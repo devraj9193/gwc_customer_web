@@ -265,7 +265,7 @@ class AppConfig{
                     ],
                   ),
                   child: CircleAvatar(
-                    maxRadius: 40.sp,
+                    maxRadius: 30.sp,
                     backgroundColor: kBottomSheetHeadCircleColor,
                     child: Image.asset(circleIcon ?? bsHeadBellIcon,
                       fit: BoxFit.scaleDown,

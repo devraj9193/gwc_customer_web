@@ -61,13 +61,14 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var h = MediaQuery.of(context).size.height;
     return SafeArea(
       child: Scaffold(
         backgroundColor: gBackgroundColor,
         body: Column(
           children: [
             Container(
-              height: 33.h,
+              height: h/2.5,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(20),

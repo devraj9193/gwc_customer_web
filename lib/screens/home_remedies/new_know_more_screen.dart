@@ -294,7 +294,7 @@ class _NewKnowMoreScreenState extends State<NewKnowMoreScreen> {
           child: Center(
             child: FadeInImage(
               placeholder: AssetImage("assets/images/placeholder.png"),
-              image: CachedNetworkImageProvider("${Uri.parse(knowMore)}"),
+              image: NetworkImage("${Uri.parse(knowMore)}"),
               imageErrorBuilder: (_, __, ___) {
                 return Image.asset("assets/images/placeholder.png");
               },
