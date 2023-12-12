@@ -1,0 +1,14 @@
+program approved:
+I/flutter (31524): message bg: {notification_type: enquiry, tag_id: , body: Start your gut healing journey now!, title: Program Approved, user: user}
+
+Additional reports requested:
+I/flutter (31524): {title: Additional Reports Requested, titleLocArgs: [], titleLocKey: null, body: Your doctor has requested a few more reports., bodyLocArgs: [], bodyLocKey: null, android: {channelId: null, clickAction: null, color: null, count: null, imageUrl: null, link: null, priority: 0, smallIcon: null, sound: default, ticker: null, tag: null, visibility: 0}, apple: null, web: null}
+
+Case Approved:
+{title: Case Approved, titleLocArgs: [], titleLocKey: null, body: Your doctor has accepted your case. Tap to start., bodyLocArgs: [], bodyLocKey: null, android: {channelId: null, clickAction: null, color: null, count: null, imageUrl: null, link: null, priority: 0, smallIcon: null, sound: default, ticker: null, tag: null, visibility: 0}, apple: null, web: null}
+
+Medical Report:
+{title: Medical Report, titleLocArgs: [], titleLocKey: null, body: Your Medical Report was uploaded. Tap it to see the details., bodyLocArgs: [], bodyLocKey: null, android: {channelId: null, clickAction: null, color: null, count: null, imageUrl: null, link: null, priority: 0, smallIcon: null, sound: default, ticker: null, tag: null, visibility: 0}, apple: null, web: null}
+
+Post Protocol Gut Guide:
+{title: Post Protocol Gut Guide, titleLocArgs: [], titleLocKey: null, body: Your post protocol guide was uploaded. Tap it to see the details., bodyLocArgs: [], bodyLocKey: null, android: {channelId: null, clickAction: null, color: null, count: null, imageUrl: null, link: null, priority: 0, smallIcon: null, sound: default, ticker: null, tag: null, visibility: 0}, apple: null, web: null}

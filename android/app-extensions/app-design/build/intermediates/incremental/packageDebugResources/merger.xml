@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~">
+    <source path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res"/>
+    <source path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\build\generated\res\rs\debug"/>
+    <source path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\build\generated\res\resValues\debug"/>
+</dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res"><file name="ic_fingerprint_white_24dp" path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\drawable\ic_fingerprint_white_24dp.xml" qualifiers="" type="drawable"/>
+<!--    <file name="ic_launcher_foreground" path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\drawable\ic_launcher_foreground.xml" qualifiers="" type="drawable"/>-->
+    <file name="ic_logo_splashscreen" path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\drawable\ic_logo_splashscreen.xml" qualifiers="" type="drawable"/><file name="ic_outline_photo_24" path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\drawable\ic_outline_photo_24.xml" qualifiers="" type="drawable"/><file name="ic_outline_search_24" path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\drawable\ic_outline_search_24.xml" qualifiers="" type="drawable"/><file name="splashscreen" path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\drawable\splashscreen.xml" qualifiers="" type="drawable"/><file name="logo" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png"
+        qualifiers="hdpi-v4" type="drawable"/><file name="logo" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="mdpi-v4" type="drawable"/><file name="splashscreen" path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\drawable-v21\splashscreen.xml" qualifiers="v21" type="drawable"/><file name="logo" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xhdpi-v4" type="drawable"/><file name="logo" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xxhdpi-v4" type="drawable"/><file name="logo" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xxxhdpi-v4" type="drawable"/><file path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\values\colors.xml" qualifiers=""><color name="colorPrimary">#666666</color><color name="colorPrimaryDark">#3c3c3c</color><color name="colorPrimaryLight">#949494</color><color name="colorSecondary">#D80D30</color><color name="colorSecondary_night">#9E000A</color><color name="colorOnPrimary">@android:color/white</color><color name="colorOnSecondary">@android:color/white</color><color name="colorPrimaryVariant">#3c3c3c</color><color name="colorAccent">@color/colorSecondary</color></file><file path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\values\dimens.xml" qualifiers=""><dimen name="space4">4dp</dimen><dimen name="space8">8dp</dimen><dimen name="space16">16dp</dimen><dimen name="space24">24dp</dimen><dimen name="space32">32dp</dimen><dimen name="space48">48dp</dimen><dimen name="space56">56dp</dimen><dimen name="space64">64dp</dimen><dimen name="space72">72dp</dimen><dimen name="space96">96dp</dimen><dimen name="text_h1">20sp</dimen><dimen name="text_h2">19sp</dimen><dimen name="text_h3">16sp</dimen><dimen name="text_h4">14sp</dimen><dimen name="text_h5">10sp</dimen></file><file path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\values\ic_launcher_background.xml" qualifiers=""><color name="ic_launcher_background">#FFFFFF</color></file><file path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\values\styles.xml" qualifiers=""><style name="BaseTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+        <item name="colorAccent">@color/colorSecondary</item>
+        <item name="colorControlNormal">@color/colorOnPrimary</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="titleTextColor">@color/colorOnPrimary</item>
+    </style><style name="ThemeOverlay.App.MaterialAlertDialog" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="colorPrimary">@color/colorSecondary</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+    </style><style name="BaseTheme.SplashScreen" parent="BaseTheme">
+        <item name="android:windowBackground">@drawable/splashscreen</item>
+    </style><style name="BaseTheme.Dark.CollapsedToolBar" parent="Widget.Design.CollapsingToolbar">
+        <item name="colorControlNormal">@color/colorOnPrimary</item>
+        <item name="collapsedTitleTextAppearance">
+            @style/TextAppearance.BaseTheme.Dark.CollapsingToolbar.Collapsed
+        </item>
+        <item name="android:editTextColor">@android:color/white</item>
+        <item name="android:textColorHint">@android:color/darker_gray</item>
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.ActionBar</item>
+    </style><style name="TextAppearance.BaseTheme.Dark.CollapsingToolbar.Collapsed" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/colorOnPrimary</item>
+    </style></file><file path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\values-night\colors.xml" qualifiers="night-v8"><color name="colorSecondary">@color/colorSecondary_night</color></file><file path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\values-v22\styles.xml" qualifiers="v22"><style name="BaseTheme.SplashScreen" parent="BaseTheme">
+    </style></file><file path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\res\values-v23\styles.xml" qualifiers="v23">
+    <style name="BaseTheme.SplashScreen" parent="BaseTheme">
+        <item name="android:windowBackground">@drawable/splashscreen</item>
+    </style></file></source><source path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\build\generated\res\rs\debug"/><source path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\build\generated\res\resValues\debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\debug\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\debug\res">
+    <file name="ic_launcher_foreground" path="C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\debug\res\drawable-v24\ic_launcher_foreground.xml" qualifiers="v24" type="drawable"/>
+    <file name="ic_launcher" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="anydpi-v26" type="mipmap"/>
+    <file name="ic_launcher_round" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="anydpi-v26" type="mipmap"/>
+    <file name="ic_launcher" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="hdpi-v4" type="mipmap"/>
+    <file name="ic_launcher_foreground" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="hdpi-v4" type="mipmap"/>
+    <file name="ic_launcher_round" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="hdpi-v4" type="mipmap"/>
+    <file name="ic_launcher" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="mdpi-v4" type="mipmap"/>
+    <file name="ic_launcher_foreground" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="mdpi-v4" type="mipmap"/>
+    <file name="ic_launcher_round" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="mdpi-v4" type="mipmap"/>
+    <file name="ic_launcher" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xhdpi-v4" type="mipmap"/>
+    <file name="ic_launcher_foreground" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xhdpi-v4" type="mipmap"/>
+    <file name="ic_launcher_round" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xhdpi-v4" type="mipmap"/>
+    <file name="ic_launcher" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xxhdpi-v4" type="mipmap"/>
+    <file name="ic_launcher_foreground" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xxhdpi-v4" type="mipmap"/>
+    <file name="ic_launcher_round" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xxhdpi-v4" type="mipmap"/>
+    <file name="ic_launcher" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xxxhdpi-v4" type="mipmap"/>
+
+    <file name="ic_launcher_foreground" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xxxhdpi-v4" type="mipmap"/>
+    <file name="ic_launcher_round" path="C:\fembuddy\fembuddy projects\gwc_customer\android\app\src\main\res\mipmap-hdpi\ic_launcher.png" qualifiers="xxxhdpi-v4" type="mipmap"/>
+</source></dataSet><mergedItems/></merger>

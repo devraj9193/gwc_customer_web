@@ -1,0 +1,162 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw  GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = 34
+//        localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '34'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '23.0'
+}
+
+
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+//apply plugin: 'com.google.gms.google-services'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion sdkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        disable 'InvalidPackage'
+        checkReleaseBuilds false
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+//    buildFeatures {
+//        viewBinding true
+//    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/com.android.tools/proguard/coroutines.pro'
+        // Fixes duplicate libraries build issue,
+        // when your project uses more than one plugin that depend on C++ libs.
+        pickFirst 'lib/**/libc++_shared.so'
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "com.fembuddy.gwc_customer"
+        minSdkVersion 21
+        targetSdkVersion sdkVersion
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        multiDexEnabled true
+//        ndk {
+//            abiFilters "armeabi"
+//        }
+    }
+
+    buildTypes {
+        debug {
+//            ndk {
+//                abiFilters "x86", "armeabi-v7a", "armeabi"
+//                //abiFilters ABI_FILTERS
+//            }
+            resValue "string", "fb_provider_id", "com.facebook.app.FacebookContentProvider{app_id_1}"
+
+        }
+        release {
+//            ndk {
+//                abiFilters "x86", "armeabi-v7a", "armeabi"
+//                //abiFilters ABI_FILTERS
+//            }
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig signingConfigs.debug
+            shrinkResources false
+            minifyEnabled false
+//            useProguard false
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+
+            resValue "string", "fb_provider_id", "com.facebook.app.FacebookContentProvider{app_id_2}"
+
+        }
+    }
+    configurations {
+        all {
+            exclude group: "com.quickblox", module: "google-webrtc"
+//            exclude group: "com.google.android.exoplayer", module: "exoplayer-core"
+
+//            exclude group: "com.bandyer", module: "bandyer-android-coreav"
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+def leakCanaryVersion = '2.7'
+def jUnitLibVersion = '4.13.2'
+def multiDexLibVersion = "2.0.1"
+def firebaseMessagingLibVersion = '23.0.7'
+def firebaseMessagingIidLibVersion = '21.1.0'
+def crashlyticsLibVersion = "18.2.12"
+def work_version = '2.7.1'
+def bandyerLibVersion = "3.2.10"
+def bandyerExtensionUsbCamera = "11.0.2"
+def pushy_version = '1.0.82'
+def huawei_push_version = '6.5.0.300'
+def androidX = '1.1.0'
+def desugaring_version = "1.1.5"
+
+dependencies {
+    // Import the Firebase BoM
+    implementation platform('com.google.firebase:firebase-bom:30.4.1')
+
+
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation 'com.google.firebase:firebase-analytics'
+
+//    implementation 'androidx.work:work-runtime-ktx:2.8.0-beta01'
+    implementation 'androidx.work:work-runtime:2.8.1'
+
+    /*** Bandyer Android SDK ***/
+    implementation "com.bandyer:bandyer-android-sdk:$bandyerLibVersion"
+
+    /** Utilities **/
+    implementation 'androidx.biometric:biometric:1.1.0'
+    implementation project(":app-utilities")
+    implementation project(":app-configuration")
+    implementation project(":app-design")
+    // define this dependency only if you desire to handle usb camera input in a video call
+    //implementation "com.bandyer:extension_usb_camera:$bandyerExtensionUsbCamera"
+
+    implementation 'androidx.work:work-runtime-ktx:2.8.1'
+    implementation 'com.google.firebase:firebase-messaging:23.1.2'
+
+}

@@ -1,0 +1,25 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml:16:1-18:12
+INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml:16:1-18:12
+INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml:16:1-18:12
+	package
+		ADDED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml:17:5-37
+		INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+		INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml:16:11-69
+uses-sdk
+INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+		ADDED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+		INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+		ADDED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml
+		INJECTED from C:\fembuddy\fembuddy projects\Bandyer-Android-SDK-master\app-extensions\app-design\src\main\AndroidManifest.xml

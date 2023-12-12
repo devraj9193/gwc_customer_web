@@ -1,0 +1,12 @@
+; DO NOT EDIT (unless you know what you are doing)
+;
+; This subdirectory is a git "subrepo", and this file is maintained by the
+; git-subrepo command. See https://github.com/git-commands/git-subrepo#readme
+;
+[subrepo]
+	remote = https://github.com/Bandyer/Android-App-Extensions
+	branch = master
+	commit = dcd6d8e86d6187bbcdcd8a8b822c300c191f1cbe
+	method = merge
+	cmdver = 0.4.5
+	parent = 59c5417f8784120e1695b55d6a7122beb357af6f
