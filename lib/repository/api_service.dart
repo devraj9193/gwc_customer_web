@@ -321,7 +321,9 @@ class ApiClient {
 
     Map<String, String> shipRocketHeader = {
       "Authorization": "Bearer $shipToken",
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD",
     };
 
     print('shiptoken: $shipToken');
@@ -329,7 +331,7 @@ class ApiClient {
       final response = await httpClient
           .get(
         Uri.parse(path),
-        headers: shipRocketHeader,
+         headers: shipRocketHeader,
       )
           .timeout(const Duration(seconds: 45));
 
@@ -1286,6 +1288,8 @@ class ApiClient {
         headers: {
           // "Authorization": "Bearer ${AppConfig().bearerToken}",
           "Authorization": getHeaderToken(),
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD"
         },
       ).timeout(const Duration(seconds: 45));
 
@@ -1807,8 +1811,7 @@ class ApiClient {
     return result;
   }
 
-  Future submitDoctorRequestedReportApi(
-      List reportIds, List uploadFiles) async {
+  Future submitDoctorRequestedReportApi(List reportIds, dynamic multipartFile) async {
     final path = submitDoctorRequestedReportUrl;
 
     var result;
@@ -1821,8 +1824,10 @@ class ApiClient {
       };
       request.headers.addAll(headers);
 
-      if (reportIds.isNotEmpty) {
-        request.fields.addAll({'report_ids[]': reportIds.join(',').toString()});
+      if(reportIds.isNotEmpty){
+        request.fields.addAll({
+          'report_ids[]': reportIds.join(',').toString()
+        });
       }
       // if(reportIds.isNotEmpty){
       //   reportIds.forEach((element) {
@@ -1839,25 +1844,23 @@ class ApiClient {
       //     'report_id': reportId
       //   });
       // }
-      // request.files.addAll(multipartFile);
+      request.files.addAll(multipartFile);
 
       request.persistentConnection = false;
 
-      if (uploadFiles != null) {
-        uploadFiles.forEach((element) async {
-          request.files
-              .add(await http.MultipartFile.fromBytes('files[]', element));
-        });
-      }
 
-      print("upload files : ${request.files}");
+      // reportList.forEach((element) async {
+      //   request.files.add(await http.MultipartFile.fromPath('files[]', element));
+      // });
+
 
       var response = await http.Response.fromStream(await request.send())
           .timeout(Duration(seconds: 45));
 
+
+
       print("submitDoctorRequestedReportApi response code:" + path);
-      print("submitDoctorRequestedReportApi response code:" +
-          response.statusCode.toString());
+      print("submitDoctorRequestedReportApi response code:" + response.statusCode.toString());
       print("submitDoctorRequestedReportApi response body:" + response.body);
       var totalTime = DateTime.now().millisecondsSinceEpoch - startTime;
       print(
@@ -1869,11 +1872,14 @@ class ApiClient {
       print('${res['status'].runtimeType} ${res['status']}');
       if (res['status'].toString() == '200') {
         result = ReportUploadModel.fromJson(res);
-      } else if (response.statusCode == 500) {
+      }
+      else if(response.statusCode == 500){
         result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
-      } else {
+      }
+      else {
         result = ErrorModel.fromJson(res);
       }
+
     } catch (e) {
       print("catch error: ${e}");
       result = ErrorModel(status: "0", message: e.toString());
@@ -2547,7 +2553,7 @@ class ApiClient {
     print('serverGetProblemList Response header: $path');
     dynamic result;
 
-    try {
+    // try {
       final response = await httpClient.get(
         Uri.parse(path),
         headers: {
@@ -2574,9 +2580,9 @@ class ApiClient {
           result = HomeRemediesModel.fromJson(json);
         }
       }
-    } catch (e) {
-      result = ErrorModel(status: "0", message: e.toString());
-    }
+    // } catch (e) {
+    //   result = ErrorModel(status: "0", message: e.toString());
+    // }
     return result;
   }
 
@@ -3224,6 +3230,8 @@ class ApiClient {
         Uri.parse(url),
         headers: {
           "Authorization": agentToken,
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD"
         },
       ).timeout(Duration(seconds: 45));
 
@@ -3258,6 +3266,8 @@ class ApiClient {
         Uri.parse(url),
         headers: {
           "Authorization": agentToken,
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD"
         },
       ).timeout(Duration(seconds: 45));
 
@@ -3304,6 +3314,8 @@ attachments[]   files   false
     var headers = {
       // "Authorization": adminToken,
       "Authorization": agentToken,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD"
     };
 
     print("Details : $data");
@@ -3364,6 +3376,8 @@ attachments[]   files   false
         Uri.parse(url),
         headers: {
           "Authorization": agentToken,
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD"
         },
       ).timeout(Duration(seconds: 45));
 
@@ -3397,6 +3411,8 @@ attachments[]   files   false
     var headers = {
       // "Authorization": adminToken,
       "Authorization": agentToken,
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD"
     };
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
@@ -3453,6 +3469,8 @@ attachments[]   files   false
           headers: {
             // "Authorization": adminToken,
             "Authorization": agentToken,
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD"
           },
           body: Map.from(body))
           .timeout(Duration(seconds: 45));

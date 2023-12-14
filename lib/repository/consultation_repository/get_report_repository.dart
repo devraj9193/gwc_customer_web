@@ -1,3 +1,5 @@
+import 'package:file_picker/file_picker.dart';
+
 import '../api_service.dart';
 
 class ReportRepository{
@@ -21,7 +23,7 @@ class ReportRepository{
     return await apiClient.downloadFile(url, filename, path);
   }
 
-  Future submitDoctorRequestedReportRepo(List reportId, List multipartFile) async{
+  Future submitDoctorRequestedReportRepo(List reportId, dynamic multipartFile) async{
     return await apiClient.submitDoctorRequestedReportApi(reportId, multipartFile);
   }
 

@@ -1715,7 +1715,7 @@ packages:
     source: hosted
     version: "1.0.0+1"
   url_launcher:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: url_launcher
       sha256: e9aa5ea75c84cf46b3db4eea212523591211c3cf2e13099ee4ec147f54201c86
@@ -1763,7 +1763,7 @@ packages:
     source: hosted
     version: "2.2.0"
   url_launcher_web:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: url_launcher_web
       sha256: "7286aec002c8feecc338cc33269e96b73955ab227456e9fb2a91f7fab8a358e9"

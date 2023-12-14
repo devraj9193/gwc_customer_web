@@ -87,7 +87,7 @@ dependencies:
   circular_progress_bar_with_lines: ^0.0.5
   simple_circular_progress_bar: ^1.0.2
   vertical_percent_indicator: any
-  url_launcher: any
+  url_launcher_web: any
   flutter_calendar_carousel: ^2.4.1
   readmore: any
   easy_scroll_to_index: any

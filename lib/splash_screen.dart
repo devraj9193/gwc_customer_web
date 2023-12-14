@@ -485,7 +485,7 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
             physics: const NeverScrollableScrollPhysics(),
             controller: _pageController,
             children: <Widget>[
-              splashImage(),
+              // splashImage(),
               if(enquiryStatus != null)
               (enquiryStatus!.isEven)
                   ? SitBackScreen()

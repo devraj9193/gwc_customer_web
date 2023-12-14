@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../repository/consultation_repository/get_report_repository.dart';
@@ -15,7 +16,7 @@ class ReportService extends ChangeNotifier{
     return await repository.getUploadedReportListListRepo();
   }
 
-  Future submitDoctorRequestedReportService(List reportId, List multipartFile) async{
+  Future submitDoctorRequestedReportService(List reportId, dynamic multipartFile) async{
     return await repository.submitDoctorRequestedReportRepo(reportId, multipartFile);
   }
 

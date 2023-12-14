@@ -121,239 +121,240 @@ class _UploadFilesState extends State<UploadFiles> {
     return (widget.isFromSettings)
         ? showUserReports()
         : Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-            colors: [gWhiteColor, gWhiteColor],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter),
-      ),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          body: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: padding,
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: buildAppBar(() {
-                    Navigator.pop(context);
-                  }),
-                ),
-              ),
-              SizedBox(height: 5.h),
-              Padding(
-                padding: padding,
-                child: Image(
-                  image: const AssetImage("assets/images/Group 3306.png"),
-                  height: 15.h,
-                  color: gsecondaryColor,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              Padding(
-                padding: padding,
-                child: Text(
-                  "Appointment Completed Successfully !\n Please upload the reports requested by the Doctor to proceed further.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      height: 1.5,
-                      fontFamily: kFontBold,
-                      color: gTextColor,
-                      fontSize: 12.sp),
-                ),
-              ),
-              Visibility(
-                visible: widget.isFromSettings,
-                child: Padding(
-                  padding: padding,
-                  child: GestureDetector(
-                    onTap: () async {
-                      showChooserSheet();
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(
-                          vertical: 5.h, horizontal: 3.w),
-                      padding: EdgeInsets.symmetric(vertical: 2.h),
-                      decoration: BoxDecoration(
-                        color: gMainColor,
-                        borderRadius: BorderRadius.circular(5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            blurRadius: 20,
-                            offset: const Offset(2, 10),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [gWhiteColor, gWhiteColor],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter),
+            ),
+            child: SafeArea(
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: padding,
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: buildAppBar(() {
+                          Navigator.pop(context);
+                        }),
+                      ),
+                    ),
+                    SizedBox(height: 5.h),
+                    Padding(
+                      padding: padding,
+                      child: Image(
+                        image: const AssetImage("assets/images/Group 3306.png"),
+                        height: 15.h,
+                        color: gsecondaryColor,
+                      ),
+                    ),
+                    SizedBox(height: 2.h),
+                    Padding(
+                      padding: padding,
+                      child: Text(
+                        "Appointment Completed Successfully !\n Please upload the reports requested by the Doctor to proceed further.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            height: 1.5,
+                            fontFamily: kFontBold,
+                            color: gTextColor,
+                            fontSize: 12.sp),
+                      ),
+                    ),
+                    Visibility(
+                      visible: widget.isFromSettings,
+                      child: Padding(
+                        padding: padding,
+                        child: GestureDetector(
+                          onTap: () async {
+                            pickFromFile();
+                            // showChooserSheet();
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 5.h, horizontal: 3.w),
+                            padding: EdgeInsets.symmetric(vertical: 2.h),
+                            decoration: BoxDecoration(
+                              color: gMainColor,
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  blurRadius: 20,
+                                  offset: const Offset(2, 10),
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: const AssetImage(
+                                        "assets/images/Group 3323.png"),
+                                    height: 2.5.h,
+                                  ),
+                                  Text(
+                                    "   Choose file",
+                                    style: TextStyle(
+                                        fontFamily: kFontMedium,
+                                        color: Colors.black,
+                                        fontSize: 10.sp),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image(
-                              image: const AssetImage(
-                                  "assets/images/Group 3323.png"),
-                              height: 2.5.h,
-                            ),
-                            Text(
-                              "   Choose file",
-                              style: TextStyle(
-                                  fontFamily: kFontMedium,
-                                  color: Colors.black,
-                                  fontSize: 10.sp),
-                            ),
-                          ],
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 1.8.h,
-              ),
-              if (!widget.isFromSettings)
-                Padding(
-                  padding: padding,
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: Text(
-                      // "Uploaded Report",
-                      'Requested Reports',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontFamily: kFontBold,
-                          color: gTextColor,
-                          fontSize: 11.sp),
+                    SizedBox(
+                      height: 1.8.h,
                     ),
-                  ),
-                ),
-              (widget.isFromSettings)
-                  ? showNormalReportList(context)
-                  : showRequestedReports(context),
-              SizedBox(
-                height: 5.h,
-              ),
-              (widget.isFromSettings)
-                  ? Visibility(
-                visible: fileFormatList.isNotEmpty,
-                child: Padding(
-                  padding: padding,
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () async {
-                        uploadReport();
-
-                        // getReportList();
-                        // Navigator.of(context).push(
-                        //   MaterialPageRoute(
-                        //       builder: (context) =>
-                        //       const ReportsUploadedScreen()),
-                        // );
-                      },
-                      child: Container(
-                        width: 60.w,
-                        height: 5.h,
-                        // padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
-                        decoration: BoxDecoration(
-                          color: eUser().buttonColor,
-                          borderRadius: BorderRadius.circular(
-                              eUser().buttonBorderRadius),
-                        ),
-                        child: (showUploadProgress)
-                            ? buildThreeBounceIndicator(
-                            color: eUser()
-                                .threeBounceIndicatorColor)
-                            : Center(
+                    if (!widget.isFromSettings)
+                      Padding(
+                        padding: padding,
+                        child: Align(
+                          alignment: Alignment.topLeft,
                           child: Text(
-                            'Submit',
+                            // "Uploaded Report",
+                            'Requested Reports',
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontFamily:
-                              eUser().buttonTextFont,
-                              color: eUser().buttonTextColor,
-                              fontSize:
-                              eUser().buttonTextSize,
-                            ),
+                                fontFamily: kFontBold,
+                                color: gTextColor,
+                                fontSize: 11.sp),
                           ),
                         ),
                       ),
+                    (widget.isFromSettings)
+                        ? showNormalReportList(context)
+                        : showRequestedReports(context),
+                    SizedBox(
+                      height: 5.h,
                     ),
-                  ),
-                ),
-              )
-                  : Padding(
-                padding: padding,
-                child: Center(
-                  child: GestureDetector(
-                    onTap: () async {
-                      List totalReportLengthExceptPrescription = [];
-                      doctorRequestedReports.forEach((element) {
-                        if (element.reportType != 'prescription') {
-                          totalReportLengthExceptPrescription
-                              .add(element);
-                        }
-                      });
-                      print(totalReportLengthExceptPrescription
-                          .length);
-                      print(reportsObject.length);
+                    (widget.isFromSettings)
+                        ? Visibility(
+                            visible: fileFormatList.isNotEmpty,
+                            child: Padding(
+                              padding: padding,
+                              child: Center(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    uploadReport();
+
+                                    // getReportList();
+                                    // Navigator.of(context).push(
+                                    //   MaterialPageRoute(
+                                    //       builder: (context) =>
+                                    //       const ReportsUploadedScreen()),
+                                    // );
+                                  },
+                                  child: Container(
+                                    width: 60.w,
+                                    height: 5.h,
+                                    // padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
+                                    decoration: BoxDecoration(
+                                      color: eUser().buttonColor,
+                                      borderRadius: BorderRadius.circular(
+                                          eUser().buttonBorderRadius),
+                                    ),
+                                    child: (showUploadProgress)
+                                        ? buildThreeBounceIndicator(
+                                            color: eUser()
+                                                .threeBounceIndicatorColor)
+                                        : Center(
+                                            child: Text(
+                                              'Submit',
+                                              style: TextStyle(
+                                                fontFamily:
+                                                    eUser().buttonTextFont,
+                                                color: eUser().buttonTextColor,
+                                                fontSize:
+                                                    eUser().buttonTextSize,
+                                              ),
+                                            ),
+                                          ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Padding(
+                            padding: padding,
+                            child: Center(
+                              child: GestureDetector(
+                                onTap: () async {
+                                  List totalReportLengthExceptPrescription = [];
+                                  doctorRequestedReports.forEach((element) {
+                                    if (element.reportType != 'prescription') {
+                                      totalReportLengthExceptPrescription
+                                          .add(element);
+                                    }
+                                  });
+                                  print(totalReportLengthExceptPrescription
+                                      .length);
+                                  print(reportsObject.length);
 //                                  if(reportsObject.length-1 == totalReportLengthExceptPrescription.length){
 
-                      if (reportsObject.length ==
-                          totalReportLengthExceptPrescription
-                              .length ||
-                          reportsObject.length - 1 ==
-                              totalReportLengthExceptPrescription
-                                  .length) {
-                        sendAllFiles();
-                        // Stream s = sendStream();
-                        // print("s.length:${s.length}");
-                      } else {
-                        AppConfig().showSnackbar(
-                            context, "Please add all the files",
-                            isError: true);
-                      }
+                                  if (reportsObject.length ==
+                                          totalReportLengthExceptPrescription
+                                              .length ||
+                                      reportsObject.length - 1 ==
+                                          totalReportLengthExceptPrescription
+                                              .length) {
+                                    sendAllFiles();
+                                    // Stream s = sendStream();
+                                    // print("s.length:${s.length}");
+                                  } else {
+                                    AppConfig().showSnackbar(
+                                        context, "Please add all the files",
+                                        isError: true);
+                                  }
 
-                      // for(int i=0;i<reportsObject.length;i++){
-                      //   if(reportsObject[i].path.isNotEmpty){
-                      //     final res = await submitDoctorRequestedReport(reportsObject[i].path, reportsObject[i].id);
-                      //     print("button res: $res  ${res.runtimeType}");
-                      //
-                      //   }
-                      // }
-                    },
-                    child: Container(
-                      width: 60.w,
-                      height: 5.h,
-                      // padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
-                      decoration: BoxDecoration(
-                        color: eUser().buttonColor,
-                        borderRadius: BorderRadius.circular(8),
-                        // border:
-                        //     Border.all(color: gMainColor, width: 1),
-                      ),
-                      child: (showUploadProgress)
-                          ? buildThreeBounceIndicator()
-                          : Center(
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(
-                            fontFamily: kFontBold,
-                            color: gWhiteColor,
-                            fontSize: 11.sp,
+                                  // for(int i=0;i<reportsObject.length;i++){
+                                  //   if(reportsObject[i].path.isNotEmpty){
+                                  //     final res = await submitDoctorRequestedReport(reportsObject[i].path, reportsObject[i].id);
+                                  //     print("button res: $res  ${res.runtimeType}");
+                                  //
+                                  //   }
+                                  // }
+                                },
+                                child: Container(
+                                  width: 60.w,
+                                  height: 5.h,
+                                  // padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
+                                  decoration: BoxDecoration(
+                                    color: eUser().buttonColor,
+                                    borderRadius: BorderRadius.circular(8),
+                                    // border:
+                                    //     Border.all(color: gMainColor, width: 1),
+                                  ),
+                                  child: (showUploadProgress)
+                                      ? buildThreeBounceIndicator()
+                                      : Center(
+                                          child: Text(
+                                            'Submit',
+                                            style: TextStyle(
+                                              fontFamily: kFontBold,
+                                              color: gWhiteColor,
+                                              fontSize: 11.sp,
+                                            ),
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 
   /// type is to determine fuction called from others
@@ -461,8 +462,8 @@ class _UploadFilesState extends State<UploadFiles> {
         if (doctorRequestedReports.isNotEmpty) {
           doctorRequestedReports.forEach((element) {
             print("element.reportId:${element.reportId}");
-            _reports = ReportObject(
-                element.reportType!, element.id.toString() ?? '', [], false);
+            _reports = ReportObject(element.reportType!,
+                element.id.toString() ?? '', [], [], false);
             // reportObj.putIfAbsent('name', () => element.reportType);
             // reportObj.putIfAbsent('id', () => element.reportId);
             // reportObj.putIfAbsent('path', () => '');
@@ -478,12 +479,12 @@ class _UploadFilesState extends State<UploadFiles> {
         print("result.data: ${result.data}");
 
         print("anyyyy");
-        final test = doctorRequestedReports.any((element) => element.reportType != "mr_report");
+        final test = doctorRequestedReports
+            .any((element) => element.reportType != "mr_report");
         print("test: $test");
 
         setState(() {});
-      }
-      else {}
+      } else {}
       // AppConfig().showSnackbar(context, result.message ?? '');
     } else {
       ErrorModel result = res;
@@ -522,7 +523,7 @@ class _UploadFilesState extends State<UploadFiles> {
       if (doctorRequestedReports.isNotEmpty) {
         doctorRequestedReports.forEach((element) {
           _reports = ReportObject(
-              element.reportType!, element.reportId ?? '', [], false);
+              element.reportType!, element.reportId ?? '', [], [], false);
           // reportObj.putIfAbsent('name', () => element.reportType);
           // reportObj.putIfAbsent('id', () => element.reportId);
           // reportObj.putIfAbsent('path', () => '');
@@ -538,15 +539,15 @@ class _UploadFilesState extends State<UploadFiles> {
       print("result.data: ${result.data}");
 
       print("anyyyy");
-      final test = doctorRequestedReports.any((element) => element.reportType != "mr_report");
+      final test = doctorRequestedReports
+          .any((element) => element.reportType != "mr_report");
       print("test: $test");
 
       setState(() {
         showUploadProgress = false;
       });
       // AppConfig().showSnackbar(context, result.message ?? '');
-    }
-    else {
+    } else {
       ErrorModel result = res;
       AppConfig().showSnackbar(context, result.message ?? '', isError: true);
       setState(() {
@@ -629,45 +630,44 @@ class _UploadFilesState extends State<UploadFiles> {
                       child: Text('Choose File Source'),
                       decoration: BoxDecoration(
                           border: Border(
-                            bottom: BorderSide(
-                              color: gHintTextColor,
-                              width: 3.0,
-                            ),
-                          )),
+                        bottom: BorderSide(
+                          color: gHintTextColor,
+                          width: 3.0,
+                        ),
+                      )),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // TextButton(
-                        //     onPressed: () {
-                        //       getImageFromCamera(type: type);
-                        //       Navigator.pop(context);
-                        //     },
-                        //     child: Row(
-                        //       mainAxisSize: MainAxisSize.min,
-                        //       children: [
-                        //         Icon(
-                        //           Icons.camera_enhance_outlined,
-                        //           color: gMainColor,
-                        //         ),
-                        //         Text('Camera'),
-                        //       ],
-                        //     )),
-                        // Container(
-                        //   width: 5,
-                        //   height: 10,
-                        //   decoration: BoxDecoration(
-                        //       border: Border(
-                        //         right: BorderSide(
-                        //           color: gHintTextColor,
-                        //           width: 1,
-                        //         ),
-                        //       )),
-                        // ),
                         TextButton(
                             onPressed: () {
-                              chooseFileUsingFilePicker(type: type);
-                              // pickFromFile(type: type);
+                              getImageFromCamera(type: type);
+                              Navigator.pop(context);
+                            },
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.camera_enhance_outlined,
+                                  color: gMainColor,
+                                ),
+                                Text('Camera'),
+                              ],
+                            )),
+                        Container(
+                          width: 5,
+                          height: 10,
+                          decoration: BoxDecoration(
+                              border: Border(
+                            right: BorderSide(
+                              color: gHintTextColor,
+                              width: 1,
+                            ),
+                          )),
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              pickFromFile(type: type);
                               Navigator.pop(context);
                             },
                             child: Row(
@@ -690,160 +690,6 @@ class _UploadFilesState extends State<UploadFiles> {
         });
   }
 
-  PlatformFile? objFile;
-  List<PlatformFile> medicalRecords = [];
-  List<File> _finalFiles = [];
-  List item = [];
-
-  void chooseFileUsingFilePicker({String? type}) async {
-    //-----pick file by file picker,
-
-    var result = await FilePicker.platform.pickFiles(
-      withReadStream:
-      true, // this will return PlatformFile object with read stream
-      type: FileType.custom, allowMultiple: true,allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
-    );
-    if (result == null) return;
-    if (result.files.first.extension!.contains("pdf") ||
-        result.files.first.extension!.contains("png") ||
-        result.files.first.extension!.contains("jpg") ||
-        result.files.first.extension!.contains("jpeg")) {
-      var path2 = result.files.single.bytes;
-
-      var path3 = result.files.single.name;
-
-      print("path: $path3");
-
-      if (type != null) {
-        if (reportsObject.isNotEmpty) {
-          reportsObject.forEach((ele) {
-            if (ele.id.toString().contains(type)) {
-              if (!ele.path.contains(path2)) {
-                ele.path.add(path2!);
-              }
-              else{
-                AppConfig().showSnackbar(context,"File Already Exist",isError: true);
-              }
-            }
-          });
-        }
-        if (type == "others") {
-          if (!otherFilesObject.contains(path2)) {
-            otherFilesObject.add(path2 ?? '');
-          }
-        }
-        print("otherFilesObject: $otherFilesObject");
-      }
-
-      // if (!item.contains(path3)) {
-      //   item.add(path3);
-      //   File file = File(path3 ?? "");
-      //   setState(() {
-      //     objFile = result.files.single;
-      //     medicalRecords.add(result.files.first);
-      //     _finalFiles.add(file);
-      //     print("medical reports : $medicalRecords");
-      //     print("_finalFiles : $_finalFiles");
-      //   });
-      // } else {
-      //   // Scaffold.of(globalkey2.currentContext??context)
-      //   AppConfig().showSnackbar(context, "File Already Exist", isError: true);
-      // }
-    } else {
-      AppConfig().showSnackbar(context, "Please select png/jpg/Pdf files",
-          isError: true);
-    }
-    setState(() {});
-  }
-
-  // void pickFromFile({String? type}) async {
-  //   print('type: $type');
-  //   final result = await FilePicker.platform.pickFiles(
-  //     withReadStream: true,
-  //     type: FileType.any,
-  //     // allowedExtensions: ['pdf', 'jpg', 'png', 'jpeg'],
-  //     allowMultiple: true,
-  //   );
-  //   if (result == null) return;
-  //
-  //   /// if allowMultiple: true
-  //   List<File> _files = result.paths.map((path) => File(path!)).toList();
-  //
-  //   _files.forEach((element) {
-  //     print(element.path.split('.').last);
-  //     if (element.path.split('.').last.toLowerCase().contains("pdf") ||
-  //         element.path.split('.').last.toLowerCase().contains("png") ||
-  //         element.path.split('.').last.toLowerCase().contains("jpg") ||
-  //         element.path.split('.').last.toLowerCase().contains("jpeg")) {
-  //       if (getFileSize(element) <= 12) {
-  //         print("filesize: ${getFileSize(File(result.paths.first!))}Mb");
-  //         // files.add(result.files.first);
-  //         // addFilesToList(File(result.paths.first!));
-  //         if (type != null) {
-  //           if (reportsObject.isNotEmpty) {
-  //             reportsObject.forEach((ele) {
-  //               if (ele.id.toString().contains(type)) {
-  //                 if (!ele.path.contains(element.path)) {
-  //                   ele.path.add(element.path);
-  //                 }
-  //                 else{
-  //                   AppConfig().showSnackbar(context,"File Already Exist",isError: true);
-  //                 }
-  //               }
-  //             });
-  //           }
-  //           if (type == "others") {
-  //             if (!otherFilesObject.contains(element.path)) {
-  //               otherFilesObject.add(element.path ?? '');
-  //             }
-  //           }
-  //           print("otherFilesObject: $otherFilesObject");
-  //         }
-  //       } else {
-  //         AppConfig()
-  //             .showSnackbar(context, "File size must be <12Mb", isError: true);
-  //       }
-  //     } else {
-  //       AppConfig().showSnackbar(context, "Please select png/jpg/Pdf files",
-  //           isError: true);
-  //     }
-  //   });
-  //
-  //   /// single file select for this  allowMultiple should be false allowMultiple: false
-  //   // if (result.files.first.extension!.contains("pdf") ||
-  //   //     result.files.first.extension!.contains("png") ||
-  //   //     result.files.first.extension!.contains("jpg") ||
-  //   //     result.files.first.extension!.contains("jpeg")) {
-  //   //   if (getFileSize(File(result.paths.first!)) <= 12) {
-  //   //     print("filesize: ${getFileSize(File(result.paths.first!))}Mb");
-  //   //     files.add(result.files.first);
-  //   //     // addFilesToList(File(result.paths.first!));
-  //   //     if (type != null) {
-  //   //       if (reportsObject.isNotEmpty) {
-  //   //         reportsObject.forEach((element) {
-  //   //           if (element.id.toString().contains(type)) {
-  //   //             element.path.add(result.paths.first!);
-  //   //           }
-  //   //         });
-  //   //       }
-  //   //       if (type == "others") {
-  //   //         otherFilesObject.add(result.paths.first ?? '');
-  //   //       }
-  //   //       print("otherFilesObject: $otherFilesObject");
-  //   //     }
-  //   //   }
-  //   //   else {
-  //   //     AppConfig()
-  //   //         .showSnackbar(context, "File size must be <12Mb", isError: true);
-  //   //   }
-  //   // }
-  //   // else {
-  //   //   AppConfig().showSnackbar(context, "Please select png/jpg/Pdf files",
-  //   //       isError: true);
-  //   // }
-  //   setState(() {});
-  // }
-
   addFilesToList(File file) async {
     newList.clear();
     setState(() {
@@ -852,7 +698,7 @@ class _UploadFilesState extends State<UploadFiles> {
 
     for (int i = 0; i < fileFormatList.length; i++) {
       var stream =
-      http.ByteStream(DelegatingStream.typed(fileFormatList[i].openRead()));
+          http.ByteStream(DelegatingStream.typed(fileFormatList[i].openRead()));
       var length = await fileFormatList[i].length();
       var multipartFile = http.MultipartFile("files[]", stream, length,
           filename: fileFormatList[i].path);
@@ -862,44 +708,44 @@ class _UploadFilesState extends State<UploadFiles> {
     setState(() {});
   }
 
-  // Future getImageFromCamera({String? type}) async {
-  //   var image = await ImagePicker.platform
-  //       .pickImage(source: ImageSource.camera, imageQuality: 40);
-  //
-  //   setState(() {
-  //     _image = File(image!.path);
-  //     if (getFileSize(_image!) <= 12) {
-  //       print("filesize: ${getFileSize(_image!)}Mb");
-  //       // addFilesToList(_image!);
-  //       if (type != null) {
-  //         if (reportsObject.isNotEmpty) {
-  //           reportsObject.forEach((element) {
-  //             if (element.id.toString().contains(type)) {
-  //               element.path.add(_image!.path);
-  //             }
-  //           });
-  //         }
-  //         if (type == "others") {
-  //           otherFilesObject.add(_image!.path ?? '');
-  //         }
-  //         print("otherFilesObject: $otherFilesObject");
-  //       }
-  //     } else {
-  //       print("filesize: ${getFileSize(_image!)}Mb");
-  //
-  //       AppConfig()
-  //           .showSnackbar(context, "File size must be <12Mb", isError: true);
-  //     }
-  //   });
-  //   print("captured image: ${_image} ${_image!.path}");
-  // }
+  Future getImageFromCamera({String? type}) async {
+    var image = await ImagePicker.platform
+        .pickImage(source: ImageSource.camera, imageQuality: 40);
+
+    setState(() {
+      _image = File(image!.path);
+      if (getFileSize(_image!) <= 12) {
+        print("filesize: ${getFileSize(_image!)}Mb");
+        // addFilesToList(_image!);
+        if (type != null) {
+          if (reportsObject.isNotEmpty) {
+            reportsObject.forEach((element) {
+              if (element.id.toString().contains(type)) {
+                element.path.add(_image!.path);
+              }
+            });
+          }
+          if (type == "others") {
+            otherFilesObject.add(_image!.path ?? '');
+          }
+          print("otherFilesObject: $otherFilesObject");
+        }
+      } else {
+        print("filesize: ${getFileSize(_image!)}Mb");
+
+        AppConfig()
+            .showSnackbar(context, "File size must be <12Mb", isError: true);
+      }
+    });
+    print("captured image: ${_image} ${_image!.path}");
+  }
 
   buildReportList(String text,
       {String id = '',
-        bool isSingleIcon = true,
-        VoidCallback? onTap,
-        VoidCallback? onSecondaryIconTap,
-        bool isDoneIcon = false}) {
+      bool isSingleIcon = true,
+      VoidCallback? onTap,
+      VoidCallback? onSecondaryIconTap,
+      bool isDoneIcon = false}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -917,79 +763,232 @@ class _UploadFilesState extends State<UploadFiles> {
           ),
           trailing: (isDoneIcon)
               ? Icon(
-            Icons.done,
-            color: gPrimaryColor,
-          )
+                  Icons.done,
+                  color: gPrimaryColor,
+                )
               : (isSingleIcon)
-              ? GestureDetector(
-              onTap: onTap,
-              child: Icon(
-                Icons.upload_outlined,
-                color: gsecondaryColor,
-              ))
-              : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: onTap,
-                child: Icon(
-                  Icons.remove_red_eye_outlined,
-                  color: gsecondaryColor,
-                ),
-              ),
-              SizedBox(
-                width: 5,
-              ),
-              GestureDetector(
-                onTap: onSecondaryIconTap,
-                child: Icon(
-                  Icons.download_outlined,
-                  color: gsecondaryColor,
-                ),
-              )
-            ],
-          ),
+                  ? GestureDetector(
+                      onTap: onTap,
+                      child: Icon(
+                        Icons.upload_outlined,
+                        color: gsecondaryColor,
+                      ))
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: onTap,
+                          child: Icon(
+                            Icons.remove_red_eye_outlined,
+                            color: gsecondaryColor,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        GestureDetector(
+                          onTap: onSecondaryIconTap,
+                          child: Icon(
+                            Icons.download_outlined,
+                            color: gsecondaryColor,
+                          ),
+                        )
+                      ],
+                    ),
         ),
         (reportsObject.isNotEmpty)
             ? ListView.builder(
-          itemCount: reportsObject.length,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return Visibility(
-                visible: reportsObject[index].id == id &&
-                    reportsObject[index].path.isNotEmpty,
-                child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: reportsObject[index].path.length,
-                    shrinkWrap: true,
-                    itemBuilder: (_, i) {
-                      final file = File(reportsObject[index].path[i].toString());
-                      return buildFile(file, index, secondaryIndex: i);
-                    }));
-          },
-        )
+                itemCount: reportsObject.length,
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Visibility(
+                      visible: reportsObject[index].id == id &&
+                          reportsObject[index].path.isNotEmpty,
+                      child: ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: reportsObject[index].path.length,
+                          shrinkWrap: true,
+                          itemBuilder: (_, i) {
+                            final file = File(reportsObject[index].path[i]);
+                            return buildFile(file, index, secondaryIndex: i);
+                          }));
+                },
+              )
             : const Divider(),
       ],
     );
   }
 
+  List<PlatformFile>? _paths;
+
+  void pickFromFile({String? type}) async {
+    print('type: $type');
+    _paths = (await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowMultiple: true,
+      onFileLoading: (FilePickerStatus status) => print(status),
+      allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
+    ))
+        ?.files;
+
+    var path2 = _paths?.single.bytes;
+
+    var path3 = _paths?.single.name;
+
+    /// if allowMultiple: true
+    List<File> _files = _paths!.map((e) => File(e.name)).toList();
+
+    _paths?.forEach((element) {
+      // if (getFileSize(element.name) <= 12) {
+      // print("filesize: ${getFileSize(File(result.paths.first!))}Mb");
+      // files.add(result.files.first);
+      // addFilesToList(File(result.paths.first!));
+      if (type != null) {
+        if (reportsObject.isNotEmpty) {
+          reportsObject.forEach((ele) {
+            if (ele.id.toString().contains(type)) {
+              if (!ele.bytes.contains(element.bytes)) {
+                ele.bytes.add(element.bytes!);
+              } else {
+                AppConfig()
+                    .showSnackbar(context, "File Already Exist", isError: true);
+              }
+            }
+          });
+
+          reportsObject.forEach((ele) {
+            if (ele.id.toString().contains(type)) {
+              if (!ele.path.contains(element.name)) {
+                ele.path.add(element.name);
+              } else {
+                AppConfig()
+                    .showSnackbar(context, "File Already Exist", isError: true);
+              }
+            }
+          });
+        }
+        if (type == "others") {
+          if (!otherFilesObject.contains(element.name)) {
+            otherFilesObject.add(element.name ?? '');
+          }
+        }
+        print("otherFilesObject: $otherFilesObject");
+      }
+      // } else {
+      //   AppConfig()
+      //       .showSnackbar(context, "File size must be <12Mb", isError: true);
+      // }
+    });
+
+    /// single file select for this  allowMultiple should be false allowMultiple: false
+    // if (result.files.first.extension!.contains("pdf") ||
+    //     result.files.first.extension!.contains("png") ||
+    //     result.files.first.extension!.contains("jpg") ||
+    //     result.files.first.extension!.contains("jpeg")) {
+    //   if (getFileSize(File(result.paths.first!)) <= 12) {
+    //     print("filesize: ${getFileSize(File(result.paths.first!))}Mb");
+    //     files.add(result.files.first);
+    //     // addFilesToList(File(result.paths.first!));
+    //     if (type != null) {
+    //       if (reportsObject.isNotEmpty) {
+    //         reportsObject.forEach((element) {
+    //           if (element.id.toString().contains(type)) {
+    //             element.path.add(result.paths.first!);
+    //           }
+    //         });
+    //       }
+    //       if (type == "others") {
+    //         otherFilesObject.add(result.paths.first ?? '');
+    //       }
+    //       print("otherFilesObject: $otherFilesObject");
+    //     }
+    //   }
+    //   else {
+    //     AppConfig()
+    //         .showSnackbar(context, "File size must be <12Mb", isError: true);
+    //   }
+    // }
+    // else {
+    //   AppConfig().showSnackbar(context, "Please select png/jpg/Pdf files",
+    //       isError: true);
+    // }
+    setState(() {});
+  }
+
+  sendAllFiles() {
+    selectedFiles.clear();
+    selectedFilesId.clear();
+    reportsObject.forEach((element) {
+      if (element.bytes.isNotEmpty) {
+        element.bytes.forEach((paths) {
+          selectedFiles
+              .add(PlatformFile(name: element.name, size: 0, bytes: paths));
+          selectedFilesId.add(element.id);
+        });
+      }
+    });
+    if (otherFilesObject.isNotEmpty) {
+      otherFilesObject.forEach((element) async {
+        Uint8List bytes = Uint8List.fromList(element.cast<int>());
+        selectedFiles.add(PlatformFile(name: element.toString(), size: 0, bytes: bytes));
+        selectedFilesId.add(0);
+      });
+    }
+    print("selectedFiles: $selectedFiles");
+    print("selectedFilesId: $selectedFilesId");
+
+    if (doctorRequestedReports
+            .any((element) => element.reportType == "prescription") &&
+        otherFilesObject.isEmpty) {
+      AppConfig().showSnackbar(
+          context, "Please Upload Prescription report under Other section",
+          isError: true);
+    } else {
+      reportsObject.forEach((element) {
+        print("11: ${element.path.isEmpty}");
+        print("ele: ${element.name}");
+      });
+      if (reportsObject.any((element) =>
+          element.path.isEmpty &&
+          element.name.toLowerCase() != "prescription")) {
+        AppConfig().showSnackbar(context, "Please Upload All the Files",
+            isError: true);
+      } else {
+        submitDoctorRequestedReport(selectedFiles, selectedFilesId);
+      }
+    }
+
+    // if(selectedFiles.isNotEmpty){
+    // }
+    // else{
+    //   AppConfig().showSnackbar(
+    //       context, "Please add all the files",
+    //       isError: true);
+    // }
+  }
+
   List<MultipartFile> multipartFileList = [];
 
   submitDoctorRequestedReport(
-      List selectedFilesList, List selectedFilesIds) async {
+      List<PlatformFile> selectedFilesList, List selectedFilesIds) async {
     multipartFileList.clear();
     openProgressDialog(context);
-    // for (var element in selectedFilesList) {
-    //   multipartFileList
-    //       .add(await http.MultipartFile.fromPath("files[]", element.path));
-    // }
+    for (var element in selectedFilesList) {
+      multipartFileList.add(
+        await http.MultipartFile.fromBytes(
+          "files[]",
+          element.bytes as List<int>,
+          filename: element.name,
+        ),
+      );
+    }
 
-    print("multipartFile: $selectedFilesIds");
+    print("multipartFile: $multipartFileList");
 
     final res = await ReportService(repository: repository)
         .submitDoctorRequestedReportService(
-        selectedFilesIds, selectedFilesList);
+            selectedFilesIds, multipartFileList);
     print("submitDoctorRequestedReport res: $res");
     if (res.runtimeType == ErrorModel) {
       final result = res as ErrorModel;
@@ -1100,112 +1099,120 @@ class _UploadFilesState extends State<UploadFiles> {
               height: 10,
             ),
             (doctorRequestedReports.isEmpty)
-            // ? dummyReport()
+                // ? dummyReport()
                 ? const SizedBox()
                 : Padding(
-              padding: padding,
-              child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: doctorRequestedReports.length,
-                  itemBuilder: (_, index) {
-                    print("reportsObject: $reportsObject");
-                    // print(reportsObject[reportsObject.indexWhere((element) => element.name == doctorRequestedReports[index].reportType)].isSubmited);
-                    return (doctorRequestedReports[index].isUploaded !=
-                        null &&
-                        doctorRequestedReports[index].isUploaded ==
-                            "1")
-                        ? ListTile(
-                        onTap: null,
-                        minVerticalPadding: 0,
-                        dense: true,
-                        // contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-                        title: Text(
-                          doctorRequestedReports[index].reportType ??
-                              '',
-                          style: TextStyle(
-                              fontSize: 10.sp,
-                              fontFamily: kFontBold,
-                              color: eUser().mainHeadingColor),
-                        ),
-                        trailing: Icon(
-                          Icons.done,
-                          color: gPrimaryColor,
-                        ))
-                        : buildReportList(
-                        doctorRequestedReports[index].reportType ??
-                            '',
-                        id: doctorRequestedReports[index]
-                            .id
-                            .toString() ??
-                            '',
-                        isSingleIcon: (doctorRequestedReports[index]
-                            .reportType! !=
-                            "prescription"), onTap: () {
-                      if (doctorRequestedReports[index]
-                          .reportType ==
-                          "prescription") {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) => MealPdf(
-                                  pdfLink:
-                                  doctorRequestedReports[
-                                  index]
-                                      .report!,
-                                  heading: "Prescription",
-                                  isVideoWidgetVisible: false,
-                                  headCircleIcon: bsHeadPinIcon,
-                                  isSheetCloseNeeded: true,
-                                  sheetCloseOnTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                )));
-                      } else {
-                        reportsObject.forEach((element) {
-                          print(element.id);
-                          print(
-                              '${element.id} ${doctorRequestedReports[index].id}');
-                          print(element.id.toString() ==
-                              doctorRequestedReports[index]
-                                  .id
-                                  .toString());
-                          if (element.id.toString() ==
-                              doctorRequestedReports[index]
-                                  .id
-                                  .toString()) {
-                            chooseFileUsingFilePicker(
-                                type: doctorRequestedReports[index]
-                                    .id
-                                    .toString());
-                            // showChooserSheet(
-                            //     type: doctorRequestedReports[index]
-                            //         .id
-                            //         .toString());
-                          } else if (element.name ==
-                              doctorRequestedReports[index]
-                                  .reportType &&
-                              element.path.isEmpty) {
-                            return;
-                          }
-                          // else{
-                          //   if(element.path .isNotEmpty){
-                          //     submitDoctorRequestedReport(element.path, element.id);
-                          //   }
-                          // }
-                        });
-                      }
-                    }, onSecondaryIconTap: () {
-                      if (doctorRequestedReports[index]
-                          .reportType ==
-                          "prescription") {
-                        _createFolder(
-                            url: doctorRequestedReports[index]
-                                .report!);
-                      }
-                    });
-                  }),
-            ),
+                    padding: padding,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: doctorRequestedReports.length,
+                        itemBuilder: (_, index) {
+                          print("reportsObject: $reportsObject");
+                          // print(reportsObject[reportsObject.indexWhere((element) => element.name == doctorRequestedReports[index].reportType)].isSubmited);
+                          return (doctorRequestedReports[index].isUploaded !=
+                                      null &&
+                                  doctorRequestedReports[index].isUploaded ==
+                                      "1")
+                              ? ListTile(
+                                  onTap: null,
+                                  minVerticalPadding: 0,
+                                  dense: true,
+                                  // contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+                                  title: Text(
+                                    doctorRequestedReports[index].reportType ??
+                                        '',
+                                    style: TextStyle(
+                                        fontSize: 10.sp,
+                                        fontFamily: kFontBold,
+                                        color: eUser().mainHeadingColor),
+                                  ),
+                                  trailing: Icon(
+                                    Icons.done,
+                                    color: gPrimaryColor,
+                                  ))
+                              : buildReportList(
+                                  doctorRequestedReports[index].reportType ??
+                                      '',
+                                  id: doctorRequestedReports[index]
+                                          .id
+                                          .toString() ??
+                                      '',
+                                  isSingleIcon: (doctorRequestedReports[index]
+                                          .reportType! !=
+                                      "prescription"), onTap: () async {
+                                  if (doctorRequestedReports[index]
+                                          .reportType ==
+                                      "prescription") {
+                                    if (!await launchUrl(Uri.parse(
+                                        doctorRequestedReports[index]
+                                            .report
+                                            .toString()))) {
+// Navigator.pop(context);
+                                      throw Exception(
+                                          'Could not launch ${doctorRequestedReports[index].report.toString()}');
+                                    }
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (ctx) => MealPdf(
+                                    //       pdfLink: doctorRequestedReports[index]
+                                    //           .report!,
+                                    //       heading: "Prescription",
+                                    //       isVideoWidgetVisible: false,
+                                    //       headCircleIcon: bsHeadPinIcon,
+                                    //       isSheetCloseNeeded: true,
+                                    //       sheetCloseOnTap: () {
+                                    //         Navigator.pop(context);
+                                    //       },
+                                    //     ),
+                                    //   ),
+                                    // );
+                                  } else {
+                                    reportsObject.forEach((element) {
+                                      print(element.id);
+                                      print(
+                                          '${element.id} ${doctorRequestedReports[index].id}');
+                                      print(element.id.toString() ==
+                                          doctorRequestedReports[index]
+                                              .id
+                                              .toString());
+                                      if (element.id.toString() ==
+                                          doctorRequestedReports[index]
+                                              .id
+                                              .toString()) {
+                                        pickFromFile(
+                                            type: doctorRequestedReports[index]
+                                                .id
+                                                .toString());
+                                        // showChooserSheet(
+                                        //     type: doctorRequestedReports[index]
+                                        //         .id
+                                        //         .toString());
+                                      } else if (element.name ==
+                                              doctorRequestedReports[index]
+                                                  .reportType &&
+                                          element.path.isEmpty) {
+                                        return;
+                                      }
+                                      // else{
+                                      //   if(element.path .isNotEmpty){
+                                      //     submitDoctorRequestedReport(element.path, element.id);
+                                      //   }
+                                      // }
+                                    });
+                                  }
+                                }, onSecondaryIconTap: () {
+                                  if (doctorRequestedReports[index]
+                                          .reportType ==
+                                      "prescription") {
+                                    _createFolder(
+                                        url: doctorRequestedReports[index]
+                                            .report!);
+                                  }
+                                });
+                        }),
+                  ),
             SizedBox(
               height: 1.8.h,
             ),
@@ -1225,8 +1232,10 @@ class _UploadFilesState extends State<UploadFiles> {
                       dense: true,
                       // contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
                       title: Text(
-                          (doctorRequestedReports.any((element) => element.reportType ==
-                              "prescription")) ? 'Prescription & Others' : "Others",
+                        (doctorRequestedReports.any((element) =>
+                                element.reportType == "prescription"))
+                            ? 'Prescription & Others'
+                            : "Others",
                         style: TextStyle(
                             fontSize: 10.sp,
                             fontFamily: kFontBold,
@@ -1234,8 +1243,7 @@ class _UploadFilesState extends State<UploadFiles> {
                       ),
                       trailing: GestureDetector(
                           onTap: () {
-                            chooseFileUsingFilePicker(
-                                type: "others");
+                            pickFromFile(type: "others");
                             // showChooserSheet(type: "others");
                           },
                           child: Icon(
@@ -1245,15 +1253,15 @@ class _UploadFilesState extends State<UploadFiles> {
                     ),
                     (otherFilesObject.isNotEmpty)
                         ? ListView.builder(
-                      itemCount: otherFilesObject.length,
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final file = File(otherFilesObject[index]);
-                        print("files===> $file");
-                        return buildFile(file, index, type: "others");
-                      },
-                    )
+                            itemCount: otherFilesObject.length,
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              final file = File(otherFilesObject[index]);
+                              print("files===> $file");
+                              return buildFile(file, index, type: "others");
+                            },
+                          )
                         : const Divider(),
                   ],
                 ),
@@ -1269,68 +1277,19 @@ class _UploadFilesState extends State<UploadFiles> {
     return (fileFormatList.isEmpty)
         ? SizedBox()
         : Padding(
-      padding: padding,
-      child: ListView.builder(
-        itemCount: fileFormatList.length,
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemBuilder: (context, index) {
-          final file = fileFormatList[index];
-          return buildFile(file, index);
-        },
-      ),
-    );
+            padding: padding,
+            child: ListView.builder(
+              itemCount: fileFormatList.length,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final file = fileFormatList[index];
+                return buildFile(file, index);
+              },
+            ),
+          );
   }
 
-  sendAllFiles() {
-    selectedFiles.clear();
-    selectedFilesId.clear();
-    reportsObject.forEach((element) {
-      if (element.path.isNotEmpty) {
-        element.path.forEach((paths) {
-          selectedFiles.add(PlatformFile(name: paths.toString(), size: 0));
-          selectedFilesId.add(element.id);
-        });
-      }
-    });
-    if (otherFilesObject.isNotEmpty) {
-      otherFilesObject.forEach((element) async {
-        selectedFiles.add(PlatformFile(name: element.toString(), size: 0));
-        selectedFilesId.add(0);
-      });
-    }
-    print("selectedFiles: $selectedFiles");
-    print("selectedFilesId: $selectedFilesId");
-
-    if(doctorRequestedReports.any((element) => element.reportType == "prescription") && otherFilesObject.isEmpty){
-      AppConfig().showSnackbar(
-          context, "Please Upload Prescription report under Other section",
-          isError: true);
-    }
-    else{
-      reportsObject.forEach((element) {
-        print("11: ${element.path.isEmpty}");
-        print("ele: ${element.name}");
-      });
-      if(reportsObject.any((element) => element.path.isEmpty && element.name.toLowerCase() != "prescription")){
-        AppConfig().showSnackbar(
-            context, "Please Upload All the Files",
-            isError: true);
-      }
-      else{
-        print("selectedFiles : ${selectedFiles}");
-        submitDoctorRequestedReport(selectedFiles, selectedFilesId);
-      }
-    }
-
-    // if(selectedFiles.isNotEmpty){
-    // }
-    // else{
-    //   AppConfig().showSnackbar(
-    //       context, "Please add all the files",
-    //       isError: true);
-    // }
-  }
   // Stream sendStream() async* {
   //   for (int i = 0; i < reportsObject.length; i++) {
   //     if (reportsObject[i].path.isNotEmpty) {
@@ -1357,12 +1316,13 @@ class _UploadFilesState extends State<UploadFiles> {
                 id: 'pres',
                 isSingleIcon: false,
                 onTap: () {}, onSecondaryIconTap: () {
-                  _createFolder(
-                      url:
+              _createFolder(
+                  url:
                       "https://gwc.disol.in/storage/uploads/users/medical_report/Gc_Kiran-mr_report.pdf");
-                }),
+            }),
             buildReportList('Blood Report', onTap: () {
-              showChooserSheet();
+              pickFromFile();
+              // showChooserSheet();
             }),
             buildReportList('Xray Report', onTap: () async {
               // var file = await getApplicationSupportDirectory();
@@ -1373,8 +1333,8 @@ class _UploadFilesState extends State<UploadFiles> {
               // print(directory.path);
 
               // File file1 = new File('$rootPath/$filename');
-
-              showChooserSheet();
+              pickFromFile();
+              // showChooserSheet();
             }),
           ],
         ),
@@ -1595,133 +1555,147 @@ class _UploadFilesState extends State<UploadFiles> {
               itemCount: doctorRequestedReports.length,
               itemBuilder: ((context, index) {
                 return (doctorRequestedReports[index].reportType !=
-                    "prescription" &&
-                    doctorRequestedReports[index].reportType !=
-                        "mr_report" &&
-                    doctorRequestedReports[index].reportType !=
-                        "gut_guide" &&
-                    doctorRequestedReports[index].reportType !=
-                        "program_end_report_user")
+                            "prescription" &&
+                        doctorRequestedReports[index].reportType !=
+                            "mr_report" &&
+                        doctorRequestedReports[index].reportType !=
+                            "gut_guide" &&
+                        doctorRequestedReports[index].reportType !=
+                            "program_end_report_user")
                     ? ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: doctorRequestedReports[index]
-                      .report
-                      .toString()
-                      .split("/")
-                      .last.split(',').length,
-                    itemBuilder: (_, i){
-                    List<String> reportNameList = doctorRequestedReports[index]
-                        .report
-                        .toString()
-                        .split("/")
-                        .last.split(',');
-                      return GestureDetector(
-                        onTap: () async {
-                          var origin = Uri.parse(doctorRequestedReports[index].report.toString()).origin;
-                          var path = Uri.parse(doctorRequestedReports[index].report.toString()).path;
-                          var dir = path.substring(0, path.lastIndexOf('/')) + "/";
-                          print("dir: $dir");
-                          print("origin: ${Uri.parse(doctorRequestedReports[index].report.toString()).origin}");
-                          print("path: ${Uri.parse(doctorRequestedReports[index].report.toString()).path}");
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: doctorRequestedReports[index]
+                            .report
+                            .toString()
+                            .split("/")
+                            .last
+                            .split(',')
+                            .length,
+                        itemBuilder: (_, i) {
+                          List<String> reportNameList =
+                              doctorRequestedReports[index]
+                                  .report
+                                  .toString()
+                                  .split("/")
+                                  .last
+                                  .split(',');
+                          return GestureDetector(
+                            onTap: () async {
+                              var origin = Uri.parse(
+                                      doctorRequestedReports[index]
+                                          .report
+                                          .toString())
+                                  .origin;
+                              var path = Uri.parse(doctorRequestedReports[index]
+                                      .report
+                                      .toString())
+                                  .path;
+                              var dir =
+                                  path.substring(0, path.lastIndexOf('/')) +
+                                      "/";
+                              print("dir: $dir");
+                              print(
+                                  "origin: ${Uri.parse(doctorRequestedReports[index].report.toString()).origin}");
+                              print(
+                                  "path: ${Uri.parse(doctorRequestedReports[index].report.toString()).path}");
 
-                          final url = origin+dir+reportNameList[i];
-                          if (url != null || url.isNotEmpty) {
-                            print("URL : $url");
-                            if (url.toLowerCase().contains(".jpg") ||
-                                url.toLowerCase().contains(".png") ||
-                                url.toLowerCase().contains(".jpeg")) {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (ctx) =>
-                                          CustomPhotoViewer(url: url)));
-                            }
-                            else {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (ctx) => MealPdf(
-                                          isVideoWidgetVisible: false,
-                                          pdfLink: url,
-                                          isSheetCloseNeeded: true,
-                                          sheetCloseOnTap: () {
-                                            Navigator.pop(context);
-                                          },
-                                          heading: reportNameList[i]
-                                      )));
-                              print("URL : $url");
-                            }
-                          }
-                          // if (await canLaunch(url)) {
-                          //   await launch(
-                          //     url,
-                          //     //forceSafariVC: true,
-                          //     // forceWebView: true,
-                          //     // enableJavaScript: true,
-                          //   );
-                          // }
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(
-                              vertical: 1.h, horizontal: 2.w),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2.h, horizontal: 3.w),
-                          decoration: BoxDecoration(
-                            color: gWhiteColor,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.3),
-                                blurRadius: 10,
-                                offset: const Offset(2, 3),
+                              final url = origin + dir + reportNameList[i];
+                              if (url != null || url.isNotEmpty) {
+                                print("URL : $url");
+                                if (url.toLowerCase().contains(".jpg") ||
+                                    url.toLowerCase().contains(".png") ||
+                                    url.toLowerCase().contains(".jpeg")) {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (ctx) =>
+                                              CustomPhotoViewer(url: url)));
+                                } else {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (ctx) => MealPdf(
+                                              isVideoWidgetVisible: false,
+                                              pdfLink: url,
+                                              isSheetCloseNeeded: true,
+                                              sheetCloseOnTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              heading: reportNameList[i])));
+                                  print("URL : $url");
+                                }
+                              }
+                              // if (await canLaunch(url)) {
+                              //   await launch(
+                              //     url,
+                              //     //forceSafariVC: true,
+                              //     // forceWebView: true,
+                              //     // enableJavaScript: true,
+                              //   );
+                              // }
+                            },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 1.h, horizontal: 2.w),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 2.h, horizontal: 3.w),
+                              decoration: BoxDecoration(
+                                color: gWhiteColor,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    blurRadius: 10,
+                                    offset: const Offset(2, 3),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Image(
-                                height: 4.h,
-                                image: const AssetImage(
-                                    "assets/images/Group 2722.png"),
-                              ),
-                              SizedBox(width: 3.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      reportNameList[i],
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.start,
-                                      maxLines: 2,
-                                      style: TextStyle(
-                                          height: 1.2,
-                                          fontFamily: kFontMedium,
-                                          color: gBlackColor,
-                                          fontSize: 9.sp),
+                              child: Row(
+                                children: [
+                                  Image(
+                                    height: 4.h,
+                                    image: const AssetImage(
+                                        "assets/images/Group 2722.png"),
+                                  ),
+                                  SizedBox(width: 3.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          reportNameList[i],
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.start,
+                                          maxLines: 2,
+                                          style: TextStyle(
+                                              height: 1.2,
+                                              fontFamily: kFontMedium,
+                                              color: gBlackColor,
+                                              fontSize: 9.sp),
+                                        ),
+                                        // SizedBox(height: 1.h),
+                                        // Text(
+                                        //   "2 MB",
+                                        //   style: TextStyle(
+                                        //       fontFamily: "GothamBook",
+                                        //       color: gMainColor,
+                                        //       fontSize: 9.sp),
+                                        // ),
+                                      ],
                                     ),
-                                    // SizedBox(height: 1.h),
-                                    // Text(
-                                    //   "2 MB",
-                                    //   style: TextStyle(
-                                    //       fontFamily: "GothamBook",
-                                    //       color: gMainColor,
-                                    //       fontSize: 9.sp),
-                                    // ),
-                                  ],
-                                ),
+                                  ),
+                                  SizedBox(width: 3.w),
+                                  Icon(
+                                    Icons.arrow_forward_ios_outlined,
+                                    color: gsecondaryColor,
+                                    size: 2.h,
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 3.w),
-                              Icon(
-                                Icons.arrow_forward_ios_outlined,
-                                color: gsecondaryColor,
-                                size: 2.h,
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    })
+                            ),
+                          );
+                        })
                     : const SizedBox();
               }),
             ),
@@ -1746,35 +1720,105 @@ class _UploadFilesState extends State<UploadFiles> {
             child: SingleChildScrollView(
               child: (showUploadProgress)
                   ? const SizedBox()
-                  : (doctorRequestedReports.isNotEmpty && doctorRequestedReports.any((element) => element.reportType == "prescription"))
-                  ? ListView.builder(
-                scrollDirection: Axis.vertical,
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: doctorRequestedReports.length,
-                itemBuilder: ((context, index) {
-                  return doctorRequestedReports[index].reportType ==
-                      "prescription"
-                      ? SizedBox(
-                    height: 80.h,
-                    width: double.maxFinite,
-                    child: SfPdfViewer.network(
-                        doctorRequestedReports[index]
-                            .report
-                            .toString()),
-                  )
-                      :const SizedBox();
-                }),
-              )
-                  : Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.h),
-                child: const Center(
-                  child: Image(
-                    image:
-                    AssetImage("assets/images/no_data_found.png"),
-                  ),
-                ),
-              ),
+                  : (doctorRequestedReports.isNotEmpty &&
+                          doctorRequestedReports.any((element) =>
+                              element.reportType == "prescription"))
+                      ? ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: doctorRequestedReports.length,
+                          itemBuilder: ((context, index) {
+                            return doctorRequestedReports[index].reportType ==
+                                    "prescription"
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      if (!await launchUrl(Uri.parse(
+                                          doctorRequestedReports[index]
+                                              .report
+                                              .toString()))) {
+// Navigator.pop(context);
+                                        throw Exception(
+                                            'Could not launch ${doctorRequestedReports[index].report.toString()}');
+                                      }
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 1.h, horizontal: 2.w),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 2.h, horizontal: 3.w),
+                                      decoration: BoxDecoration(
+                                        color: gWhiteColor,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.3),
+                                            blurRadius: 10,
+                                            offset: const Offset(2, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image(
+                                            height: 4.h,
+                                            image: const AssetImage(
+                                                "assets/images/Group 2722.png"),
+                                          ),
+                                          SizedBox(width: 3.w),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  doctorRequestedReports[index]
+                                                      .report
+                                                      .toString()
+                                                      .split("/")
+                                                      .last,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.start,
+                                                  maxLines: 2,
+                                                  style: TextStyle(
+                                                      height: 1.2,
+                                                      fontFamily: kFontMedium,
+                                                      color: gBlackColor,
+                                                      fontSize: 9.sp),
+                                                ),
+// SizedBox(height: 1.h),
+// Text(
+//   "2 MB",
+//   style: TextStyle(
+//       fontFamily: "GothamBook",
+//       color: gMainColor,
+//       fontSize: 9.sp),
+// ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(width: 3.w),
+                                          Icon(
+                                            Icons.arrow_forward_ios_outlined,
+                                            color: gsecondaryColor,
+                                            size: 2.h,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox();
+                          }),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15.h),
+                          child: const Center(
+                            child: Image(
+                              image:
+                                  AssetImage("assets/images/no_data_found.png"),
+                            ),
+                          ),
+                        ),
             ),
           ),
         ),
@@ -1796,34 +1840,104 @@ class _UploadFilesState extends State<UploadFiles> {
           child: SingleChildScrollView(
             child: (showUploadProgress)
                 ? const SizedBox()
-                : (doctorRequestedReports.isNotEmpty && doctorRequestedReports.any((element) => element.reportType == "mr_report"))
-                ? ListView.builder(
-              scrollDirection: Axis.vertical,
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: doctorRequestedReports.length,
-              itemBuilder: ((context, index) {
-                return doctorRequestedReports[index].reportType == "mr_report"
-                    ? SizedBox(
-                  height: 80.h,
-                  width: double.maxFinite,
-                  child: SfPdfViewer.network(
-                      doctorRequestedReports[index]
-                          .report
-                          .toString()),
-                )
-                    : const SizedBox();
-              }),
-            )
-                : Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.h),
-              child: const Center(
-                child: Image(
-                  image:
-                  AssetImage("assets/images/no_data_found.png"),
-                ),
-              ),
-            ),
+                : (doctorRequestedReports.isNotEmpty &&
+                        doctorRequestedReports.any(
+                            (element) => element.reportType == "mr_report"))
+                    ? ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: doctorRequestedReports.length,
+                        itemBuilder: ((context, index) {
+                          return doctorRequestedReports[index].reportType ==
+                                  "mr_report"
+                              ? GestureDetector(
+                                  onTap: () async {
+                                    if (!await launchUrl(Uri.parse(
+                                        doctorRequestedReports[index]
+                                            .report
+                                            .toString()))) {
+// Navigator.pop(context);
+                                      throw Exception(
+                                          'Could not launch ${doctorRequestedReports[index].report.toString()}');
+                                    }
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.symmetric(
+                                        vertical: 1.h, horizontal: 2.w),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 2.h, horizontal: 3.w),
+                                    decoration: BoxDecoration(
+                                      color: gWhiteColor,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey.withOpacity(0.3),
+                                          blurRadius: 10,
+                                          offset: const Offset(2, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Image(
+                                          height: 4.h,
+                                          image: const AssetImage(
+                                              "assets/images/Group 2722.png"),
+                                        ),
+                                        SizedBox(width: 3.w),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                doctorRequestedReports[index]
+                                                    .report
+                                                    .toString()
+                                                    .split("/")
+                                                    .last,
+                                                overflow: TextOverflow.ellipsis,
+                                                textAlign: TextAlign.start,
+                                                maxLines: 2,
+                                                style: TextStyle(
+                                                    height: 1.2,
+                                                    fontFamily: kFontMedium,
+                                                    color: gBlackColor,
+                                                    fontSize: 9.sp),
+                                              ),
+// SizedBox(height: 1.h),
+// Text(
+//   "2 MB",
+//   style: TextStyle(
+//       fontFamily: "GothamBook",
+//       color: gMainColor,
+//       fontSize: 9.sp),
+// ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(width: 3.w),
+                                        Icon(
+                                          Icons.arrow_forward_ios_outlined,
+                                          color: gsecondaryColor,
+                                          size: 2.h,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox();
+                        }),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(vertical: 15.h),
+                        child: const Center(
+                          child: Image(
+                            image:
+                                AssetImage("assets/images/no_data_found.png"),
+                          ),
+                        ),
+                      ),
           ),
         ),
       ],
@@ -1845,35 +1959,105 @@ class _UploadFilesState extends State<UploadFiles> {
             child: SingleChildScrollView(
               child: (showUploadProgress)
                   ? const SizedBox()
-                  : (doctorRequestedReports.isNotEmpty && doctorRequestedReports.any((element) => element.reportType == "gut_guide"))
-                  ? ListView.builder(
-                scrollDirection: Axis.vertical,
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: doctorRequestedReports.length,
-                itemBuilder: ((context, index) {
-                  return doctorRequestedReports[index].reportType ==
-                      "gut_guide"
-                      ? SizedBox(
-                    height: 80.h,
-                    width: double.maxFinite,
-                    child: SfPdfViewer.network(
-                        doctorRequestedReports[index]
-                            .report
-                            .toString()),
-                  )
-                      : const SizedBox();
-                }),
-              )
-                  : Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.h),
-                child: const Center(
-                  child: Image(
-                    image:
-                    AssetImage("assets/images/no_data_found.png"),
-                  ),
-                ),
-              ),
+                  : (doctorRequestedReports.isNotEmpty &&
+                          doctorRequestedReports.any(
+                              (element) => element.reportType == "gut_guide"))
+                      ? ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: doctorRequestedReports.length,
+                          itemBuilder: ((context, index) {
+                            return doctorRequestedReports[index].reportType ==
+                                    "gut_guide"
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      if (!await launchUrl(Uri.parse(
+                                          doctorRequestedReports[index]
+                                              .report
+                                              .toString()))) {
+// Navigator.pop(context);
+                                        throw Exception(
+                                            'Could not launch ${doctorRequestedReports[index].report.toString()}');
+                                      }
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 1.h, horizontal: 2.w),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 2.h, horizontal: 3.w),
+                                      decoration: BoxDecoration(
+                                        color: gWhiteColor,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.3),
+                                            blurRadius: 10,
+                                            offset: const Offset(2, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image(
+                                            height: 4.h,
+                                            image: const AssetImage(
+                                                "assets/images/Group 2722.png"),
+                                          ),
+                                          SizedBox(width: 3.w),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  doctorRequestedReports[index]
+                                                      .report
+                                                      .toString()
+                                                      .split("/")
+                                                      .last,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.start,
+                                                  maxLines: 2,
+                                                  style: TextStyle(
+                                                      height: 1.2,
+                                                      fontFamily: kFontMedium,
+                                                      color: gBlackColor,
+                                                      fontSize: 9.sp),
+                                                ),
+// SizedBox(height: 1.h),
+// Text(
+//   "2 MB",
+//   style: TextStyle(
+//       fontFamily: "GothamBook",
+//       color: gMainColor,
+//       fontSize: 9.sp),
+// ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(width: 3.w),
+                                          Icon(
+                                            Icons.arrow_forward_ios_outlined,
+                                            color: gsecondaryColor,
+                                            size: 2.h,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox();
+                          }),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15.h),
+                          child: const Center(
+                            child: Image(
+                              image:
+                                  AssetImage("assets/images/no_data_found.png"),
+                            ),
+                          ),
+                        ),
             ),
           ),
         ),
@@ -1896,35 +2080,105 @@ class _UploadFilesState extends State<UploadFiles> {
             child: SingleChildScrollView(
               child: (showUploadProgress)
                   ? const SizedBox()
-                  : (doctorRequestedReports.isNotEmpty && doctorRequestedReports.any((element) => element.reportType == "program_end_report_user"))
-                   ? ListView.builder(
-                scrollDirection: Axis.vertical,
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: doctorRequestedReports.length,
-                itemBuilder: ((context, index) {
-                  return doctorRequestedReports[index].reportType ==
-                      "program_end_report_user"
-                      ? SizedBox(
-                    height: 80.h,
-                    width: double.maxFinite,
-                    child: SfPdfViewer.network(
-                        doctorRequestedReports[index]
-                            .report
-                            .toString()),
-                  )
-                      : const SizedBox();
-                }),
-              )
-                  : Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.h),
-                child: const Center(
-                  child: Image(
-                    image:
-                    AssetImage("assets/images/no_data_found.png"),
-                  ),
-                ),
-              ),
+                  : (doctorRequestedReports.isNotEmpty &&
+                          doctorRequestedReports.any((element) =>
+                              element.reportType == "program_end_report_user"))
+                      ? ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: doctorRequestedReports.length,
+                          itemBuilder: ((context, index) {
+                            return doctorRequestedReports[index].reportType ==
+                                    "program_end_report_user"
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      if (!await launchUrl(Uri.parse(
+                                          doctorRequestedReports[index]
+                                              .report
+                                              .toString()))) {
+// Navigator.pop(context);
+                                        throw Exception(
+                                            'Could not launch ${doctorRequestedReports[index].report.toString()}');
+                                      }
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.symmetric(
+                                          vertical: 1.h, horizontal: 2.w),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 2.h, horizontal: 3.w),
+                                      decoration: BoxDecoration(
+                                        color: gWhiteColor,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.3),
+                                            blurRadius: 10,
+                                            offset: const Offset(2, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Image(
+                                            height: 4.h,
+                                            image: const AssetImage(
+                                                "assets/images/Group 2722.png"),
+                                          ),
+                                          SizedBox(width: 3.w),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  doctorRequestedReports[index]
+                                                      .report
+                                                      .toString()
+                                                      .split("/")
+                                                      .last,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  textAlign: TextAlign.start,
+                                                  maxLines: 2,
+                                                  style: TextStyle(
+                                                      height: 1.2,
+                                                      fontFamily: kFontMedium,
+                                                      color: gBlackColor,
+                                                      fontSize: 9.sp),
+                                                ),
+// SizedBox(height: 1.h),
+// Text(
+//   "2 MB",
+//   style: TextStyle(
+//       fontFamily: "GothamBook",
+//       color: gMainColor,
+//       fontSize: 9.sp),
+// ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(width: 3.w),
+                                          Icon(
+                                            Icons.arrow_forward_ios_outlined,
+                                            color: gsecondaryColor,
+                                            size: 2.h,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox();
+                          }),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15.h),
+                          child: const Center(
+                            child: Image(
+                              image:
+                                  AssetImage("assets/images/no_data_found.png"),
+                            ),
+                          ),
+                        ),
             ),
           ),
         ),
@@ -1936,9 +2190,10 @@ class _UploadFilesState extends State<UploadFiles> {
 class ReportObject {
   String name;
   String id;
-  List<Uint8List> path;
+  List<String> path;
+  List<Uint8List> bytes;
   bool isSubmited;
-  ReportObject(this.name, this.id, this.path, this.isSubmited);
+  ReportObject(this.name, this.id, this.path, this.bytes, this.isSubmited);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

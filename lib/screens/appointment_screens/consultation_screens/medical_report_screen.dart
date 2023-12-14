@@ -50,11 +50,14 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
   }
 
   viewPdf() async {
-    if (await canLaunchUrl(Uri.parse(widget.pdfLink ?? '')))
-      launch(widget.pdfLink ?? '');
-    else
+    if (!await launchUrl(Uri.parse(widget.pdfLink.toString()))) {
+      Navigator.pop(context);
+      throw Exception('Could not launch ${widget.pdfLink.toString()}');
+
+    } else {
       // can't launch url, there is some error
-      throw "Could not launch ${widget.pdfLink}";
+      throw "Could not launch ${widget.pdfLink.toString()}";
+    }
   }
 
   @override
@@ -89,10 +92,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
               ),
               SizedBox(height: 2.h),
               Expanded(
-                child:
-                SfPdfViewer.network(
-                    this.widget.pdfLink
-                ),
+                child: SfPdfViewer.network(this.widget.pdfLink),
               ),
             ],
           ),

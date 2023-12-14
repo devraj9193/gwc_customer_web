@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gwc_customer/repository/home_remedy_repo/home_remedies_repository.dart';
+
+import '../../repository/home_remedies_repository/home_remedies_repository.dart';
 
 
 class HomeRemediesService extends ChangeNotifier {
