@@ -6,8 +6,7 @@ when we go for join screen than we r calling this screen
 
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/model/error_model.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 
 import '../../repository/api_service.dart';
 import '../../repository/medical_program_feedback_repo/medical_feedback_repo.dart';

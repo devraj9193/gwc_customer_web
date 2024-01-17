@@ -5,8 +5,7 @@ import 'package:gwc_customer_web/model/post_program_model/breakfast/protocol_bre
 import 'package:gwc_customer_web/repository/post_program_repo/post_program_repository.dart';
 import 'package:gwc_customer_web/services/post_program_service/post_program_service.dart';
 import 'package:lottie/lottie.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../../model/post_program_model/post_program_base_model.dart';
 import '../../repository/api_service.dart';
 import '../../utils/app_config.dart';

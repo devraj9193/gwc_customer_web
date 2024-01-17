@@ -15,8 +15,7 @@ import 'package:gwc_customer_web/repository/api_service.dart';
 import 'package:gwc_customer_web/services/home_remedy_service/home_remedies_service.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import '../../repository/home_remedies_repository/home_remedies_repository.dart';
 import 'new_know_more_screen.dart';
@@ -71,11 +70,11 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
                     unselectedLabelStyle: TextStyle(
                         fontFamily: kFontBook,
                         color: gHintTextColor,
-                        fontSize: 9.sp),
+                        fontSize: 12.dp),
                     labelStyle: TextStyle(
                         fontFamily: kFontMedium,
                         color: gBlackColor,
-                        fontSize: 11.sp),
+                        fontSize: 14.dp),
                     tabs: const [
                       Text('General'),
                       Text("Program Phase Remedies"),
@@ -105,7 +104,7 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
             height: 1,
             color: Colors.grey.withOpacity(0.3),
           ),
-          SizedBox(height: 2.h),
+          SizedBox(height: 4.h),
           FutureBuilder(
               future: homeRemediesFuture,
               builder: (_, snapshot) {
@@ -125,10 +124,10 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
                         physics: const ScrollPhysics(),
                         shrinkWrap: true,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                          crossAxisCount: 3,
-                          mainAxisExtent: 22.h,
+                          mainAxisSpacing: 15,
+                          crossAxisSpacing: 15,
+                          crossAxisCount: MediaQuery.of(context).size.shortestSide < 600 ? 3 : 4,
+                          mainAxisExtent: 30.h,
                           // childAspectRatio: MediaQuery.of(context).size.width /
                           //     (MediaQuery.of(context).size.height / 1.4),
                         ),
@@ -170,8 +169,8 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
                                         ),
                                       ),
                                       child: CachedNetworkImage(
-                                        height: 15.h,
-                                        width: 30.w,
+                                        height: 23.h,
+                                        width: 35.w,
                                         imageUrl:
                                             "${Uri.parse(problemList[index].thumbnail)}",
                                         placeholder: (__, _) {
@@ -188,10 +187,12 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
                                     Text(
                                       problemList[index].name.toString(),
                                       textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontFamily: kFontBold,
                                         color: gBlackColor,
-                                        fontSize: 9.sp,
+                                        fontSize: 12.dp,
                                       ),
                                     ),
                                   ],
@@ -219,7 +220,7 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
             height: 1,
             color: Colors.grey.withOpacity(0.3),
           ),
-          SizedBox(height: 2.h),
+          SizedBox(height: 4.h),
           FutureBuilder(
               future: homeRemediesFuture,
               builder: (_, snapshot) {
@@ -240,10 +241,10 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
                         physics: const ScrollPhysics(),
                         shrinkWrap: true,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                          crossAxisCount: 3,
-                          mainAxisExtent: 22.h,
+                          mainAxisSpacing: 15,
+                          crossAxisSpacing: 15,
+                          crossAxisCount: MediaQuery.of(context).size.shortestSide < 600 ? 3 : 4,
+                          mainAxisExtent: 30.h,
                           // childAspectRatio: MediaQuery.of(context).size.width /
                           //     (MediaQuery.of(context).size.height / 1.4),
                         ),
@@ -285,8 +286,8 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
                                   ),
                                 ),
                                 child: CachedNetworkImage(
-                                  height: 15.h,
-                                  width: 30.w,
+                                  height: 23.h,
+                                  width: 35.w,
                                   imageUrl:
                                   "${Uri.parse(problemList[index].thumbnail)}",
                                   placeholder: (__, _) {
@@ -303,10 +304,12 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
                               Text(
                                 problemList[index].name.toString(),
                                 textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   fontFamily: kFontBold,
                                   color: gBlackColor,
-                                  fontSize: 9.sp,
+                                  fontSize: 12.dp,
                                 ),
                               ),
                             ],

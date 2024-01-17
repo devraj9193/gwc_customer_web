@@ -1,8 +1,7 @@
 import 'package:circular_progress_bar_with_lines/circular_progress_bar_with_lines.dart';
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 
 class CommonWidgets extends StatefulWidget {
   final String points;

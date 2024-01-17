@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:http/http.dart';
 
 import '../../model/profile_model/terms_condition_model.dart';
@@ -8,7 +9,7 @@ class FeedbackRepository{
 
   FeedbackRepository({required this.apiClient}) : assert(apiClient != null);
 
-  Future submitFeedbackRepo(Map feedback, List<MultipartFile> files) async{
+  Future submitFeedbackRepo(Map feedback, List<PlatformFile> files) async{
     return await apiClient.submitUserFeedbackDetails(feedback, files);
   }
 }

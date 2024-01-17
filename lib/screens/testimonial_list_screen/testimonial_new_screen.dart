@@ -3,8 +3,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:video_player/video_player.dart';
@@ -68,11 +67,11 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
         body: Column(
           children: [
             Container(
-              height: h/2.5,
+              height: h/2.2,
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
                 ),
                 color: Colors.white,
                 boxShadow: [
@@ -85,8 +84,8 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
               child: Stack(
                 children: [
                   Positioned(
-                    top: 0,
-                    left: 0,
+                    top: 1.h,
+                    left: 2.w,
                     right: 0,
                     child: buildAppBar(
                       () {},
@@ -103,7 +102,7 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
                           image: const AssetImage(
                             "assets/images/Group 9757.png",
                           ),
-                          height: 20.h,
+                          height: 30.h,
                         ),
                         SizedBox(height: 2.h),
                         Text(
@@ -226,11 +225,11 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
       if (a != null) addUrlToVideoPlayerChewie(a);
     }
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 3.w),
-      padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+      margin: EdgeInsets.symmetric(vertical: 2.h, horizontal: 3.w),
+      padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
       decoration: BoxDecoration(
           color: gWhiteColor,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
                 color: gHintTextColor.withOpacity(0.35),
@@ -245,13 +244,14 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 6.h,
-                width: 12.w,
+                height: 10.h,
+                width: 8.w,
                 decoration: BoxDecoration(
                   color: gsecondaryColor,
                   borderRadius: BorderRadius.circular(5),
                   image: DecorationImage(
                     image: AssetImage("assets/images/meal_placeholder.png"),
+                    fit: BoxFit.fill
                   ),
                 ),
                 // child: Image(
@@ -260,7 +260,7 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
                 //   fit: BoxFit.fill,
                 // ),
               ),
-              SizedBox(width: 2.w),
+              SizedBox(width: 1.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,12 +268,12 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
                     Text(
                       feedbackUser ?? '',
                       style: TextStyle(
-                          fontSize: 11.sp, fontFamily: kFontBold, height: 1.5),
+                          fontSize: 15.dp, fontFamily: kFontBold, height: 1.5),
                     ),
                     Text(
                       feedbackTime ?? '',
                       style: TextStyle(
-                          fontSize: 9.5.sp, fontFamily: kFontBook, height: 1.5),
+                          fontSize: 12.5.dp, fontFamily: kFontBook, height: 1.5),
                     ),
                     buildRating(
                       double.parse(
@@ -294,7 +294,7 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
                   // addTrackerUrlToVideoPlayer(widget.trackerVideoLink ?? '');
                 },
                 child: SizedBox(
-                  height: 7.h,
+                  height: 12.h,
                   child: Lottie.asset(
                       'assets/lottie/Animation - 1701175879899.json'),
                 ),
@@ -302,12 +302,12 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
             ],
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
+            padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 1.5.h),
             child: Text(
               feedback ??
                   "Lorem Ipsum is simply dummy text of the print and typesetting industry",
               style: TextStyle(
-                  fontSize: 10.5.sp, fontFamily: kFontMedium, height: 1.5),
+                  fontSize: 13.dp, fontFamily: kFontMedium, height: 1.5),
             ),
           ),
           Align(
@@ -315,7 +315,7 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
             child: Icon(
               Icons.format_quote_rounded,
               color: gGreyColor.withOpacity(0.5),
-              size: 5.h,
+              size: 7.h,
             ),
           ),
           // SizedBox(
@@ -361,7 +361,7 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
       color: kBottomSheetHeadYellow,
       borderColor: gWhiteColor,
       rating: rating,
-      size: 12,
+      size: 15,
       filledIconData: Icons.star_sharp,
       halfFilledIconData: Icons.star_half_sharp,
       defaultIconData: Icons.star_outline_sharp,

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/screens/home_screens/new_home_screen/home_widgets/shadow_text.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 import 'package:vector_math/vector_math.dart' as Vector;

@@ -22,8 +22,7 @@ import 'package:gwc_customer_web/repository/prepratory_repository/prep_repositor
 import 'package:gwc_customer_web/screens/dashboard_screen.dart';
 import 'package:gwc_customer_web/services/prepratory_service/prepratory_service.dart';
 import 'package:gwc_customer_web/utils/app_config.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../../../model/prepratory_meal_model/get_prep_meal_track_model.dart';
 import '../../../model/success_message_model.dart';
 import '../../../widgets/constants.dart';

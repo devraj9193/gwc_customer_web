@@ -5,8 +5,7 @@ import 'package:gwc_customer_web/repository/post_program_repo/post_program_repos
 import 'package:gwc_customer_web/screens/post_program_screens/protcol_guide_details.dart';
 import 'package:gwc_customer_web/services/post_program_service/post_program_service.dart';
 import 'package:lottie/lottie.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../repository/api_service.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/widgets.dart';

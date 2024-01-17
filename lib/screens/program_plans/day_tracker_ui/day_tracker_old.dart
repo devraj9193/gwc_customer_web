@@ -18,8 +18,7 @@
 // import 'package:gwc_customer/widgets/constants.dart';
 // import 'package:gwc_customer/widgets/unfocus_widget.dart';
 // import 'package:gwc_customer/widgets/widgets.dart';
-// import 'package:sizer/sizer.dart';
-// import 'package:http/http.dart' as http;
+// import 'package:flutter_sizer/flutter_sizer.dart';// import 'package:http/http.dart' as http;
 //
 // import '../../../repository/prepratory_repository/prep_repository.dart';
 // import '../../prepratory plan/new/new_transition_design.dart';

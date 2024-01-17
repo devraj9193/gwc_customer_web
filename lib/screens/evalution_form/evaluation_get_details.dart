@@ -13,8 +13,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gwc_customer_web/model/evaluation_from_models/get_evaluation_model/child_get_evaluation_data_model.dart';
 import 'package:gwc_customer_web/repository/evaluation_form_repository/evanluation_form_repo.dart';
 import 'package:gwc_customer_web/services/evaluation_fome_service/evaluation_form_service.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../../../utils/app_config.dart';
 import '../../model/error_model.dart';
 import '../../model/evaluation_from_models/get_evaluation_model/get_evaluationdata_model.dart';
@@ -882,11 +881,14 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
           shrinkWrap: true,
           physics: const BouncingScrollPhysics(),
           children: [
-            SizedBox(
-              height: 18.h,
-              child: const Image(
-                image: AssetImage("assets/images/stool_image.png"),
-                fit: BoxFit.fill,
+            Align(
+              alignment: Alignment.topLeft,
+              child: SizedBox(
+                height: 35.h,
+                child: const Image(
+                  image: AssetImage("assets/images/stool_image.png"),
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
             SizedBox(height: 1.h),

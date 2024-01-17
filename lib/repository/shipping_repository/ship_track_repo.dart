@@ -10,7 +10,7 @@ class ShipTrackRepository{
   }
 
   Future getTrackingDetailsRepo(String awbNumber) async{
-    return await apiClient.serverShippingTrackerApi(awbNumber);
+    return await apiClient.shipRocketTrackingTrackerApi(awbNumber);
   }
 
   Future getShoppingDetailsListRepo() async{

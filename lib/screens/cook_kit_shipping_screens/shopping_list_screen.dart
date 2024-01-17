@@ -8,8 +8,7 @@ var shoppingListApiUrl = "${AppConfig().BASE_URL}/api/getData/get_shopping_list"
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../model/ship_track_model/shopping_model/child_get_shopping_model.dart';
 import '../../model/ship_track_model/shopping_model/get_shopping_model.dart';
 import '../../repository/api_service.dart';

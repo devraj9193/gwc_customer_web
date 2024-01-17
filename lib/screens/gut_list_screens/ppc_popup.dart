@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-import '../../../widgets/constants.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import '../../../widgets/constants.dart';
 import '../appointment_screens/doctor_calender_time_screen.dart';
 
 class PpcPopUpScreen extends StatefulWidget {
@@ -113,40 +112,40 @@ class _PpcPopUpScreenState extends State<PpcPopUpScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Padding(
-          //   padding: EdgeInsets.symmetric(vertical: 4.h),
-          //   child: const Image(
-          //     image: AssetImage("assets/images/consultation_completed.png"),
-          //   ),
-          // ),SizedBox(height: 2.h),
-          // Text(
-          //   "Book Your Post Program Consultation",
-          //   style: TextStyle(
-          //     fontFamily: kFontBold,
-          //     color: gBlackColor,
-          //     fontSize: 15.sp,
-          //   ),
-          // ),
-          // SizedBox(height: 1.h),
-          // Text(
-          //   "Your next critical step is your review consultation with your doctor.",
-          //   textAlign: TextAlign.start,
-          //   style: TextStyle(
-          //     fontFamily: kFontMedium,
-          //     color: gBlackColor,
-          //     fontSize: 11.sp,
-          //   ),
-          // ),
-          // SizedBox(height: 1.h),
-          // Text(
-          //   "Please book your consultation at the earliest below.",
-          //   textAlign: TextAlign.start,
-          //   style: TextStyle(
-          //     fontFamily: kFontMedium,
-          //     color: gBlackColor,
-          //     fontSize: 11.sp,
-          //   ),
-          // ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 4.h),
+            child: const Image(
+              image: AssetImage("assets/images/consultation_completed.png"),
+            ),
+          ),SizedBox(height: 2.h),
+          Text(
+            "Book Your Post Program Consultation",
+            style: TextStyle(
+              fontFamily: kFontBold,
+              color: gBlackColor,
+              fontSize: 15.sp,
+            ),
+          ),
+          SizedBox(height: 1.h),
+          Text(
+            "Your next critical step is your review consultation with your doctor.",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              fontFamily: kFontMedium,
+              color: gBlackColor,
+              fontSize: 11.sp,
+            ),
+          ),
+          SizedBox(height: 1.h),
+          Text(
+            "Please book your consultation at the earliest below.",
+            textAlign: TextAlign.start,
+            style: TextStyle(
+              fontFamily: kFontMedium,
+              color: gBlackColor,
+              fontSize: 11.sp,
+            ),
+          ),
         ],
       ),
     );

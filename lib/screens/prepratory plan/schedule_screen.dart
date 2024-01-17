@@ -15,21 +15,22 @@ var submitSlotSelectedUrl = "${AppConfig().BASE_URL}/api/submitForm/follow_up_bo
  */
 
 import 'package:flutter/material.dart';
-import 'package:gwc_customer_web/model/consultation_model/appointment_slot_model.dart';
-import 'package:gwc_customer_web/model/consultation_model/child_slots_model.dart';
-import 'package:gwc_customer_web/model/error_model.dart';
-import 'package:gwc_customer_web/model/success_message_model.dart';
-import 'package:gwc_customer_web/model/user_slot_for_schedule_model/user_slot_days_schedule_model.dart';
-import 'package:gwc_customer_web/repository/user_slot_for_schedule_repository/schedule_slot_repository.dart';
-import 'package:gwc_customer_web/services/user_slot_for_schedule_service/user_slot_for_schedule_service.dart';
-import 'package:gwc_customer_web/utils/app_config.dart';
-import 'package:gwc_customer_web/widgets/constants.dart';
-import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:intl/intl.dart';
+import '../../model/consultation_model/appointment_slot_model.dart';
+import '../../model/consultation_model/child_slots_model.dart';
+import '../../model/error_model.dart';
+import '../../model/success_message_model.dart';
+import '../../model/user_slot_for_schedule_model/user_slot_days_schedule_model.dart';
 import '../../repository/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+
+import '../../repository/user_slot_for_schedule_repository/schedule_slot_repository.dart';
+import '../../services/user_slot_for_schedule_service/user_slot_for_schedule_service.dart';
+import '../../utils/app_config.dart';
+import '../../widgets/constants.dart';
+import '../../widgets/widgets.dart';
 
 class NewScheduleScreen extends StatefulWidget {
   const NewScheduleScreen({Key? key}) : super(key: key);
@@ -110,8 +111,8 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                                             res.data?[index].slot == null ||
                                                 res.data?[index].slot == "")
                                         ? "Book your ${index + 1}${getDayOfMonthSuffix(index + 1)} follow-up call"
-                                        : "Slot booked ${getTime("${res.data?[index].date}","${res.data?[index].slot}")}",
-                                        // "Your doctor will give you a call at this time",
+                                        : "Slot booked ${getTime("${res.data?[index].date}", "${res.data?[index].slot}")}",
+                                    // "Your doctor will give you a call at this time",
                                     res.data?[index].date ?? '',
                                     res.data?[index].callStatus ?? '',
                                     isSlotBooked:
@@ -180,7 +181,7 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                           style: TextStyle(
                             fontFamily: kFontBold,
                             color: gBlackColor,
-                            fontSize: 10.sp,
+                            fontSize: 13.dp,
                           ),
                         ),
                       ],
@@ -217,7 +218,7 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                                           child: Icon(
                                             Icons.done_outlined,
                                             color: gWhiteColor,
-                                            size: 8.sp,
+                                            size: 8.dp,
                                           ),
                                         ),
                                       ),
@@ -230,7 +231,7 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                                         style: TextStyle(
                                             fontFamily: kFontBook,
                                             color: gTextColor,
-                                            fontSize: 10.sp),
+                                            fontSize: 13.dp),
                                       )
                                     ],
                                   )
@@ -241,7 +242,7 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                                     style: TextStyle(
                                       fontFamily: kFontBook,
                                       color: gsecondaryColor,
-                                      fontSize: 10.sp,
+                                      fontSize: 13.dp,
                                       decoration: TextDecoration.underline,
                                     ),
                                   ),
@@ -252,7 +253,7 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                             style: TextStyle(
                               fontFamily: kFontBold,
                               color: gBlackColor,
-                              fontSize: 10.sp,
+                              fontSize: 13.dp,
                             ),
                           ),
                   ],
@@ -267,18 +268,16 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                 //     fontFamily:
                 //     kFontMedium,
                 //     color: gTextColor,
-                //     fontSize: 10.sp,
+                //     fontSize: 10.dp,
                 //   ),
                 // ),
-                SizedBox(
-                  height: 8,
-                ),
+                SizedBox(height: 1.h),
                 Text(
                   middleText,
                   style: TextStyle(
                     fontFamily: kFontBook,
                     color: gTextColor,
-                    fontSize: 10.sp,
+                    fontSize: 12.dp,
                   ),
                 ),
                 const SizedBox(height: 5),
@@ -288,24 +287,28 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                         style: TextStyle(
                           fontFamily: kFontBold,
                           color: gsecondaryColor,
-                          fontSize: 10.sp,
+                          fontSize: 12.dp,
                         ),
                       )
                     : callStatus == "1"
                         ? Row(
-                          children: [
-                            Text(
+                            children: [
+                              Text(
                                 "Follow up call complete.",
                                 style: TextStyle(
                                   fontFamily: kFontBold,
                                   color: gPrimaryColor,
-                                  fontSize: 10.sp,
+                                  fontSize: 12.dp,
                                 ),
                               ),
-                            SizedBox(width: 0.w),
-                            Icon(Icons.check_circle,color: gPrimaryColor,size: 1.5.h,)
-                          ],
-                        )
+                              SizedBox(width: 0.w),
+                              Icon(
+                                Icons.check_circle,
+                                color: gPrimaryColor,
+                                size: 2.h,
+                              )
+                            ],
+                          )
                         : const SizedBox(),
                 const SizedBox(height: 8),
               ],
@@ -318,14 +321,13 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
   }
 
   /// getTime will be used to split the time which is in string format to show in hour:min
-  getTime(String date,String time) {
-
-    DateTime tempDate = new DateFormat("dd-MM-yyyy hh:mm:ss").parse("$date $time");
+  getTime(String date, String time) {
+    DateTime tempDate =
+        new DateFormat("dd-MM-yyyy hh:mm:ss").parse("$date $time");
 
     print("DateTime : $tempDate");
 
-    return '${DateFormat('dd MMM yyyy').format(tempDate).toString()} at ${DateFormat.jm()
-        .format(DateFormat("hh:mm:ss").parse(time))}';
+    return '${DateFormat('dd MMM yyyy').format(tempDate).toString()} at ${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(time))}';
   }
 
   List morningSlotList = [
@@ -364,20 +366,27 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
     });
   }
 
+  bool showSubmitProgress = false;
+
+  var submitProgressState;
+
   showCustomDialog(Function setState, String date) {
     var inputFormat = DateFormat('dd-MM-yyyy');
     var date1 = inputFormat.parse(date);
-
+    submitProgressState = setState;
     var outputFormat = DateFormat('yyyy-MM-dd');
     var date2 = outputFormat.format(date1);
     print(date2);
     return Dialog(
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0))),
+        borderRadius: BorderRadius.all(
+          Radius.circular(8.0),
+        ),
+      ),
       // contentPadding: EdgeInsets.only(top: 10.0, bottom: 8),
       child: SingleChildScrollView(
         child: Container(
-            padding: EdgeInsets.symmetric(vertical: 12),
+            padding: EdgeInsets.symmetric(vertical: 1.h),
             // height: 50.h,
             child: FutureBuilder(
               future: getSlotFuture(date2),
@@ -386,7 +395,6 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                 if (snap.hasData) {
                   if (snap.data.runtimeType == ErrorModel) {
                     final model = snap.data as ErrorModel;
-
                     return Center(
                       child: Text(model.message ?? ''),
                     );
@@ -394,7 +402,7 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                     final model = snap.data as SlotModel;
                     followUpSlots = model.data;
                     blockedSlot = "";
-                    followUpSlots!.values!.forEach((e) {
+                    followUpSlots!.values.forEach((e) {
                       if (e.isBooked == "1") {
                         blockedSlot = e.slot!;
                       }
@@ -410,7 +418,7 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                         Text(
                           'Please Select Slot',
                           style: TextStyle(
-                              fontFamily: kFontMedium, fontSize: 12.sp),
+                              fontFamily: kFontMedium, fontSize: 15.dp),
                         ),
                         Divider(),
                         Center(
@@ -430,35 +438,38 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                           height: 10,
                         ),
                         // Spacer(),
-                        Center(
-                          child: GestureDetector(
-                            onTap: () {
-                              submitFollowupSlots(date2, selectedSlot);
-                            },
-                            child: Container(
-                              width: 30.w,
-                              height: 5.h,
-                              // padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
-                              decoration: BoxDecoration(
-                                color: eUser().buttonColor,
-                                borderRadius: BorderRadius.circular(
-                                    eUser().buttonBorderRadius),
-                                // border: Border.all(color: eUser().buttonBorderColor,
-                                //     width: eUser().buttonBorderWidth),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Submit',
-                                  style: TextStyle(
-                                    fontFamily: kFontBold,
-                                    color: gWhiteColor,
-                                    fontSize: 11.sp,
+                        (showSubmitProgress)
+                            ? Center(child: buildCircularIndicator())
+                            : Center(
+                                child: IntrinsicWidth(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      submitFollowupSlots(date2, selectedSlot);
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 1.5.h, horizontal: 5.w),
+                                      decoration: BoxDecoration(
+                                        color: eUser().buttonColor,
+                                        borderRadius: BorderRadius.circular(
+                                            eUser().buttonBorderRadius),
+                                        // border: Border.all(color: eUser().buttonBorderColor,
+                                        //     width: eUser().buttonBorderWidth),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'Submit',
+                                          style: TextStyle(
+                                            fontFamily: kFontBold,
+                                            color: gWhiteColor,
+                                            fontSize: 13.dp,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ),
                         SizedBox(
                           height: 10,
                         )
@@ -480,7 +491,7 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       child: Text(
         slotName,
-        style: TextStyle(fontFamily: kFontBold, fontSize: 12.sp),
+        style: TextStyle(fontFamily: kFontBold, fontSize: 12.dp),
       ),
     );
   }
@@ -509,7 +520,7 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        margin: EdgeInsets.symmetric(horizontal: 2, vertical: 3),
+        margin: EdgeInsets.symmetric(horizontal: 2.w, vertical: 3),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(6),
             color: (isBlocked)
@@ -520,13 +531,19 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.timelapse_rounded,
-                size: 10,
-                color: (isSelected || isBlocked) ? gWhiteColor : gBlackColor),
+            Icon(
+              Icons.timelapse_rounded,
+              size: 2.5.h,
+              color: (isSelected || isBlocked) ? gWhiteColor : gBlackColor,
+            ),
+            SizedBox(width: 0.5.w),
             Text(
               time,
               style: TextStyle(
-                  color: (isSelected || isBlocked) ? gWhiteColor : gBlackColor),
+                color: (isSelected || isBlocked) ? gWhiteColor : gBlackColor,
+                fontSize: (isSelected || isBlocked) ? 14.dp : 12.dp,
+                fontFamily: (isSelected || isBlocked) ? kFontMedium : kFontBook,
+              ),
             )
           ],
         ),
@@ -538,20 +555,33 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
     print(slot);
     String start = slot.split('-').first;
     String end = slot.split('-').last;
+    submitProgressState(() {
+      showSubmitProgress = true;
+    });
     print(start);
     final res = await GetUserScheduleSlotsForService(repository: repository)
         .submitSlotSelectedService(selectedDate, start, end);
     Navigator.pop(context);
     if (res.runtimeType == ErrorModel) {
+      submitProgressState(() {
+        showSubmitProgress = false;
+      });
       final result = res as ErrorModel;
       AppConfig().showSnackbar(context, result.message ?? '', isError: true);
     } else {
+      submitProgressState(() {
+        showSubmitProgress = false;
+      });
+      getSlotDates();
       final result = res as SuccessMessageModel;
       AppConfig().showSnackbar(context, result.errorMsg ?? '');
     }
     setState(() {
       selectedDate = "";
       selectedSlot = "";
+    });
+    submitProgressState(() {
+      showSubmitProgress = true;
     });
   }
 }

@@ -14,8 +14,7 @@ https://gwc.disol.in/apidoc/#api-User-notification_list
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../model/error_model.dart';
 import '../model/local_storage_dashboard_model.dart';
 import '../model/notification_model/NotificationModel.dart';
@@ -87,7 +86,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           body: Column(
             children: [
               Padding(
-                padding: EdgeInsets.only(left: 4.w, right: 4.w, top: 1.h),
+                padding: EdgeInsets.only(left: 4.w, right: 4.w, top: 2.h,bottom: 2.h),
                 child: buildAppBar((){
                   Navigator.pop(context);
                 }),
@@ -134,7 +133,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               builder: (_, snapshot){
                               print(snapshot.connectionState);
                               if(snapshot.connectionState == ConnectionState.waiting){
-                                return buildCircularIndicator();
+                                return Padding(padding: EdgeInsets.symmetric(vertical: 30.h),child: buildCircularIndicator(),);
                               }
                               else if(snapshot.connectionState == ConnectionState.done){
                                 if(snapshot.hasData){
@@ -154,7 +153,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                             },
                                             child: Text('Retry',
                                               style: TextStyle(
-                                                  fontSize: 10.sp,
+                                                  fontSize: 10.dp,
                                                   fontFamily: kFontMedium
                                               ),
                                             )
@@ -189,7 +188,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     child: Column(children: [
                                       Text(snapshot.error.toString(),
                                         style: TextStyle(
-                                          fontSize: 11.sp,
+                                          fontSize: 11.dp,
                                           fontFamily: kFontMedium
                                         ),
                                       ),
@@ -199,7 +198,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                           },
                                           child: Text('Retry',
                                             style: TextStyle(
-                                                fontSize: 10.sp,
+                                                fontSize: 10.dp,
                                                 fontFamily: kFontMedium
                                             ),
                                           )
@@ -248,11 +247,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
             child: Image.asset(asset,
               fit: BoxFit.scaleDown,
               color: gBlackColor,
-              width: 40,
+              width: 50,
               // height: 70
             ),
           ),
-          minLeadingWidth: 30,
+          minLeadingWidth:1.w,
           title: Text(title,
             style: TextStyle(
                 fontFamily: kFontBold,
@@ -278,7 +277,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 style: TextStyle(
                     fontFamily: kFontMedium,
                     color: gHintTextColor,
-                    fontSize: 9.5.sp
+                    fontSize: 12.dp
                 ),
               )
             ],
@@ -300,7 +299,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         //               style: TextStyle(
         //                   fontFamily: kFontBold,
         //                   color: gMainColor,
-        //                   fontSize: 11.sp
+        //                   fontSize: 11.dp
         //               ),
         //             ),
         //             Expanded(
@@ -308,7 +307,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         //                 style: TextStyle(
         //                     fontFamily: kFontBold,
         //                     color: gMainColor,
-        //                     fontSize: 10.sp
+        //                     fontSize: 10.dp
         //                 ),
         //               ),
         //             ),
@@ -316,7 +315,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         //               style: TextStyle(
         //                   fontFamily: kFontBold,
         //                   color: gMainColor,
-        //                   fontSize: 9.5.sp
+        //                   fontSize: 9.5.dp
         //               ),
         //             )
         //           ],

@@ -2,6 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.fembuddy.gwc_customer_web">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <uses-permission android:name="android.permission.INTERNET" />

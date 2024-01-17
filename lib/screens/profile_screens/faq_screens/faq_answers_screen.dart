@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/model/faq_model/faq_list_model.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-// import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';// import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:intl/intl.dart';
 import '../../../widgets/constants.dart';
 import '../../../widgets/video/normal_video.dart';
@@ -88,7 +87,7 @@ class _FaqAnswerScreenState extends State<FaqAnswerScreen> {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 15),
+                    padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 15),
                     child: (widget.faqList.type == 'text')
                         ? textWidget()
                         : (widget.faqList.type == 'video')
@@ -111,7 +110,7 @@ class _FaqAnswerScreenState extends State<FaqAnswerScreen> {
         Text(_faqList?.question ?? '',
           style: TextStyle(
               fontFamily: kFontBold,
-              fontSize: 12.sp,
+              fontSize: 15.dp,
               height: 1.5
           ),
         ),
@@ -122,7 +121,7 @@ class _FaqAnswerScreenState extends State<FaqAnswerScreen> {
           style: TextStyle(
               height: 1.5,
               fontFamily: kFontMedium,
-              fontSize: 10.sp
+              fontSize: 13.dp
           ),
         ),
       ],
@@ -136,7 +135,7 @@ class _FaqAnswerScreenState extends State<FaqAnswerScreen> {
         Text(_faqList?.question ?? '',
           style: TextStyle(
               fontFamily: kFontBold,
-              fontSize: 12.sp,
+              fontSize: 15.dp,
               height: 1.5
           ),
         ),

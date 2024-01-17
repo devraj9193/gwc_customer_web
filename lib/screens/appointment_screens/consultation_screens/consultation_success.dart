@@ -3,8 +3,7 @@ we r using this screen in old ui's
  */
 
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../widgets/constants.dart';
 import '../../../widgets/widgets.dart';
 

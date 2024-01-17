@@ -7,8 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gwc_customer_web/screens/dashboard_screen.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:provider/provider.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 class HelpScreen extends StatefulWidget {
   bool isFromLogin;
   HelpScreen({this.isFromLogin = false});

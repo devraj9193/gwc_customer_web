@@ -18,8 +18,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart' hide GetStringUtils;
 import 'package:gwc_customer_web/widgets/dart_extensions.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../../../utils/app_config.dart';
 import '../../model/country_model.dart';
 import '../../model/dashboard_model/report_upload_model/report_upload_model.dart';
@@ -37,6 +36,7 @@ import '../../services/profile_screen_service/user_profile_service.dart';
 import '../../utils/country_list.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/widgets.dart';
+import '../uvdesk/ticket_details_screen.dart';
 import 'check_box_settings.dart';
 import 'personal_details_screen2.dart';
 
@@ -398,6 +398,29 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.transparent,
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TicketChatScreen(
+                    userName: "${_pref?.getString(AppConfig.User_Name)}",
+                    thumbNail:
+                    "${_pref?.getString(AppConfig.User_Profile)}",
+                    ticketId:
+                    "${_pref?.getString(AppConfig.User_ticket_id)}",
+                    subject: '',
+                    email: "${_pref?.getString(AppConfig.User_Email)}",
+                    ticketStatus: 1 ?? -1,
+                  ),
+                ),
+              );
+            },
+            backgroundColor: gsecondaryColor.withOpacity(0.7),
+            child: const ImageIcon(
+              AssetImage("assets/images/noun-chat-5153452.png"),
+            ),
+          ),
           body: widget.showData
               ? FutureBuilder(
                   future: _getEvaluationDataFuture,
@@ -517,7 +540,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                   // width: 40.w,
                   // height: 5.h,
                   padding:
-                      EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 10.w),
+                      EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
                   decoration: BoxDecoration(
                     color: eUser().buttonColor,
                     borderRadius:
@@ -659,7 +682,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             // Text(
             //   'Marital Status:*',
             //   style: TextStyle(
-            //     fontSize: 9.sp,
+            //     fontSize: 9.dp,
             //     color: kTextColor,
             //     fontFamily: "PoppinsSemiBold",
             //   ),
@@ -691,7 +714,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                                 : gHintTextColor,
                             fontFamily: maritalStatus == "Single"
                                 ? kFontMedium
-                                : kFontBook),
+                                : kFontBook,
+                        ),
                       ),
                     ],
                   ),
@@ -770,7 +794,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             // Text(
             //   'Phone Number*',
             //   style: TextStyle(
-            //     fontSize: 9.sp,
+            //     fontSize: 9.dp,
             //     color: kTextColor,
             //     fontFamily: "PoppinsSemiBold",
             //   ),
@@ -1897,11 +1921,14 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
               shrinkWrap: true,
               physics: const BouncingScrollPhysics(),
               children: [
-                SizedBox(
-                  height: 18.h,
-                  child: const Image(
-                    image: AssetImage("assets/images/stool_image.png"),
-                    fit: BoxFit.fill,
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: SizedBox(
+                    height: 35.h,
+                    child: const Image(
+                      image: AssetImage("assets/images/stool_image.png"),
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -2329,7 +2356,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             //         Text(
             //           'Add File',
             //           style: TextStyle(
-            //             fontSize: 10.sp,
+            //             fontSize: 10.dp,
             //             color: gMainColor,
             //             fontFamily: "PoppinsRegular",
             //           ),
@@ -3691,7 +3718,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: "PoppinsBold",
-                  fontSize: 11.sp,
+                  fontSize: 11.dp,
                 ),
               ),
             ),
@@ -3752,12 +3779,12 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
     print(res);
     if (res.runtimeType == GetCountryDetailsModel) {
       GetCountryDetailsModel model = res as GetCountryDetailsModel;
-      if (model.postOffice!.isNotEmpty) {
-        print(model.postOffice?.first.state);
+      if (model.response.postOffice.isNotEmpty) {
+        print(model.response.postOffice.first.state);
         setState(() {
-          stateController.text = model.postOffice?.first.state ?? '';
-          cityController.text = model.postOffice?.first.district ?? '';
-          countryController.text = model.postOffice?.first.country ?? '';
+          stateController.text = model.response.postOffice.first.state ?? '';
+          cityController.text = model.response.postOffice.first.district ?? '';
+          countryController.text = model.response.postOffice.first.country ?? '';
         });
       }
     } else {
@@ -3791,7 +3818,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
           fontFamily: kFontBook,
           color: gTextColor,
           // color: (statusList[itemId] == title) ? color : gTextColor,
-          fontSize: 8.sp,
+          fontSize: 8.dp,
         ),
       ),
     );
@@ -4181,7 +4208,7 @@ initstate:
               style: TextStyle(
                 fontFamily: "PoppinsRegular",
                 color: gBlackColor,
-                fontSize: 10.sp,
+                fontSize: 10.dp,
               ),
             ),
             Icon(Icons.keyboard_arrow_down_outlined)
@@ -4220,7 +4247,7 @@ initstate:
               style: TextStyle(
                 fontFamily: "PoppinsRegular",
                 color: gBlackColor,
-                fontSize: 10.sp,
+                fontSize: 10.dp,
               ),
             ),
             Icon(Icons.keyboard_arrow_down_outlined)

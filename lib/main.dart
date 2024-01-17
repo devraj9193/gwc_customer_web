@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter/services.dart';
 import 'package:flutter_sim_country_code/flutter_sim_country_code.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:gwc_customer_web/services/home_service/drink_water_controller.dart';
 import 'package:gwc_customer_web/services/internet_service/dependency_injecion.dart';
 import 'package:gwc_customer_web/services/local_notification_service.dart';
@@ -22,8 +23,7 @@ import 'package:gwc_customer_web/services/uvdesk_service/uv_desk_service.dart';
 import 'package:gwc_customer_web/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
-import 'package:get/get.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:get/get.dart';
 import 'repository/api_service.dart';
 import 'repository/enquiry_status_repository.dart';
 import 'services/analytics_service.dart';
@@ -185,8 +185,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Sizer(builder:
-        (BuildContext context, Orientation orientation, DeviceType deviceType) {
+    return FlutterSizer(builder:
+        (context, orientation, screenType) {
       return MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => CheckState()),

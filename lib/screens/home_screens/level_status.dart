@@ -4,8 +4,7 @@ now r showing coming soon ui
 
 import 'package:flutter/material.dart';
 import 'package:simple_circular_progress_bar/simple_circular_progress_bar.dart';
-import 'package:sizer/sizer.dart';
-import '../../model/home_model/home_model.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import '../../model/home_model/home_model.dart';
 import '../../repository/api_service.dart';
 import '../../repository/home_repo/home_repository.dart';
 import '../../services/home_service/home_service.dart';

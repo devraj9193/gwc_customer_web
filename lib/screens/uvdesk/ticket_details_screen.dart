@@ -33,8 +33,7 @@ import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
-import 'package:sizer/sizer.dart';
-import 'package:grouped_list/grouped_list.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:grouped_list/grouped_list.dart';
 import '../../../model/error_model.dart';
 import '../../../widgets/widgets.dart';
 import '../../model/uvdesk_model/new_ticket_details_model.dart';
@@ -45,6 +44,7 @@ import '../../utils/app_config.dart';
 import '../../widgets/constants.dart';
 import 'package:html/parser.dart';
 
+import '../../widgets/open_alert_box.dart';
 import 'attachments_view_screen.dart';
 
 class TicketChatScreen extends StatefulWidget {
@@ -87,7 +87,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
   StreamSocket streamSocket = StreamSocket();
 
   late final UvDeskService _uvDeskService =
-  UvDeskService(uvDeskRepo: repository);
+      UvDeskService(uvDeskRepo: repository);
 
   final ScrollController _scrollController = ScrollController();
 
@@ -104,7 +104,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
     });
     _timer = Timer.periodic(
       const Duration(seconds: 10),
-          (_) => getThreadsList(),
+      (_) => getThreadsList(),
     );
     getThreadsList();
     setState(() {
@@ -123,8 +123,9 @@ class _TicketChatScreenState extends State<TicketChatScreen>
     //   showProgress = true;
     // });
     // callProgressStateOnBuild(true);
+    print("ticket_id : ${widget.ticketId}");
     final result =
-    await _uvDeskService.getTicketDetailsByIdService(widget.ticketId);
+        await _uvDeskService.getTicketDetailsByIdService(widget.ticketId);
     print("result: $result");
 
     if (result.runtimeType == NewTicketDetailsModel) {
@@ -133,7 +134,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
       threadsListModel = model;
 
       setState(() {
-        threadList = model.ticket!.threads ?? [];
+        threadList = model.response.ticket!.threads ?? [];
         print("threads List : $threadList");
         streamSocket.addResponse(threadList);
       });
@@ -156,7 +157,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
   }
 
   RefreshController refreshController =
-  RefreshController(initialRefresh: false);
+      RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
     print("Refresh Thread List");
@@ -168,14 +169,14 @@ class _TicketChatScreenState extends State<TicketChatScreen>
 
   getRefreshThreadsList() async {
     final result =
-    await _uvDeskService.getTicketDetailsByIdService(widget.ticketId);
+        await _uvDeskService.getTicketDetailsByIdService(widget.ticketId);
     print("result: $result");
 
     if (result.runtimeType == NewTicketDetailsModel) {
       print("Threads List");
       NewTicketDetailsModel model = result as NewTicketDetailsModel;
       threadsListModel = model;
-      threadList = model.ticket!.threads ?? [];
+      threadList = model.response.ticket!.threads ?? [];
       refreshController.refreshCompleted();
       print("threads List : $threadList");
     } else {
@@ -189,6 +190,12 @@ class _TicketChatScreenState extends State<TicketChatScreen>
   void _onLoading() async {
     await Future.value();
     refreshController.loadComplete();
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
   }
 
   @override
@@ -218,22 +225,22 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                   ),
                   widget.thumbNail.isEmpty
                       ? CircleAvatar(
-                    radius: 2.h,
-                    backgroundColor: kNumberCircleRed,
-                    child: Text(
-                      getInitials(widget.userName, 2),
-                      style: TextStyle(
-                        fontSize: 8.sp,
-                        fontFamily: kFontBold,
-                        color: gWhiteColor,
-                      ),
-                    ),
-                  )
+                          radius: 3.h,
+                          backgroundColor: kNumberCircleRed,
+                          child: Text(
+                            getInitials(widget.userName, 2),
+                            style: TextStyle(
+                              fontSize: 11.dp,
+                              fontFamily: kFontBold,
+                              color: gWhiteColor,
+                            ),
+                          ),
+                        )
                       : CircleAvatar(
-                    radius: 2.h,
-                    backgroundImage: NetworkImage(widget.thumbNail),
-                  ),
-                  SizedBox(width: 2.w),
+                          radius: 3.h,
+                          backgroundImage: NetworkImage(widget.thumbNail),
+                        ),
+                  SizedBox(width: 1.w),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,14 +274,14 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                   ),
                   widget.ticketStatus == 5 || widget.ticketStatus == 4
                       ? TicketPopUpMenu(
-                      ticketId: widget.ticketId,
-                      ticketStatus: widget.ticketStatus)
+                          ticketId: widget.ticketId,
+                          ticketStatus: widget.ticketStatus)
                       : const SizedBox(),
                   // popupMenu()
                 ],
               ),
             ),
-            SizedBox(height: 1.h),
+            SizedBox(height: 0.h),
             Expanded(
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 1.h),
@@ -292,55 +299,60 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                     topRight: Radius.circular(30),
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
                   children: [
-                    Expanded(
-                      child: RawScrollbar(
-                        thumbVisibility: false,
-                        thickness: 3,
-                        controller: _scrollController,
-                        radius: const Radius.circular(3),
-                        thumbColor: gMainColor,
-                        child: SmartRefresher(
-                          onRefresh: _onRefresh,
-                          onLoading: _onLoading,
-                          controller: refreshController,
-                          physics: const BouncingScrollPhysics(),
-                          enablePullDown: true,
-                          enablePullUp: false,
-                          reverse: true,
-                          footer: const ClassicFooter(),
-                          header: const ClassicHeader(),
-                          child:
-                          // StreamBuilder(
-                          //   stream: streamSocket.getResponse,
-                          //   builder: (_, snapshot) {
-                          //     print("snap.data: ${snapshot.data}");
-                          //     if (snapshot.hasError) {
-                          //       return Text('${snapshot.error}');
-                          //     }
-                          //     if (snapshot.hasData) {
-                          //       return buildMessageUi(threadList);
-                          //     } else if (snapshot.hasError) {
-                          //       return Center(
-                          //         child: Text(snapshot.error.toString()),
-                          //       );
-                          //     }
-                          //     return Center(
-                          //       child: buildCircularIndicator(),
-                          //     );
-                          //   },
-                          // ),
-                          buildMessageUi(threadList),
-                          // buildMessageList(
-                          //         threadsListModel?.ticket?.threads ?? []),
-                        ),
-                      ),
-                    ),
-                    widget.ticketStatus == 5 || widget.ticketStatus == 4
-                        ? const SizedBox()
-                        : _buildEnterMessageRow(),
+                    Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: RawScrollbar(
+                                  thumbVisibility: false,
+                                  thickness: 3,
+                                  controller: _scrollController,
+                                  radius: const Radius.circular(3),
+                                  thumbColor: gMainColor,
+                                  child: SmartRefresher(
+                                    onRefresh: _onRefresh,
+                                    onLoading: _onLoading,
+                                    controller: refreshController,
+                                    physics: const BouncingScrollPhysics(),
+                                    enablePullDown: true,
+                                    enablePullUp: false,
+                                    reverse: true,
+                                    footer: const ClassicFooter(),
+                                    header: const ClassicHeader(),
+                                    child:
+                                        // StreamBuilder(
+                                        //   stream: streamSocket.getResponse,
+                                        //   builder: (_, snapshot) {
+                                        //     print("snap.data: ${snapshot.data}");
+                                        //     if (snapshot.hasError) {
+                                        //       return Text('${snapshot.error}');
+                                        //     }
+                                        //     if (snapshot.hasData) {
+                                        //       return buildMessageUi(threadList);
+                                        //     } else if (snapshot.hasError) {
+                                        //       return Center(
+                                        //         child: Text(snapshot.error.toString()),
+                                        //       );
+                                        //     }
+                                        //     return Center(
+                                        //       child: buildCircularIndicator(),
+                                        //     );
+                                        //   },
+                                        // ),
+                                        buildMessageUi(threadList),
+                                    // buildMessageList(
+                                    //         threadsListModel?.ticket?.threads ?? []),
+                                  ),
+                                ),
+                              ),
+                              widget.ticketStatus == 5 || widget.ticketStatus == 4
+                                  ? const SizedBox()
+                                  : _buildEnterMessageRow(),
+                            ],
+                          ),
+                    isLoading ? buildCircularIndicator() : const SizedBox(),
                   ],
                 ),
               ),
@@ -384,7 +396,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
               style: TextStyle(
                 fontFamily: "GothamBook",
                 color: gBlackColor,
-                fontSize: 8.sp,
+                fontSize: 8.dp,
               ),
             ),
           ),
@@ -416,14 +428,14 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                       constraints: BoxConstraints(maxWidth: 65.w, minWidth: 0),
                       margin: message.createdBy == "agent"
                           ? EdgeInsets.only(
-                          top: 0.5.h, bottom: 0.5.h, left: 5, right: 20.w)
+                              top: 0.5.h, bottom: 0.5.h, left: 5, right: 20.w)
                           : EdgeInsets.only(
-                          top: 0.5.h, bottom: 0.5.h, right: 5, left: 20.w),
+                              top: 0.5.h, bottom: 0.5.h, right: 5, left: 20.w),
                       decoration: BoxDecoration(
                           color: message.createdBy == "agent"
                               ? (message.cc != null)
-                              ? kNumberCircleRed
-                              : gWhiteColor
+                                  ? kNumberCircleRed
+                                  : gWhiteColor
                               : gsecondaryColor,
                           boxShadow: [
                             BoxShadow(
@@ -464,43 +476,45 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                               height: 1.h,
                             ),
                           ...message.attachments!.map(
-                                (e) => (message.attachments != null &&
-                                message.attachments!.isNotEmpty)
+                            (e) => (message.attachments != null &&
+                                    message.attachments!.isNotEmpty)
                                 ? InkWell(
-                                onTap: () {
-                                  buildAttachmentView(
-                                      imageBaseUrl + e.relativePath!);
-                                },
-                                child: Padding(
-                                  padding:
-                                  EdgeInsets.symmetric(vertical: 1.h),
-                                  child: ClipRRect(
-                                    borderRadius:
-                                    BorderRadius.circular(10.0),
-                                    child: Image(
-                                      image: NetworkImage(
-                                          imageBaseUrl + e.relativePath!),
-                                      fit: BoxFit.contain,
-                                      height: 15.h,
-                                    ),
-                                  ),
-                                )
-                              // child: Align(
-                              //   alignment: Alignment.topLeft,
-                              //   child: Container(
-                              //     constraints: const BoxConstraints(
-                              //       maxHeight: 120,maxWidth: 70,
-                              //     ),
-                              //     decoration: BoxDecoration(
-                              //         image: DecorationImage(
-                              //             image: NetworkImage(
-                              //                 imageBaseUrl +
-                              //                     e.relativePath!),
-                              //             fit: BoxFit.contain)),
-                              //     // child: Image.network(imageBaseUrl+e.relativePath! ?? ''),
-                              //   ),
-                              // ),
-                            )
+                                    onTap: () {
+                                      buildAttachmentView(
+                                          // e.iconURL!
+                                          imageBaseUrl + e.relativePath!);
+                                    },
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 1.h),
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        child: Image(
+                                          image: NetworkImage(
+                                              // e.iconURL!
+                                              imageBaseUrl + e.relativePath!),
+                                          fit: BoxFit.contain,
+                                          height: 15.h,
+                                        ),
+                                      ),
+                                    )
+                                    // child: Align(
+                                    //   alignment: Alignment.topLeft,
+                                    //   child: Container(
+                                    //     constraints: const BoxConstraints(
+                                    //       maxHeight: 120,maxWidth: 70,
+                                    //     ),
+                                    //     decoration: BoxDecoration(
+                                    //         image: DecorationImage(
+                                    //             image: NetworkImage(
+                                    //                 imageBaseUrl +
+                                    //                     e.relativePath!),
+                                    //             fit: BoxFit.contain)),
+                                    //     // child: Image.network(imageBaseUrl+e.relativePath! ?? ''),
+                                    //   ),
+                                    // ),
+                                    )
                                 : const SizedBox(),
                           ),
                           HtmlWidget(
@@ -508,8 +522,8 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                             textStyle: TextStyle(
                               color: message.createdBy == "agent"
                                   ? (message.cc != null)
-                                  ? gWhiteColor
-                                  : gTextColor
+                                      ? gWhiteColor
+                                      : gTextColor
                                   : gWhiteColor,
                             ),
                           ),
@@ -550,9 +564,9 @@ class _TicketChatScreenState extends State<TicketChatScreen>
 
     timeStamp ??= 0;
     DateTime messageTime =
-    DateTime.fromMicrosecondsSinceEpoch(timeStamp * 1000);
+        DateTime.fromMicrosecondsSinceEpoch(timeStamp * 1000);
     DateTime messageDate =
-    DateTime(messageTime.year, messageTime.month, messageTime.day);
+        DateTime(messageTime.year, messageTime.month, messageTime.day);
 
     if (today == messageDate) {
       completedDate = "Today";
@@ -581,7 +595,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                   index: 1,
                   title: "ReOpen Ticket",
                   isEnabled:
-                  (widget.ticketStatus == 4 || widget.ticketStatus == 3)),
+                      (widget.ticketStatus == 4 || widget.ticketStatus == 3)),
               SizedBox(height: 0.6.h),
             ],
           ),
@@ -600,8 +614,8 @@ class _TicketChatScreenState extends State<TicketChatScreen>
     return GestureDetector(
       onTap: isEnabled
           ? () {
-        Navigator.pop(context);
-      }
+              Navigator.pop(context);
+            }
           : null,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -611,7 +625,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
             style: TextStyle(
               fontFamily: kFontBook,
               color: gTextColor,
-              fontSize: 8.sp,
+              fontSize: 8.dp,
             ),
           ),
           Container(
@@ -641,8 +655,8 @@ class _TicketChatScreenState extends State<TicketChatScreen>
             children: [
               Expanded(
                 child: Container(
-                  margin: EdgeInsets.only(left: 3.w, top: 0.5.h),
-                  padding: EdgeInsets.only(left: 3.w),
+                  margin: EdgeInsets.only(left: 3.w, top: 2.h,bottom: 2.h),
+                  padding: EdgeInsets.only(left: 3.w,top: 1.h,bottom: 1.h),
                   decoration: BoxDecoration(
                     boxShadow: [
                       BoxShadow(
@@ -651,7 +665,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                       ),
                     ],
                     color: gWhiteColor,
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Form(
                     key: formKey,
@@ -664,7 +678,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                         alignLabelWithHint: true,
                         hintStyle: TextStyle(
                           color: gMainColor,
-                          fontSize: 10.sp,
+                          fontSize: 10.dp,
                           fontFamily: "GothamBook",
                         ),
                         border: InputBorder.none,
@@ -689,7 +703,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                       style: TextStyle(
                           fontFamily: "GothamBook",
                           color: gBlackColor,
-                          fontSize: 10.sp),
+                          fontSize: 10.dp),
                       maxLines: 3,
                       minLines: 1,
                       textInputAction: TextInputAction.none,
@@ -699,51 +713,51 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                   ),
                 ),
               ),
-              SizedBox(width: 2.w),
+              SizedBox(width: 1.w),
               commentController.text.toString().isNotEmpty ||
-                  fileFormatList.isNotEmpty
+                      fileFormatList.isNotEmpty
                   ? GestureDetector(
-                onTap: () {
-                  if (commentController.text.isEmpty) {
-                    AppConfig().showSnackbar(
-                        context, "Please type Something..!",
-                        isError: true);
-                  } else {
-                    sendReply();
-                    // final message = Message(
-                    //     text: commentController.text.toString(),
-                    //     date: DateTime.now(),
-                    //     sendMe: true,
-                    //     image:
-                    //         "assets/images/closeup-content-attractive-indian-business-lady.png");
-                    setState(() {
-                      // messages.add(message);
-                    });
-                    commentController.clear();
-                  }
-                },
-                child: Container(
-                  margin: EdgeInsets.only(right: 2.w),
-                  padding: const EdgeInsets.only(
-                      left: 8, right: 5, top: 5, bottom: 6),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(1),
-                        blurRadius: 10,
-                        offset: const Offset(2, 5),
+                      onTap: () {
+                        if (commentController.text.isEmpty) {
+                          AppConfig().showSnackbar(
+                              context, "Please type Something..!",
+                              isError: true);
+                        } else {
+                          sendReply(fileFormatList,attachmentFiles);
+                          // final message = Message(
+                          //     text: commentController.text.toString(),
+                          //     date: DateTime.now(),
+                          //     sendMe: true,
+                          //     image:
+                          //         "assets/images/closeup-content-attractive-indian-business-lady.png");
+                          setState(() {
+                            // messages.add(message);
+                          });
+                          commentController.clear();
+                        }
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 1.w),
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 7, top: 7, bottom: 8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(1),
+                              blurRadius: 10,
+                              offset: const Offset(2, 5),
+                            ),
+                          ],
+                          color: gsecondaryColor,
+                        ),
+                        child: Icon(
+                          Icons.send,
+                          color: gWhiteColor,
+                          size: 3.5.h,
+                        ),
                       ),
-                    ],
-                    color: gsecondaryColor,
-                  ),
-                  child: Icon(
-                    Icons.send,
-                    color: gWhiteColor,
-                    size: 2.5.h,
-                  ),
-                ),
-              )
+                    )
                   : Container(width: 0),
             ],
           ),
@@ -755,7 +769,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
   _imageListView(File loc, int index) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
-      margin: EdgeInsets.symmetric(vertical: 1.h,horizontal: 3.w),
+      margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
       decoration: BoxDecoration(
           color: gBackgroundColor,
           boxShadow: [
@@ -776,7 +790,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontFamily: kFontBold,
-            fontSize: 11.sp,
+            fontSize: 11.dp,
           ),
         ),
         trailing: GestureDetector(
@@ -838,12 +852,12 @@ class _TicketChatScreenState extends State<TicketChatScreen>
       floatingHeader: true,
       groupBy: (Threads message) {
         DateTime header =
-        DateFormat('dd-mm-yy hh:mm').parse("${message.createdAt}");
+            DateFormat('dd-mm-yy hh:mm').parse("${message.createdAt}");
         return DateTime(header.year, header.month, header.day);
       },
       groupHeaderBuilder: (Threads message) {
         DateTime header =
-        DateFormat('dd-mm-yy hh:mm').parse("${message.createdAt}");
+            DateFormat('dd-mm-yy hh:mm').parse("${message.createdAt}");
         return SizedBox(
           height: 40,
           child: Center(
@@ -853,7 +867,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                 padding: const EdgeInsets.all(8),
                 child: Text(
                   DateFormat.yMMMd().format(header),
-                  style: const TextStyle(color: gWhiteColor),
+                  style: TextStyle(color: gWhiteColor,fontSize: 12.dp,fontFamily: kFontMedium),
                 ),
               ),
             ),
@@ -867,177 +881,180 @@ class _TicketChatScreenState extends State<TicketChatScreen>
         return (message.threadType == "note" || message.threadType == "forward")
             ? const SizedBox()
             : Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Container(
-            //     child: message.isIncoming
-            //         ? _generateAvatarFromName(message.senderName)
-            //         : null),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 15),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: message.createdBy == "agent"
-                      ? CrossAxisAlignment.start
-                      : CrossAxisAlignment.end,
-                  children: [
-                    FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Container(
-                        width: double.maxFinite,
-                        padding: EdgeInsets.only(
-                            left: 3.5.w,
-                            right: 3.5.w,
-                            bottom: 1.5.h,
-                            top: 1.5.h),
-                        constraints:
-                        BoxConstraints(maxWidth: 65.w, minWidth: 0),
-                        margin: message.createdBy == "agent"
-                            ? EdgeInsets.only(
-                            top: 0.5.h,
-                            bottom: 0.5.h,
-                            left: 5,
-                            right: 20.w)
-                            : EdgeInsets.only(
-                            top: 0.5.h,
-                            bottom: 0.5.h,
-                            right: 5,
-                            left: 20.w),
-                        decoration: BoxDecoration(
-                            color: message.createdBy == "agent"
-                                ? (message.cc != null)
-                                ? kNumberCircleRed
-                                : gWhiteColor
-                                : gsecondaryColor,
-                            boxShadow: [
-                              BoxShadow(
-                                  blurRadius: 1.0,
-                                  color: Colors.grey.withAlpha(60),
-                                  spreadRadius: 1.0,
-                                  offset: Offset(0.0, 1.0))
-                            ],
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(18),
-                                topRight: Radius.circular(18),
-                                bottomLeft: message.createdBy == "agent"
-                                    ? Radius.circular(0)
-                                    : Radius.circular(18),
-                                bottomRight: message.createdBy == "agent"
-                                    ? Radius.circular(18)
-                                    : Radius.circular(0))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (message.createdBy == "agent")
-                              IntrinsicWidth(
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: HtmlWidget(
-                                    (message.user!.name != null)
-                                        ? "${message.user?.name}"
-                                        : "",
-                                    textStyle: TextStyle(
-                                        fontSize: smTextFontSize,
-                                        color: gHintTextColor,
-                                        fontFamily: kFontBold),
-                                  ),
-                                ),
-                              ),
-                            if (message.createdBy == "agent")
-                              SizedBox(
-                                height: 1.h,
-                              ),
-                            ...message.attachments!.map(
-                                  (e) => (message.attachments != null &&
-                                  message.attachments!.isNotEmpty)
-                                  ? InkWell(
-                                  onTap: () {
-                                    print(
-                                        "attachment URL : ${imageBaseUrl + e.relativePath!}");
-                                    buildAttachmentView(imageBaseUrl +
-                                        e.relativePath!);
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 1.h),
-                                    child: ClipRRect(
-                                      borderRadius:
-                                      BorderRadius.circular(10.0),
-                                      child: Image(
-                                        image: NetworkImage(
-                                            imageBaseUrl +
-                                                e.relativePath!),
-                                        fit: BoxFit.contain,
-                                        height: 15.h,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Container(
+                  //     child: message.isIncoming
+                  //         ? _generateAvatarFromName(message.senderName)
+                  //         : null),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 15),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: message.createdBy == "agent"
+                            ? CrossAxisAlignment.start
+                            : CrossAxisAlignment.end,
+                        children: [
+                          FittedBox(
+                            fit: BoxFit.fitWidth,
+                            child: Container(
+                              width: double.maxFinite,
+                              padding: EdgeInsets.symmetric(horizontal: 1.5.w,vertical: 1.5.h),
+                              constraints:
+                                  BoxConstraints(maxWidth: 65.w, minWidth: 0),
+                              margin: message.createdBy == "agent"
+                                  ? EdgeInsets.only(
+                                      top: 0.5.h,
+                                      bottom: 0.5.h,
+                                      left: 1.5.w,
+                                      right: 20.w)
+                                  : EdgeInsets.only(
+                                      top: 0.5.h,
+                                      bottom: 0.5.h,
+                                      right: 1.5.w,
+                                      left: 20.w),
+                              decoration: BoxDecoration(
+                                  color: message.createdBy == "agent"
+                                      ? (message.cc != null)
+                                          ? kNumberCircleRed
+                                          : gWhiteColor
+                                      : gsecondaryColor,
+                                  boxShadow: [
+                                    BoxShadow(
+                                        blurRadius: 1.0,
+                                        color: Colors.grey.withAlpha(60),
+                                        spreadRadius: 1.0,
+                                        offset: Offset(0.0, 1.0))
+                                  ],
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(18),
+                                      topRight: Radius.circular(18),
+                                      bottomLeft: message.createdBy == "agent"
+                                          ? Radius.circular(0)
+                                          : Radius.circular(18),
+                                      bottomRight: message.createdBy == "agent"
+                                          ? Radius.circular(18)
+                                          : Radius.circular(0))),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (message.createdBy == "agent")
+                                    IntrinsicWidth(
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: HtmlWidget(
+                                          (message.user!.name != null)
+                                              ? "${message.user?.name}"
+                                              : "",
+                                          textStyle: TextStyle(
+                                              fontSize: smTextFontSize,
+                                              color: gHintTextColor,
+                                              fontFamily: kFontBold,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  )
-                                // child: Align(
-                                //   alignment: Alignment.topLeft,
-                                //   child: Container(
-                                //     constraints: const BoxConstraints(
-                                //       maxHeight: 120,maxWidth: 70,
-                                //     ),
-                                //     decoration: BoxDecoration(
-                                //         image: DecorationImage(
-                                //             image: NetworkImage(
-                                //                 imageBaseUrl +
-                                //                     e.relativePath!),
-                                //             fit: BoxFit.contain)),
-                                //     // child: Image.network(imageBaseUrl+e.relativePath! ?? ''),
-                                //   ),
-                                // ),
-                              )
-                                  : const SizedBox(),
-                            ),
-                            HtmlWidget(
-                              parsedString ?? "",
-                              textStyle: TextStyle(
-                                color: message.createdBy == "agent"
-                                    ? (message.cc != null)
-                                    ? gWhiteColor
-                                    : gTextColor
-                                    : gWhiteColor,
+                                  if (message.createdBy == "agent")
+                                    SizedBox(
+                                      height: 1.h,
+                                    ),
+                                  ...message.attachments!.map(
+                                    (e) => (message.attachments != null &&
+                                            message.attachments!.isNotEmpty)
+                                        ? InkWell(
+                                            onTap: () {
+                                              print(
+                                                  "attachment URL : ${imageBaseUrl + e.relativePath!}");
+                                              buildAttachmentView(
+                                                  // e.iconURL!
+                                                  imageBaseUrl +
+                                                      e.relativePath!);
+                                            },
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 1.h),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10.0),
+                                                child: Image(
+                                                  image: NetworkImage(
+                                                      // e.iconURL!
+                                                      imageBaseUrl +
+                                                          e.relativePath!),
+                                                  fit: BoxFit.contain,
+                                                  height: 15.h,
+                                                ),
+                                              ),
+                                            )
+                                            // child: Align(
+                                            //   alignment: Alignment.topLeft,
+                                            //   child: Container(
+                                            //     constraints: const BoxConstraints(
+                                            //       maxHeight: 120,maxWidth: 70,
+                                            //     ),
+                                            //     decoration: BoxDecoration(
+                                            //         image: DecorationImage(
+                                            //             image: NetworkImage(
+                                            //                 imageBaseUrl +
+                                            //                     e.relativePath!),
+                                            //             fit: BoxFit.contain)),
+                                            //     // child: Image.network(imageBaseUrl+e.relativePath! ?? ''),
+                                            //   ),
+                                            // ),
+                                            )
+                                        : const SizedBox(),
+                                  ),
+                                  HtmlWidget(
+                                    parsedString ?? "",
+                                    textStyle: TextStyle(
+                                      color: message.createdBy == "agent"
+                                          ? (message.cc != null)
+                                              ? gWhiteColor
+                                              : gTextColor
+                                          : gWhiteColor,
+                                      fontSize: smTextFontSize,
+                                        fontFamily: kFontBold
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Text(
+                                      "${message.createdAt}",
+                                      style: TextStyle(
+                                          fontSize: smTextFontSize,
+                                          color: message.createdBy == "agent"
+                                              ? (message.cc != null)
+                                                  ? gWhiteColor
+                                                  : gTextColor
+                                              : gWhiteColor,
+                                          fontFamily: kFontBold,
+                                      ),
+                                    ),
+                                  ),
+                                  // Align(
+                                  //   alignment: Alignment.bottomRight,
+                                  //   child: Padding(
+                                  //     padding: EdgeInsets.only(top: 0.5.h),
+                                  //     child: Row(
+                                  //       mainAxisSize: MainAxisSize.min,
+                                  //       mainAxisAlignment:
+                                  //           MainAxisAlignment.spaceBetween,
+                                  //       children: _buildNameTimeHeader(message),
+                                  //     ),
+                                  //   ),
+                                  // ),
+                                ],
                               ),
                             ),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Text(
-                                "${message.createdAt}",
-                                style: TextStyle(
-                                    fontSize: smTextFontSize,
-                                    color: message.createdBy == "agent"
-                                        ? (message.cc != null)
-                                        ? gWhiteColor
-                                        : gTextColor
-                                        : gWhiteColor,
-                                    fontFamily: kFontBold),
-                              ),
-                            ),
-                            // Align(
-                            //   alignment: Alignment.bottomRight,
-                            //   child: Padding(
-                            //     padding: EdgeInsets.only(top: 0.5.h),
-                            //     child: Row(
-                            //       mainAxisSize: MainAxisSize.min,
-                            //       mainAxisAlignment:
-                            //           MainAxisAlignment.spaceBetween,
-                            //       children: _buildNameTimeHeader(message),
-                            //     ),
-                            //   ),
-                            // ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
+                  ),
+                ],
+              );
       },
     );
   }
@@ -1074,46 +1091,6 @@ class _TicketChatScreenState extends State<TicketChatScreen>
     ),
   );
 
-  sendReply() async {
-    // setState(() {
-    //   isLoading = true;
-    // });
-    print("---------Send reply---------");
-
-    Map m = {
-      'message': commentController.text.toString(),
-      'threadType': ThreadType.reply.name,
-      'actAsType': ActAsType.customer.name,
-      'actAsEmail': widget.email,
-      'status_id': (TicketStatusType.answered.index + 1).toString()
-    };
-
-    final result = await _uvDeskService.sendReplyService(widget.ticketId, m,
-        attachments: attachmentFiles);
-
-    if (result.runtimeType != ErrorModel) {
-      commentController.clear();
-      fileFormatList.clear();
-      getThreadsList();
-      // SentReplyModel model = result as SentReplyModel;
-      // setState(() {
-      //   isLoading = false;
-      // });
-      // GwcApi().showSnackBar(context, model.message!, isError: true);
-    } else {
-      // setState(() {
-      //   isLoading = false;
-      // });
-      ErrorModel response = result as ErrorModel;
-      AppConfig().showSnackbar(context, response.message!, isError: true);
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(
-      //     builder: (context) => const DashboardScreen(),
-      //   ),
-      // );
-    }
-  }
-
   /*
   Attachment codes
    */
@@ -1140,11 +1117,11 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                       child: Text('Choose File Source'),
                       decoration: BoxDecoration(
                           border: Border(
-                            bottom: BorderSide(
-                              color: gHintTextColor,
-                              width: 3.0,
-                            ),
-                          )),
+                        bottom: BorderSide(
+                          color: gHintTextColor,
+                          width: 3.0,
+                        ),
+                      )),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1169,11 +1146,11 @@ class _TicketChatScreenState extends State<TicketChatScreen>
                           height: 10,
                           decoration: BoxDecoration(
                               border: Border(
-                                right: BorderSide(
-                                  color: gHintTextColor,
-                                  width: 1,
-                                ),
-                              )),
+                            right: BorderSide(
+                              color: gHintTextColor,
+                              width: 1,
+                            ),
+                          )),
                         ),
                         TextButton(
                             onPressed: () {
@@ -1222,7 +1199,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
     ))
         ?.files;
 
-    var path2 =_paths?.single.bytes;
+    var path2 = _paths?.single.bytes;
 
     var path3 = _paths?.single.name;
 
@@ -1375,7 +1352,7 @@ class _TicketChatScreenState extends State<TicketChatScreen>
         backgroundColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(15.0.sp),
+            Radius.circular(15.0.dp),
           ),
         ),
         contentPadding: EdgeInsets.only(top: 1.h),
@@ -1385,6 +1362,50 @@ class _TicketChatScreenState extends State<TicketChatScreen>
       ),
     );
   }
+
+  sendReply(List<File> file,List<PlatformFile> selectedFiles) async {
+    setState(() {
+      isLoading = true;
+    });
+    fileFormatList.clear();
+    print("---------Send reply---------");
+
+    Map m = {
+      'message': commentController.text.toString(),
+      'threadType': ThreadType.reply.name,
+      'actAsType': ActAsType.customer.name,
+      'actAsEmail': widget.email,
+      'status_id': (TicketStatusType.answered.index + 1).toString(),
+      'ticket_id': widget.ticketId,
+    };
+
+    final result = await _uvDeskService.sendReplyService(widget.ticketId, m,
+        attachments: selectedFiles);
+
+    if (result.runtimeType != ErrorModel) {
+      file.clear();
+      selectedFiles.clear();
+      commentController.clear();
+      getThreadsList();
+      setState(() {
+        isLoading = false;
+      });
+      // SentReplyModel model = result as SentReplyModel;
+      // GwcApi().showSnackBar(context, model.message!, isError: true);
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      ErrorModel response = result as ErrorModel;
+      // AppConfig().showSnackbar(context, response.message!, isError: true);
+      // Navigator.of(context).pushReplacement(
+      //   MaterialPageRoute(
+      //     builder: (context) => const DashboardScreen(),
+      //   ),
+      // );
+    }
+  }
+
 }
 
 class Message {
@@ -1395,9 +1416,9 @@ class Message {
 
   Message(
       {required this.text,
-        required this.date,
-        required this.sendMe,
-        required this.image});
+      required this.date,
+      required this.sendMe,
+      required this.image});
 }
 
 class StreamSocket {

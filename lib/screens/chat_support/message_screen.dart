@@ -23,8 +23,7 @@
 // import 'package:mime/mime.dart';
 // import 'package:photo_view/photo_view.dart';
 // import 'package:provider/provider.dart';
-// import 'package:sizer/sizer.dart';
-// import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+// import 'package:flutter_sizer/flutter_sizer.dart';// import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 // import '../../model/message_model/message_model.dart';
 // import '../../services/quick_blox_service/quick_blox_service.dart';
 // import '../../widgets/constants.dart';

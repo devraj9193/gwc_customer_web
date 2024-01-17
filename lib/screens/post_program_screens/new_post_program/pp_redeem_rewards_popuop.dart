@@ -8,8 +8,7 @@ import 'package:gwc_customer_web/repository/rewards_repository/reward_repository
 import 'package:gwc_customer_web/services/rewards_service/reward_service.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
 class PPRewardsPopup extends StatefulWidget {

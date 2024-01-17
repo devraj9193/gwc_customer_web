@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:get/get.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:get/get.dart';
 import '../../model/error_model.dart';
 import '../../model/new_user_model/register/register_model.dart';
 import '../../repository/api_service.dart';

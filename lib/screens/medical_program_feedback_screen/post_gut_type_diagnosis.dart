@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:tcard/tcard.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:tcard/tcard.dart';
 
 import '../../model/error_model.dart';
 import '../../model/new_user_model/register/register_model.dart';
@@ -44,14 +43,6 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
     kNumberCircleAmber,
     kNumberCircleGreen,
     kNumberCircleRed,
-    kNumberCircleAmber,
-    gGreyColor,
-    kNumberCircleGreen,
-    kNumberCircleRed,
-    kNumberCirclePurple,
-    kNumberCircleAmber,
-    kNumberCircleGreen,
-    kNumberCircleRed,
   ];
 
   List<Widget> cards = [];
@@ -87,9 +78,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                                         ? slider8(index)
                                         : index == 8
                                             ? slider9(index)
-                                            : index == 9
-                                                ? slider10(index)
-                                                : Container();
+                                            : Container();
       },
     );
   }
@@ -182,7 +171,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
 
   @override
   Widget build(BuildContext context) {
-     double h = MediaQuery.of(context).size.height;
+    double h = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -235,79 +224,79 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                 SizedBox(
                   height: 1.h,
                 ),
-                TCard(
-                  cards: cards,
-                  lockYAxis: true,
-                  size: Size(double.maxFinite, h),
-                  delaySlideFor: 300,
-                  controller: _controller,
-                  onForward: (index, info) {
-                    print("onForward");
-                    print("${submittedIndex + 1}  $index");
-
-                    if (submittedIndex + 1 != index &&
-                        (submittedIndex + 1 < index)) {
-                      _controller.back();
-                    } else {
+                Center(
+                  child: TCard(
+                    cards: cards,
+                    lockYAxis: true,
+                    size: Size(MediaQuery.of(context).size.shortestSide < 600 ? double.maxFinite : 60.w, 80.h),
+                    delaySlideFor: 300,
+                    controller: _controller,
+                    onForward: (index, info) {
+                      print("onForward");
+                      print("${submittedIndex + 1}  $index");
+                  
+                      if (submittedIndex + 1 != index &&
+                          (submittedIndex + 1 < index)) {
+                        _controller.back();
+                      } else {
+                        _index = index;
+                        print("index: $index");
+                        print("Direction : ${info.direction}");
+                      }
+                      setState(() {});
+                    },
+                    onBack: (index, info) {
+                      print("onBack");
                       _index = index;
-                      print("index: $index");
-                      print("Direction : ${info.direction}");
-                    }
-                    setState(() {});
-                  },
-                  onBack: (index, info) {
-                    print("onBack");
-                    _index = index;
-                    setState(() {});
-                  },
-                  onEnd: () {
-                    print('end');
-                  },
+                      setState(() {});
+                    },
+                    onEnd: () {
+                      print('end');
+                    },
+                  ),
                 ),
                 SizedBox(height: 1.h),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30.w),
-                  child: Row(
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () {
-                          _controller.back();
-                        },
-                        child: const Icon(
-                          Icons.arrow_back_ios,
-                        ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        _controller.back();
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios,
                       ),
-                      SizedBox(width: 5.w),
-                      Text(
-                        "${_index + 1} of ${colors.length}",
-                        style: TextStyle(
-                          fontSize: 9.sp,
-                          color: gHintTextColor,
-                          height: 1.35,
-                          fontFamily: kFontMedium,
-                        ),
+                    ),
+                    SizedBox(width: 5.w),
+                    Text(
+                      "${_index + 1} of ${colors.length}",
+                      style: TextStyle(
+                        fontSize: 13.dp,
+                        color: gHintTextColor,
+                        height: 1.35,
+                        fontFamily: kFontMedium,
                       ),
-                      SizedBox(width: 5.w),
-                      GestureDetector(
-                        onTap: () {
-                          print(_index);
-                          print(submittedIndex);
-                          print(_index == colors.length - 1);
-                          if (submittedIndex == _index &&
-                              _index != colors.length - 1) {
-                            _controller.forward();
-                          } else {}
-                        },
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: (submittedIndex == _index &&
-                                  _index != colors.length - 1)
-                              ? gBlackColor
-                              : gGreyColor,
-                        ),
+                    ),
+                    SizedBox(width: 5.w),
+                    GestureDetector(
+                      onTap: () {
+                        print(_index);
+                        print(submittedIndex);
+                        print(_index == colors.length - 1);
+                        if (submittedIndex == _index &&
+                            _index != colors.length - 1) {
+                          _controller.forward();
+                        } else {}
+                      },
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: (submittedIndex == _index &&
+                                _index != colors.length - 1)
+                            ? gBlackColor
+                            : gGreyColor,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -451,53 +440,56 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                   'Stool consistency', 'Refer below given Bristol Stool chart',
                   fontSize: headingFont),
               SizedBox(height: 1.h),
-              ListView.separated(
-                  itemCount: stoolConsistency.length,
-                  controller: ScrollController(),
-                  shrinkWrap: true,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    var success = stoolConsistency[index];
-                    return Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            unselectedWidgetColor: gWhiteColor,
-                            disabledColor: gsecondaryColor),
-                        child: RadioListTile(
-                          visualDensity:
-                              VisualDensity(horizontal: -4, vertical: -4), //
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          value: success.title.toString(),
-                          activeColor: gsecondaryColor,
-                          splashRadius: 0,
-                          groupValue: selectedStoolConsistency,
-                          // controlAffinity: ListTileControlAffinity.trailing,
-                          onChanged: (value) {
-                            setstate(() {
-                              selectedStoolConsistency = value.toString();
-                              print(
-                                  "selectedStoolConsistency: $selectedStoolConsistency");
-                            });
-                          },
-                          title: Transform.translate(
-                            offset: const Offset(-10, 0),
-                            child: Text(
-                              success.title ?? '',
-                              style: TextStyle(
-                                color: gWhiteColor,
-                                height: 1.3,
-                                fontFamily: kFontBook,
-                                fontSize: subHeadingFont,
+             Expanded(child:  SingleChildScrollView(
+               child: ListView.separated(
+                    itemCount: stoolConsistency.length,
+                    controller: ScrollController(),
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      var success = stoolConsistency[index];
+                      return Transform.translate(
+                        offset: const Offset(-10, 0),
+                        child: Theme(
+                          data: Theme.of(context).copyWith(
+                              unselectedWidgetColor: gWhiteColor,
+                              disabledColor: gsecondaryColor),
+                          child: RadioListTile(
+                            visualDensity:
+                                VisualDensity(horizontal: -4, vertical: -4), //
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            value: success.title.toString(),
+                            activeColor: gsecondaryColor,
+                            splashRadius: 0,
+                            groupValue: selectedStoolConsistency,
+                            // controlAffinity: ListTileControlAffinity.trailing,
+                            onChanged: (value) {
+                              setstate(() {
+                                selectedStoolConsistency = value.toString();
+                                print(
+                                    "selectedStoolConsistency: $selectedStoolConsistency");
+                              });
+                            },
+                            title: Transform.translate(
+                              offset: const Offset(-10, 0),
+                              child: Text(
+                                success.title ?? '',
+                                style: TextStyle(
+                                  color: gWhiteColor,
+                                  height: 1.3,
+                                  fontFamily: kFontBook,
+                                  fontSize: subHeadingFont,
+                                ),
+                                // style: AllListText().subHeadingText(),
                               ),
-                              // style: AllListText().subHeadingText(),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
+                      );
+                    }),
+             ),),
               GestureDetector(
                 onTap: () {
                   if (selectedStoolConsistency.isEmpty) {
@@ -531,66 +523,66 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
     });
   }
 
-  slider3(int index) {
-    return StatefulBuilder(builder: (_, setstate) {
-      return Container(
-        padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
-        decoration: BoxDecoration(
-          color: colors[index].withOpacity(1),
-          borderRadius: BorderRadius.circular(16.0),
-          boxShadow: [
-            BoxShadow(
-              offset: const Offset(0, 17),
-              blurRadius: 10.0,
-              color: gWhiteColor.withOpacity(0.3),
-            )
-          ],
-        ),
-        child: Center(
-          child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildQuestionTitle('Bristol Stool chart image', '',
-                  fontSize: headingFont),
-              SizedBox(height: 4.h),
-              SizedBox(
-                height: 18.h,
-                child: const Image(
-                  image: AssetImage("assets/images/stool_image.png"),
-                  fit: BoxFit.fill,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  submittedIndex = 2;
-                  _controller.forward();
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 2.h,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    });
-  }
+  // slider3(int index) {
+  //   return StatefulBuilder(builder: (_, setstate) {
+  //     return Container(
+  //       padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+  //       decoration: BoxDecoration(
+  //         color: colors[index].withOpacity(1),
+  //         borderRadius: BorderRadius.circular(16.0),
+  //         boxShadow: [
+  //           BoxShadow(
+  //             offset: const Offset(0, 17),
+  //             blurRadius: 10.0,
+  //             color: gWhiteColor.withOpacity(0.3),
+  //           )
+  //         ],
+  //       ),
+  //       child: Center(
+  //         child: Column(
+  //           // crossAxisAlignment: CrossAxisAlignment.start,
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             SizedBox(height: 2.h),
+  //             buildQuestionTitle('Bristol Stool chart image', '',
+  //                 fontSize: headingFont),
+  //             SizedBox(height: 4.h),
+  //             SizedBox(
+  //               height: 18.h,
+  //               child: const Image(
+  //                 image: AssetImage("assets/images/stool_image.png"),
+  //                 fit: BoxFit.fill,
+  //               ),
+  //             ),
+  //             GestureDetector(
+  //               onTap: () {
+  //                 submittedIndex = 2;
+  //                 _controller.forward();
+  //               },
+  //               child: Center(
+  //                 child: Container(
+  //                   padding: EdgeInsets.all(5),
+  //                   margin: EdgeInsets.symmetric(vertical: 4.h),
+  //                   decoration: BoxDecoration(
+  //                       color: gWhiteColor, shape: BoxShape.circle),
+  //                   child: Center(
+  //                     child: Icon(
+  //                       Icons.done_outlined,
+  //                       color: gsecondaryColor,
+  //                       size: 2.h,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     );
+  //   });
+  // }
 
-  slider4(int index) {
+  slider3(int index) {
     return StatefulBuilder(builder: (_, setstate) {
       return Container(
         padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
@@ -668,7 +660,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                     AppConfig().showSnackbar(context, "Please Select Any One !",
                         isError: true, bottomPadding: 10);
                   } else {
-                    submittedIndex = 3;
+                    submittedIndex = 2;
                     _controller.forward();
                   }
                 },
@@ -695,7 +687,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
     });
   }
 
-  slider5(int index) {
+  slider4(int index) {
     return StatefulBuilder(builder: (_, setstate) {
       return Container(
         padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
@@ -771,7 +763,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                     AppConfig().showSnackbar(context, "Please Select Any One !",
                         isError: true, bottomPadding: 10);
                   } else {
-                    submittedIndex = 4;
+                    submittedIndex = 3;
                     _controller.forward();
                   }
                 },
@@ -798,7 +790,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
     });
   }
 
-  slider6(int index) {
+  slider5(int index) {
     return StatefulBuilder(builder: (_, setstate) {
       return Container(
         padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
@@ -875,7 +867,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                     AppConfig().showSnackbar(context, "Please Select Any One !",
                         isError: true, bottomPadding: 10);
                   } else {
-                    submittedIndex = 5;
+                    submittedIndex = 4;
                     _controller.forward();
                   }
                 },
@@ -902,7 +894,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
     });
   }
 
-  slider7(int index) {
+  slider6(int index) {
     return StatefulBuilder(builder: (_, setstate) {
       return Container(
         padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
@@ -980,7 +972,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                     AppConfig().showSnackbar(context, "Please Select Any One !",
                         isError: true, bottomPadding: 10);
                   } else {
-                    submittedIndex = 6;
+                    submittedIndex = 5;
                     _controller.forward();
                   }
                 },
@@ -1007,7 +999,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
     });
   }
 
-  slider8(int index) {
+  slider7(int index) {
     return StatefulBuilder(builder: (_, setstate) {
       return Container(
         padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
@@ -1086,7 +1078,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                     AppConfig().showSnackbar(context, "Please Select Any One !",
                         isError: true, bottomPadding: 10);
                   } else {
-                    submittedIndex = 7;
+                    submittedIndex = 6;
                     _controller.forward();
                   }
                 },
@@ -1113,7 +1105,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
     });
   }
 
-  slider9(int index) {
+  slider8(int index) {
     return StatefulBuilder(builder: (_, setstate) {
       return Container(
         padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
@@ -1233,7 +1225,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                         context, "Please Enter your answer",
                         isError: true, bottomPadding: 10);
                   } else {
-                    submittedIndex = 8;
+                    submittedIndex = 7;
                     _controller.forward();
                   }
                 },
@@ -1260,7 +1252,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
     });
   }
 
-  slider10(int index) {
+  slider9(int index) {
     return StatefulBuilder(builder: (_, setstate) {
       return Container(
         padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
@@ -1371,49 +1363,49 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                 ),
               ),
               Center(
-                child: GestureDetector(
-                  onTap: () {
-                    if (!isLoading) {
-                      if (selectedSymptomsAfterStomachUpset.isEmpty) {
-                        AppConfig().showSnackbar(
-                            context, "Please Select Any One !",
-                            isError: true, bottomPadding: 10);
-                      } else if (selectedSymptomsAfterStomachUpset == 'Other' &&
-                          selectedSymptomsAfterStomachUpsetController
-                              .text.isEmpty) {
-                        AppConfig().showSnackbar(
-                            context, "Please Enter your answer",
-                            isError: true, bottomPadding: 10);
-                      } else {
-                        submitGutDiagnosisForm(setstate);
+                child: IntrinsicWidth(
+                  child: GestureDetector(
+                    onTap: () {
+                      if (!isLoading) {
+                        if (selectedSymptomsAfterStomachUpset.isEmpty) {
+                          AppConfig().showSnackbar(
+                              context, "Please Select Any One !",
+                              isError: true, bottomPadding: 10);
+                        } else if (selectedSymptomsAfterStomachUpset == 'Other' &&
+                            selectedSymptomsAfterStomachUpsetController
+                                .text.isEmpty) {
+                          AppConfig().showSnackbar(
+                              context, "Please Enter your answer",
+                              isError: true, bottomPadding: 10);
+                        } else {
+                          submitGutDiagnosisForm(setstate);
+                        }
                       }
-                    }
-                  },
-                  child: Container(
-                    width: 40.w,
-                    height: 5.h,
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    decoration: BoxDecoration(
-                      color: eUser().buttonColor,
-                      borderRadius:
-                          BorderRadius.circular(eUser().buttonBorderRadius),
-                      // border: Border.all(
-                      //     color: eUser().buttonBorderColor,
-                      //     width: eUser().buttonBorderWidth
-                      // ),
+                    },
+                    child: Container(padding: EdgeInsets.symmetric(vertical: 1.5.h,horizontal: 5.w),
+                      margin: EdgeInsets.symmetric(vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: eUser().buttonColor,
+                        borderRadius:
+                            BorderRadius.circular(eUser().buttonBorderRadius),
+                        // border: Border.all(
+                        //     color: eUser().buttonBorderColor,
+                        //     width: eUser().buttonBorderWidth
+                        // ),
+                      ),
+                      child: (isLoading)
+                          ? buildThreeBounceIndicator(
+                              color: eUser().threeBounceIndicatorColor)
+                          : Center(
+                              child: Text(
+                              'Submit',
+                              style: TextStyle(
+                                fontFamily: eUser().buttonTextFont,
+                                color: eUser().buttonTextColor,
+                                fontSize: eUser().buttonTextSize,
+                              ),
+                            )),
                     ),
-                    child: (isLoading)
-                        ? buildThreeBounceIndicator(
-                            color: eUser().threeBounceIndicatorColor)
-                        : Center(
-                            child: Text(
-                            'Submit',
-                            style: TextStyle(
-                              fontFamily: eUser().buttonTextFont,
-                              color: eUser().buttonTextColor,
-                              fontSize: eUser().buttonTextSize,
-                            ),
-                          )),
                   ),
                 ),
               ),
@@ -1430,26 +1422,27 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         RichText(
-            key: key,
-            textScaleFactor: textScleFactor,
-            text: TextSpan(
-                text: name,
-                style: TextStyle(
-                  fontSize: fontSize ?? 9.sp,
-                  color: gWhiteColor,
-                  height: 1.35,
-                  fontFamily: kFontMedium,
-                ),
-                children: [
-                  TextSpan(
-                    text: ' *',
-                    style: TextStyle(
-                      fontSize: 9.sp,
-                      color: kPrimaryColor,
-                      fontFamily: "PoppinsSemiBold",
-                    ),
-                  )
-                ])),
+          key: key,
+          text: TextSpan(
+              text: name,
+              style: TextStyle(
+                fontSize: fontSize ?? 9.sp,
+                color: gWhiteColor,
+                height: 1.35,
+                fontFamily: kFontMedium,
+              ),
+              children: [
+                TextSpan(
+                  text: ' *',
+                  style: TextStyle(
+                    fontSize: 9.sp,
+                    color: kPrimaryColor,
+                    fontFamily: "PoppinsSemiBold",
+                  ),
+                )
+              ]),
+          textScaler: TextScaler.linear(textScleFactor),
+        ),
         Text(
           "Note: $notes",
           textAlign: TextAlign.start,

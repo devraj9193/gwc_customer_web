@@ -16,6 +16,6 @@ class EvaluationFormRepository{
   }
 
   Future getCountryDetailsRepo(String pinCode, String countryCode) async{
-    return await apiClient.getCountryDetails(pinCode, countryCode);
+    return await apiClient.getPinCodeDetails(pinCode, countryCode);
   }
 }

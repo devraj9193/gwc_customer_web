@@ -31,8 +31,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:simple_tooltip/simple_tooltip.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import 'package:video_player/video_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -243,7 +242,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
   }
 
   /// this will be showing when user not submitted previous day data and tracker
-  showMoreTextSheet(String? dayNumber) {
+  showMoreTextSheet(String? dayNumber, {bool? previousDay = false}) {
     return AppConfig().showSheet(
       context,
       Column(
@@ -266,33 +265,61 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                   SizedBox(
                     height: 1.h,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      selectedDay = int.parse(dayNumber!);
-                      // getMeals();
-                      getMealFromDay(selectedDay!);
-                      Navigator.pop(context);
-                    },
-                    child: Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.h, horizontal: 10.w),
-                        decoration: BoxDecoration(
-                          color: gsecondaryColor,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: gMainColor, width: 1),
-                        ),
-                        child: Text(
-                          'Go to - Day${dayNumber}',
-                          style: TextStyle(
-                            fontFamily: kFontMedium,
-                            color: gWhiteColor,
-                            fontSize: 11.sp,
+                  previousDay!
+                      ? GestureDetector(
+                          onTap: () {
+                            selectedDay = int.parse(dayNumber!);
+                            // getMeals();
+                            getMealFromDay(selectedDay!);
+                            Navigator.pop(context);
+                          },
+                          child: Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 1.h, horizontal: 10.w),
+                              decoration: BoxDecoration(
+                                color: gsecondaryColor,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: gMainColor, width: 1),
+                              ),
+                              child: Text(
+                                'Fill Day${dayNumber}',
+                                style: TextStyle(
+                                  fontFamily: kFontMedium,
+                                  color: gWhiteColor,
+                                  fontSize: 13.dp,
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () {
+                            selectedDay = int.parse(dayNumber!);
+                            // getMeals();
+                            getMealFromDay(selectedDay!);
+                            Navigator.pop(context);
+                          },
+                          child: Center(
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 1.h, horizontal: 10.w),
+                              decoration: BoxDecoration(
+                                color: gsecondaryColor,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: gMainColor, width: 1),
+                              ),
+                              child: Text(
+                                'Go to - Day${dayNumber}',
+                                style: TextStyle(
+                                  fontFamily: kFontMedium,
+                                  color: gWhiteColor,
+                                  fontSize: 13.dp,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -300,7 +327,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
           SizedBox(height: 1.h)
         ],
       ),
-      bottomSheetHeight: 34.h,
+      bottomSheetHeight: 40.h,
       circleIcon: bsHeadPinIcon,
     );
   }
@@ -364,7 +391,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                       style: TextStyle(
                         fontFamily: kFontMedium,
                         color: gWhiteColor,
-                        fontSize: 11.sp,
+                        fontSize: 13.dp,
                       ),
                     ),
                   ),
@@ -581,19 +608,104 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                   });
                   print("isDayCompleted: $isDayCompleted");
                   getMealFromDay(selectedDay!);
-                  // getMeals();
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => MealPlanScreen(
-                  //       // day: dayPlansData[index]["day"],
-                  //       isCompleted: listData[index].isCompleted == 1 ? true : null,
-                  //       day: listData[index].dayNumber!,
-                  //       presentDay: model.presentDay.toString(),
-                  //       nextDay: nextDay.toString() ?? "-1",
-                  //     ),
-                  //   ),
-                  // );
+                  // // selectedDay = int.parse(listData[index].dayNumber!);
+                  // print(
+                  //     "day number : ${int.parse(listData[index].dayNumber!)}");
+                  // print("selected day : ${selectedDay!}");
+                  // print("isDay Completed : ${listData[index].isCompleted!}");
+                  // print("present day : $presentDay");
+                  // if (listData[index].isCompleted != 1) {
+                  //   if (int.parse(listData[index].dayNumber!) > presentDay!) {
+                  //     setState(() {
+                  //       showShimmer = true;
+                  //       // selectedDay = int.parse(listData[index].dayNumber!);
+                  //       isDayCompleted = listData[index].isCompleted == 1;
+                  //       commentController.clear();
+                  //     });
+                  //     showMoreTextSheet("$selectedDay",previousDay: true);
+                  //   } else if(int.parse(listData[index].dayNumber!) == presentDay!){
+                  //
+                  //   }else {
+                  //     setState(() {
+                  //       showShimmer = true;
+                  //       selectedDay = int.parse(listData[index].dayNumber!);
+                  //       isDayCompleted = listData[index].isCompleted == 1;
+                  //       commentController.clear();
+                  //     });
+                  //     getMealFromDay(selectedDay!);
+                  //   }
+                  // } else {
+                  //   setState(() {
+                  //     showShimmer = true;
+                  //     selectedDay = int.parse(listData[index].dayNumber!);
+                  //     isDayCompleted = listData[index].isCompleted == 1;
+                  //     commentController.clear();
+                  //   });
+                  //   print("isDayCompleted: $isDayCompleted");
+                  //   getMealFromDay(selectedDay!);
+                  //   // getMeals();
+                  //   // Navigator.push(
+                  //   //   context,
+                  //   //   MaterialPageRoute(
+                  //   //     builder: (context) => MealPlanScreen(
+                  //   //       // day: dayPlansData[index]["day"],
+                  //   //       isCompleted: listData[index].isCompleted == 1 ? true : null,
+                  //   //       day: listData[index].dayNumber!,
+                  //   //       presentDay: model.presentDay.toString(),
+                  //   //       nextDay: nextDay.toString() ?? "-1",
+                  //   //     ),
+                  //   //   ),
+                  //   // );
+                  // }
+                  // // setState(() {
+                  // //   showShimmer = true;
+                  // //   selectedDay = int.parse(listData[index].dayNumber!);
+                  // //   isDayCompleted = listData[index].isCompleted == 1;
+                  // //   commentController.clear();
+                  // // });
+                  // // print("isDayCompleted: $isDayCompleted");
+                  // // getMealFromDay(selectedDay!);
+                  // // // getMeals();
+                  // // // Navigator.push(
+                  // // //   context,
+                  // // //   MaterialPageRoute(
+                  // // //     builder: (context) => MealPlanScreen(
+                  // // //       // day: dayPlansData[index]["day"],
+                  // // //       isCompleted: listData[index].isCompleted == 1 ? true : null,
+                  // // //       day: listData[index].dayNumber!,
+                  // // //       presentDay: model.presentDay.toString(),
+                  // // //       nextDay: nextDay.toString() ?? "-1",
+                  // // //     ),
+                  // // //   ),
+                  // // // );
+                  if (int.parse(listData[index].dayNumber!) == 1) {
+                  } else {
+                    for (int i = 0; i < presentDay!-1; i++) {
+                      setState(() {
+                        showShimmer = true;
+                        selectedDay = int.parse(listData[index].dayNumber!);
+                        isDayCompleted = listData[index].isCompleted == 1;
+                        commentController.clear();
+                      });
+                      print(presentDay);
+                      print("index : ${index !=i}");
+                      if (listData[i].isCompleted == 0 && index != i ) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          showMoreTextSheet(listData[i].dayNumber);
+                        });
+                        break;
+                      }else{
+                        setState(() {
+                          showShimmer = true;
+                          selectedDay = int.parse(listData[index].dayNumber!);
+                          isDayCompleted = listData[index].isCompleted == 1;
+                          commentController.clear();
+                        });
+                        print("isDayCompleted: $isDayCompleted");
+                        getMealFromDay(selectedDay!);
+                      }
+                    }
+                  }
                 }
               : () {
                   print("disable");
@@ -616,8 +728,8 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                         : (listData[index].dayNumber == presentDay.toString())
                             ? MealPlanConstants().dayBgPresentdayColor
                             : MealPlanConstants().dayBgNormalColor),
-            margin: const EdgeInsets.only(left: 4, top: 5, right: 4),
-            padding: EdgeInsets.symmetric(horizontal: 3.w),
+            margin: EdgeInsets.symmetric(vertical: 0.h,horizontal: 1.w),
+            padding: EdgeInsets.symmetric(horizontal: 2.w,vertical: 0.h),
             child: Center(
               child: Text(
                 'DAY ${listData[index].dayNumber!}',
@@ -638,7 +750,8 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                         ? MealPlanConstants().dayTextSelectedColor
                         : MealPlanConstants().dayTextColor),
               ),
-            )),
+            ),
+        ),
       ),
     );
   }
@@ -913,12 +1026,13 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
           //       SizedBox(height: 1.h),
           Visibility(
             // visible: !widget.viewDay1Details,
-            child: SizedBox(
-              height: 4.h,
+            child: Container(
+              padding: EdgeInsets.only(top: 2.h,left: 2.w),
+              height: 6.h,
               child: EasyScrollToIndex(
                 controller: _scrollController, // ScrollToIndexController
                 itemCount: listData.length,
-                itemWidth: 50,
+                itemWidth: 4.w,
                 itemHeight: 4.h,
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (BuildContext context, int index) {
@@ -970,7 +1084,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: 2.h),
+            SizedBox(height: 1.h),
             Text(
               // "Day ${widget.day} Meal Plan",
               (selectedDay == null || presentDay == 0)
@@ -981,15 +1095,16 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                   color: eUser().mainHeadingColor,
                   fontSize: eUser().mainHeadingFontSize),
             ),
-            Text(
-              (presentDay == 0)
-                  ? 'Your Detox will start from tomorrow'
-                  : 'Day ${presentDay} of Day ${totalDays}',
-              style: TextStyle(
-                  fontFamily: kFontMedium,
-                  color: eUser().mainHeadingColor,
-                  fontSize: 10.sp),
-            ),
+            if (presentDay == 0 && selectedDay == 0)
+              Text(
+                (presentDay == 0)
+                    ? 'Your Detox will start from tomorrow'
+                    : 'Day ${presentDay} of Day ${totalDays}',
+                style: TextStyle(
+                    fontFamily: kFontMedium,
+                    color: eUser().mainHeadingColor,
+                    fontSize: 12.dp),
+              ),
             // not showing these when we came from slide screen
             // Visibility(
             //   visible: !widget.viewDay1Details,
@@ -1041,7 +1156,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                       style: TextStyle(
                           fontFamily: kFontBook,
                           color: gTextColor,
-                          fontSize: 11.sp),
+                          fontSize: 12.dp),
                       decoration: InputDecoration(
                         suffixIcon: commentController.text.isEmpty ||
                                 isDayCompleted != null
@@ -1060,7 +1175,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                         hintStyle: TextStyle(
                           fontFamily: "GothamBook",
                           color: gTextColor,
-                          fontSize: 9.sp,
+                          fontSize: 9.dp,
                         ),
                       ),
                       textInputAction: TextInputAction.next,
@@ -1111,7 +1226,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                       child: Container(
                         margin: EdgeInsets.symmetric(vertical: 2.h),
                         padding: EdgeInsets.symmetric(
-                            horizontal: 10.w, vertical: 1.h),
+                            horizontal: 5.w, vertical: 1.5.h),
                         // width:
                         //     btnText.length > 22 ? 75.w : 60.w,
                         // height: 5.h,
@@ -1215,9 +1330,9 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                 //   controller: _controller!,
                 //   showVolume: false,
                 //   showVideoProgress: !model.isChanged,
-                //   seekButtonIconSize: 10.sp,
-                //   playButtonIconSize: 14.sp,
-                //   replayButtonSize: 14.sp,
+                //   seekButtonIconSize: 10.dp,
+                //   playButtonIconSize: 14.dp,
+                //   replayButtonSize: 14.dp,
                 //   showFullscreenBtn: true,
                 // );
               },
@@ -1302,7 +1417,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                 style: TextStyle(
                   height: 1.5,
                   color: MealPlanConstants().mealNameTextColor,
-                  fontSize: 12.sp,
+                  fontSize: 15.dp,
                   fontFamily: MealPlanConstants().mealNameFont,
                 ),
               ),
@@ -1312,7 +1427,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                   (e) => Column(
                     children: [
                       Container(
-                        height: 120,
+                        height: 140,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 6, vertical: 2),
                         child: Row(
@@ -1383,8 +1498,8 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                                           }
                                                     : () => showVideo(e),
                                             child: Container(
-                                              height: 100,
-                                              width: 150,
+                                              height: 120,
+                                              width: 160,
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     BorderRadius.circular(15),
@@ -1466,8 +1581,8 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                                     }
                                               : () => showVideo(e),
                                           child: Container(
-                                            height: 100,
-                                            width: 150,
+                                            height: 120,
+                                            width: 160,
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(15),
@@ -1511,7 +1626,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                       ),
                               ],
                             ),
-                            const SizedBox(width: 8),
+                            SizedBox(width: 1.5.w),
                             Expanded(
                               child: Column(
                                 // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1532,9 +1647,6 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
                                   Text(
                                     e.name ?? 'Morning Yoga',
                                     style: TextStyle(
@@ -1546,7 +1658,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                   ),
                                   // Text(e.mealTime ?? "B/W 6-8am",
                                   //   style: TextStyle(
-                                  //       fontSize: 9.sp,
+                                  //       fontSize: 9.dp,
                                   //       fontFamily: kFontMedium
                                   //   ),
                                   // ),
@@ -1576,10 +1688,10 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                                           child: Icon(
                                                             Icons.circle_sharp,
                                                             color: gGreyColor,
-                                                            size: 0.7.h,
+                                                            size: 1.h,
                                                           ),
                                                         ),
-                                                        SizedBox(width: 1.w),
+                                                        SizedBox(width: 0.5.w),
                                                         Expanded(
                                                           child: Text(
                                                             element ?? '',
@@ -1664,7 +1776,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                               Text(
                                                 'Followed',
                                                 style: TextStyle(
-                                                    fontSize: 8.sp,
+                                                    fontSize: 10.dp,
                                                     fontFamily: kFontMedium,
                                                     color: gWhiteColor),
                                               ),
@@ -1698,7 +1810,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                                   Text(
                                                     'Missed It',
                                                     style: TextStyle(
-                                                        fontSize: 8.sp,
+                                                        fontSize: 10.dp,
                                                         fontFamily: kFontMedium,
                                                         color: gWhiteColor),
                                                   ),
@@ -1724,7 +1836,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                               child: Text(
                                                 'Status',
                                                 style: TextStyle(
-                                                    fontSize: 8.sp,
+                                                    fontSize: 10.dp,
                                                     fontFamily: kFontMedium,
                                                     color: gWhiteColor),
                                               ),
@@ -1807,7 +1919,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
               },
               child: Container(
                 padding:
-                    EdgeInsets.symmetric(vertical: 1.2.h, horizontal: 10.w),
+                    EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
                 decoration: BoxDecoration(
                     color: gsecondaryColor,
                     border: Border.all(color: kLineColor, width: 0.5),
@@ -1817,7 +1929,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                   style: TextStyle(
                     fontFamily: kFontMedium,
                     color: gWhiteColor,
-                    fontSize: 11.sp,
+                    fontSize: 13.dp,
                   ),
                 ),
               ),
@@ -1830,7 +1942,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
               },
               child: Container(
                 padding:
-                    EdgeInsets.symmetric(vertical: 1.2.h, horizontal: 10.w),
+                    EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
                 decoration: BoxDecoration(
                     color: gPrimaryColor,
                     border: Border.all(color: kLineColor, width: 0.5),
@@ -1840,7 +1952,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                   style: TextStyle(
                     fontFamily: kFontMedium,
                     color: gWhiteColor,
-                    fontSize: 11.sp,
+                    fontSize: 13.dp,
                   ),
                 ),
               ),
@@ -1927,7 +2039,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
             fontFamily: kFontBook,
             // color: (planStatus == index) ? color : gTextColor,
             color: (statusList[itemId] == title) ? color : gTextColor,
-            fontSize: 9.5.sp,
+            fontSize: 9.5.dp,
           ),
         ),
       ),
@@ -1949,7 +2061,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
         style: TextStyle(
           fontFamily: "GothamBook",
           color: (planStatus == index) ? color : gTextColor,
-          fontSize: 8.sp,
+          fontSize: 8.dp,
         ),
       ),
     );
@@ -2075,9 +2187,17 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
       // initVideoView(e.url);
     } else {
       print(e.url);
-
-      Navigator.push(context,
-          MaterialPageRoute(builder: (ctx) => Mp3Widget(url: e.url ?? '')));
+      setState(() {
+        isEnabled = !isEnabled;
+        videoName = e.name!;
+        mealTime = e.mealTime!;
+      });
+      YogaVideoPlayer(
+        url: e.url.toString(),
+      );
+      initChewieView(e.url);
+      // Navigator.push(context,
+      //     MaterialPageRoute(builder: (ctx) => Mp3Widget(url: e.url ?? '')));
     }
     // _init(e.url);
     // Navigator.push(context, MaterialPageRoute(builder: (ctx)=> YogaVideoScreen(yogaDetails: e.toJson(),day: widget.day,)));
@@ -2140,7 +2260,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                         color: statusList.isEmpty
                             ? textColor
                             : getTextColor(e.itemId!) ?? textColor,
-                        fontSize: 8.sp),
+                        fontSize: 8.dp),
                   ),
                 ),
                 Icon(
@@ -2387,7 +2507,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
     //                   controller: _trackerVideoPlayerController!,
     //                   showVolume: false,
     //                   showVideoProgress: false,
-    //                   seekButtonIconSize: 10.sp,
+    //                   seekButtonIconSize: 10.dp,
     //                   playButtonIconSize: 14.sp,
     //                   replayButtonSize: 10.sp,
     //                 )

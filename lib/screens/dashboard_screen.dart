@@ -5,10 +5,11 @@ This screen will be base class which will holds bottom sheet
 import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:gwc_customer_web/screens/profile_screens/settings_screen.dart';
+import 'package:gwc_customer_web/screens/program_plans/day_tracker_ui/day_tracker.dart';
+import 'package:gwc_customer_web/screens/program_plans/program_start_screen.dart';
 import 'package:gwc_customer_web/screens/testimonial_list_screen/testimonial_new_screen.dart';
-import 'package:gwc_customer_web/screens/uvdesk/ticket_chat_screens/ticket_chat_screen.dart';
-import 'package:sizer/sizer.dart';
-import '../model/error_model.dart';
+import 'package:gwc_customer_web/screens/uvdesk/ticket_details_screen.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import '../model/error_model.dart';
 import '../model/evaluation_from_models/evaluation_model_format1.dart';
 import '../model/uvdesk_model/new_ticket_details_model.dart';
 import '../repository/api_service.dart';
@@ -18,6 +19,7 @@ import '../utils/app_config.dart';
 import '../widgets/constants.dart';
 import '../widgets/exit_widget.dart';
 import '../widgets/widgets.dart';
+import 'appointment_screens/consultation_screens/upload_files.dart';
 import 'appointment_screens/doctor_calender_time_screen.dart';
 import 'cook_kit_shipping_screens/tracking_pop_up.dart';
 import 'evalution_form/evaluation_upload_report.dart';
@@ -28,6 +30,7 @@ import 'home_screens/level_status.dart';
 import 'home_screens/water_intake/water_level_screen.dart';
 import 'medical_program_feedback_screen/card_selection.dart';
 import 'medical_program_feedback_screen/final_feedback_form.dart';
+import 'medical_program_feedback_screen/post_gut_type_diagnosis.dart';
 import 'profile_screens/call_support_method.dart';
 import 'package:http/http.dart' as http;
 import 'package:badges/badges.dart' as badges;
@@ -57,7 +60,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getThreadsList();
+          getThreadsList();
     setState(() {
       _bottomNavIndex = widget.index;
     });
@@ -78,9 +81,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       NewTicketDetailsModel model = result as NewTicketDetailsModel;
       threadsListModel = model;
       setState(() {
-          _pref.setBool("isReplied",model.ticket!.isReplied!);
+          _pref.setBool("isReplied",model.response.ticket!.isReplied!);
           // isReplied = model.ticket!.isReplied!;
-          print("isReplied api : ${model.ticket!.isReplied!}");
+          print("isReplied api : ${model.response.ticket!.isReplied!}");
           print("isReplied : ${_pref.getBool("isReplied")!}");
           isReplied = _pref.getBool("isReplied") ?? false;
       });
@@ -131,11 +134,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           //     dayNumber: '0',
           // );
 
-           // return const PostGutTypeDiagnosis();
-          // return CombinedPrepMealTransScreen(stage: 1,);
+            // return const ProgramPlanScreen(from: 'healing',videoLink: 'https://gutandhealth.com/storage/uploads/Begin Gut Preparation.mp4',);
+          // return UploadFiles();
           // this one
-          // return const TrackerUI(from: '');
-          //  return EvaluationUploadReport();
+          //    return const TrackerUI(from: '');
+                // return EvaluationUploadReport();
             return const LevelStatus();
 
           // return const HomeScreens();
@@ -297,7 +300,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         //                         style: TextStyle(
         //                             fontFamily: kFontMedium,
         //                             color: gWhiteColor,
-        //                             fontSize: 6.sp,
+        //                             fontSize: 6.dp,
         //                         ),
         //                       ),
         //                     ),
@@ -366,7 +369,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           style: TabStyle.react,
           backgroundColor: Colors.white,
           // curveSize: 500,
-          height: 7.h,
+          height: 9.h,
           items: [
             TabItem(
               icon: _bottomNavIndex == 0
@@ -457,12 +460,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() {});
         }
       } else {
-        AppConfig().showSheet(
-          context,
-          const ExitWidget(),
-          bottomSheetHeight: 45.h,
-          isDismissible: true,
-        );
+        // AppConfig().showSheet(
+        //   context,
+        //   const ExitWidget(),
+        //   bottomSheetHeight: 45.h,
+        //   isDismissible: true,
+        // );
       }
     });
     return Future.value(false);

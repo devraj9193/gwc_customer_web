@@ -13,8 +13,7 @@ import 'package:gwc_customer_web/screens/uvdesk/ticket_details_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../model/error_model.dart';
 import '../../model/uvdesk_model/get_ticket_list_model.dart';
 import '../../repository/api_service.dart';

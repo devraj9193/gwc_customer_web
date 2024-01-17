@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-const newDashboardGreenButtonColor = Color(0xffA7CB52);
+import 'package:flutter_sizer/flutter_sizer.dart';const newDashboardGreenButtonColor = Color(0xffA7CB52);
 const newDashboardLightGreyButtonColor = Color(0xffB9B4B4);
 
 const gPrimaryColor = Color(0xff4E7215);
@@ -73,12 +72,12 @@ const kButtonColor = gsecondaryColor;
 
 
 /// tracker ui fonts
-double headingFont = 12.sp;
-double subHeadingFont = 10.sp;
-double questionFont = 10.sp;
+double headingFont = 16.dp;
+double subHeadingFont = 14.dp;
+double questionFont = 15.dp;
 
-double smTextFontSize = 8.5.sp;
-double smText9FontSize = 9.sp;
+double smTextFontSize = 13.dp;
+double smText9FontSize = 11.dp;
 
 
 
@@ -88,12 +87,12 @@ const kBottomSheetHeadYellow = Color(0xffFFE281);
 const kBottomSheetHeadGreen = Color(0xffA7C652);
 const kBottomSheetHeadCircleColor = Color(0xffFFF9F8);
 
-double bottomSheetHeadingFontSize = 12.sp;
+double bottomSheetHeadingFontSize = 14.dp;
 String bottomSheetHeadingFontFamily = kFontBold;
 
-double bottomSheetSubHeadingXLFontSize = 12.sp;
-double bottomSheetSubHeadingXFontSize = 11.sp;
-double bottomSheetSubHeadingSFontSize = 10.sp;
+double bottomSheetSubHeadingXLFontSize = 14.dp;
+double bottomSheetSubHeadingXFontSize = 13.dp;
+double bottomSheetSubHeadingSFontSize = 15.dp;
 String bottomSheetSubHeadingBoldFont = kFontBold;
 String bottomSheetSubHeadingMediumFont = kFontMedium;
 String bottomSheetSubHeadingBookFont = kFontBook;
@@ -149,23 +148,23 @@ class eUser{
 
   var mainHeadingColor = gBlackColor;
   var mainHeadingFont = kFontBold;
-  double mainHeadingFontSize = 13.sp;
+  double mainHeadingFontSize = 15.dp;
 
   var userFieldLabelColor =  gBlackColor;
   var userFieldLabelFont = kFontMedium;
-  double userFieldLabelFontSize = 11.sp;
+  double userFieldLabelFontSize = 15.dp;
   /*
   fontFamily: "GothamBook",
   color: gHintTextColor,
-  fontSize: 11.sp
+  fontSize: 11.dp
    */
   var userTextFieldColor =  gHintTextColor;
   var userTextFieldFont = kFontBook;
-  double userTextFieldFontSize = 11.sp;
+  double userTextFieldFontSize = 13.dp;
 
   var userTextFieldHintColor =  Colors.grey.withOpacity(0.5);
   var userTextFieldHintFont = kFontMedium;
-  double userTextFieldHintFontSize = 10.sp;
+  double userTextFieldHintFontSize = 13.dp;
 
   var focusedBorderColor = gBlackColor;
   var focusedBorderWidth = 1.5;
@@ -175,15 +174,15 @@ class eUser{
 
   var fieldSuffixTextColor =  gBlackColor.withOpacity(0.5);
   var fieldSuffixTextFont = kFontMedium;
-  double fieldSuffixTextFontSize = 8.sp;
+  double fieldSuffixTextFontSize = 8.dp;
 
-  var resendOtpFontSize = 9.sp;
+  var resendOtpFontSize = 9.dp;
   var resendOtpFont = kFontBook;
   var resendOtpFontColor = gsecondaryColor;
 
   var buttonColor = kButtonColor;
   var buttonTextColor = gWhiteColor;
-  double buttonTextSize = 12.sp;
+  double buttonTextSize = 14.dp;
   var buttonTextFont = kFontBold;
   var buttonBorderColor = kLineColor;
   double buttonBorderWidth = 1;
@@ -194,15 +193,15 @@ class eUser{
 
   var loginDummyTextColor =  Colors.black87;
   var loginDummyTextFont = kFontBook;
-  double loginDummyTextFontSize = 9.sp;
+  double loginDummyTextFontSize = 9.dp;
 
   var anAccountTextColor =  gHintTextColor;
   var anAccountTextFont = kFontMedium;
-  double anAccountTextFontSize = 10.sp;
+  double anAccountTextFontSize = 10.dp;
 
   var loginSignupTextColor =  gsecondaryColor;
   var loginSignupTextFont = kFontBold;
-  double loginSignupTextFontSize = 10.5.sp;
+  double loginSignupTextFontSize = 10.5.dp;
 
 }
 
@@ -210,37 +209,37 @@ class PPConstants{
   final bgColor = Color(0xffFAFAFA).withOpacity(1);
 
   var kDayText = gBlackColor;
-  double kDayTextFontSize = 13.sp;
+  double kDayTextFontSize = 13.dp;
   var kDayTextFont = kFontBold;
 
   var topViewHeadingText = gBlackColor;
-  double topViewHeadingFontSize = 12.sp;
+  double topViewHeadingFontSize = 12.dp;
   var topViewHeadingFont = kFontMedium;
 
   var topViewSubText = gBlackColor.withOpacity(0.5);
-  double topViewSubFontSize = 9.sp;
+  double topViewSubFontSize = 11.dp;
   var topViewSubFont = kFontBook;
 
   var kBottomViewHeadingText = gsecondaryColor;
-  double kBottomViewHeadingFontSize = 12.sp;
+  double kBottomViewHeadingFontSize = 12.dp;
   var kBottomViewHeadingFont = kFontMedium;
 
   var kBottomViewSubText = gHintTextColor;
-  double kBottomViewSubFontSize = 8.5.sp;
+  double kBottomViewSubFontSize = 8.5.dp;
   var kBottomViewSubFont = kFontBook;
 
   var kBottomViewSuffixText = gBlackColor.withOpacity(0.5);
-  double kBottomViewSuffixFontSize = 8.sp;
+  double kBottomViewSuffixFontSize = 8.dp;
   var kBottomViewSuffixFont = kFontBook;
 
   var kBottomSheetHeadingText = gsecondaryColor;
-  double kBottomSheetHeadingFontSize = 12.sp;
+  double kBottomSheetHeadingFontSize = 12.dp;
   var kBottomSheetHeadingFont = kFontMedium;
 
   /// this is for benefits answer
   var kBottomSheetBenefitsText = gBlackColor;
   /// this is for benefits answer
-  double kBottomSheetBenefitsFontSize = 10.sp;
+  double kBottomSheetBenefitsFontSize = 10.dp;
   /// this is for benefits answer
   var kBottomSheetBenefitsFont = kFontMedium;
 
@@ -257,25 +256,25 @@ class MealPlanConstants{
   var dayBgSelectedColor = newDashboardGreenButtonColor;
   var dayBgPresentdayColor = gsecondaryColor;
   double dayBorderRadius = 8.0;
-  double presentDayTextSize = 10.sp;
-  double DisableDayTextSize = 10.sp;
+  double presentDayTextSize = 12.dp;
+  double DisableDayTextSize = 12.dp;
   var dayTextFontFamily = kFontMedium;
   var dayUnSelectedTextFontFamily = kFontBook;
 
   var groupHeaderTextColor = gBlackColor;
   var groupHeaderFont = kFontBook;
-  double groupHeaderFontSize = 12.sp;
+  double groupHeaderFontSize = 12.dp;
 
   var mustHaveTextColor = gsecondaryColor;
   var mustHaveFont = kFontBold;
-  double mustHaveFontSize = 8.sp;
+  double mustHaveFontSize = 14.dp;
 
   var mealNameTextColor = gBlackColor;
   var mealNameFont = kFontMedium;
-  double mealNameFontSize = 12.sp;
+  double mealNameFontSize = 14.dp;
 
   var benifitsFont = kFontBook;
-  double benifitsFontSize = 10.sp;
+  double benifitsFontSize = 10.dp;
 
 }
 

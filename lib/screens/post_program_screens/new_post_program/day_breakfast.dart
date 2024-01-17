@@ -9,8 +9,7 @@ import 'package:gwc_customer_web/services/post_program_service/post_program_serv
 import 'package:gwc_customer_web/utils/app_config.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 
 class PPDailyTasksUI extends StatefulWidget {
   final String day;

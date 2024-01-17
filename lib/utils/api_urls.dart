@@ -12,6 +12,8 @@ var registerUserUrl = "${AppConfig().BASE_URL}/api/register";
 /// shiprocket Api
 var shippingApiLoginUrl = "${AppConfig().shipRocket_AWB_URL}/auth/login";
 
+var shipRocketTrackingApiUrl = "${AppConfig().BASE_URL}/api/getData/shiprocket_tracking";
+
 var shippingApiUrl = "${AppConfig().shipRocket_AWB_URL}/courier/track/awb";
 
 var shoppingListApiUrl =
@@ -34,6 +36,9 @@ var enquiryStatusUrl = "${AppConfig().BASE_URL}/api/form/check_enquiry_status";
 
 var submitEvaluationFormUrl =
     "${AppConfig().BASE_URL}/api/submitForm/evaluation_form";
+
+var getPinCodeFormApiUrl =
+    "${AppConfig().BASE_URL}/api/getData/pincode";
 
 var getEvaluationDataUrl =
     "${AppConfig().BASE_URL}/api/getData/get_evaluation_data";
@@ -110,6 +115,9 @@ var doctorRequestedReportListUrl =
 
 var submitDoctorRequestedReportUrl =
     "${AppConfig().BASE_URL}/api/submitForm/requested_user_report";
+
+var submitUserReportUploadUrl =
+    "${AppConfig().BASE_URL}/api/submitForm/report_upload";
 
 var notificationListUrl =
     "${AppConfig().BASE_URL}/api/getData/notification_list";
@@ -193,6 +201,12 @@ var getRemainderUrl = '${AppConfig().BASE_URL}/api/getData/get_water_reminder';
 
 var submitRemainderUrl =
     '${AppConfig().BASE_URL}/api/submitForm/water_reminder';
+
+var ticketChatApiUrl =
+    '${AppConfig().BASE_URL}/api/getData/track_ticket';
+
+var ticketChatSendApiUrl =
+    '${AppConfig().BASE_URL}/api/submitForm/reply_message';
 
 // *************** uvdesk apis *****************
 /*

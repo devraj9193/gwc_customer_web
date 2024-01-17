@@ -2,8 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../widgets/constants.dart';
 
 class FeedsDetailsScreen extends StatefulWidget {

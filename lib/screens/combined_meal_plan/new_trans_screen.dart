@@ -34,7 +34,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gwc_customer_web/model/combined_meal_model/detox_nourish_model/child_nourish_model.dart';
 import 'package:lottie/lottie.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../model/combined_meal_model/meal_slot_model.dart';
 import '../../model/error_model.dart';
 import '../../model/prepratory_meal_model/prep_meal_model.dart';
@@ -57,11 +57,13 @@ class NourishPlanScreen extends StatefulWidget {
   final ChildNourishModel prepPlanDetails;
   final String? totalDays;
   final int selectedDay;
+
   /// this value if false by default
   /// if we come from start screen and clicked on view button
   /// than this will true
   final bool viewDay1Details;
   final String? trackerVideoLink;
+
   /// we r using this parameter to check whether post program started or not
   /// if there is a value than clap sheet not showing
   final String? postProgramStage;
@@ -124,38 +126,39 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
     _childPrepModel = childPrepModel;
     print("Nourish--");
     print(_childPrepModel!.toJson());
-    if(_childPrepModel != null){
+    if (_childPrepModel != null) {
       final dataList = _childPrepModel?.data ?? {};
 
       totalDays = int.tryParse(widget.totalDays ?? "0") ?? -1;
 
-
       currentDayStatus = _childPrepModel?.currentDayStatus ?? '0';
       previousDayStatus = _childPrepModel?.previousDayStatus;
 
-      isPostProgramStarted = _childPrepModel?.isPostProgramStarted == '0' || _childPrepModel?.isPostProgramStarted == 'null'  ? false : true;
+      isPostProgramStarted = _childPrepModel?.isPostProgramStarted == '0' ||
+              _childPrepModel?.isPostProgramStarted == 'null'
+          ? false
+          : true;
 
       print("previousDayStatus: $previousDayStatus");
       print("currentDayStatus: $currentDayStatus");
 
-      if(_childPrepModel!.currentDay != null){
+      if (_childPrepModel!.currentDay != null) {
         presentDay = int.tryParse(_childPrepModel!.currentDay!) ?? 1;
       }
 
       print("presentDay: $presentDay");
 
-      if(_childPrepModel!.currentDay != null){
+      if (_childPrepModel!.currentDay != null) {
         presentDay = int.tryParse(_childPrepModel!.currentDay!) ?? 1;
       }
 
       print("presentDay: $presentDay");
-
 
       slotNamesForTabs.addAll(dataList);
 
       print(slotNamesForTabs);
 
-      if(slotNamesForTabs.isNotEmpty){
+      if (slotNamesForTabs.isNotEmpty) {
         selectedIndex = 0;
         // selectedSlot = slotNamesForTabs.keys.first;
         // selectedItemName = slotNamesForTabs.values.first.subItems!.keys.first;
@@ -166,7 +169,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
     _tabController = TabController(vsync: this, length: tabSize);
 
     if (!widget.viewDay1Details) {
-      if(!isPostProgramStarted){
+      if (!isPostProgramStarted) {
         // this is previousDayStatus change from cron
         // if (previousDayStatus == "0") {
         // this is when we change from db
@@ -179,16 +182,19 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                   builder: (ctx) => TrackerUI(
                       from: ProgramMealType.transition.name,
                       isPreviousDaySheet: true,
-                      proceedProgramDayModel: ProceedProgramDayModel(day: (presentDay!-1).toString()),
-                      trackerVideoLink: widget.trackerVideoLink
-                  ),),);
+                      proceedProgramDayModel: ProceedProgramDayModel(
+                          day: (presentDay! - 1).toString()),
+                      trackerVideoLink: widget.trackerVideoLink),
+                ),
+              );
             }
           });
         }
-        if ((presentDay == totalDays && _childPrepModel!.currentDayStatus == "1" || _childPrepModel!.isNourishCompleted == "1") &&
+        if ((presentDay == totalDays &&
+                    _childPrepModel!.currentDayStatus == "1" ||
+                _childPrepModel!.isNourishCompleted == "1") &&
             (widget.postProgramStage == null ||
-                widget.postProgramStage!.isEmpty))
-        {
+                widget.postProgramStage!.isEmpty)) {
           Future.delayed(Duration(seconds: 0)).then((value) {
             return buildDayCompletedClap();
           });
@@ -276,35 +282,28 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
   /// to get the initial index to show time based tabs
   getInitialIndex() {
     print("HOur : $selectedIndex ${DateTime.now().hour}");
-    print("HOur : $selectedIndex : ${DateTime.now().hour >= DateTime.now().hour}");
+    print(
+        "HOur : $selectedIndex : ${DateTime.now().hour >= DateTime.now().hour}");
     if (DateTime.now().hour >= 0 && DateTime.now().hour <= 7) {
-      print(
-          "Early Morning : ${DateTime.now().hour >= 7}");
+      print("Early Morning : ${DateTime.now().hour >= 7}");
       selectedIndex = 0;
     } else if (DateTime.now().hour >= 7 && DateTime.now().hour <= 10) {
-      print(
-          "Breakfast : ${DateTime.now().hour <= 7}");
+      print("Breakfast : ${DateTime.now().hour <= 7}");
       selectedIndex = 1;
     } else if (DateTime.now().hour >= 10 && DateTime.now().hour <= 12) {
-      print(
-          "Mid Day : ${DateTime.now().hour <= 10}");
+      print("Mid Day : ${DateTime.now().hour <= 10}");
       selectedIndex = 2;
-    }
-    else if (DateTime.now().hour > 12 && DateTime.now().hour <= 14) {
+    } else if (DateTime.now().hour > 12 && DateTime.now().hour <= 14) {
       print("Lunch : ${DateTime.now().hour <= 11}");
       selectedIndex = 3;
-    }
-    else if (DateTime.now().hour > 14 && DateTime.now().hour <= 18) {
-      print(
-          "Evening : ${DateTime.now().hour <= 13}");
+    } else if (DateTime.now().hour > 14 && DateTime.now().hour <= 18) {
+      print("Evening : ${DateTime.now().hour <= 13}");
       selectedIndex = 4;
     } else if (DateTime.now().hour > 18 && DateTime.now().hour <= 21) {
-      print(
-          "Dinner : ${DateTime.now().hour <= 18}");
+      print("Dinner : ${DateTime.now().hour <= 18}");
       selectedIndex = 5;
     } else if (DateTime.now().hour > 21 && DateTime.now().hour <= 0) {
-      print(
-          "Post Dinner : ${DateTime.now().hour <= 21}");
+      print("Post Dinner : ${DateTime.now().hour <= 21}");
       selectedIndex = 6;
       showTrackerBtn = true;
     }
@@ -317,7 +316,6 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
     _tabController!.animateTo(selectedIndex);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -327,7 +325,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: 3.w,top: 2.h,bottom: 1.h),
+              padding: EdgeInsets.only(left: 3.w, top: 2.h, bottom: 0.h),
               child: Text(
                 'Nourish Phase',
                 style: TextStyle(
@@ -339,11 +337,13 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
             Padding(
               padding: EdgeInsets.only(left: 3.w),
               child: Text(
-                (presentDay == 0) ? 'Your Nourish will start from tomorrow' : 'Day ${presentDay} of Day ${widget.totalDays}',
+                (presentDay == 0)
+                    ? 'Your Nourish will start from tomorrow'
+                    : 'Day ${presentDay} of Day ${widget.totalDays}',
                 style: TextStyle(
                     fontFamily: kFontMedium,
                     color: eUser().mainHeadingColor,
-                    fontSize: 10.sp),
+                    fontSize: 12.dp),
               ),
             ),
             // SizedBox(height: 1.h),
@@ -382,11 +382,15 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                         unselectedLabelStyle: TextStyle(
                             fontFamily: kFontBook,
                             color: gHintTextColor,
-                            fontSize: 9.sp),
+                            fontSize: 12.dp),
                         labelStyle: TextStyle(
                             fontFamily: kFontMedium,
                             color: gBlackColor,
-                            fontSize: 11.sp),
+                            fontSize: 15.dp),
+                        indicatorColor: newDashboardGreenButtonColor,
+                        labelPadding: EdgeInsets.symmetric(horizontal: 5.w),
+                        indicatorPadding:
+                            EdgeInsets.symmetric(horizontal: -2.w),
                         indicator: BoxDecoration(
                           color: newDashboardGreenButtonColor,
                           borderRadius: const BorderRadius.only(
@@ -397,19 +401,21 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                         onTap: (index) {
                           print("ontap: $index");
                           // print(slotNamesForTabs.keys.elementAt(index));
-                          selectedSlot =
-                              slotNamesForTabs.keys.elementAt(index);
+                          selectedSlot = slotNamesForTabs.keys.elementAt(index);
                           selectedIndex = index;
                           setState(() {
-                            selectedItemName = slotNamesForTabs[selectedSlot]!.subItems!.keys.first;
+                            selectedItemName = slotNamesForTabs[selectedSlot]!
+                                .subItems!
+                                .keys
+                                .first;
                             print(selectedItemName);
                           });
                           // _buildList(index);
                         },
                         tabs: slotNamesForTabs.keys
                             .map((e) => Tab(
-                          text: e,
-                        ))
+                                  text: e,
+                                ))
                             .toList(),
                       ),
                     ),
@@ -425,7 +431,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                   ...slotNamesForTabs.values
                       .map(
                         (e) => buildTabView(e),
-                  )
+                      )
                       .toList(),
                 ],
               ),
@@ -473,7 +479,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
     slotNamesForTabs.entries.map((e) {
       print("compare");
       print(e.value.subItems == mealNames.subItems);
-      if(e.value.subItems == mealNames.subItems){
+      if (e.value.subItems == mealNames.subItems) {
         mealNames.subItems!.forEach((key, element) {
           subItems.add(key);
           print("$key -- $element");
@@ -512,8 +518,8 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
           ],
         ),
         Expanded(
-        child: SingleChildScrollView(
-          child: Column(
+            child: SingleChildScrollView(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
                 height: 65.h,
@@ -527,13 +533,13 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                         children: [
                           Container(
                             width: 300,
-                            margin: EdgeInsets.only(
-                                left: 3.w, right: 3.w, top: 5.h, bottom: 5.h),
+                            margin: EdgeInsets.symmetric(
+                                vertical: 3.5.h, horizontal: 5.w),
                             padding: EdgeInsets.only(bottom: 2.h),
                             decoration: BoxDecoration(
-                              color: gBackgroundColor,
+                              color: gWhiteColor,
+                              // gSitBackBgColor,
                               borderRadius: BorderRadius.circular(40),
-
                               // boxShadow:  [
                               //   BoxShadow(
                               //     color: gWhiteColor,
@@ -544,14 +550,18 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                             ),
                             child: buildReceipeDetails(meals[index]),
                           ),
-                          if(meals.length > 1)orFiled(index),
+                          if (meals.length > 1) orFiled(index),
                         ],
                       );
                     }),
               ),
               // btn(),
               //&& showTrackerBtn
-              if (currentDayStatus == "0" && !widget.viewDay1Details && showTrackerBtn) btn(),
+              if (currentDayStatus == "0" &&
+                  !widget.viewDay1Details
+                  // && showTrackerBtn
+              )
+                btn(),
               Visibility(
                 visible: currentDayStatus == "1",
                 child: Center(
@@ -575,15 +585,16 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                                 ),
                               ),
                             ),
-                            SizedBox(width: 8,),
+                            SizedBox(
+                              width: 8,
+                            ),
                             Text(
                               // "Day ${widget.day} Meal Plan",
                               "Day ${presentDay} Submitted",
                               style: TextStyle(
                                   fontFamily: eUser().mainHeadingFont,
                                   color: gTextColor,
-                                  fontSize:
-                                  eUser().mainHeadingFontSize),
+                                  fontSize: eUser().mainHeadingFontSize),
                             )
                           ],
                         ),
@@ -594,8 +605,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
               )
             ],
           ),
-        )
-        ),
+        )),
       ],
     );
   }
@@ -606,34 +616,33 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
     if (subItems != null) {
       print("subItems: $subItems");
       subItems.forEach((key) {
-        WidgetList.add(
-            GestureDetector(
-                onTap: () {
-                  print(key);
-                  rotatedBoxOnclick(key);
-                },
-                child: RotatedBox(
-                  quarterTurns: 3,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 2.w),
-                    decoration: selectedItemName == key
-                        ? const BoxDecoration(
-                      color: gWhiteColor,
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(20),
-                        bottomLeft: Radius.circular(20),
-                      ),
-                    )
-                        : const BoxDecoration(),
-                    child: Text(
-                      key,
-                      style: TextStyle(
-                        color: selectedItemName == key ? gBlackColor : gWhiteColor,
-                        fontSize: 16,
-                      ),
-                    ),
+        WidgetList.add(GestureDetector(
+            onTap: () {
+              print(key);
+              rotatedBoxOnclick(key);
+            },
+            child: RotatedBox(
+              quarterTurns: 3,
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 2.w),
+                decoration: selectedItemName == key
+                    ? const BoxDecoration(
+                        color: gWhiteColor,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          bottomLeft: Radius.circular(20),
+                        ),
+                      )
+                    : const BoxDecoration(),
+                child: Text(
+                  key,
+                  style: TextStyle(
+                    color: selectedItemName == key ? gBlackColor : gWhiteColor,
+                    fontSize: 16,
                   ),
-                )));
+                ),
+              ),
+            )));
       });
     }
     print(WidgetList);
@@ -652,7 +661,6 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
       addAnimation();
     });
   }
-
 
   // /// this function design has changed
   // /// now we r not using this design
@@ -744,13 +752,13 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
           right: 0,
           top: 6.h,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 3.w),
-            margin: EdgeInsets.symmetric(horizontal: 2.w),
+            padding: EdgeInsets.symmetric(horizontal: 1.w),
+            margin: EdgeInsets.symmetric(horizontal: 0.w),
             decoration: BoxDecoration(
               color: gWhiteColor,
               borderRadius: BorderRadius.circular(40),
               border:
-              Border.all(color: kLineColor.withOpacity(0.2), width: 0.9),
+                  Border.all(color: kLineColor.withOpacity(0.2), width: 0.9),
               // boxShadow: [
               //   BoxShadow(
               //     color: gBlackColor.withOpacity(0.1),
@@ -764,7 +772,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 15.h,
+                    height: 13.h,
                   ),
                   Text(
                     meal?.name ?? '',
@@ -773,90 +781,88 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                         color: eUser().mainHeadingColor,
                         fontSize: eUser().mainHeadingFontSize),
                   ),
-                  SizedBox(
-                    height: 2.h
-                  ),
+                  SizedBox(height: 2.h),
                   (meal?.benefits != null)
                       ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ...meal!.benefits!.split('* ').map((element) {
-                        if(element.isNotEmpty) {
-                          return Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 0.3.h),
-                                child: Icon(
-                                  Icons.circle_sharp,
-                                  color: gGreyColor,
-                                  size: 1.h,
-                                ),
-                              ),
-                              SizedBox(width: 2.w),
-                              Expanded(
-                                child: Text(
-                                  element ?? '',
-                                  style: TextStyle(
-                                      fontFamily: eUser().userTextFieldFont,
-                                      height: 1.2,
-                                      color: eUser().userTextFieldColor,
-                                      fontSize: eUser()
-                                          .userTextFieldHintFontSize),
-                                ),
-                              ),
-                            ],
-                          );
-                        } else return SizedBox();
-
-                      })
-                    ],
-                  )
-                      : SizedBox(),
-                  SizedBox(height: 5.h),
-                  (meal?.howToPrepare != null)
-                      ? Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        Get.to(
-                              () => MealPlanRecipeDetails(
-                            meal: meal,
-                          ),
-                        );
-                      },
-                      child: Container(
-                        // margin: EdgeInsets.symmetric(horizontal: 5.w),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.h, horizontal: 5.w),
-                        decoration: BoxDecoration(
-                          color: newDashboardGreenButtonColor,
-                          borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(15),
-                            bottomLeft: Radius.circular(15),
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: kLineColor,
-                              offset: Offset(2, 3),
-                              blurRadius: 5,
-                            )
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ...meal!.benefits!.split('* ').map((element) {
+                              if (element.isNotEmpty) {
+                                return Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 0.3.h),
+                                      child: Icon(
+                                        Icons.circle_sharp,
+                                        color: gGreyColor,
+                                        size: 1.5.h,
+                                      ),
+                                    ),
+                                    SizedBox(width: 1.w),
+                                    Expanded(
+                                      child: Text(
+                                        element ?? '',
+                                        style: TextStyle(
+                                            fontFamily:
+                                                eUser().userTextFieldFont,
+                                            height: 1.2,
+                                            color: eUser().userTextFieldColor,
+                                            fontSize: eUser()
+                                                .userTextFieldHintFontSize),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else
+                                return SizedBox();
+                            })
                           ],
-                          // border: Border.all(
-                          //   width: 1,
-                          //   color: kLineColor,
-                          // ),
-                        ),
-                        child: Text(
-                          "Recipe",
-                          style: TextStyle(
-                            color: gWhiteColor,
-                            fontFamily: kFontBook,
-                            fontSize: 11.sp,
+                        )
+                      : SizedBox(),
+                  (widget.viewDay1Details) ? const SizedBox() :  (meal?.howToPrepare != null)
+                      ? Center(
+                          child: GestureDetector(
+                            onTap: () {
+                                    Get.to(
+                                      () => MealPlanRecipeDetails(
+                                        meal: meal,
+                                      ),
+                                    );
+                                  },
+                            child: Container(
+                              margin: EdgeInsets.symmetric(vertical: 5.h),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 1.5.h, horizontal: 3.w),
+                              decoration: BoxDecoration(
+                                color: newDashboardGreenButtonColor,
+                                borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(15),
+                                  bottomLeft: Radius.circular(15),
+                                ),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: kLineColor,
+                                    offset: Offset(2, 3),
+                                    blurRadius: 5,
+                                  )
+                                ],
+                                // border: Border.all(
+                                //   width: 1,
+                                //   color: kLineColor,
+                                // ),
+                              ),
+                              child: Text(
+                                "Recipe",
+                                style: TextStyle(
+                                  color: gWhiteColor,
+                                  fontFamily: kFontBook,
+                                  fontSize: 14.dp,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  )
+                        )
                       : const SizedBox(),
                 ],
               ),
@@ -883,15 +889,15 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
             child: Center(
               child: (meal?.itemPhoto != null && meal!.itemPhoto!.isNotEmpty)
                   ? CircleAvatar(
-                radius: 8.h,
-                backgroundImage: NetworkImage("${meal.itemPhoto}"),
-                //AssetImage("assets/images/Group 3252.png"),
-              )
+                      radius: 7.h,
+                      backgroundImage: NetworkImage("${meal.itemPhoto}"),
+                      //AssetImage("assets/images/Group 3252.png"),
+                    )
                   : CircleAvatar(
-                radius: 8.h,
-                backgroundImage: const AssetImage(
-                    "assets/images/meal_placeholder.png"),
-              ),
+                      radius: 7.h,
+                      backgroundImage: const AssetImage(
+                          "assets/images/meal_placeholder.png"),
+                    ),
             ),
           ),
         ),
@@ -917,9 +923,9 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
           context,
           MaterialPageRoute(
               builder: (ctx) => MealPdf(
-                pdfLink: url!,
-                heading: url.split('/').last,
-              )));
+                    pdfLink: url!,
+                    heading: url.split('/').last,
+                  )));
   }
 
   orFiled(int index) {
@@ -937,37 +943,40 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
 
   btn() {
     return Center(
-      child: GestureDetector(
-        onTap: () {
-          print("(presentDay).toString(): ${(presentDay).toString()}");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (ctx) => TrackerUI(
-                  from: ProgramMealType.transition.name,
-                  proceedProgramDayModel: ProceedProgramDayModel(day: (presentDay == 0 ? 1 : presentDay).toString()),
-                  trackerVideoLink: widget.trackerVideoLink
-              ),),);
-        },
-        child: Container(
-          margin: EdgeInsets.symmetric(vertical: 2.h),
-          width: 60.w,
-          height: 5.h,
-          decoration: BoxDecoration(
-            color: eUser().buttonColor,
-            borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
-            // border: Border.all(color: eUser().buttonBorderColor,
-            //     width: eUser().buttonBorderWidth),
-          ),
-          child: Center(
-            child: Text(
-              'Next',
-              // 'Proceed to Day $proceedToDay',
-              style: TextStyle(
-                fontFamily: eUser().buttonTextFont,
-                color: eUser().buttonTextColor,
-                // color: (statusList.length != lst.length) ? gPrimaryColor : gMainColor,
-                fontSize: eUser().buttonTextSize,
+      child: IntrinsicWidth(
+        child: GestureDetector(
+          onTap: () {
+            print("(presentDay).toString(): ${(presentDay).toString()}");
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (ctx) => TrackerUI(
+                    from: ProgramMealType.transition.name,
+                    proceedProgramDayModel: ProceedProgramDayModel(
+                        day: (presentDay == 0 ? 1 : presentDay).toString()),
+                    trackerVideoLink: widget.trackerVideoLink),
+              ),
+            );
+          },
+          child: Container(
+            margin: EdgeInsets.symmetric(vertical: 2.h),
+            padding: EdgeInsets.symmetric(vertical: 1.5.h,horizontal: 5.w),
+            decoration: BoxDecoration(
+              color: eUser().buttonColor,
+              borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
+              // border: Border.all(color: eUser().buttonBorderColor,
+              //     width: eUser().buttonBorderWidth),
+            ),
+            child: Center(
+              child: Text(
+                'Next',
+                // 'Proceed to Day $proceedToDay',
+                style: TextStyle(
+                  fontFamily: eUser().buttonTextFont,
+                  color: eUser().buttonTextColor,
+                  // color: (statusList.length != lst.length) ? gPrimaryColor : gMainColor,
+                  fontSize: eUser().buttonTextSize,
+                ),
               ),
             ),
           ),
@@ -979,17 +988,17 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
   /// this function is used for rotatedbox click events
   void addAnimation() {
     _animationController =
-    AnimationController(duration: Duration(milliseconds: 300), vsync: this)
-      ..addListener(() {
-        setState(() {
-          animationOffset =
-              Offset(checkedPositionOffset.dx, _animation.value);
-        });
-      });
+        AnimationController(duration: Duration(milliseconds: 300), vsync: this)
+          ..addListener(() {
+            setState(() {
+              animationOffset =
+                  Offset(checkedPositionOffset.dx, _animation.value);
+            });
+          });
 
     _animation = Tween(begin: lastCheckOffset.dy, end: checkedPositionOffset.dy)
         .animate(CurvedAnimation(
-        parent: _animationController!, curve: Curves.easeInOutBack));
+            parent: _animationController!, curve: Curves.easeInOutBack));
     _animationController!.forward();
   }
 
@@ -1039,7 +1048,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                   },
                   child: Container(
                     padding:
-                    EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
+                        EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
                     decoration: BoxDecoration(
                       color: gsecondaryColor,
                       borderRadius: BorderRadius.circular(8),
@@ -1050,7 +1059,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                       style: TextStyle(
                         fontFamily: kFontMedium,
                         color: gWhiteColor,
-                        fontSize: 11.sp,
+                        fontSize: 11.dp,
                       ),
                     ),
                   ),
@@ -1083,8 +1092,11 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
         Future.delayed(Duration(seconds: 2)).then((value) {
           Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (_) => DashboardScreen(index: 2,)),
-                  (route) => true);
+              MaterialPageRoute(
+                  builder: (_) => DashboardScreen(
+                        index: 2,
+                      )),
+              (route) => true);
         });
       }
     }
@@ -1095,10 +1107,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
       httpClient: http.Client(),
     ),
   );
-
 }
-
-
 
 /*
 old ui
@@ -1107,8 +1116,7 @@ old ui
 // import 'package:flutter/material.dart';
 // import 'package:gwc_customer/model/combined_meal_model/detox_nourish_model/child_nourish_model.dart';
 // import 'package:lottie/lottie.dart';
-// import 'package:sizer/sizer.dart';
-// import '../../model/combined_meal_model/new_prep_model.dart';
+// import 'package:flutter_sizer/flutter_sizer.dart';// import '../../model/combined_meal_model/new_prep_model.dart';
 // import '../../model/error_model.dart';
 // import '../../model/program_model/proceed_model/send_proceed_program_model.dart';
 // import '../../model/program_model/start_post_program_model.dart';
@@ -1395,11 +1403,11 @@ old ui
 //                           unselectedLabelStyle: TextStyle(
 //                               fontFamily: kFontBook,
 //                               color: gHintTextColor,
-//                               fontSize: 9.sp),
+//                               fontSize: 9.dp),
 //                           labelStyle: TextStyle(
 //                               fontFamily: kFontMedium,
 //                               color: gBlackColor,
-//                               fontSize: 9.sp),
+//                               fontSize: 9.dp),
 //                           indicator: BoxDecoration(
 //                             color: kNumberCircleGreen,
 //                             borderRadius: const BorderRadius.only(
@@ -1719,7 +1727,7 @@ old ui
 //                           style: TextStyle(
 //                             color: gWhiteColor,
 //                             fontFamily: kFontBook,
-//                             fontSize: 11.sp,
+//                             fontSize: 11.dp,
 //                           ),
 //                         ),
 //                       ),
@@ -1915,7 +1923,7 @@ old ui
 //                       style: TextStyle(
 //                         fontFamily: kFontMedium,
 //                         color: gWhiteColor,
-//                         fontSize: 11.sp,
+//                         fontSize: 11.dp,
 //                       ),
 //                     ),
 //                   ),
@@ -1985,8 +1993,7 @@ old ui
 // // import 'package:gwc_customer/widgets/vlc_player/vlc_player_with_controls.dart';
 // // import 'package:gwc_customer/widgets/widgets.dart';
 // // import 'package:lottie/lottie.dart';
-// // import 'package:sizer/sizer.dart';
-// // import 'package:http/http.dart' as http;
+// // import 'package:flutter_sizer/flutter_sizer.dart';// // import 'package:http/http.dart' as http;
 // // import 'package:wakelock_plus/wakelock_plus.dart';
 // //
 // // import '../../../repository/post_program_repo/post_program_repository.dart';
@@ -2052,7 +2059,7 @@ old ui
 // //   //       child: Text(
 // //   //         res.message ?? '',
 // //   //         style: TextStyle(
-// //   //           fontSize: 10.sp,
+// //   //           fontSize: 10.dp,
 // //   //           fontFamily: kFontMedium,
 // //   //         ),
 // //   //       ),
@@ -2392,11 +2399,11 @@ old ui
 // //                           unselectedLabelStyle: TextStyle(
 // //                               fontFamily: kFontBook,
 // //                               color: gHintTextColor,
-// //                               fontSize: 9.sp),
+// //                               fontSize: 9.dp),
 // //                           labelStyle: TextStyle(
 // //                               fontFamily: kFontMedium,
 // //                               color: gBlackColor,
-// //                               fontSize: 9.sp),
+// //                               fontSize: 9.dp),
 // //                           indicator: BoxDecoration(
 // //                             color: gWhiteColor,
 // //                             borderRadius: const BorderRadius.only(
@@ -2650,7 +2657,7 @@ old ui
 // //                           style: TextStyle(
 // //                             color: gWhiteColor,
 // //                             fontFamily: kFontBook,
-// //                             fontSize: 11.sp,
+// //                             fontSize: 11.dp,
 // //                           ),
 // //                         ),
 // //                       ),
@@ -3075,7 +3082,7 @@ old ui
 // //                       style: TextStyle(
 // //                         fontFamily: kFontMedium,
 // //                         color: gWhiteColor,
-// //                         fontSize: 11.sp,
+// //                         fontSize: 11.dp,
 // //                       ),
 // //                     ),
 // //                   ),

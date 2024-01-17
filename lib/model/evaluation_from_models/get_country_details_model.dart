@@ -1,30 +1,49 @@
 class GetCountryDetailsModel {
-  String? message;
-  String? status;
-  List<PostOffice>? postOffice;
+  int status;
+  int errorCode;
+  Response response;
 
-  GetCountryDetailsModel({this.message, this.status, this.postOffice});
+  GetCountryDetailsModel({
+    required this.status,
+    required this.errorCode,
+    required this.response,
+  });
 
-  GetCountryDetailsModel.fromJson(Map<String, dynamic> json) {
-    message = json['Message'];
-    status = json['Status'];
-    if (json['PostOffice'] != null) {
-      postOffice = <PostOffice>[];
-      json['PostOffice'].forEach((v) {
-        postOffice!.add(new PostOffice.fromJson(v));
-      });
-    }
-  }
+  factory GetCountryDetailsModel.fromJson(Map<String, dynamic> json) => GetCountryDetailsModel(
+    status: json["status"],
+    errorCode: json["errorCode"],
+    response: Response.fromJson(json["response"]),
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Message'] = this.message;
-    data['Status'] = this.status;
-    if (this.postOffice != null) {
-      data['PostOffice'] = this.postOffice!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "status": status,
+    "errorCode": errorCode,
+    "response": response.toJson(),
+  };
+}
+
+class Response {
+  String message;
+  String status;
+  List<PostOffice> postOffice;
+
+  Response({
+    required this.message,
+    required this.status,
+    required this.postOffice,
+  });
+
+  factory Response.fromJson(Map<String, dynamic> json) => Response(
+    message: json["Message"],
+    status: json["Status"],
+    postOffice: List<PostOffice>.from(json["PostOffice"].map((x) => PostOffice.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "Message": message,
+    "Status": status,
+    "PostOffice": List<dynamic>.from(postOffice.map((x) => x.toJson())),
+  };
 }
 
 class PostOffice {

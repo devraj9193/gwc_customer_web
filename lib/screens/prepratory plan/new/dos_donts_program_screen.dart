@@ -10,8 +10,7 @@ used syncfusion pdf viewer;
 
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import '../../../widgets/constants.dart';
 

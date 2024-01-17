@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import '../../../widgets/constants.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import '../../../widgets/constants.dart';
 import '../../../widgets/widgets.dart';
 import '../../evalution_form/check_box_settings.dart';
 import 'gut_health_tracker.dart';

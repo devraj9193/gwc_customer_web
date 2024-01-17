@@ -7,8 +7,7 @@ Now this screen was not using
 
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/screens/evalution_form/evaluation_get_details.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/widgets.dart';
 import '../appointment_screens/consultation_screens/upload_files.dart';

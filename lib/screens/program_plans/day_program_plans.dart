@@ -10,8 +10,7 @@
 // import 'package:gwc_customer/services/program_service/program_service.dart';
 // import 'package:gwc_customer/widgets/open_alert_box.dart';
 // import 'package:lottie/lottie.dart';
-// import 'package:sizer/sizer.dart';
-// import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:flutter_sizer/flutter_sizer.dart';// import 'package:cached_network_image/cached_network_image.dart';
 // import '../../model/program_model/start_post_program_model.dart';
 // import '../../repository/api_service.dart';
 // import '../../repository/post_program_repo/post_program_repository.dart';

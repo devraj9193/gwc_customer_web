@@ -2,8 +2,7 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:intl/intl.dart' show DateFormat;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:intl/intl.dart' show DateFormat;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../utils/app_config.dart';

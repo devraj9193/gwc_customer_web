@@ -7,10 +7,11 @@ Api Url used ->
 
 import 'dart:collection';
 import 'dart:developer';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:image_network/image_network.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
 import '../../../model/error_model.dart';
 import '../../../model/new_user_model/choose_your_problem/child_choose_problem.dart';
 import '../../../model/new_user_model/choose_your_problem/choose_your_problem_model.dart';
@@ -23,6 +24,7 @@ import '../../../widgets/constants.dart';
 import '../../../widgets/widgets.dart';
 import 'about_the_program.dart';
 import 'choose_problems_data.dart';
+import 'package:gwc_customer_web/widgets/dart_extensions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class ChooseYourProblemScreen extends StatefulWidget {
@@ -114,48 +116,29 @@ class _ChooseYourProblemScreenState extends State<ChooseYourProblemScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                  padding: EdgeInsets.only(left: 1.5.w, right: 1.5.w),
-                child: buildAppBar(() {
-                  Navigator.pop(context);
-                })
+              buildAppBar(() {
+                Navigator.pop(context);
+              }),
+              SizedBox(
+                height: 1.h,
               ),
-              Expanded(child: _mainView())
+              Text(
+                "Choose Your Gut Issue",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontFamily: eUser().mainHeadingFont,
+                    fontSize: eUser().mainHeadingFontSize,
+                    color: eUser().mainHeadingColor
+                ),
+              ),
+              SizedBox(
+                height: 2.5.h,
+              ),
+              Expanded(child: SingleChildScrollView(child: buildChooseProblem(),),),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  _mainView(){
-    return Padding(
-        padding: EdgeInsets.only(left: 4.w, right: 4.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 1.h,
-          ),
-          Text(
-            "Choose Your Gut Issue",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontFamily: eUser().mainHeadingFont,
-                fontSize: eUser().mainHeadingFontSize,
-                color: eUser().mainHeadingColor
-            ),
-          ),
-          SizedBox(
-            height: 2.5.h,
-          ),
-          Expanded(
-            flex: 4,
-            child: buildChooseProblem(),
-          ),
-        ],
-      )
     );
   }
 
@@ -169,108 +152,130 @@ class _ChooseYourProblemScreenState extends State<ChooseYourProblemScreen> {
               List<ChildChooseProblemModel>? problemList = model.data;
               return Column(
                 children: [
-                  Flexible(
-                      child: GridView.builder(
-                          scrollDirection: Axis.vertical,
-                          physics: const ScrollPhysics(),
-                          shrinkWrap: true,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 4,
-                            crossAxisSpacing: 5.0,
-                            mainAxisSpacing: 6.8,
-                            // childAspectRatio: MediaQuery.of(context).size.width /
-                            //     (MediaQuery.of(context).size.height / 1.4),
-                          ),
-                          // gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
-                          itemCount: problemList?.length ?? 0,
-                          itemBuilder: (context, index) {
-                            return InkWell(
-                              onTap: () {
-                                print("Problem: ${problemList?[index].name}");
-                                buildChooseProblemOnClick(problemList![index]);
-                              },
-                              child: Container(
-                                // margin: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(
-                                      color: eUser().buttonBorderColor,
-                                      width: eUser().buttonBorderWidth
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.3),
-                                      blurRadius: 5,
-                                      offset: const Offset(2, 5),
-                                    ),
-                                  ],
-                                  image: DecorationImage(
-                                      image: AssetImage("assets/images/Group 4855.png"),
-                                      fit: BoxFit.cover
-                                  ),
+                  GridView.builder(
+                      scrollDirection: Axis.vertical,
+                      physics: const ScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: MediaQuery.of(context).size.shortestSide < 600 ? 3 : 5,
+                        crossAxisSpacing: 10.0,
+                        mainAxisSpacing: 12,
+                        mainAxisExtent: 25.h,
+                        // childAspectRatio: MediaQuery.of(context).size.width /
+                        //     (MediaQuery.of(context).size.height / 1.4),
+                      ),
+                      // gridDelegate:SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
+                      itemCount: problemList?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            print("Problem: ${problemList?[index].name}");
+                            buildChooseProblemOnClick(problemList![index]);
+                          },
+                          child: Container(
+                            // margin: EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              // border: Border.all(
+                              //     color: eUser().buttonBorderColor,
+                              //     width: eUser().buttonBorderWidth
+                              // ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  blurRadius: 5,
+                                  offset: const Offset(2, 5),
                                 ),
-                                child: Stack(
-                                  children: [
-                                    Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 5),
-                                        child: Column(
-                                          children: [
-                                            // SizedBox(height: 1.h),
-                                            CachedNetworkImage(
-                                              imageUrl: problemList?[index].image ?? '',
-                                              height: 40,
-                                              width: 40,
-                                              errorWidget: (ctx, _, __){
-                                                return Image.asset("assets/images/placeholder.png",
-                                                  height: 40,
-                                                  width: 40,
-                                                );
-                                              },
-                                            ),
-                                            // Image(
-                                            //   height: 40,
-                                            //   width: 40,
-                                            //   image: CachedNetworkImageProvider(problemList?[index].image ?? ''),
-                                            // ),
-                                            SizedBox(height: 1.5.h),
-                                            Expanded(
-                                              child: Text(
-                                                // 'Constipation Constipationdsd',
-                                                problemList?[index].name.toString() ?? '',
-                                                style: TextStyle(
-                                                  fontFamily: kFontBold,
-                                                  color: gTextColor,
-                                                  fontSize: (problemList![index].name.toString().length > 10) ? 8.sp : 9.sp,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 1),
-                                          ],
+                              ],
+                              image: DecorationImage(
+                                  image: AssetImage("assets/images/Group 4855.png"),
+                                  fit: BoxFit.fill,
+                              ),
+                            ),
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // SizedBox(height: 1.h),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(vertical: 1.h),
+                                        child: ImageNetwork(
+                                          image:  problemList?[index].image ?? '',
+                                          height: 100,
+                                          width: 100,
+                                          duration: 1500,
+                                          curve: Curves.easeIn,
+                                          onPointer: true,
+                                          debugPrint: false,
+                                          fullScreen: false,
+                                          fitAndroidIos: BoxFit.cover,
+                                          fitWeb: BoxFitWeb.contain,
+                                          borderRadius: BorderRadius.circular(10),
+                                          onLoading: const CircularProgressIndicator(
+                                            color: Colors.indigoAccent,
+                                          ),
+                                          onError: const Icon(
+                                            Icons.error,
+                                            color: Colors.red,
+                                          ),
+                                          onTap: () {
+                                            debugPrint("©gabriel_patrick_souza");
+                                          },
                                         ),
+                                        // CachedNetworkImage(
+                                        //   imageUrl: problemList?[index].image ?? '',
+                                        //   height: 15.h,
+                                        //   errorWidget: (ctx, _, __){
+                                        //     return Image.asset("assets/images/placeholder.png",
+                                        //       height: 15.h,
+                                        //     );
+                                        //   },
+                                        // ),
                                       ),
-                                    ),
-                                    Positioned(
-                                      top: 10,
-                                      left: 10,
-                                      child: Visibility(
-                                        visible: selectedProblems.contains(problemList?[index].id),
-                                        child:  Align(
-                                          alignment: Alignment.topLeft,
-                                          child: Icon(
-                                            Icons.check_circle,
-                                            color: gMainColor,
-                                            size: 20,
+                                      // Image(
+                                      //   height: 40,
+                                      //   width: 40,
+                                      //   image: CachedNetworkImageProvider(problemList?[index].image ?? ''),
+                                      // ),
+                                      SizedBox(height: 1.5.h),
+                                      Expanded(
+                                        child: Text(
+                                          // 'Constipation Constipationdsd',
+                                          problemList?[index].name.toString() ?? '',
+                                          style: TextStyle(
+                                            fontFamily: kFontBold,
+                                            color: gTextColor,
+                                            fontSize: (problemList![index].name.toString().length > 10) ? 8.sp : 9.sp,
                                           ),
                                         ),
                                       ),
-                                    )
-                                  ],
+                                      const SizedBox(height: 1),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          })
-                  ),
+                                Positioned(
+                                  top: 10,
+                                  left: 10,
+                                  child: Visibility(
+                                    visible: selectedProblems.contains(problemList?[index].id),
+                                    child:  Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Icon(
+                                        Icons.check_circle,
+                                        color: gMainColor,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
                   SizedBox(height: 5.h),
                   Container(
                     height: 15.h,
@@ -323,36 +328,36 @@ class _ChooseYourProblemScreenState extends State<ChooseYourProblemScreen> {
                       keyboardType: TextInputType.emailAddress,
                     ),
                   ),
-                  SizedBox(height: 4.h),
                   Center(
-                    child: GestureDetector(
-                      onTap: selectedProblems.isEmpty && otherController.text.isEmpty ? (){
-                        print(otherController.text.isEmpty);
-                        AppConfig().showSnackbar(context, "Please Select/Mention your Problem");
-                      } : () {
-                        submitProblems();
-                      },
-                      child: Container(
-                        width: 40.w,
-                        height: 5.h,
-                        // padding: EdgeInsets.symmetric(
-                        //     vertical: 1.h, horizontal: 15.w),
-                        decoration: BoxDecoration(
-                          color: selectedProblems.isEmpty ? eUser().buttonColor : eUser().buttonColor,
-                          borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
-                          border: Border.all(
-                              color: eUser().buttonBorderColor,
-                              width: eUser().buttonBorderWidth
+                    child: IntrinsicWidth(
+                      child: GestureDetector(
+                        onTap: selectedProblems.isEmpty && otherController.text.isEmpty ? (){
+                          print(otherController.text.isEmpty);
+                          AppConfig().showSnackbar(context, "Please Select/Mention your Problem",isError: true);
+                        } : () {
+                          submitProblems();
+                        },
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 4.h),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 1.5.h, horizontal: 5.w),
+                          decoration: BoxDecoration(
+                            color: selectedProblems.isEmpty ? eUser().buttonColor : eUser().buttonColor,
+                            borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
+                            border: Border.all(
+                                color: eUser().buttonBorderColor,
+                                width: eUser().buttonBorderWidth
+                            ),
                           ),
-                        ),
-                        child: (isLoading) ? buildThreeBounceIndicator(color: eUser().threeBounceIndicatorColor)
-                            : Center(
-                          child: Text(
-                            'Next',
-                            style: TextStyle(
-                              fontFamily: eUser().buttonTextFont,
-                              color: selectedProblems.isEmpty ? eUser().buttonTextColor : eUser().buttonTextColor,
-                              fontSize: eUser().buttonTextSize,
+                          child: (isLoading) ? buildThreeBounceIndicator(color: eUser().threeBounceIndicatorColor)
+                              : Center(
+                            child: Text(
+                              'Next',
+                              style: TextStyle(
+                                fontFamily: eUser().buttonTextFont,
+                                color: selectedProblems.isEmpty ? eUser().buttonTextColor : eUser().buttonTextColor,
+                                fontSize: eUser().buttonTextSize,
+                              ),
                             ),
                           ),
                         ),
@@ -380,7 +385,9 @@ class _ChooseYourProblemScreenState extends State<ChooseYourProblemScreen> {
             }
 
           }
-          return buildCircularIndicator();
+          return Padding(
+            padding: EdgeInsets.symmetric(vertical: 30.h),
+            child: buildCircularIndicator(),);
         }
     );
   }

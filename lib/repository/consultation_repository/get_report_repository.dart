@@ -23,8 +23,12 @@ class ReportRepository{
     return await apiClient.downloadFile(url, filename, path);
   }
 
-  Future submitDoctorRequestedReportRepo(List reportId, dynamic multipartFile) async{
+  Future submitDoctorRequestedReportRepo(List reportId, List<PlatformFile> multipartFile) async{
     return await apiClient.submitDoctorRequestedReportApi(reportId, multipartFile);
+  }
+
+  Future submitUserReportUploadRepo(List<PlatformFile> multipartFile) async{
+    return await apiClient.submitUserReportUploadApi(multipartFile);
   }
 
 }

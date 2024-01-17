@@ -1,7 +1,6 @@
 // import 'package:advstory/advstory.dart';
 // import 'package:flutter/material.dart';
-// import 'package:sizer/sizer.dart';
-//
+// import 'package:flutter_sizer/flutter_sizer.dart';//
 // import '../../model/new_user_model/about_program_model/feeds_model/feedsListModel.dart';
 // import '../../widgets/constants.dart';
 //

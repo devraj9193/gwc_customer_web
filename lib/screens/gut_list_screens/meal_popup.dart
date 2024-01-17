@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 class MealPopup extends StatelessWidget {
   final VoidCallback yesButton;
   final VoidCallback noButton;

@@ -1,6 +1,30 @@
 import 'get_ticket_list_model.dart';
 
 class NewTicketDetailsModel {
+  int status;
+  int errorCode;
+  Response response;
+
+  NewTicketDetailsModel({
+    required this.status,
+    required this.errorCode,
+    required this.response,
+  });
+
+  factory NewTicketDetailsModel.fromJson(Map<String, dynamic> json) => NewTicketDetailsModel(
+    status: json["status"],
+    errorCode: json["errorCode"],
+    response: Response.fromJson(json["response"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "status": status,
+    "errorCode": errorCode,
+    "response": response.toJson(),
+  };
+}
+
+class Response {
   Ticket? ticket;
   int? totalCustomerTickets;
   List<SupportGroups>? supportGroups;
@@ -9,7 +33,7 @@ class NewTicketDetailsModel {
   List<TicketPriorities>? ticketPriorities;
   List<TicketTypes>? ticketTypes;
 
-  NewTicketDetailsModel(
+  Response(
       {this.ticket,
         this.totalCustomerTickets,
         this.supportGroups,
@@ -18,7 +42,7 @@ class NewTicketDetailsModel {
         this.ticketPriorities,
         this.ticketTypes});
 
-  NewTicketDetailsModel.fromJson(Map<String, dynamic> json) {
+  Response.fromJson(Map<String, dynamic> json) {
     ticket =
     json['ticket'] != null ? new Ticket.fromJson(json['ticket']) : null;
     totalCustomerTickets = json['totalCustomerTickets'];

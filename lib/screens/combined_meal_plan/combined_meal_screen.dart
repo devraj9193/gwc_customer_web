@@ -28,8 +28,7 @@ import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/model/combined_meal_model/combined_meal_model.dart';
 import 'package:gwc_customer_web/screens/combined_meal_plan/new_prep_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:sizer/sizer.dart';
-import '../../model/combined_meal_model/detox_nourish_model/child_detox_model.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import '../../model/combined_meal_model/detox_nourish_model/child_detox_model.dart';
 import '../../model/combined_meal_model/detox_nourish_model/child_nourish_model.dart';
 import '../../model/combined_meal_model/new_nourish_model.dart';
 import '../../model/combined_meal_model/new_prep_model.dart';
@@ -248,10 +247,11 @@ class _CombinedPrepMealTransScreenState extends State<CombinedPrepMealTransScree
   bool showTabs = true;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: newDashboardGreenButtonColor.withOpacity(0.6),
-        title: buildAppBar(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: newDashboardGreenButtonColor.withOpacity(0.6),
+          title: buildAppBar(
               () {
                 final _ori = MediaQuery.of(context).orientation;
                 print(_ori.name);
@@ -263,125 +263,130 @@ class _CombinedPrepMealTransScreenState extends State<CombinedPrepMealTransScree
                   Navigator.pop(context);
                 }
           },
-        ),
-        actions: [
-          // we r showing respective screen on click of help(?) icon
-          IconButton(
-            icon: Icon(
-              Icons.help_outline_rounded,
-              color: gWhiteColor,
-            ),
-            onPressed: () {
-              print(selectedTab);
-              if(selectedTab == 1 || selectedTab == 2){
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (ctx) => HomeRemediesScreen()
-                    ));
-              }
-              else{
-                if(selectedTab == 0){
-                  if(prepDoDontPdfLink != null){
-                    Navigator.push(context, MaterialPageRoute(builder: (_)=> DosDontsProgramScreen(pdfLink: prepDoDontPdfLink!,)));
-                  }
-                }
-                else{
-                  if(transDoDontPdfLink != null){
-                    Navigator.push(context, MaterialPageRoute(builder: (_)=> DosDontsProgramScreen(pdfLink: transDoDontPdfLink!,)));
-                  }
-                }
-              }
+                    ),
+          actions: [
+            // we r showing respective screen on click of help(?) icon
+            IconButton(
+              icon: const Icon(
+                Icons.help_outline_rounded,
+                color: gWhiteColor,
+              ),
+              onPressed: () {
+                print(selectedTab);
+                // if(selectedTab == 1 || selectedTab == 2){
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (ctx) => const HomeRemediesScreen()
+                      ));
+                // }
+                // else{
+                //   if(selectedTab == 0){
+                //     if(prepDoDontPdfLink != null){
+                //       Navigator.push(context, MaterialPageRoute(builder: (_)=> DosDontsProgramScreen(pdfLink: prepDoDontPdfLink!,)));
+                //     }
+                //   }
+                //   else{
+                //     if(transDoDontPdfLink != null){
+                //       Navigator.push(context, MaterialPageRoute(builder: (_)=> DosDontsProgramScreen(pdfLink: transDoDontPdfLink!,)));
+                //     }
+                //   }
+                // }
 
-              // if (planNotePdfLink != null ||
-              //     planNotePdfLink!.isNotEmpty) {
-              //   Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //           builder: (ctx) => MealPdf(
-              //             pdfLink: planNotePdfLink!,
-              //             heading: "Note",
-              //             isVideoWidgetVisible: false,
-              //             headCircleIcon: bsHeadPinIcon,
-              //             topHeadColor: kBottomSheetHeadGreen,
-              //             isSheetCloseNeeded: true,
-              //             sheetCloseOnTap: () {
-              //               Navigator.pop(context);
-              //             },
-              //           )));
-              // } else {
-              //   AppConfig().showSnackbar(
-              //       context, "Note Link Not available",
-              //       isError: true);
-              // }
-            },
-          )
-        ],
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(20),
+                // if (planNotePdfLink != null ||
+                //     planNotePdfLink!.isNotEmpty) {
+                //   Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (ctx) => MealPdf(
+                //             pdfLink: planNotePdfLink!,
+                //             heading: "Note",
+                //             isVideoWidgetVisible: false,
+                //             headCircleIcon: bsHeadPinIcon,
+                //             topHeadColor: kBottomSheetHeadGreen,
+                //             isSheetCloseNeeded: true,
+                //             sheetCloseOnTap: () {
+                //               Navigator.pop(context);
+                //             },
+                //           )));
+                // } else {
+                //   AppConfig().showSnackbar(
+                //       context, "Note Link Not available",
+                //       isError: true);
+                // }
+              },
+            ),
+            SizedBox(width: 1.w),
+          ],
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(20),
+            ),
           ),
+          centerTitle: false,
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          toolbarHeight: 15.h,
+          bottom:  TabBar(
+          controller: _tabController,
+          labelColor: gBlackColor,
+          unselectedLabelColor: gHintTextColor,
+          isScrollable: true,
+          indicatorColor: gPrimaryColor,
+            labelPadding: EdgeInsets.symmetric(horizontal: 6.w),
+          // indicatorPadding: EdgeInsets.symmetric(horizontal: 2.w),
+          unselectedLabelStyle: TextStyle(
+              fontFamily: kFontBook, color: gHintTextColor, fontSize: 13.dp),
+          labelStyle: TextStyle(
+              fontFamily: kFontMedium, color: gBlackColor, fontSize: 15.dp),
+          tabs: myTabs,
+          onTap: (i){
+            setState(() {
+              selectedTab = i;
+              showTabs = true;
+            });
+          },
+        )
+          // bottom: PreferredSize(preferredSize: Size(0, 0),
+          // child: Consumer<CheckState>(
+          //   builder: (_, data, __){
+          //     if(data.isChanged){
+          //       return TabBar(
+          //         controller: _tabController,
+          //         labelColor: gBlackColor,
+          //         unselectedLabelColor: gHintTextColor,
+          //         isScrollable: true,
+          //         indicatorColor: gPrimaryColor,
+          //         indicatorPadding: EdgeInsets.symmetric(horizontal: 2.w),
+          //         unselectedLabelStyle: TextStyle(
+          //             fontFamily: kFontBook, color: gHintTextColor, fontSize: 9.dp),
+          //         labelStyle: TextStyle(
+          //             fontFamily: kFontMedium, color: gBlackColor, fontSize: 11.dp),
+          //         tabs: myTabs,
+          //         onTap: (i){
+          //           setState(() {
+          //             selectedTab = i;
+          //             showTabs = true;
+          //           });
+          //         },
+          //       );
+          //     }
+          //     return SizedBox();
+          //   },
+          // ),),
         ),
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-        bottom:  TabBar(
-        controller: _tabController,
-        labelColor: gBlackColor,
-        unselectedLabelColor: gHintTextColor,
-        isScrollable: true,
-        indicatorColor: gPrimaryColor,
-        indicatorPadding: EdgeInsets.symmetric(horizontal: 2.w),
-        unselectedLabelStyle: TextStyle(
-            fontFamily: kFontBook, color: gHintTextColor, fontSize: 9.sp),
-        labelStyle: TextStyle(
-            fontFamily: kFontMedium, color: gBlackColor, fontSize: 11.sp),
-        tabs: myTabs,
-        onTap: (i){
-          setState(() {
-            selectedTab = i;
-            showTabs = true;
-          });
-        },
-      )
-        // bottom: PreferredSize(preferredSize: Size(0, 0),
-        // child: Consumer<CheckState>(
-        //   builder: (_, data, __){
-        //     if(data.isChanged){
-        //       return TabBar(
-        //         controller: _tabController,
-        //         labelColor: gBlackColor,
-        //         unselectedLabelColor: gHintTextColor,
-        //         isScrollable: true,
-        //         indicatorColor: gPrimaryColor,
-        //         indicatorPadding: EdgeInsets.symmetric(horizontal: 2.w),
-        //         unselectedLabelStyle: TextStyle(
-        //             fontFamily: kFontBook, color: gHintTextColor, fontSize: 9.sp),
-        //         labelStyle: TextStyle(
-        //             fontFamily: kFontMedium, color: gBlackColor, fontSize: 11.sp),
-        //         tabs: myTabs,
-        //         onTap: (i){
-        //           setState(() {
-        //             selectedTab = i;
-        //             showTabs = true;
-        //           });
-        //         },
-        //       );
-        //     }
-        //     return SizedBox();
-        //   },
-        // ),),
-      ),
-      body: Column(
-       children:[
-         // if(selectedTab == 1 || selectedTab == 2) buildDaysView(),
-         Expanded(
-           child: (showProgress)
-               ? Center(
-             child: buildCircularIndicator(),
+        body: Column(
+         children:[
+           // if(selectedTab == 1 || selectedTab == 2) buildDaysView(),
+           Expanded(
+             child: (showProgress)
+                 ? Center(
+               child: buildCircularIndicator(),
+             )
+                 : mainView(),
            )
-               : mainView(),
-         )
-       ]
+         ]
+        ),
       ),
     );
   }
@@ -422,11 +427,11 @@ class _CombinedPrepMealTransScreenState extends State<CombinedPrepMealTransScree
               labelStyle: TextStyle(
                   fontFamily: kFontMedium,
                   color: gPrimaryColor,
-                  fontSize: 12.sp),
+                  fontSize: 12.dp),
               unselectedLabelStyle: TextStyle(
                   fontFamily: kFontBook,
                   color: gHintTextColor,
-                  fontSize: 10.sp),
+                  fontSize: 10.dp),
               // labelPadding: EdgeInsets.only(
               //     right: 10.w, left: 2.w, top: 1.h, bottom: 1.h),
               indicatorPadding: EdgeInsets.symmetric(horizontal: 5.w),
@@ -559,7 +564,7 @@ class _CombinedPrepMealTransScreenState extends State<CombinedPrepMealTransScree
           ),
           Center(child: Text(stageName,
             style: TextStyle(
-                fontSize: 8.5.sp,
+                fontSize: 8.5.dp,
                 fontFamily: kFontMedium,
                 color: gTextColor
             ),),)
@@ -585,6 +590,7 @@ class _CombinedPrepMealTransScreenState extends State<CombinedPrepMealTransScree
     return (_childPrepModel != null ) ? NewPrepScreen(
       prepPlanDetails: _childPrepModel!,
       totalDays: prepTotalDays!,
+      viewDay1Details: widget.fromStartScreen || showBlur(3),
     ) : noData();
   }
 

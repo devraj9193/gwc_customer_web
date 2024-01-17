@@ -14,7 +14,7 @@ class UvDeskRepo {
   }
 
   Future getTicketDetailsByIdRepo(String id) async{
-    return await apiClient.getTicketDetailsApi(id);
+    return await apiClient.getGwcTicketChatApi(id);
   }
 
   Future createTicketRepo(Map data, {List<File>? attachments}) async{
@@ -28,7 +28,7 @@ class UvDeskRepo {
 
 
   Future sendReplyRepo(String ticketId, Map data, {List<PlatformFile>? attachments}) async{
-    return await apiClient.sendReplyApi(ticketId, data, attachments: attachments);
+    return await apiClient.chatSendApi(ticketId, data, attachments: attachments);
   }
 
   Future reOpenTicketRepo(String id) async{

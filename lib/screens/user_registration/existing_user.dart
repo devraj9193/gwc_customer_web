@@ -24,32 +24,34 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:get/get.dart';
+import 'package:gwc_customer_web/model/error_model.dart';
+import 'package:gwc_customer_web/model/login_model/resend_otp_model.dart';
+import 'package:gwc_customer_web/repository/login_otp_repository.dart';
+import 'package:gwc_customer_web/screens/evalution_form/evaluation_form_screen.dart';
+import 'package:gwc_customer_web/services/login_otp_service.dart';
+import 'package:gwc_customer_web/utils/app_config.dart';
+import 'package:gwc_customer_web/widgets/constants.dart';
+import 'package:gwc_customer_web/widgets/unfocus_widget.dart';
+import 'package:gwc_customer_web/widgets/widgets.dart';
+import 'package:gwc_customer_web/widgets/will_pop_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
 import 'package:http/http.dart' as http;
-import '../../model/error_model.dart';
+import 'package:gwc_customer_web/repository/api_service.dart';
 import '../../model/evaluation_from_models/get_evaluation_model/child_get_evaluation_data_model.dart';
 import '../../model/evaluation_from_models/get_evaluation_model/get_evaluationdata_model.dart';
 import '../../model/login_model/login_otp_model.dart';
-import '../../model/login_model/resend_otp_model.dart';
 import '../../model/profile_model/user_profile/user_profile_model.dart';
-import '../../repository/api_service.dart';
 import '../../repository/evaluation_form_repository/evanluation_form_repo.dart';
-import '../../repository/login_otp_repository.dart';
 import '../../repository/profile_repository/get_user_profile_repo.dart';
 import '../../services/evaluation_fome_service/evaluation_form_service.dart';
-import '../../services/login_otp_service.dart';
 import '../../services/profile_screen_service/user_profile_service.dart';
-import '../../utils/app_config.dart';
-import '../../widgets/constants.dart';
-import '../../widgets/unfocus_widget.dart';
-import '../../widgets/widgets.dart';
-import '../../widgets/will_pop_widget.dart';
 import '../dashboard_screen.dart';
-import '../evalution_form/evaluation_form_screen.dart';
 import 'new_user/choose_your_problem_screen.dart';
 import 'package:pinput/pinput.dart';
+
+import 'new_user/sit_back_screen.dart';
 
 class ExistingUser extends StatefulWidget {
   const ExistingUser({Key? key}) : super(key: key);
@@ -96,22 +98,22 @@ class _ExistingUserState extends State<ExistingUser> {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
-      (Timer timer) {
-       if(isSheetOpen){
-         if (_resendTimer == 0) {
-           bottomsheetSetState(() {
-             timer.cancel();
-             enableResendOtp = true;
-           });
-         } else {
-           bottomsheetSetState(() {
-             _resendTimer--;
-           });
-         }
-       }
-       else{
-         _resendTimer--;
-       }
+          (Timer timer) {
+        if(isSheetOpen){
+          if (_resendTimer == 0) {
+            bottomsheetSetState(() {
+              timer.cancel();
+              enableResendOtp = true;
+            });
+          } else {
+            bottomsheetSetState(() {
+              _resendTimer--;
+            });
+          }
+        }
+        else{
+          _resendTimer--;
+        }
       },
     );
   }
@@ -162,33 +164,26 @@ class _ExistingUserState extends State<ExistingUser> {
       child: UnfocusWidget(
         child: Scaffold(
             body: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              Container(
-                height: 50.h,
-                width: double.maxFinite,
-                decoration: BoxDecoration(
-                    // image: DecorationImage(
-                    //     image: AssetImage("assets/images/Mask Group 2.png"),
-                    //     fit: BoxFit.fill),
-                    ),
-                child: Center(
-                  child: Image(
-                    fit: BoxFit.fitWidth,
-                    // height: 15.h,
-                    width: 80.w,
-                    image: const AssetImage(
-                      "assets/images/Gut welness logo.png",
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    child: Center(
+                      child: Image(
+                        fit: BoxFit.fitWidth,
+                         height: 20.h,
+                        image: const AssetImage(
+                          "assets/images/Gut welness logo.png",
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  SizedBox(height: 1.h),
+                  buildForms(),
+                ],
               ),
-              SizedBox(height: 1.h),
-              buildForms(),
-            ],
-          ),
-        )),
+            )),
       ),
     );
   }
@@ -250,7 +245,7 @@ class _ExistingUserState extends State<ExistingUser> {
                     textStyle: TextStyle(
                         fontFamily: "GothamBook",
                         color: gMainColor,
-                        fontSize: 11.sp),
+                        fontSize: 11.dp),
                     padding: EdgeInsets.zero,
                     favorite: ['+91', 'IN'],
                     initialSelection: countryCode,
@@ -298,35 +293,35 @@ class _ExistingUserState extends State<ExistingUser> {
                             borderSide: BorderSide(
                                 color: eUser().focusedBorderColor,
                                 width: eUser().focusedBorderWidth)
-                            // borderRadius: BorderRadius.circular(25.0),
-                            ),
+                          // borderRadius: BorderRadius.circular(25.0),
+                        ),
                         enabledBorder: (phoneController.text.isEmpty)
                             ? null
                             : UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: eUser().focusedBorderColor,
-                                    width: eUser().focusedBorderWidth)),
+                            borderSide: BorderSide(
+                                color: eUser().focusedBorderColor,
+                                width: eUser().focusedBorderWidth)),
                         isDense: true,
                         counterText: '',
                         contentPadding: EdgeInsets.symmetric(horizontal: 2),
                         suffixIcon: (phoneController.text.length != 10 &&
-                                phoneController.text.length > 0)
+                            phoneController.text.length > 0)
                             ? InkWell(
-                                onTap: () {
-                                  phoneController.clear();
-                                },
-                                child: const Icon(
-                                  Icons.cancel_outlined,
-                                  color: gMainColor,
-                                ),
-                              )
+                          onTap: () {
+                            phoneController.clear();
+                          },
+                          child: const Icon(
+                            Icons.cancel_outlined,
+                            color: gMainColor,
+                          ),
+                        )
                             : (phoneController.text.length == 10)
-                                ? Icon(
-                                    Icons.check_circle_outline,
-                                    color: gPrimaryColor,
-                                    size: 2.h,
-                                  )
-                                : const SizedBox(),
+                            ? Icon(
+                          Icons.check_circle_outline,
+                          color: gPrimaryColor,
+                          size: 2.h,
+                        )
+                            : const SizedBox(),
                         // (phoneController.text.length == 10 &&
                         //             isPhone(phoneController.text))
                         //         ? GestureDetector(
@@ -398,63 +393,63 @@ class _ExistingUserState extends State<ExistingUser> {
             ),
             SizedBox(height: 5.h),
             Center(
-              child: GestureDetector(
-                // onTap: (showLoginProgress) ? null : () {
-                onTap: () {
-                  if(showOpenBottomSheetProgress){
-
-                  }
-                  else{
-                    if (mobileFormKey.currentState!.validate()) {
-                      if (isPhone(phoneController.text)) {
-                        print("ifff");
-                        setState(() {
-                          showOpenBottomSheetProgress = true;
-                        });
-                        getOtp(phoneController.text);
+              child: IntrinsicWidth(
+                child: GestureDetector(
+                  // onTap: (showLoginProgress) ? null : () {
+                  onTap: () {
+                    if(showOpenBottomSheetProgress){
+                
+                    }
+                    else{
+                      if (mobileFormKey.currentState!.validate()) {
+                        if (isPhone(phoneController.text)) {
+                          print("ifff");
+                          setState(() {
+                            showOpenBottomSheetProgress = true;
+                          });
+                          getOtp(phoneController.text);
+                        }
+                      }
+                      else {
+                        AppConfig().showSnackbar(
+                            context, 'Enter your Mobile Number',
+                            isError: true);
                       }
                     }
-                    else {
-                      AppConfig().showSnackbar(
-                          context, 'Enter your Mobile Number',
-                          isError: true);
-                    }
-                  }
-                      },
-                child: Container(
-                  width: 40.w,
-                  height: 5.h,
-                  margin: EdgeInsets.symmetric(vertical: 4.h),
-                  padding:
-                      EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
-                  decoration: BoxDecoration(
-                    color: (phoneController.text.isEmpty ||
-                            otpController.text.isEmpty)
-                        ? eUser().buttonColor
-                        : eUser().buttonColor,
-                    borderRadius:
-                        BorderRadius.circular(eUser().buttonBorderRadius),
-                    // border: Border.all(
-                    //     color: eUser().buttonBorderColor,
-                    //     width: eUser().buttonBorderWidth
-                    // ),
-                  ),
-                  child: (showOpenBottomSheetProgress)
-                      ? buildThreeBounceIndicator(
-                          color: eUser().threeBounceIndicatorColor)
-                      : Center(
-                          child: Text(
-                            'GET OTP',
-                            style: TextStyle(
-                              fontFamily: eUser().buttonTextFont,
-                              color: (phoneController.text.isEmpty ||
-                                      otpController.text.isEmpty)
-                                  ? eUser().buttonTextColor
-                                  : eUser().buttonTextColor,
-                              fontSize: eUser().buttonTextSize,
-                            ),
-                          ),
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 4.h),
+                    padding:
+                    EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                    decoration: BoxDecoration(
+                      color: (phoneController.text.isEmpty ||
+                          otpController.text.isEmpty)
+                          ? eUser().buttonColor
+                          : eUser().buttonColor,
+                      borderRadius:
+                      BorderRadius.circular(eUser().buttonBorderRadius),
+                      // border: Border.all(
+                      //     color: eUser().buttonBorderColor,
+                      //     width: eUser().buttonBorderWidth
+                      // ),
+                    ),
+                    child: (showOpenBottomSheetProgress)
+                        ? buildThreeBounceIndicator(
+                        color: eUser().threeBounceIndicatorColor)
+                        : Center(
+                      child: Text(
+                        'GET OTP',
+                        style: TextStyle(
+                          fontFamily: eUser().buttonTextFont,
+                          color: (phoneController.text.isEmpty ||
+                              otpController.text.isEmpty)
+                              ? eUser().buttonTextColor
+                              : eUser().buttonTextColor,
+                          fontSize: eUser().buttonTextSize,
                         ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -495,7 +490,7 @@ class _ExistingUserState extends State<ExistingUser> {
             //         style: TextStyle(
             //           fontFamily: "GothamRoundedBold_21016",
             //           color: Colors.black87.withOpacity(0.7),
-            //           fontSize: 10.sp,
+            //           fontSize: 10.dp,
             //         ),
             //       ),
             //     ),
@@ -513,24 +508,25 @@ class _ExistingUserState extends State<ExistingUser> {
                         fontSize: eUser().anAccountTextFontSize,
                       ),
                       children: [
-                    TextSpan(
-                        text: 'Signup',
-                        style: TextStyle(
-                          height: 1.5,
-                          fontFamily: eUser().loginSignupTextFont,
-                          color: eUser().loginSignupTextColor,
-                          fontSize: eUser().loginSignupTextFontSize,
-                        ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
+                        TextSpan(
+                            text: 'Signup',
+                            style: TextStyle(
+                              height: 1.5,
+                              fontFamily: eUser().loginSignupTextFont,
+                              color: eUser().loginSignupTextColor,
+                              fontSize: eUser().loginSignupTextFontSize,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                    // SitBackScreen(),
                                     const ChooseYourProblemScreen(),
-                              ),
-                            );
-                          })
-                  ])),
+                                  ),
+                                );
+                              })
+                      ])),
             )
           ],
         ),
@@ -632,7 +628,7 @@ class _ExistingUserState extends State<ExistingUser> {
                                 //     style: TextStyle(
                                 //         fontFamily: kFontMedium,
                                 //         color: gPrimaryColor,
-                                //         fontSize: 8.5.sp),
+                                //         fontSize: 8.5.dp),
                                 //   ),
                                 // ),
                                 SizedBox(height: 5.h),
@@ -758,48 +754,49 @@ class _ExistingUserState extends State<ExistingUser> {
                                 ),
                                 SizedBox(height: 2.h),
                                 Center(
-                                  child: GestureDetector(
-                                    // onTap: (showLoginProgress) ? null : () {
-                                    onTap: (showLoginProgress) ? null : () {
-                                      final fcmToken = _pref.getString(AppConfig.FCM_TOKEN);
-
-                                      if (mobileFormKey.currentState!.validate() &&
-                                          phoneController.text.isNotEmpty &&
-                                          otpController.text.isNotEmpty) {
-                                        login(phoneController.text, otpController.text, fcmToken ?? '');
-                                      }
-                                    },
-                                    child: Container(
-                                      width: 60.w,
-                                      height: 5.h,
-                                      margin: EdgeInsets.symmetric(vertical: 4.h),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 1.h, horizontal: 10.w),
-                                      decoration: BoxDecoration(
-                                        color: (phoneController.text.isEmpty ||
-                                            otpController.text.isEmpty)
-                                            ? eUser().buttonColor
-                                            : eUser().buttonColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        // border: Border.all(
-                                        //     color: eUser().buttonBorderColor,
-                                        //     width: eUser().buttonBorderWidth
-                                        // ),
-                                      ),
-                                      child: (showLoginProgress)
-                                          ? buildThreeBounceIndicator(
-                                          color: eUser().threeBounceIndicatorColor)
-                                          : Center(
-                                        child: Text(
-                                          'LOGIN',
-                                          style: TextStyle(
-                                            fontFamily: eUser().buttonTextFont,
-                                            color: (phoneController
-                                                .text.isEmpty ||
-                                                otpController.text.isEmpty)
-                                                ? eUser().buttonTextColor
-                                                : eUser().buttonTextColor,
-                                            fontSize: eUser().buttonTextSize,
+                                  child: IntrinsicWidth(
+                                    child: GestureDetector(
+                                      // onTap: (showLoginProgress) ? null : () {
+                                      onTap: (showLoginProgress) ? null : () {
+                                        final fcmToken = _pref.getString(AppConfig.FCM_TOKEN);
+                                    
+                                        if (mobileFormKey.currentState!.validate() &&
+                                            phoneController.text.isNotEmpty &&
+                                            otpController.text.isNotEmpty) {
+                                          login(phoneController.text, otpController.text, fcmToken ?? "");
+                                        }
+                                      },
+                                      child: Container(
+                                        
+                                        margin: EdgeInsets.symmetric(vertical: 4.h),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 1.5.h, horizontal: 5.w),
+                                        decoration: BoxDecoration(
+                                          color: (phoneController.text.isEmpty ||
+                                              otpController.text.isEmpty)
+                                              ? eUser().buttonColor
+                                              : eUser().buttonColor,
+                                          borderRadius: BorderRadius.circular(10),
+                                          // border: Border.all(
+                                          //     color: eUser().buttonBorderColor,
+                                          //     width: eUser().buttonBorderWidth
+                                          // ),
+                                        ),
+                                        child: (showLoginProgress)
+                                            ? buildThreeBounceIndicator(
+                                            color: eUser().threeBounceIndicatorColor)
+                                            : Center(
+                                          child: Text(
+                                            'LOGIN',
+                                            style: TextStyle(
+                                              fontFamily: eUser().buttonTextFont,
+                                              color: (phoneController
+                                                  .text.isEmpty ||
+                                                  otpController.text.isEmpty)
+                                                  ? eUser().buttonTextColor
+                                                  : eUser().buttonTextColor,
+                                              fontSize: eUser().buttonTextSize,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -825,7 +822,7 @@ class _ExistingUserState extends State<ExistingUser> {
                             ],
                           ),
                           child: CircleAvatar(
-                            maxRadius: 40.sp,
+                            maxRadius: 40.dp,
                             backgroundColor: kBottomSheetHeadCircleColor,
                             child: Image.asset(bsHeadBellIcon,
                               fit: BoxFit.scaleDown,
@@ -864,7 +861,7 @@ class _ExistingUserState extends State<ExistingUser> {
       setState(() {
         isSheetOpen = true;
         otpMessage = "OTP Sent";
-          showOpenBottomSheetProgress = false;
+        showOpenBottomSheetProgress = false;
         if (kDebugMode) otpController.text = result.otp!;
       });
       if(!isFromResendOtp) buildGetOTP(context);
@@ -933,7 +930,7 @@ class _ExistingUserState extends State<ExistingUser> {
       }
       else {
         bool? firstTime = _pref.getBool(AppConfig.isFirstTime);
-/// showing help screen for first time
+        /// showing help screen for first time
         // if (firstTime == null) {
         //   _pref.setBool(AppConfig.isFirstTime, false);
         //   Navigator.of(context).pushReplacement(
@@ -945,21 +942,21 @@ class _ExistingUserState extends State<ExistingUser> {
         //   );
         // }
         // else {
-          _pref.setBool(AppConfig.isFirstTime, false);
+        _pref.setBool(AppConfig.isFirstTime, false);
 
-          Navigator.of(context).pushAndRemoveUntil(
+        Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(
               builder: (context) => const DashboardScreen(index: 2,),
             ),(route) {
-              print(route.currentResult);
-              return false;
-          }
-          );
+          print(route.currentResult);
+          return false;
+        }
+        );
         // }
       }
       final shipAddress =
-          await EvaluationFormService(repository: evalrepository)
-              .getEvaluationDataService();
+      await EvaluationFormService(repository: evalrepository)
+          .getEvaluationDataService();
       if (shipAddress.runtimeType == GetEvaluationDataModel) {
         GetEvaluationDataModel model = shipAddress as GetEvaluationDataModel;
         ChildGetEvaluationDataModel? model1 = model.data;

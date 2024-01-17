@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import '../../../widgets/constants.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import '../../../widgets/constants.dart';
 
 class TrackingPopUpScreen extends StatefulWidget {
   const TrackingPopUpScreen({Key? key}) : super(key: key);

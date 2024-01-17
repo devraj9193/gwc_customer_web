@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../widgets/constants.dart';
 
 class DailyRecommendationDetails extends StatefulWidget {

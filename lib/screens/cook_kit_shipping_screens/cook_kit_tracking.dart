@@ -25,8 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/screens/cook_kit_shipping_screens/shopping_list_screen.dart';
 import 'package:intl/intl.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../../../model/ship_track_model/ship_track_activity_model.dart';
 import '../../../model/ship_track_model/shipping_track_model.dart';
 import '../../../repository/api_service.dart';
@@ -1056,14 +1055,14 @@ class _CookKitTrackingState extends State<CookKitTracking> {
     //print(result.runtimeType);
     if (result.runtimeType == ShippingTrackModel) {
       ShippingTrackModel data = result;
-      if (data.trackingData!.error != null) {
+      if (data.response.trackingData.error != null) {
         setState(() {
           showErrorText = true;
-          errorTextResponse = data.trackingData?.error ?? '';
+          errorTextResponse = data.response.trackingData.error ?? '';
         });
       } else {
-        print(data.trackingData!.shipmentTrackActivities);
-        data.trackingData!.shipmentTrackActivities!.forEach((element) {
+        print(data.response.trackingData.shipmentTrackActivities);
+        data.response.trackingData.shipmentTrackActivities!.forEach((element) {
           trackerList.add(element);
           if (element.srStatusLabel!.toLowerCase() == 'delivered') {
             setState(() {
@@ -1071,8 +1070,8 @@ class _CookKitTrackingState extends State<CookKitTracking> {
             });
           }
         });
-        shipAddress = data.trackingData?.shipmentTrack?.first.deliveredTo ?? '';
-        estimatedDate = data.trackingData!.etd!;
+        shipAddress = data.response.trackingData.shipmentTrack?.first.deliveredTo ?? '';
+        estimatedDate = data.response.trackingData.etd!;
         estimatedDay = DateFormat('EEEE').format(DateTime.parse(estimatedDate));
         //print("estimatedDay: $estimatedDay");
         setState(() {

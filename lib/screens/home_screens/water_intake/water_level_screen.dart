@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/screens/home_screens/water_intake/water_level_time.dart';
 import 'package:provider/provider.dart';
-import 'package:sizer/sizer.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../services/home_service/drink_water_controller.dart';
 import '../../../widgets/constants.dart';

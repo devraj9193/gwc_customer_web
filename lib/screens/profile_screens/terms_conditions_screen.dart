@@ -5,8 +5,7 @@
  */
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../../model/profile_model/terms_condition_model.dart';
 import '../../repository/api_service.dart';
 import '../../repository/profile_repository/settings_repo.dart';
@@ -49,11 +48,11 @@ class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
                         style: TextStyle(
                             fontFamily: kFontBold,
                             color: gBlackColor,
-                            fontSize: 12.sp
+                            fontSize: 15.dp
                         ),
                       ),
                       SizedBox(
-                        height: 1.h,
+                        height: 2.h,
                       ),
                       FutureBuilder(
                           future: SettingsService(repository: repository).getData(),
@@ -63,9 +62,9 @@ class _TermsConditionsScreenState extends State<TermsConditionsScreen> {
                                 TermsConditionModel model = snapshot.data as TermsConditionModel;
                                 return Text(model.data ?? '',
                                   style: TextStyle(
-                                    height: 1.8,
-                                    fontSize: 10.sp,
-                                    color: gTextColor,
+                                    height: 2,
+                                    fontSize: 13.dp,
+                                    color: gBlackColor,
                                     fontFamily: "GothamBook",
                                   ),
                                 );

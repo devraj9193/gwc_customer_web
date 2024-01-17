@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../../repository/api_service.dart';
 import '../../repository/uvdesk_repository/uvdesk_repo.dart';
 import '../../../model/error_model.dart';

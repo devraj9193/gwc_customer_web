@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/screens/home_screens/gut_health_tracker_screens/urine_quality_screen.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../model/error_model.dart';
 import '../../../model/success_message_model.dart';
 import '../../../repository/api_service.dart';

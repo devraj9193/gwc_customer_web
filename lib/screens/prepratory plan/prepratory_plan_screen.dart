@@ -11,8 +11,7 @@
 // import 'package:gwc_customer/widgets/constants.dart';
 // import 'package:gwc_customer/widgets/widgets.dart';
 // import 'package:http/http.dart' as http;
-// import 'package:sizer/sizer.dart';
-//
+// import 'package:flutter_sizer/flutter_sizer.dart';//
 // class PrepratoryPlanScreen extends StatefulWidget {
 //   String? totalDays;
 //   String? dayNumber;

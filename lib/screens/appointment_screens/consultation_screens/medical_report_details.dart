@@ -4,8 +4,7 @@ not using this ui
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:url_launcher/url_launcher.dart';
 
 import '../../../widgets/constants.dart';
 import '../../../widgets/widgets.dart';

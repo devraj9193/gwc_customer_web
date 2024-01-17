@@ -19,8 +19,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:sizer/sizer.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../model/consultation_model/appointment_booking/appointment_book_model.dart';
 import '../../model/consultation_model/appointment_booking/child_doctor_model.dart';
 import '../../model/dashboard_model/get_appointment/child_appintment_details.dart';
@@ -282,7 +281,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                       style: TextStyle(
                           fontFamily: kFontMedium,
                           color: gTextColor,
-                          fontSize: 12.sp),
+                          fontSize: 15.dp),
                     ),
                   ),
                   SizedBox(
@@ -296,7 +295,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                       style: TextStyle(
                           fontFamily: kFontMedium,
                           color: gTextColor,
-                          fontSize: 12.sp),
+                          fontSize: 14.dp),
                     ),
                   ),
                   SizedBox(height: 3.h),
@@ -347,12 +346,13 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                           bottom: 0,
                           left: 0,
                           right: 0,
-                          top: 5.h,
+                          top: 8.h,
                           child: Container(
                             color: gsecondaryColor,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                SizedBox(height: 3.h),
                                 Padding(
                                   padding:
                                   EdgeInsets.symmetric(horizontal: 13.w),
@@ -364,7 +364,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                                           text: 'Your Appointment @ ',
                                           style: TextStyle(
                                             height: 1.5,
-                                            fontSize: 12.sp,
+                                            fontSize: 15.sp,
                                             fontFamily: kFontBook,
                                             color: gWhiteColor,
                                           ),
@@ -375,7 +375,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                                               : widget.bookingTime.toString(),
                                           style: TextStyle(
                                             height: 1.5,
-                                            fontSize: 13.sp,
+                                            fontSize: 16.sp,
                                             fontFamily: kFontMedium,
                                             color: gWhiteColor,
                                           ),
@@ -384,7 +384,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                                           text: " on\n",
                                           style: TextStyle(
                                             height: 1.5,
-                                            fontSize: 12.sp,
+                                            fontSize: 15.sp,
                                             fontFamily: kFontBook,
                                             color: gWhiteColor,
                                           ),
@@ -397,7 +397,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                                               .toString(),
                                           style: TextStyle(
                                             height: 1.5,
-                                            fontSize: 13.sp,
+                                            fontSize: 16.sp,
                                             fontFamily: kFontMedium,
                                             color: gWhiteColor,
                                           ),
@@ -406,7 +406,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                                           text: ", Has Been Confirmed",
                                           style: TextStyle(
                                             height: 1.5,
-                                            fontSize: 12.sp,
+                                            fontSize: 15.sp,
                                             fontFamily: kFontBook,
                                             color: gWhiteColor,
                                           ),
@@ -419,39 +419,42 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                                 // zoom join
                                 Visibility(
                                   visible: true,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        isJoinPressed = true;
-                                      });
-                                      // ChildAppointmentDetails? model;
-                                      // if (widget.isFromDashboard) {
-                                      //   model =
-                                      //       ChildAppointmentDetails.fromJson(
-                                      //           Map.from(
-                                      //               widget.dashboardValueMap!));
-                                      // }
-                                      print("Zoom Call");
-                                      launchZoomUrl("${widget.appointmentUrl?.kaleyraJoinurl}");
-                                    },
-                                    child: Container(
-                                      width: 60.w,
-                                      height: 5.h,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 1.h, horizontal: 10.w),
-                                      decoration: BoxDecoration(
-                                        color: gWhiteColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                            color: gMainColor, width: 1),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'Join',
-                                          style: TextStyle(
-                                            fontFamily: kFontMedium,
-                                            color: gMainColor,
-                                            fontSize: 12.sp,
+                                  child: Center(
+                                    child: IntrinsicWidth(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            isJoinPressed = true;
+                                          });
+                                          // ChildAppointmentDetails? model;
+                                          // if (widget.isFromDashboard) {
+                                          //   model =
+                                          //       ChildAppointmentDetails.fromJson(
+                                          //           Map.from(
+                                          //               widget.dashboardValueMap!));
+                                          // }
+                                          print("Zoom Call");
+                                          launchZoomUrl("${widget.appointmentUrl?.kaleyraJoinurl}");
+                                        },
+                                        child: Container(
+
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 1.5.h, horizontal: 5.w),
+                                          decoration: BoxDecoration(
+                                            color: gWhiteColor,
+                                            borderRadius: BorderRadius.circular(10),
+                                            border: Border.all(
+                                                color: gMainColor, width: 1),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              'Join',
+                                              style: TextStyle(
+                                                fontFamily: kFontMedium,
+                                                color: gMainColor,
+                                                fontSize: 15.sp,
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -639,7 +642,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                                         decoration: TextDecoration.underline,
                                         fontFamily: kFontMedium,
                                         color: gWhiteColor,
-                                        fontSize: 12.sp,
+                                        fontSize: 15.sp,
                                       ),
                                     ),
                                   ),
@@ -662,7 +665,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                             },
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 3.w, vertical: 1.h),
+                                  horizontal: 3.w, vertical: 3.h),
                               decoration: BoxDecoration(
                                 color: gWhiteColor,
                                 borderRadius: BorderRadius.circular(20),
@@ -679,22 +682,22 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                                   Image(
                                     image: const AssetImage(
                                         "assets/images/Group 3776.png"),
-                                    height: 8.h,
+                                    height: 10.h,
                                   ),
-                                  SizedBox(width: 5.w),
+                                  SizedBox(width: 2.w),
                                   Expanded(
                                     child: Text(
                                       "Medical Feedback",
                                       style: TextStyle(
                                           fontFamily: kFontMedium,
                                           color: gTextColor,
-                                          fontSize: 12.sp),
+                                          fontSize: 15.sp),
                                     ),
                                   ),
                                   Icon(
                                     Icons.arrow_forward_ios_sharp,
                                     color: gMainColor,
-                                    size: 2.h,
+                                    size: 3.h,
                                   )
                                 ],
                               ),
@@ -732,13 +735,13 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                                       style: TextStyle(
                                           fontFamily: kFontMedium,
                                           color: gTextColor,
-                                          fontSize: 12.sp),
+                                          fontSize: 15.dp),
                                     ),
                                   ),
                                   Icon(
                                     Icons.arrow_forward_ios_sharp,
                                     color: gMainColor,
-                                    size: 2.h,
+                                    size: 3.h,
                                   )
                                 ],
                               ),

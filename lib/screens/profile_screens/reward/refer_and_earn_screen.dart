@@ -10,8 +10,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_stack/flutter_image_stack.dart';
 import 'package:flutter_share_me/flutter_share_me.dart';
-import 'package:sizer/sizer.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:url_launcher/url_launcher.dart';
 
 import '../../../utils/app_config.dart';
 import '../../../widgets/constants.dart';

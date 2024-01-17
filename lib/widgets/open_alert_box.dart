@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'constants.dart';
 
 openAlertBox({
@@ -26,7 +25,7 @@ openAlertBox({
         child: AlertDialog(
          // backgroundColor: kPrimaryColor,
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(15.0.sp))),
+              borderRadius: BorderRadius.all(Radius.circular(15.0.dp))),
           contentPadding: EdgeInsets.only(top: 1.h),
           content: Container(
             padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
@@ -46,7 +45,7 @@ openAlertBox({
                     style: TextStyle(
                         fontFamily: kFontBold,
                         color: gsecondaryColor,
-                        fontSize: 11.sp),
+                        fontSize: 11.dp),
                   ),
                 ),
                 Visibility(
@@ -65,7 +64,7 @@ openAlertBox({
                     style: TextStyle(
                         fontFamily: kFontMedium,
                         color: gBlackColor,
-                        fontSize: 11.sp),
+                        fontSize: 11.dp),
                   ),
                 ),
                 Visibility(
@@ -89,7 +88,7 @@ openAlertBox({
                             style: TextStyle(
                               fontFamily: kFontMedium,
                               color: gWhiteColor,
-                              fontSize: 11.sp,
+                              fontSize: 11.dp,
                             ),
                           ),
                         ),
@@ -111,7 +110,7 @@ openAlertBox({
                           style: TextStyle(
                             fontFamily: kFontMedium,
                             color: gWhiteColor,
-                            fontSize: 11.sp,
+                            fontSize: 11.dp,
                           ),
                         ),
                       ),

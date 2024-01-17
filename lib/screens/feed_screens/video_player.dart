@@ -7,8 +7,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sizer/sizer.dart';
-// import 'package:flutter_vlc_player/flutter_vlc_player.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';// import 'package:flutter_vlc_player/flutter_vlc_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../widgets/constants.dart';

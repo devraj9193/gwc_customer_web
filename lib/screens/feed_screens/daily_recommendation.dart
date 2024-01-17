@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sizer/sizer.dart';
-import '../../model/new_user_model/about_program_model/feeds_model/feedsListModel.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import '../../model/new_user_model/about_program_model/feeds_model/feedsListModel.dart';
 import '../../widgets/constants.dart';
 import 'package:get/get.dart';
 import 'daily_recommendation_details.dart';

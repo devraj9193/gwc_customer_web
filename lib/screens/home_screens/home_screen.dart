@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/screens/home_screens/recent_tips/recent_tips.dart';
 import 'package:gwc_customer_web/screens/home_screens/story/home_story.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 
 import '../../model/error_model.dart';
 import '../../model/home_model/bmi_bmr_model.dart';

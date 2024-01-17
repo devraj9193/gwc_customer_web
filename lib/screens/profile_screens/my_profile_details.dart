@@ -32,8 +32,9 @@ import 'package:gwc_customer_web/model/profile_model/user_profile/send_user_mode
 import 'package:gwc_customer_web/screens/profile_screens/user_details_tap.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/dart_extensions.dart';
+import 'package:image_network/image_network.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:http/http.dart' as http;
 import '../../model/error_model.dart';
 import '../../model/profile_model/user_profile/child_user_model.dart';
@@ -56,7 +57,6 @@ class MyProfileDetails extends StatefulWidget {
 }
 
 class _MyProfileDetailsState extends State<MyProfileDetails> {
-
   bool photoError = false;
   String profile = '';
   TextEditingController fnameController = TextEditingController();
@@ -117,11 +117,39 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 1.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                child: buildAppBar(() {
-                  Navigator.pop(context);
-                })
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 3.w),
+                      child: buildAppBar(() {
+                        Navigator.pop(context);
+                      })),
+                  Padding(
+                    padding: EdgeInsets.only(right: 3.w),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: 'V.',
+                            style: TextStyle(
+                                fontFamily: kFontMedium,
+                                color: gBlackColor,
+                                fontSize: 6.dp),
+                          ),
+                          TextSpan(
+                            text: "4.3",
+                            style: TextStyle(
+                                fontFamily: kFontBook,
+                                color: gBlackColor,
+                                fontSize: 6.dp),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 1.h),
               FutureBuilder(
@@ -129,7 +157,8 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                   builder: (_, snapshot) {
                     if (snapshot.hasData) {
                       if (snapshot.data.runtimeType == UserProfileModel) {
-                        UserProfileModel data = snapshot.data as UserProfileModel;
+                        UserProfileModel data =
+                            snapshot.data as UserProfileModel;
                         ChildUserModel? subData = data.data;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +166,8 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 5.w),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     "My Profile",
@@ -145,263 +175,292 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                     style: TextStyle(
                                         fontFamily: kFontBold,
                                         color: gBlackColor,
-                                        fontSize: 12.sp),
+                                        fontSize: 16.dp),
                                   ),
                                   (!isEdit)
                                       ? InkWell(
-                                      onTap: () {
-                                        toggleEdit();
-                                        if (isEdit) {
-                                          setState(() {
-                                            ChildUserModel data = subData!;
-                                            print(
-                                                "${data.name}, ${data.age}");
-                                            fnameController.text =
-                                                data.fname ?? '';
-                                            lnameController.text =
-                                                data.lname ?? '';
-                                            ageController.text =
-                                                data.age ?? '';
-                                            genderSelected = data.gender!.toTitleCase() ?? '';
-                                            emailController.text =
-                                            data.email!;
-                                            mobileController.text =
-                                            data.phone!;
-                                          });
-                                        }
-                                        // Navigator.of(context).push(
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) =>
-                                        //     const RegisterScreen(),
-                                        //   ),
-                                        // );
-                                      },
-                                      child: SvgPicture.asset(
-                                        "assets/images/Icon feather-edit.svg",
-                                        color: Colors.grey,
-                                        fit: BoxFit.contain,
-                                        height: 2.h,
-                                      ))
+                                          onTap: () {
+                                            toggleEdit();
+                                            if (isEdit) {
+                                              setState(() {
+                                                ChildUserModel data = subData!;
+                                                print(
+                                                    "${data.name}, ${data.age}");
+                                                fnameController.text =
+                                                    data.fname ?? '';
+                                                lnameController.text =
+                                                    data.lname ?? '';
+                                                ageController.text =
+                                                    data.age ?? '';
+                                                genderSelected = data.gender!
+                                                        .toTitleCase() ??
+                                                    '';
+                                                emailController.text =
+                                                    data.email!;
+                                                mobileController.text =
+                                                    data.phone!;
+                                              });
+                                            }
+                                            // Navigator.of(context).push(
+                                            //   MaterialPageRoute(
+                                            //     builder: (context) =>
+                                            //     const RegisterScreen(),
+                                            //   ),
+                                            // );
+                                          },
+                                          child: SvgPicture.asset(
+                                            "assets/images/Icon feather-edit.svg",
+                                            color: Colors.grey,
+                                            fit: BoxFit.contain,
+                                            height: 2.h,
+                                          ))
                                       : Align(
-                                    alignment: Alignment.topRight,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        GestureDetector(
-                                            onTap: () {
-                                              toggleEdit();
-                                              _image = null;
-                                            },
-                                            child: Icon(Icons.clear)),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        GestureDetector(
-                                            onTap: () async {
-                                              if (int.parse(ageController
-                                                  .text) <
-                                                  10 ||
-                                                  int.parse(ageController
-                                                      .text) >
-                                                      100) {
-                                                AppConfig().showSnackbar(
-                                                    context,
-                                                    "Age Should be Greater than 10 and less than 100",
-                                                    isError: true);
-                                              } else {
-                                                var file;
-                                                if (_image != null) {
-                                                  file = await http
-                                                      .MultipartFile
-                                                      .fromPath("photo",
-                                                      _image!.path);
-                                                }
-                                                SendUserModel user =
-                                                SendUserModel(
-                                                    fname:
-                                                    fnameController
-                                                        .text,
-                                                    lname:
-                                                    lnameController
-                                                        .text,
-                                                    age: ageController
-                                                        .text,
-                                                    gender:
-                                                    genderSelected.toLowerCase(),
-                                                    email:
-                                                    subData!.email,
-                                                    phone:
-                                                    subData.phone,
-                                                    profile: (_image !=
-                                                        null &&
-                                                        file !=
-                                                            null)
-                                                        ? file
-                                                        : null);
-                                                updateProfileData(
-                                                    user.toJson());
-                                              }
+                                          alignment: Alignment.topRight,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              GestureDetector(
+                                                  onTap: () {
+                                                    toggleEdit();
+                                                    _image = null;
+                                                  },
+                                                  child: Icon(Icons.clear)),
+                                              SizedBox(
+                                                width: 10,
+                                              ),
+                                              GestureDetector(
+                                                  onTap: () async {
+                                                    if (int.parse(ageController
+                                                                .text) <
+                                                            10 ||
+                                                        int.parse(ageController
+                                                                .text) >
+                                                            100) {
+                                                      AppConfig().showSnackbar(
+                                                          context,
+                                                          "Age Should be Greater than 10 and less than 100",
+                                                          isError: true);
+                                                    } else {
+                                                      var file;
+                                                      if (_image != null) {
+                                                        file = await http
+                                                                .MultipartFile
+                                                            .fromPath("photo",
+                                                                _image!.path);
+                                                      }
+                                                      SendUserModel user = SendUserModel(
+                                                          fname: fnameController
+                                                              .text,
+                                                          lname: lnameController
+                                                              .text,
+                                                          age: ageController
+                                                              .text,
+                                                          gender: genderSelected
+                                                              .toLowerCase(),
+                                                          email: subData!.email,
+                                                          phone: subData.phone,
+                                                          profile: (_image !=
+                                                                      null &&
+                                                                  file != null)
+                                                              ? file
+                                                              : null);
+                                                      updateProfileData(
+                                                          user.toJson());
+                                                    }
 
-                                              // toggleEdit();
-                                            },
-                                            child: Icon(Icons.check))
-                                      ],
-                                    ),
-                                  ),
+                                                    // toggleEdit();
+                                                  },
+                                                  child: Icon(Icons.check))
+                                            ],
+                                          ),
+                                        ),
                                 ],
                               ),
                             ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                  top: 2.h, bottom: 3.h, right: 5.w, left: 5.w),
-                              padding: EdgeInsets.only(
-                                  top: 2.h, bottom: 2.h, right: 3.w, left: 3.w),
-                              decoration: BoxDecoration(
-                                color: gWhiteColor,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: kLineColor.withOpacity(0.5),
-                                    offset: Offset(2, 3),
-                                    blurRadius: 5,
-                                  )
-                                ],
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Center(
-                                child: Column(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 6.h,
-                                      backgroundColor: Colors.black26,
-                                      backgroundImage:
-                                      // (subData!.profile == null || photoError) ? ExactAssetImage(
-                                      //     "assets/images/cheerful.png") :
-                                      (_image != null)
-                                          ? FileImage(_image!)
-                                          : CachedNetworkImageProvider(
-                                          subData!.profile!,
-                                          errorListener: (message) {
-                                            print("image error");
-                                            setState(
-                                                    () => photoError = true);
-                                          }) as ImageProvider,
-                                      child: Stack(
-                                        //  overflow: Overflow.visible,
-                                          clipBehavior: Clip.none,
-                                          children: [
-                                            Visibility(
-                                              visible: isEdit,
-                                              child: GestureDetector(
-                                                onTap: showChooserSheet,
-                                                child: Align(
-                                                  alignment:
-                                                  Alignment.bottomRight,
-                                                  child: CircleAvatar(
-                                                    radius: 11,
-                                                    backgroundColor: gPrimaryColor
-                                                        .withOpacity(0.9),
-                                                    child: const Padding(
-                                                      padding:
-                                                      EdgeInsets.all(4.0),
-                                                      child: Icon(
-                                                        CupertinoIcons.camera,
-                                                        color: gWhiteColor,
-                                                        size: 14,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ]),
-                                    ),
-                                    SizedBox(
-                                      height: 1.h,
-                                    ),
-                                    Text(
-                                      "${subData?.name}",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontFamily: eUser().mainHeadingFont,
-                                          color: eUser().mainHeadingColor,
-                                          fontSize: eUser().mainHeadingFontSize),
-                                    ),
-                                    SizedBox(height: 1.h),
-                                    Text(
-                                      "${subData?.email}",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontFamily:
-                                          eUser().userTextFieldHintFont,
-                                          color: gHintTextColor,
-                                          fontSize:
-                                          eUser().userTextFieldFontSize),
-                                    ),
-                                    SizedBox(height: 1.h),
-                                    Text(
-                                      "${subData?.phone}",
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                          fontFamily:
-                                          eUser().userTextFieldHintFont,
-                                          color: gHintTextColor,
-                                          fontSize:
-                                          eUser().userTextFieldFontSize),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 5.w, top: 2.h, right: 5.w),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                        children: [
-                                          buildButtons(
-                                            "Evaluation",
-                                            "assets/images/Group 62759.png",
-                                                () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                  const EvaluationGetDetails(
-                                                    isFromProfile: false,
-                                                  ),
-                                                  // builder: (context) => isConsultationCompleted ? ConsultationSuccess() : const DoctorCalenderTimeScreen(),
-                                                ),
-                                              );
-                                            },
+                            Center(
+                              child: IntrinsicWidth(
+                                child: Container(
+                                  margin: EdgeInsets.only(
+                                      top: 2.h, bottom: 3.h, right: 0.w, left: 0.w),
+                                  padding: EdgeInsets.only(
+                                      top: 3.h,
+                                      bottom: 3.h,
+                                      right: 5.w,
+                                      left: 5.w),
+                                  decoration: BoxDecoration(
+                                    color: gWhiteColor,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: kLineColor.withOpacity(0.5),
+                                        offset: Offset(2, 3),
+                                        blurRadius: 5,
+                                      )
+                                    ],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: Column(
+                                      children: [
+                                        ImageNetwork(
+                                          image: subData!.profile!,
+                                          height: 140,
+                                          width: 140,
+                                          duration: 1500,
+                                          curve: Curves.easeIn,
+                                          onPointer: true,
+                                          debugPrint: false,
+                                          fullScreen: false,
+                                          fitAndroidIos: BoxFit.cover,
+                                          fitWeb: BoxFitWeb.cover,
+                                          borderRadius: BorderRadius.circular(70),
+                                          onLoading: const CircularProgressIndicator(
+                                            color: Colors.indigoAccent,
                                           ),
-                                          buildButtons(
-                                            "My Reports",
-                                            "assets/images/Group 62760.png",
+                                          onError: const Icon(
+                                            Icons.error,
+                                            color: Colors.red,
+                                          ),
+                                          onTap: () {
+                                            debugPrint("©gabriel_patrick_souza");
+                                          },
+                                        ),
+                                        // CircleAvatar(
+                                        //   radius: 8.h,
+                                        //   backgroundColor: Colors.black26,
+                                        //   backgroundImage:
+                                        //       // (subData!.profile == null || photoError) ? ExactAssetImage(
+                                        //       //     "assets/images/cheerful.png") :
+                                        //       (_image != null)
+                                        //           ? FileImage(_image!)
+                                        //           : CachedNetworkImageProvider(
+                                        //               subData!.profile!,
+                                        //               errorListener: (message) {
+                                        //               print("image error");
+                                        //               setState(() =>
+                                        //                   photoError = true);
+                                        //             }) as ImageProvider,
+                                        //   child: Stack(
+                                        //       //  overflow: Overflow.visible,
+                                        //       clipBehavior: Clip.none,
+                                        //       children: [
+                                        //         Visibility(
+                                        //           visible: isEdit,
+                                        //           child: GestureDetector(
+                                        //             onTap: showChooserSheet,
+                                        //             child: Align(
+                                        //               alignment:
+                                        //                   Alignment.bottomRight,
+                                        //               child: CircleAvatar(
+                                        //                 radius: 11,
+                                        //                 backgroundColor:
+                                        //                     gPrimaryColor
+                                        //                         .withOpacity(0.9),
+                                        //                 child: const Padding(
+                                        //                   padding:
+                                        //                       EdgeInsets.all(4.0),
+                                        //                   child: Icon(
+                                        //                     CupertinoIcons.camera,
+                                        //                     color: gWhiteColor,
+                                        //                     size: 14,
+                                        //                   ),
+                                        //                 ),
+                                        //               ),
+                                        //             ),
+                                        //           ),
+                                        //         ),
+                                        //       ]),
+                                        // ),
+                                        SizedBox(
+                                          height: 1.h,
+                                        ),
+                                        Text(
+                                          "${subData?.name}",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontFamily: eUser().mainHeadingFont,
+                                              color: eUser().mainHeadingColor,
+                                              fontSize:
+                                                  eUser().mainHeadingFontSize),
+                                        ),
+                                        SizedBox(height: 1.h),
+                                        Text(
+                                          "${subData?.email}",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontFamily:
+                                                  eUser().userTextFieldHintFont,
+                                              color: gHintTextColor,
+                                              fontSize:
+                                                  eUser().userTextFieldFontSize),
+                                        ),
+                                        SizedBox(height: 1.h),
+                                        Text(
+                                          "${subData?.phone}",
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontFamily:
+                                                  eUser().userTextFieldHintFont,
+                                              color: gHintTextColor,
+                                              fontSize:
+                                                  eUser().userTextFieldFontSize),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(top: 2.h),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              buildButtons(
+                                                "Evaluation",
+                                                "assets/images/Group 62759.png",
                                                 () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      UploadFiles(
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          const EvaluationGetDetails(
+                                                        isFromProfile: false,
+                                                      ),
+                                                      // builder: (context) => isConsultationCompleted ? ConsultationSuccess() : const DoctorCalenderTimeScreen(),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                              SizedBox(width: 3.w),
+                                              buildButtons(
+                                                "My Reports",
+                                                "assets/images/Group 62760.png",
+                                                () {
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          UploadFiles(
                                                         isFromSettings: true,
                                                       ),
-                                                  // builder: (context) => isConsultationCompleted ? ConsultationSuccess() : const DoctorCalenderTimeScreen(),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                          buildButtons(
-                                            "Feedback",
-                                            "assets/images/Group 62758.png",
+                                                      // builder: (context) => isConsultationCompleted ? ConsultationSuccess() : const DoctorCalenderTimeScreen(),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                              SizedBox(width: 3.w),
+                                              buildButtons(
+                                                "Feedback",
+                                                "assets/images/Group 62758.png",
                                                 () {
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      FeedbackRatingScreen(),
-                                                  // builder: (context) => isConsultationCompleted ? ConsultationSuccess() : const DoctorCalenderTimeScreen(),
-                                                ),
-                                              );
-                                            },
+                                                  Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FeedbackRatingScreen(),
+                                                      // builder: (context) => isConsultationCompleted ? ConsultationSuccess() : const DoctorCalenderTimeScreen(),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                    )
-                                  ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -447,7 +506,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
         // mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(8),
             decoration: const BoxDecoration(
                 color: gsecondaryColor, shape: BoxShape.circle),
             child: Image(
@@ -455,7 +514,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                 image,
               ),
               color: gWhiteColor,
-              height: 3.h,
+              height: 4.h,
             ),
           ),
           SizedBox(height: 1.h),
@@ -464,7 +523,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
             style: TextStyle(
               color: gTextColor,
               fontFamily: kFontMedium,
-              fontSize: 10.sp,
+              fontSize: 13.dp,
             ),
           ),
         ],
@@ -487,7 +546,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
             style: TextStyle(
               color: gHintTextColor,
               fontFamily: kFontBook,
-              fontSize: 10.sp,
+              fontSize: 10.dp,
             ),
           ),
           SizedBox(height: 1.h),
@@ -523,7 +582,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                 style: TextStyle(
                   color: gBlackColor,
                   fontFamily: kFontBold,
-                  fontSize: 11.sp,
+                  fontSize: 11.dp,
                 ),
               ),
               Container(
@@ -538,7 +597,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
     );
   }
 
-  genderTile(String title, String selectedGender){
+  genderTile(String title, String selectedGender) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 5.w),
       child: Column(
@@ -550,10 +609,11 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
             style: TextStyle(
               color: gHintTextColor,
               fontFamily: kFontBook,
-              fontSize: 10.sp,
+              fontSize: 10.dp,
             ),
           ),
           SizedBox(height: 1.h),
+
           /// commented the edit for gender
           /// if we need edit than uncomment this
           // (isEdit)
@@ -648,7 +708,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                 style: TextStyle(
                   color: gBlackColor,
                   fontFamily: kFontBold,
-                  fontSize: 11.sp,
+                  fontSize: 11.dp,
                 ),
               ),
               Container(
@@ -804,16 +864,16 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                         style: TextStyle(
                           color: gTextColor,
                           fontFamily: kFontMedium,
-                          fontSize: 12.sp,
+                          fontSize: 12.dp,
                         ),
                       ),
                       decoration: BoxDecoration(
                           border: Border(
-                            bottom: BorderSide(
-                              color: gHintTextColor,
-                              width: 3.0,
-                            ),
-                          )),
+                        bottom: BorderSide(
+                          color: gHintTextColor,
+                          width: 3.0,
+                        ),
+                      )),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -835,7 +895,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                   style: TextStyle(
                                     color: gTextColor,
                                     fontFamily: kFontMedium,
-                                    fontSize: 10.sp,
+                                    fontSize: 10.dp,
                                   ),
                                 ),
                               ],
@@ -845,11 +905,11 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                           height: 10,
                           decoration: BoxDecoration(
                               border: Border(
-                                right: BorderSide(
-                                  color: gHintTextColor,
-                                  width: 1,
-                                ),
-                              )),
+                            right: BorderSide(
+                              color: gHintTextColor,
+                              width: 1,
+                            ),
+                          )),
                         ),
                         TextButton(
                             onPressed: () {
@@ -868,7 +928,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                   style: TextStyle(
                                     color: gTextColor,
                                     fontFamily: kFontMedium,
-                                    fontSize: 10.sp,
+                                    fontSize: 10.dp,
                                   ),
                                 ),
                               ],
@@ -886,10 +946,13 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
   Future getImageFromCamera() async {
     await ImagePicker()
         .pickImage(source: ImageSource.camera, imageQuality: 50)
-        .then((pickedFile) => cropSelectedImage("${pickedFile?.path}")
-        .then((croppedFile) => setState(() {
-      _image = File("${croppedFile?.path}");
-    }),),);
+        .then(
+          (pickedFile) => cropSelectedImage("${pickedFile?.path}").then(
+            (croppedFile) => setState(() {
+              _image = File("${croppedFile?.path}");
+            }),
+          ),
+        );
     print("captured image: $_image");
   }
 
@@ -899,10 +962,10 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
         .then(
           (pickedFile) => cropSelectedImage("${pickedFile?.path}").then(
             (croppedFile) => setState(() {
-          _image = File("${croppedFile?.path}");
-        }),
-      ),
-    );
+              _image = File("${croppedFile?.path}");
+            }),
+          ),
+        );
     // setState(() {
     //   _image = File(image);
     // });

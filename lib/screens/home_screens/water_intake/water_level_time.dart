@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../model/home_model/water_level_time_model.dart';
 import '../../../services/home_service/drink_water_controller.dart';
 import '../../../utils/app_config.dart';

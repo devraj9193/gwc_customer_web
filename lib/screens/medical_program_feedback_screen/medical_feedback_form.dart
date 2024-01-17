@@ -13,8 +13,7 @@ once medical feedback submitetd we r showing card screen instead of finafeedback
  */
 
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../../model/error_model.dart';
 import '../../model/new_user_model/register/register_model.dart';
 import '../../repository/api_service.dart';
@@ -270,58 +269,59 @@ class _MedicalFeedbackFormState extends State<MedicalFeedbackForm> {
           lifeHabitsRadioButton(),
           SizedBox(height: 5.h),
           Center(
-            child: GestureDetector(
-              onTap: () {
-                if (formKey.currentState!.validate()) {
-                  if (mealPreferences.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Meal Preference",
-                        isError: true, bottomPadding: 10);
-                  } else if (hungerPattern.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Hunger Pattern",
-                        isError: true, bottomPadding: 10);
-                  } else if (bowelPattern.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Bowel Pattern",
-                        isError: true, bottomPadding: 10);
-                  } else if (lifestyleHabits.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Life Style",
-                        isError: true, bottomPadding: 10);
+            child: IntrinsicWidth(
+              child: GestureDetector(
+                onTap: () {
+                  if (formKey.currentState!.validate()) {
+                    if (mealPreferences.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Select Meal Preference",
+                          isError: true, bottomPadding: 10);
+                    } else if (hungerPattern.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Select Hunger Pattern",
+                          isError: true, bottomPadding: 10);
+                    } else if (bowelPattern.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Select Bowel Pattern",
+                          isError: true, bottomPadding: 10);
+                    } else if (lifestyleHabits.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Select Life Style",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submitMedicalFeedbackForm(
+                        resolvedController.text.toString(),
+                        unResolvedController.text.toString(),
+                        mealPreferences.toString(),
+                        hungerPattern.toString(),
+                        bowelPattern.toString(),
+                        lifestyleHabits.toString(),
+                      );
+                    }
                   } else {
-                    submitMedicalFeedbackForm(
-                      resolvedController.text.toString(),
-                      unResolvedController.text.toString(),
-                      mealPreferences.toString(),
-                      hungerPattern.toString(),
-                      bowelPattern.toString(),
-                      lifestyleHabits.toString(),
-                    );
+                    AppConfig().showSnackbar(context, "Please Enter Your Answer",
+                        isError: true, bottomPadding: 10);
                   }
-                } else {
-                  AppConfig().showSnackbar(context, "Please Enter Your Answer",
-                      isError: true, bottomPadding: 10);
-                }
-              },
-              child: Container(
-                width: 40.w,
-                height: 5.h,
-                decoration: BoxDecoration(
-                  color: eUser().buttonColor,
-                  borderRadius:
-                      BorderRadius.circular(eUser().buttonBorderRadius),
-                  // border: Border.all(
-                  //     color: eUser().buttonBorderColor,
-                  //     width: eUser().buttonBorderWidth
-                  // ),
-                ),
-                child: (isLoading) ? buildThreeBounceIndicator(color: eUser().threeBounceIndicatorColor)
-                    : Center(
-                    child: Text(
-                  'Submit',
-                  style: TextStyle(
-                    fontFamily: eUser().buttonTextFont,
-                    color: eUser().buttonTextColor,
-                    fontSize: eUser().buttonTextSize,
+                },
+                child: Container(
+                 padding: EdgeInsets.symmetric(horizontal: 5.w,vertical: 1.5.h),
+                                 decoration: BoxDecoration(
+                    color: eUser().buttonColor,
+                    borderRadius:
+                        BorderRadius.circular(eUser().buttonBorderRadius),
+                    // border: Border.all(
+                    //     color: eUser().buttonBorderColor,
+                    //     width: eUser().buttonBorderWidth
+                    // ),
                   ),
-                )),
+                  child: (isLoading) ? buildThreeBounceIndicator(color: eUser().threeBounceIndicatorColor)
+                      : Center(
+                      child: Text(
+                    'Submit',
+                    style: TextStyle(
+                      fontFamily: eUser().buttonTextFont,
+                      color: eUser().buttonTextColor,
+                      fontSize: eUser().buttonTextSize,
+                    ),
+                  )),
+                ),
               ),
             ),
           ),
@@ -737,6 +737,7 @@ class _MedicalFeedbackFormState extends State<MedicalFeedbackForm> {
         color: (value == title) ? kTextColor : gHintTextColor,
         height: 1.3,
         fontFamily: (value == title) ? kFontMedium : kFontBook,
+        fontSize: (value == title) ? 14.dp : 12.dp,
       ),
     );
   }

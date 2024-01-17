@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../widgets/constants.dart';
 import '../../widgets/widgets.dart';
@@ -23,6 +23,24 @@ class ProtocolGuideDetails extends StatefulWidget {
 }
 
 class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    viewPdf();
+  }
+
+  viewPdf() async {
+    if (!await launchUrl(Uri.parse(widget.pdfLink.toString()))) {
+      Navigator.pop(context);
+      throw Exception('Could not launch ${widget.pdfLink.toString()}');
+    } else {
+      // can't launch url, there is some error
+      throw "Could not launch ${widget.pdfLink.toString()}";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,7 +143,7 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
                                       ],
                                     ),
                                     child: CircleAvatar(
-                                      maxRadius: 40.sp,
+                                      maxRadius: 40.dp,
                                       backgroundColor: kBottomSheetHeadCircleColor,
                                       child: Image.asset(this.widget.headCircleIcon ?? bsHeadBellIcon,
                                         fit: BoxFit.scaleDown,
@@ -183,7 +201,7 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
                       //                 style: TextStyle(
                       //                     fontFamily: "GothamRoundedBold_21016",
                       //                     color: gTextColor,
-                      //                     fontSize: 12.sp),
+                      //                     fontSize: 12.dp),
                       //               ),
                       //             ),
                       //           ),
@@ -226,7 +244,7 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
                       //       //       height: 1.5,
                       //       //       fontFamily: "GothamMedium",
                       //       //       color: gTextColor,
-                      //       //       fontSize: 10.sp),
+                      //       //       fontSize: 10.dp),
                       //       // ),
                       //     ],
                       //   ),

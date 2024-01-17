@@ -39,8 +39,7 @@ import 'package:gwc_customer_web/services/shipping_service/ship_track_service.da
 import 'package:gwc_customer_web/widgets/vlc_player/vlc_player_with_controls.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:sizer/sizer.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../model/error_model.dart';
 import '../../utils/app_config.dart';
 import '../../widgets/constants.dart';

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:sizer/sizer.dart';
-import 'dart:math' as math;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'dart:math' as math;
 import 'package:http/http.dart' as http;
 import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
 

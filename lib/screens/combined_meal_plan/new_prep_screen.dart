@@ -18,8 +18,7 @@ we r accessing in this screen using "AppConfig.isPrepTrackerCompleted" key
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../model/combined_meal_model/meal_slot_model.dart';
 import '../../model/combined_meal_model/new_prep_model.dart';
 import '../../utils/app_config.dart';
@@ -35,7 +34,9 @@ class NewPrepScreen extends StatefulWidget {
   /// this will be used when we came from start program screen
   final bool viewDay1Details;
 
-  NewPrepScreen({Key? key, required this.prepPlanDetails,
+  NewPrepScreen({
+    Key? key,
+    required this.prepPlanDetails,
     this.selectedDay = 1,
     this.viewDay1Details = false,
     this.totalDays,
@@ -45,8 +46,8 @@ class NewPrepScreen extends StatefulWidget {
   State<NewPrepScreen> createState() => _NewPrepScreenState();
 }
 
-class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateMixin{
-
+class _NewPrepScreenState extends State<NewPrepScreen>
+    with TickerProviderStateMixin {
   AnimationController? _animationController;
   Offset checkedPositionOffset = Offset(0, 0);
   Offset lastCheckOffset = Offset(0, 0);
@@ -70,7 +71,7 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(widget.totalDays != null){
+    if (widget.totalDays != null) {
       totalDays = widget.totalDays;
     }
     getPrepItemsAndStore(widget.prepPlanDetails);
@@ -82,43 +83,35 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
 
   bool showPrepTrackerBtn = false;
   final _pref = AppConfig().preferences;
-  late bool isPrepTrackerCompleted = _pref?.getBool(AppConfig.isPrepTrackerCompleted) ?? false;
+  late bool isPrepTrackerCompleted =
+      _pref?.getBool(AppConfig.isPrepTrackerCompleted) ?? false;
 
   getInitialIndex() {
     // print("HOur : $selectedIndex ${DateTime.now().hour}");
     // print("HOur : $selectedIndex : ${DateTime.now().hour >= DateTime.now().hour}");
     if (DateTime.now().hour >= 0 && DateTime.now().hour <= 7) {
-      print(
-          "Early Morning : ${DateTime.now().hour >= 7}");
+      print("Early Morning : ${DateTime.now().hour >= 7}");
       selectedIndex = 0;
     } else if (DateTime.now().hour >= 7 && DateTime.now().hour <= 10) {
-      print(
-          "Breakfast : ${DateTime.now().hour <= 7}");
+      print("Breakfast : ${DateTime.now().hour <= 7}");
       selectedIndex = 1;
     } else if (DateTime.now().hour >= 10 && DateTime.now().hour <= 12) {
-      print(
-          "Mid Day : ${DateTime.now().hour <= 10}");
+      print("Mid Day : ${DateTime.now().hour <= 10}");
       selectedIndex = 2;
-    }
-    else if (DateTime.now().hour > 12 && DateTime.now().hour <= 14) {
+    } else if (DateTime.now().hour > 12 && DateTime.now().hour <= 14) {
       print("Lunch : ${DateTime.now().hour <= 11}");
       selectedIndex = 3;
-    }
-    else if (DateTime.now().hour > 14 && DateTime.now().hour <= 18) {
-      print(
-          "Evening : ${DateTime.now().hour <= 13}");
+    } else if (DateTime.now().hour > 14 && DateTime.now().hour <= 18) {
+      print("Evening : ${DateTime.now().hour <= 13}");
       selectedIndex = 4;
     } else if (DateTime.now().hour > 18 && DateTime.now().hour <= 21) {
-      print(
-          "Dinner : ${DateTime.now().hour <= 18}");
+      print("Dinner : ${DateTime.now().hour <= 18}");
       selectedIndex = 5;
     } else if (DateTime.now().hour > 21 && DateTime.now().hour <= 0) {
-      print(
-          "Post Dinner : ${DateTime.now().hour <= 21}");
+      print("Post Dinner : ${DateTime.now().hour <= 21}");
 
-
-      if(totalDays != null && presentDay != null){
-        if(totalDays == presentDay){
+      if (totalDays != null && presentDay != null) {
+        if (totalDays == presentDay) {
           showPrepTrackerBtn = true;
         }
       }
@@ -133,18 +126,16 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
     _tabController!.animateTo(selectedIndex);
   }
 
-
-
   void getPrepItemsAndStore(ChildPrepModel childPrepModel) {
     _childPrepModel = childPrepModel;
     print("prep--");
     print(_childPrepModel!.toJson());
-    if(_childPrepModel != null){
+    if (_childPrepModel != null) {
       slotNamesForTabs.addAll(_childPrepModel!.details!);
 
       print(slotNamesForTabs);
 
-      if(slotNamesForTabs.isNotEmpty){
+      if (slotNamesForTabs.isNotEmpty) {
         selectedIndex = 0;
         // selectedSlot = slotNamesForTabs.keys.first;
         // selectedItemName = slotNamesForTabs.values.first.subItems!.keys.first;
@@ -156,18 +147,17 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
     _tabController = TabController(vsync: this, length: tabSize);
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: tabSize,
       child: Scaffold(
+        backgroundColor: gWhiteColor,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: 3.w,top: 2.h,bottom: 1.h),
+              padding: EdgeInsets.only(left: 3.w, top: 2.h, bottom: 0.h),
               child: Text(
                 'Preparatory Phase',
                 style: TextStyle(
@@ -179,11 +169,15 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
             Padding(
               padding: EdgeInsets.only(left: 3.w),
               child: Text(
-                  (presentDay == 0) ? 'Your Prep will start from tomorrow' : 'Day ${presentDay} of Day ${totalDays}',
+                (presentDay == 0)
+                    ? 'Your Prep will start from tomorrow'
+                    : presentDay == null
+                        ? 'Day 1 of Day ${totalDays}'
+                        : 'Day ${presentDay} of Day ${totalDays}',
                 style: TextStyle(
                     fontFamily: kFontMedium,
                     color: eUser().mainHeadingColor,
-                    fontSize: 10.sp),
+                    fontSize: 12.dp),
               ),
             ),
             // SizedBox(height: 1.h),
@@ -222,11 +216,15 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
                         unselectedLabelStyle: TextStyle(
                             fontFamily: kFontBook,
                             color: gHintTextColor,
-                            fontSize: 9.sp),
+                            fontSize: 12.dp),
                         labelStyle: TextStyle(
                             fontFamily: kFontMedium,
                             color: gBlackColor,
-                            fontSize: 11.sp),
+                            fontSize: 15.dp),
+                        indicatorColor: newDashboardGreenButtonColor,
+                        labelPadding: EdgeInsets.symmetric(horizontal: 5.w),
+                        indicatorPadding:
+                            EdgeInsets.symmetric(horizontal: -2.w),
                         indicator: BoxDecoration(
                           color: newDashboardGreenButtonColor,
                           borderRadius: const BorderRadius.only(
@@ -237,19 +235,23 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
                         onTap: (index) {
                           print("ontap: $index");
                           // print(slotNamesForTabs.keys.elementAt(index));
-                          selectedSlot =
-                              slotNamesForTabs.keys.elementAt(index);
+                          selectedSlot = slotNamesForTabs.keys.elementAt(index);
                           selectedIndex = index;
                           setState(() {
-                            selectedItemName = slotNamesForTabs[selectedSlot]!.subItems!.keys.first;
+                            selectedItemName = slotNamesForTabs[selectedSlot]!
+                                .subItems!
+                                .keys
+                                .first;
                             print(selectedItemName);
                           });
                           // _buildList(index);
                         },
                         tabs: slotNamesForTabs.keys
-                            .map((e) => Tab(
-                          text: e,
-                        ))
+                            .map(
+                              (e) => Tab(
+                                text: e,
+                              ),
+                            )
                             .toList(),
                       ),
                     ),
@@ -265,19 +267,18 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
                   ...slotNamesForTabs.values
                       .map(
                         (e) => buildTabView(e),
-                  )
+                      )
                       .toList(),
                 ],
               ),
             ),
             // btn()
-            if(showPrepTrackerBtn && !isPrepTrackerCompleted) btn()
+            if (showPrepTrackerBtn && !isPrepTrackerCompleted) btn()
           ],
         ),
       ),
     );
   }
-
 
   buildTabView(SubItems mealNames) {
     List<MealSlot> meals = [];
@@ -285,7 +286,7 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
     slotNamesForTabs.entries.map((e) {
       print("compare");
       print(e.value.subItems == mealNames.subItems);
-      if(e.value.subItems == mealNames.subItems){
+      if (e.value.subItems == mealNames.subItems) {
         mealNames.subItems!.forEach((key, element) {
           subItems.add(key);
           print("$key -- $element");
@@ -336,11 +337,12 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
                     children: [
                       Container(
                         width: 300,
-                        margin: EdgeInsets.only(
-                            left: 3.w, right: 3.w, top: 5.h, bottom: 5.h),
+                        margin: EdgeInsets.symmetric(
+                            vertical: 3.5.h, horizontal: 5.w),
                         padding: EdgeInsets.only(bottom: 2.h),
                         decoration: BoxDecoration(
-                          color: gBackgroundColor,
+                          color: gWhiteColor,
+                          // gSitBackBgColor,
                           borderRadius: BorderRadius.circular(40),
 
                           // boxShadow:  [
@@ -353,7 +355,7 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
                         ),
                         child: buildReceipeDetails(meals[index]),
                       ),
-                      if(meals.length > 1)orFiled(index),
+                      if (meals.length > 1) orFiled(index),
                     ],
                   );
                 }),
@@ -362,6 +364,7 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
       ],
     );
   }
+
   btn() {
     return Center(
       child: GestureDetector(
@@ -369,8 +372,7 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => PrepratoryMealCompletedScreen()
-            ),
+                builder: (context) => PrepratoryMealCompletedScreen()),
           );
         },
         child: Container(
@@ -400,7 +402,6 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
     );
   }
 
-
   buildReceipeDetails(MealSlot? meal) {
     return Stack(
       fit: StackFit.expand,
@@ -411,13 +412,13 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
           right: 0,
           top: 6.h,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 3.w),
-            margin: EdgeInsets.symmetric(horizontal: 2.w),
+            padding: EdgeInsets.symmetric(horizontal: 1.w),
+            margin: EdgeInsets.symmetric(horizontal: 0.w),
             decoration: BoxDecoration(
               color: gWhiteColor,
               borderRadius: BorderRadius.circular(40),
               border:
-              Border.all(color: kLineColor.withOpacity(0.2), width: 0.9),
+                  Border.all(color: kLineColor.withOpacity(0.2), width: 0.9),
               // boxShadow:  [
               //   BoxShadow(
               //     color: gBlackColor.withOpacity(0.1),
@@ -431,7 +432,7 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(
-                    height: 15.h,
+                    height: 13.h,
                   ),
                   Text(
                     meal?.name ?? '',
@@ -440,86 +441,88 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
                         color: eUser().mainHeadingColor,
                         fontSize: eUser().mainHeadingFontSize),
                   ),
-                  SizedBox(
-                    height: 2.h
-                  ),
+                  SizedBox(height: 2.h),
                   (meal?.benefits != null)
                       ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ...meal!.benefits!.split('* ').map((element) {
-                        if(element.isNotEmpty) {
-                          return Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(top: 0.3.h),
-                              child: Icon(
-                                Icons.circle_sharp,
-                                color: gGreyColor,
-                                size: 1.h,
-                              ),
-                            ),
-                            SizedBox(width: 2.w),
-                            Expanded(
-                              child: Text(
-                                element ?? '',
-                                style: TextStyle(
-                                    fontFamily: eUser().userTextFieldFont,
-                                    height: 1.2,
-                                    color: eUser().userTextFieldColor,
-                                    fontSize: eUser()
-                                        .userTextFieldHintFontSize),
-                              ),
-                            ),
+                            ...meal!.benefits!.split('* ').map((element) {
+                              if (element.isNotEmpty) {
+                                return Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 0.3.h),
+                                      child: Icon(
+                                        Icons.circle_sharp,
+                                        color: gGreyColor,
+                                        size: 1.5.h,
+                                      ),
+                                    ),
+                                    SizedBox(width: 1.w),
+                                    Expanded(
+                                      child: Text(
+                                        element ?? '',
+                                        style: TextStyle(
+                                            fontFamily:
+                                                eUser().userTextFieldFont,
+                                            height: 1.2,
+                                            color: eUser().userTextFieldColor,
+                                            fontSize: eUser()
+                                                .userTextFieldHintFontSize),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else
+                                return SizedBox();
+                            })
                           ],
-                        );
-                        } else return SizedBox();
-
-                      })
-                    ],
-                  )
+                        )
                       : const SizedBox(),
-                  (meal!.howToPrepare != null)
-                      ? GestureDetector(
-                    onTap: () {
-                      Get.to(
-                            () => MealPlanRecipeDetails(
-                          meal: meal,
-                        ),
-                      );
-                    },
-                    child: Center(
-                      child: Container(
-                         margin: EdgeInsets.symmetric(vertical: 5.h),
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.h, horizontal: 5.w),
-                        decoration: const BoxDecoration(
-                          color: newDashboardGreenButtonColor,
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(15),
-                            bottomLeft: Radius.circular(15),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: kLineColor,
-                              offset: Offset(2, 3),
-                              blurRadius: 5,
+                  (widget.viewDay1Details)
+                      ? const SizedBox()
+                      : (meal!.howToPrepare != null)
+                          ? GestureDetector(
+                              onTap: () {
+                                print("/// Recipe Details ///");
+                                Get.to(
+                                  () => MealPlanRecipeDetails(
+                                    meal: meal,
+                                  ),
+                                );
+                              },
+                              child: Center(
+                                child: Container(
+                                  margin: EdgeInsets.symmetric(vertical: 5.h),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 1.5.h, horizontal: 3.w),
+                                  decoration: const BoxDecoration(
+                                    color: newDashboardGreenButtonColor,
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(15),
+                                      bottomLeft: Radius.circular(15),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: kLineColor,
+                                        offset: Offset(2, 3),
+                                        blurRadius: 5,
+                                      )
+                                    ],
+                                  ),
+                                  child: Text(
+                                    "Recipe",
+                                    style: TextStyle(
+                                      color: gWhiteColor,
+                                      fontFamily: kFontBook,
+                                      fontSize: 14.dp,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             )
-                          ],
-                        ),
-                        child: Text(
-                          "Recipe",
-                          style: TextStyle(
-                            color: gWhiteColor,
-                            fontFamily: kFontBook,
-                            fontSize: 11.sp,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                      : const SizedBox(),
+                          : const SizedBox(),
                 ],
               ),
             ),
@@ -544,11 +547,10 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
             ),
             child: Center(
               child: CircleAvatar(
-                  radius: 8.h,
-                  backgroundImage:
-                  CachedNetworkImageProvider(meal.itemPhoto ?? '')
-                // AssetImage("assets/images/Group 3252.png"),
-              ),
+                  radius: 7.h,
+                  backgroundImage: NetworkImage(meal?.itemPhoto ?? '')
+                  // AssetImage("assets/images/Group 3252.png"),
+                  ),
             ),
           ),
         ),
@@ -575,8 +577,7 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
     if (subItems != null) {
       print("subItems: $subItems");
       subItems.forEach((key) {
-        WidgetList.add(
-            GestureDetector(
+        WidgetList.add(GestureDetector(
             onTap: () {
               print(key);
               indexChecked(key);
@@ -587,17 +588,18 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
                 padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 2.w),
                 decoration: selectedItemName == key
                     ? const BoxDecoration(
-                  color: gWhiteColor,
-                  borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    bottomLeft: Radius.circular(20),
-                  ),
-                )
+                        color: gWhiteColor,
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(20),
+                          bottomLeft: Radius.circular(20),
+                        ),
+                      )
                     : const BoxDecoration(),
                 child: Text(
                   key.capitalize ?? '',
                   style: TextStyle(
-                    color: selectedItemName == key ? gBlackColor : gHintTextColor,
+                    color:
+                        selectedItemName == key ? gBlackColor : gHintTextColor,
                     fontSize: 16,
                   ),
                 ),
@@ -623,20 +625,17 @@ class _NewPrepScreenState extends State<NewPrepScreen> with TickerProviderStateM
 
   void addAnimation() {
     _animationController =
-    AnimationController(duration: Duration(milliseconds: 300), vsync: this)
-      ..addListener(() {
-        setState(() {
-          animationOffset =
-              Offset(checkedPositionOffset.dx, _animation.value);
-        });
-      });
+        AnimationController(duration: Duration(milliseconds: 300), vsync: this)
+          ..addListener(() {
+            setState(() {
+              animationOffset =
+                  Offset(checkedPositionOffset.dx, _animation.value);
+            });
+          });
 
     _animation = Tween(begin: lastCheckOffset.dy, end: checkedPositionOffset.dy)
         .animate(CurvedAnimation(
-        parent: _animationController!, curve: Curves.easeInOutBack));
+            parent: _animationController!, curve: Curves.easeInOutBack));
     _animationController!.forward();
   }
-
-
 }
-

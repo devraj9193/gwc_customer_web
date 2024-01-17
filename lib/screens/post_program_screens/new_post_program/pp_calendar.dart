@@ -10,8 +10,7 @@ import 'package:gwc_customer_web/utils/app_config.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
 import 'package:intl/intl.dart' show DateFormat;
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 
 
 class PPCalendar extends StatefulWidget {

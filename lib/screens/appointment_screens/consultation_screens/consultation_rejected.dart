@@ -5,8 +5,7 @@ if we need to show image with error text we can reuse this ui
  */
 
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../widgets/constants.dart';
 import '../../../widgets/widgets.dart';
 

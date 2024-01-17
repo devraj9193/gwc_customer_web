@@ -3,8 +3,7 @@ we r getting value from new_list-stages screen
  */
 
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import '../../../model/dashboard_model/gut_model/gut_data_model.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import '../../../model/dashboard_model/gut_model/gut_data_model.dart';
 import '../../../widgets/constants.dart';
 import '../../../widgets/widgets.dart';
 import 'package:intl/intl.dart';

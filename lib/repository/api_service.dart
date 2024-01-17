@@ -324,6 +324,7 @@ class ApiClient {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, GET, OPTIONS, PUT, DELETE, HEAD",
+      "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept"
     };
 
     print('shiptoken: $shipToken');
@@ -338,6 +339,40 @@ class ApiClient {
       print('serverShippingTrackerApi Response header: $path');
       print('serverShippingTrackerApi Response status: ${response.statusCode}');
       print('serverShippingTrackerApi Response body: ${response.body}');
+
+      if (response.statusCode != 200) {
+        final res = jsonDecode(response.body);
+        result = ErrorModel.fromJson(res);
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        final res = jsonDecode(response.body);
+        result = ShippingTrackModel.fromJson(res);
+      }
+    } catch (e) {
+      result = ErrorModel(status: "0", message: e.toString());
+    }
+
+    return result;
+  }
+
+  Future shipRocketTrackingTrackerApi(String awbNumber) async {
+    print(awbNumber);
+    final String path = '$shipRocketTrackingApiUrl/$awbNumber';
+    dynamic result;
+
+    try {
+      final response = await httpClient.post(
+        Uri.parse(path),
+        headers: {
+          // "Authorization": "Bearer ${AppConfig().bearerToken}",
+          "Authorization": getHeaderToken(),
+        },
+      ).timeout(Duration(seconds: 45));
+
+      print('shipRocketTrackingTrackerApi Response header: $path');
+      print('shipRocketTrackingTrackerApi Response status: ${response.statusCode}');
+      print('shipRocketTrackingTrackerApi Response body: ${response.body}');
 
       if (response.statusCode != 200) {
         final res = jsonDecode(response.body);
@@ -1275,6 +1310,43 @@ class ApiClient {
   }
   //https://api.worldpostallocations.com/?postalcode=570008&countrycode=IN
 
+  getPinCodeDetails(String pincode, String countryCode) async {
+    final String path = "$getPinCodeFormApiUrl/$pincode";
+
+    dynamic result;
+
+    // try {
+      final response = await httpClient.get(
+        Uri.parse(path),
+        headers: {
+          "Authorization": getHeaderToken(),
+        },
+      ).timeout(const Duration(seconds: 45));
+
+      print('getPinCodeDetails Response header: $path');
+      print('getPinCodeDetails Response status: ${response.statusCode}');
+      print('getPinCodeDetails Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final res = jsonDecode(response.body);
+         if (res['response']['Status'].toString().toLowerCase() == "success") {
+          result = GetCountryDetailsModel.fromJson(res);
+        } else {
+          result = ErrorModel(status: "0", message: "No Data");
+        }
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        print('getCountryDetails error: ${response.reasonPhrase}');
+        result = ErrorModel.fromJson(jsonDecode(response.body));
+      }
+    // } catch (e) {
+    //   result = ErrorModel(status: "0", message: e.toString());
+    // }
+
+    return result;
+  }
+
   getCountryDetails(String pincode, String countryCode) async {
     final String url = "http://www.postalpincode.in/api/pincode/";
     final String path = url + pincode;
@@ -1318,7 +1390,7 @@ class ApiClient {
   }
 
   Future submitUserFeedbackDetails(
-      Map feedback, List<MultipartFile> files) async {
+      Map feedback, List<PlatformFile> files) async {
     final String path = submitFeedbackUrl;
 
     dynamic result;
@@ -1337,8 +1409,12 @@ class ApiClient {
       request.headers.addAll(headers);
       request.fields.addAll(Map.from(bodyParam));
 
-      if (files.isNotEmpty) {
-        request.files.addAll(files);
+      if (files != null) {
+        files.forEach((element) async {
+          request.files.add(await http.MultipartFile.fromBytes(
+              'medical_report[]', files.first.bytes as List<int>,
+              filename: files.first.name));
+        });
       }
       var response = await http.Response.fromStream(await request.send())
           .timeout(Duration(seconds: 50));
@@ -1811,7 +1887,7 @@ class ApiClient {
     return result;
   }
 
-  Future submitDoctorRequestedReportApi(List reportIds, dynamic multipartFile) async {
+  Future submitDoctorRequestedReportApi(List reportIds, List<PlatformFile> multipartFile) async {
     final path = submitDoctorRequestedReportUrl;
 
     var result;
@@ -1821,6 +1897,7 @@ class ApiClient {
       var request = http.MultipartRequest('POST', Uri.parse(path));
       var headers = {
         "Authorization": getHeaderToken(),
+        "content-type": "image/png"
       };
       request.headers.addAll(headers);
 
@@ -1837,31 +1914,107 @@ class ApiClient {
       //   });
       // }
 
-      print(request.fields);
+      print("reports id : ${request.fields}");
+
+      // print("Multi : $multipartFile");
+
+      if (multipartFile != null) {
+        multipartFile.forEach((element) async {
+          request.files.add(await http.MultipartFile.fromBytes(
+              'files[]', element.bytes as List<int>,
+              filename: element.name));
+        });
+      }
 
       // if(reportId != "others"){
       //   request.fields.addAll({
       //     'report_id': reportId
       //   });
       // }
-      request.files.addAll(multipartFile);
+      //  request.files.addAll(multipartFile);
+
+      print(" reports files : ${request.files}");
 
       request.persistentConnection = false;
-
 
       // reportList.forEach((element) async {
       //   request.files.add(await http.MultipartFile.fromPath('files[]', element));
       // });
 
-
       var response = await http.Response.fromStream(await request.send())
           .timeout(Duration(seconds: 45));
-
-
 
       print("submitDoctorRequestedReportApi response code:" + path);
       print("submitDoctorRequestedReportApi response code:" + response.statusCode.toString());
       print("submitDoctorRequestedReportApi response body:" + response.body);
+      var totalTime = DateTime.now().millisecondsSinceEpoch - startTime;
+      print(
+          "start: $startTime end: ${DateTime.now().millisecondsSinceEpoch}  total: $totalTime");
+
+      print("response Time:" + (totalTime / 1000).round().toString());
+
+      final res = jsonDecode(response.body);
+      print('${res['status'].runtimeType} ${res['status']}');
+      if (res['status'].toString() == '200') {
+        result = ReportUploadModel.fromJson(res);
+      }
+      else if(response.statusCode == 500){
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      }
+      else {
+        result = ErrorModel.fromJson(res);
+      }
+
+    } catch (e) {
+      print("catch error: ${e}");
+      result = ErrorModel(status: "0", message: e.toString());
+    }
+    return result;
+  }
+
+  Future submitUserReportUploadApi(List<PlatformFile> multipartFile) async {
+    final path = submitUserReportUploadUrl;
+
+    var result;
+    var startTime = DateTime.now().millisecondsSinceEpoch;
+
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse(path));
+      var headers = {
+        "Authorization": getHeaderToken(),
+        "content-type": "image/png"
+      };
+      request.headers.addAll(headers);
+
+      if (multipartFile != null) {
+        multipartFile.forEach((element) async {
+          request.files.add(await http.MultipartFile.fromBytes(
+              'report', element.bytes as List<int>,
+              filename: element.name));
+        });
+      }
+
+      // if(reportId != "others"){
+      //   request.fields.addAll({
+      //     'report_id': reportId
+      //   });
+      // }
+      //  request.files.addAll(multipartFile);
+
+      print(" reports files : ${request.files}");
+
+      request.persistentConnection = false;
+
+      // reportList.forEach((element) async {
+      //   request.files.add(await http.MultipartFile.fromPath('files[]', element));
+      // });
+
+      var response = await http.Response.fromStream(await request.send())
+          .timeout(Duration(seconds: 45));
+
+      print("submitUserReportUploadApi response code:" + path);
+      print("submitUserReportUploadApi response code:" + response.statusCode.toString());
+      print("submitUserReportUploadApi response body:" + response.body);
       var totalTime = DateTime.now().millisecondsSinceEpoch - startTime;
       print(
           "start: $startTime end: ${DateTime.now().millisecondsSinceEpoch}  total: $totalTime");
@@ -2331,10 +2484,11 @@ class ApiClient {
 
     print("proceedTransitionDayProgramList path: $url");
 
-    print(Map.from(model.toJson()));
+       print(Map.from(model.toJson()));
     Map<String, String> m = Map.unmodifiable(model.toJson());
 
     try {
+
       var request = http.MultipartRequest('POST', Uri.parse(url));
 
       var headers = {
@@ -2384,8 +2538,7 @@ class ApiClient {
       var response = await http.Response.fromStream(await request.send())
           .timeout(Duration(seconds: 50));
 
-      print(
-          'proceedTransitionDayProgramList Response status: ${response.statusCode}');
+      print('proceedTransitionDayProgramList Response status: ${response.statusCode}');
       print('proceedTransitionDayProgramList Response body: ${response.body}');
 
       final json = jsonDecode(response.body);
@@ -2400,10 +2553,56 @@ class ApiClient {
       } else if (response.statusCode == 500) {
         result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
       } else {
-        print(
-            'proceedTransitionDayProgramList error: ${response.reasonPhrase}');
+        print('proceedTransitionDayProgramList error: ${response.reasonPhrase}');
         result = ErrorModel.fromJson(json);
       }
+
+      // // if (files != null) {
+      // //   files.forEach((element) async {
+      // //     request.files.add(await http.MultipartFile.fromBytes(
+      // //         'tracking_attachment', element));
+      // //   });
+      // // }
+      // //
+      // // if (mandatoryFile != null) {
+      // //   mandatoryFile.forEach((element) async {
+      // //     request.files
+      // //         .add(await http.MultipartFile.fromBytes('tongue_image', element));
+      // //   });
+      // // }
+      //
+      // // request.files.addAll(files);
+      // // request.files.addAll(mandatoryFile);
+      // request.fields.addAll(m);
+      //
+      // // reportList.forEach((element) async {
+      // //   request.files.add(await http.MultipartFile.fromPath('files[]', element));
+      // // });
+      // request.headers.addAll(headers);
+      //
+      // var response = await http.Response.fromStream(await request.send())
+      //     .timeout(Duration(seconds: 50));
+      //
+      // print(
+      //     'proceedTransitionDayProgramList Response status: ${response.statusCode}');
+      // print('proceedTransitionDayProgramList Response body: ${response.body}');
+      //
+      // final json = jsonDecode(response.body);
+      //
+      // if (response.statusCode == 200) {
+      //   print('proceedTransitionDayProgramList result: $json');
+      //   if (json['status'].toString() == "200") {
+      //     result = GetProceedModel.fromJson(json);
+      //   } else {
+      //     result = ErrorModel.fromJson(json);
+      //   }
+      // } else if (response.statusCode == 500) {
+      //   result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      // } else {
+      //   print(
+      //       'proceedTransitionDayProgramList error: ${response.reasonPhrase}');
+      //   result = ErrorModel.fromJson(json);
+      // }
     } catch (e) {
       print(e);
       result = ErrorModel(status: "", message: e.toString());
@@ -3202,6 +3401,96 @@ class ApiClient {
         result = ErrorModel.fromJson(json);
       }
     } catch (e) {
+      result = ErrorModel(status: "", message: e.toString());
+    }
+    return result;
+  }
+
+  //gwc chat api integration
+
+  getGwcTicketChatApi(String id) async {
+    String url = "$ticketChatApiUrl/$id";
+    print(url);
+
+    dynamic result;
+    try {
+      final response = await httpClient.get(
+        Uri.parse(url),
+        headers: {
+          "Authorization": getHeaderToken(),
+        },
+      ).timeout(Duration(seconds: 45));
+
+      print("agentToken : ${getHeaderToken()}");
+
+      print('getGwcTicketChatApi Url: $url');
+      print('getGwcTicketChatApi Response status: ${response.statusCode}');
+      print('getGwcTicketChatApi Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        result = NewTicketDetailsModel.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        result = ErrorModel(
+            status: response.statusCode.toString(), message: response.body);
+      }
+    } catch (e) {
+      print(e);
+      result = ErrorModel(status: "", message: e.toString());
+    }
+    return result;
+  }
+
+//gwc chat send api
+
+  chatSendApi(String ticketId, Map data, {List<PlatformFile>? attachments}) async {
+    String url = ticketChatSendApiUrl;
+    print(url);
+    print(data);
+
+    dynamic result;
+    var headers = {
+      "Authorization": getHeaderToken(),
+    };
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse(url));
+
+      request.headers.addAll(headers);
+      request.fields.addAll(Map.from(data));
+      request.persistentConnection = false;
+
+      if (attachments != null) {
+        for (int i = 0; i < attachments.length; i++) {
+          request.files.add(await http.MultipartFile.fromBytes(
+            'file',
+              // 'attachments[$i]',
+              attachments[i].bytes as List<int>,filename: attachments.first.name));
+        }
+        print("attachment .length: ${attachments.length}");
+      }
+
+      print("request.files.length: ${request.files.length}");
+
+      var response = await http.Response.fromStream(await request.send())
+          .timeout(Duration(seconds: 45));
+
+      print('chatSendApi Url: $url');
+      print('chatSendApi Response status: ${response.statusCode}');
+      print('chatSendApi Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        result = TicketdetailsModel.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        result = ErrorModel(
+            status: response.statusCode.toString(), message: response.body);
+      }
+    } catch (e) {
+      print(e);
       result = ErrorModel(status: "", message: e.toString());
     }
     return result;

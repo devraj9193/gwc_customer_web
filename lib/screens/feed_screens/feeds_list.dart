@@ -13,7 +13,7 @@ to differentiate mp4, and other format we r checking format field
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/screens/feed_screens/video_player.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:http/http.dart' as http;
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:stories_for_flutter/stories_for_flutter.dart';
@@ -113,14 +113,14 @@ class _FeedsListState extends State<FeedsList> {
                     labelStyle: TextStyle(
                         fontFamily: kFontMedium,
                         color: gPrimaryColor,
-                        fontSize: 12.sp),
+                        fontSize: 15.dp),
                     unselectedLabelStyle: TextStyle(
                         fontFamily: kFontBook,
                         color: gHintTextColor,
-                        fontSize: 10.sp),
+                        fontSize: 12.dp),
                     labelPadding: EdgeInsets.only(
                         right: 10.w, left: 2.w, top: 1.h, bottom: 1.h),
-                    indicatorPadding: EdgeInsets.only(right: 7.w),
+                    indicatorPadding: EdgeInsets.only(right: 0.w),
                     tabs: const [
                       Text('Feed'),
                       Text('PodCast'),
@@ -236,7 +236,7 @@ class _FeedsListState extends State<FeedsList> {
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(width: 2.w),
+                                              SizedBox(width: 1.w),
                                               Expanded(
                                                 child: Column(
                                                   crossAxisAlignment:
@@ -252,7 +252,7 @@ class _FeedsListState extends State<FeedsList> {
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       style: TextStyle(
-                                                          fontSize: 11.sp,
+                                                          fontSize: 11.dp,
                                                           height: 1.5,
                                                           fontFamily:
                                                               kFontMedium,
@@ -312,7 +312,7 @@ class _FeedsListState extends State<FeedsList> {
                                                               fontFamily:
                                                                   kFontMedium,
                                                               color: gTextColor,
-                                                              fontSize: 8.sp),
+                                                              fontSize: 8.dp),
                                                         )),
                                                         Visibility(
                                                           visible: true,
@@ -357,7 +357,7 @@ class _FeedsListState extends State<FeedsList> {
                                               // Text(
                                               //   "See more",
                                               //   style: TextStyle(
-                                              //     fontSize: 9.sp,
+                                              //     fontSize: 9.dp,
                                               //     color: gPrimaryColor,
                                               //     fontFamily: "GothamBook",
                                               //   ),
@@ -407,7 +407,7 @@ class _FeedsListState extends State<FeedsList> {
                                                   //     ),
                                                   //   ),
                                                   // ),
-                                                  SizedBox(width: 3.w),
+                                                  SizedBox(width: 1.w),
                                                   Expanded(
                                                     child: Column(
                                                       crossAxisAlignment:
@@ -425,7 +425,7 @@ class _FeedsListState extends State<FeedsList> {
                                                                   kFontMedium,
                                                               color:
                                                                   gBlackColor,
-                                                              fontSize: 11.sp),
+                                                              fontSize: 11.dp),
                                                         ),
                                                         SizedBox(height: 0.5.h),
                                                         Text(
@@ -435,7 +435,7 @@ class _FeedsListState extends State<FeedsList> {
                                                               fontFamily:
                                                                   kFontMedium,
                                                               color: gTextColor,
-                                                              fontSize: 8.sp),
+                                                              fontSize: 8.dp),
                                                         ),
                                                       ],
                                                     ),
@@ -459,7 +459,7 @@ class _FeedsListState extends State<FeedsList> {
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
-                                                    fontSize: 11.sp,
+                                                    fontSize: 11.dp,
                                                     fontFamily: kFontMedium,
                                                     color: gTextColor),
                                               ),
@@ -525,12 +525,13 @@ class _FeedsListState extends State<FeedsList> {
                                                                         gsecondaryColor,
                                                                     fontSize:
                                                                         bottomSheetSubHeadingSFontSize),
-                                                              )),
-                                                        )
-                                                      ]),
+                                                              ),),
+                                                        ),
+                                                      ],),
                                                     ),
                                               SizedBox(height: 1.h),
-                                              buildFeedImageView(list[index].image!),
+                                              buildFeedImageView(
+                                                  list[index].image!),
                                               // SizedBox(height: 1.h),
                                               Row(
                                                 mainAxisAlignment:
@@ -558,7 +559,7 @@ class _FeedsListState extends State<FeedsList> {
                                                               fontFamily:
                                                                   kFontMedium,
                                                               color: gTextColor,
-                                                              fontSize: 8.sp),
+                                                              fontSize: 8.dp),
                                                         ),
                                                         SizedBox(width: 4.w),
                                                         GestureDetector(
@@ -580,7 +581,7 @@ class _FeedsListState extends State<FeedsList> {
                                                               fontFamily:
                                                                   kFontMedium,
                                                               color: gTextColor,
-                                                              fontSize: 8.sp),
+                                                              fontSize: 8.dp),
                                                         ),
                                                       ],
                                                     ),
@@ -613,7 +614,6 @@ class _FeedsListState extends State<FeedsList> {
   }
 
   buildFeedImageView(List<dynamic> imageUrl) {
-
     return imageUrl.length > 1
         ? Column(
             children: [
@@ -622,26 +622,28 @@ class _FeedsListState extends State<FeedsList> {
                 child: PageView(
                   controller: pageController,
                   children: [
-                    ...imageUrl
-                        .map(
-                          (e) => Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 2.w),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(5),
-                              child: FadeInImage.memoryNetwork(
-                                placeholder:
-                                    placeHolderImage!.buffer.asUint8List(),
-                                image: e,
-                                fit: BoxFit.fill,
-                                placeholderErrorBuilder: (_, __, ___) {
-                                  return Image.asset(
-                                      "assets/images/placeholder.png");
-                                },
-                              ),
-                            ),
+                    ...imageUrl.map((e) {
+                      print("feed image : $e");
+                      return Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 2.w),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Image(
+                            image: NetworkImage(e),
                           ),
-                        )
-                        .toList(),
+                          // FadeInImage.memoryNetwork(
+                          //   placeholder:
+                          //       placeHolderImage!.buffer.asUint8List(),
+                          //   image: e,
+                          //   fit: BoxFit.fill,
+                          //   placeholderErrorBuilder: (_, __, ___) {
+                          //     return Image.asset(
+                          //         "assets/images/placeholder.png");
+                          //   },
+                          // ),
+                        ),
+                      );
+                    }).toList(),
                   ],
                 ),
               ),
@@ -653,8 +655,8 @@ class _FeedsListState extends State<FeedsList> {
                 effect: ExpandingDotsEffect(
                   dotColor: kNumberCircleRed.withOpacity(0.5),
                   activeDotColor: gsecondaryColor,
-                  dotHeight: 1.h,
-                  dotWidth: 2.w,
+                  dotHeight: 2.h,
+                  dotWidth: 1.w,
                   // jumpScale: 2,
                 ),
               ),
@@ -763,7 +765,7 @@ class _FeedsListState extends State<FeedsList> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(width: 2.w),
+                                          SizedBox(width: 1.w),
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
@@ -779,7 +781,7 @@ class _FeedsListState extends State<FeedsList> {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   style: TextStyle(
-                                                      fontSize: 11.sp,
+                                                      fontSize: 15.sp,
                                                       height: 1.5,
                                                       fontFamily: kFontMedium,
                                                       color: gTextColor),

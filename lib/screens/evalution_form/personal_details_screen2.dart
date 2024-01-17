@@ -5,8 +5,7 @@
 import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import '../../../model/evaluation_from_models/evaluation_model_format2.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import '../../../model/evaluation_from_models/evaluation_model_format2.dart';
 import '../../../utils/app_config.dart';
 import '../../model/dashboard_model/report_upload_model/report_upload_model.dart';
 import '../../model/error_model.dart';
@@ -17,6 +16,7 @@ import '../../repository/evaluation_form_repository/evanluation_form_repo.dart';
 import '../../services/evaluation_fome_service/evaluation_form_service.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/widgets.dart';
+import '../uvdesk/ticket_details_screen.dart';
 import 'check_box_settings.dart';
 import 'evaluation_upload_report.dart';
 import 'package:http/http.dart' as http;
@@ -193,11 +193,34 @@ class _PersonalDetailsScreenState2 extends State<PersonalDetailsScreen2> {
             image: AssetImage("assets/images/eval_bg.png"),
             fit: BoxFit.fitWidth,
             colorFilter:
-                const ColorFilter.mode(kPrimaryColor, BlendMode.lighten)),
+                const ColorFilter.mode(kPrimaryColor, BlendMode.lighten),),
       ),
       child: SafeArea(
         child: Scaffold(
           backgroundColor: Colors.transparent,
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => TicketChatScreen(
+                    userName: "${_pref?.getString(AppConfig.User_Name)}",
+                    thumbNail:
+                    "${_pref?.getString(AppConfig.User_Profile)}",
+                    ticketId:
+                    "${_pref?.getString(AppConfig.User_ticket_id)}",
+                    subject: '',
+                    email: "${_pref?.getString(AppConfig.User_Email)}",
+                    ticketStatus: 1 ?? -1,
+                  ),
+                ),
+              );
+            },
+            backgroundColor: gsecondaryColor.withOpacity(0.7),
+            child: const ImageIcon(
+              AssetImage("assets/images/noun-chat-5153452.png"),
+            ),
+          ),
           body: Column(
             children: [
               Padding(
@@ -243,131 +266,132 @@ class _PersonalDetailsScreenState2 extends State<PersonalDetailsScreen2> {
                           buildLifeStyleDetails(),
                           buildBowelDetails(),
                           Center(
-                            child: GestureDetector(
-                              onTap: widget.showData
-                                  ? () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (ctx) =>
-                                              EvaluationUploadReport(
-                                            showData: widget.showData,
-                                            childGetEvaluationDataModel: widget
-                                                .childGetEvaluationDataModel,
+                            child: IntrinsicWidth(
+                              child: GestureDetector(
+                                onTap: widget.showData
+                                    ? () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (ctx) =>
+                                                EvaluationUploadReport(
+                                              showData: widget.showData,
+                                              childGetEvaluationDataModel: widget
+                                                  .childGetEvaluationDataModel,
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    }
-                                  : () {
-                                      if (glassesOfWater.isEmpty) {
-                                        Scrollable.ensureVisible(
-                                            glassWaterKey.currentContext!,
-                                            duration: const Duration(
-                                                milliseconds: 1000));
-                                        showCustomSnack(
-                                            "Please select How Many glass of water do you drink a day");
-                                      } else if (selectedHabitCheckBoxList
-                                              .isEmpty &&
-                                          !habitOtherSelected) {
-                                        Scrollable.ensureVisible(
-                                            habbitsKey.currentContext!,
-                                            duration: const Duration(
-                                                milliseconds: 1000));
-                                        showCustomSnack(
-                                            "Please select Habits or Addiction");
-                                      } else if (mealPreferenceSelected
-                                          .isEmpty) {
-                                        Scrollable.ensureVisible(
-                                            bowelMealKey.currentContext!,
-                                            duration: const Duration(
-                                                milliseconds: 1000));
-                                        showCustomSnack(
-                                            "Please select What is your meal preference");
-                                      } else if (hungerPatternSelected
-                                          .isEmpty) {
-                                        Scrollable.ensureVisible(
-                                            hungerKey.currentContext!,
-                                            duration: const Duration(
-                                                milliseconds: 1000));
-                                        showCustomSnack(
-                                            "Please select Hunger Pattern");
-                                      } else if (bowelPatternSelected.isEmpty) {
-                                        Scrollable.ensureVisible(
-                                            bowelPatternKey.currentContext!,
-                                            duration: const Duration(
-                                                milliseconds: 1000));
-                                        showCustomSnack(
-                                            "Please select Bowel Pattern");
-                                      } else {
-                                        if (formKey1.currentState!.validate()) {
-                                          if (formKey2.currentState!
-                                              .validate()) {
-                                            if (formKey3.currentState!
+                                        );
+                                      }
+                                    : () {
+                                        if (glassesOfWater.isEmpty) {
+                                          Scrollable.ensureVisible(
+                                              glassWaterKey.currentContext!,
+                                              duration: const Duration(
+                                                  milliseconds: 1000));
+                                          showCustomSnack(
+                                              "Please select How Many glass of water do you drink a day");
+                                        } else if (selectedHabitCheckBoxList
+                                                .isEmpty &&
+                                            !habitOtherSelected) {
+                                          Scrollable.ensureVisible(
+                                              habbitsKey.currentContext!,
+                                              duration: const Duration(
+                                                  milliseconds: 1000));
+                                          showCustomSnack(
+                                              "Please select Habits or Addiction");
+                                        } else if (mealPreferenceSelected
+                                            .isEmpty) {
+                                          Scrollable.ensureVisible(
+                                              bowelMealKey.currentContext!,
+                                              duration: const Duration(
+                                                  milliseconds: 1000));
+                                          showCustomSnack(
+                                              "Please select What is your meal preference");
+                                        } else if (hungerPatternSelected
+                                            .isEmpty) {
+                                          Scrollable.ensureVisible(
+                                              hungerKey.currentContext!,
+                                              duration: const Duration(
+                                                  milliseconds: 1000));
+                                          showCustomSnack(
+                                              "Please select Hunger Pattern");
+                                        } else if (bowelPatternSelected.isEmpty) {
+                                          Scrollable.ensureVisible(
+                                              bowelPatternKey.currentContext!,
+                                              duration: const Duration(
+                                                  milliseconds: 1000));
+                                          showCustomSnack(
+                                              "Please select Bowel Pattern");
+                                        } else {
+                                          if (formKey1.currentState!.validate()) {
+                                            if (formKey2.currentState!
                                                 .validate()) {
-                                              if (formKey4.currentState!
+                                              if (formKey3.currentState!
                                                   .validate()) {
-                                                submitFormDetails();
+                                                if (formKey4.currentState!
+                                                    .validate()) {
+                                                  submitFormDetails();
+                                                } else {
+                                                  Scrollable.ensureVisible(
+                                                      formKey4.currentContext!,
+                                                      duration: const Duration(
+                                                          milliseconds: 1000));
+                                                }
                                               } else {
                                                 Scrollable.ensureVisible(
-                                                    formKey4.currentContext!,
+                                                    formKey3.currentContext!,
                                                     duration: const Duration(
                                                         milliseconds: 1000));
                                               }
                                             } else {
                                               Scrollable.ensureVisible(
-                                                  formKey3.currentContext!,
+                                                  formKey2.currentContext!,
                                                   duration: const Duration(
                                                       milliseconds: 1000));
                                             }
                                           } else {
                                             Scrollable.ensureVisible(
-                                                formKey2.currentContext!,
+                                                formKey1.currentContext!,
                                                 duration: const Duration(
                                                     milliseconds: 1000));
                                           }
-                                        } else {
-                                          Scrollable.ensureVisible(
-                                              formKey1.currentContext!,
-                                              duration: const Duration(
-                                                  milliseconds: 1000));
                                         }
-                                      }
-                                    },
-                              child: Container(
-                                width: 40.w,
-                                height: 5.h,
-                                margin: EdgeInsets.symmetric(vertical: 4.h),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 1.h, horizontal: 10.w),
-                                decoration: BoxDecoration(
-                                  color: eUser().buttonColor,
-                                  borderRadius: BorderRadius.circular(
-                                      eUser().buttonBorderRadius),
-
-                                  // border: Border.all(
-                                  //     color: eUser().buttonBorderColor,
-                                  //     width: eUser().buttonBorderWidth
-                                  // ),
+                                      },
+                                child: Container(
+                                 
+                                  margin: EdgeInsets.symmetric(vertical: 4.h),
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 1.5.h, horizontal: 5.w),
+                                  decoration: BoxDecoration(
+                                    color: eUser().buttonColor,
+                                    borderRadius: BorderRadius.circular(
+                                        eUser().buttonBorderRadius),
+                              
+                                    // border: Border.all(
+                                    //     color: eUser().buttonBorderColor,
+                                    //     width: eUser().buttonBorderWidth
+                                    // ),
+                                  ),
+                                  child: widget.showData ? Center(
+                                    child: Text(
+                                      "Next" ,
+                                      style: TextStyle(
+                                        fontFamily: eUser().buttonTextFont,
+                                        color: eUser().buttonTextColor,
+                                        fontSize: eUser().buttonTextSize,
+                                      ),
+                                    ),) : isSubmitPressed
+                                      ? buildThreeBounceIndicator(color: gWhiteColor)
+                                      : Center(
+                                    child: Text(
+                                      'Submit',
+                                      style: TextStyle(
+                                        fontFamily: eUser().buttonTextFont,
+                                        color: eUser().buttonTextColor,
+                                        fontSize: eUser().buttonTextSize,
+                                      ),
+                                    ),),
                                 ),
-                                child: widget.showData ? Center(
-                                  child: Text(
-                                    "Next" ,
-                                    style: TextStyle(
-                                      fontFamily: eUser().buttonTextFont,
-                                      color: eUser().buttonTextColor,
-                                      fontSize: eUser().buttonTextSize,
-                                    ),
-                                  ),) : isSubmitPressed
-                                    ? buildThreeBounceIndicator(color: gWhiteColor)
-                                    : Center(
-                                  child: Text(
-                                    'Submit',
-                                    style: TextStyle(
-                                      fontFamily: eUser().buttonTextFont,
-                                      color: eUser().buttonTextColor,
-                                      fontSize: eUser().buttonTextSize,
-                                    ),
-                                  ),),
                               ),
                             ),
                           ),
@@ -423,7 +447,7 @@ class _PersonalDetailsScreenState2 extends State<PersonalDetailsScreen2> {
                 //   style: TextStyle(
                 //       fontFamily: kFontBook,
                 //       color: gTextColor,
-                //       fontSize: 9.sp
+                //       fontSize: 9.dp
                 //   ),
                 // ),
               ],
@@ -862,7 +886,7 @@ class _PersonalDetailsScreenState2 extends State<PersonalDetailsScreen2> {
                 //   style: TextStyle(
                 //       fontFamily: kFontBook,
                 //       color: gTextColor,
-                //       fontSize: 9.sp
+                //       fontSize: 9.dp
                 //   ),
                 // ),
               ],

@@ -13,8 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/screens/user_registration/new_user/sit_back_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../../../model/error_model.dart';
 import '../../../model/new_user_model/register/register_model.dart';
 import '../../../repository/api_service.dart';
@@ -412,7 +411,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   //   //     style: TextStyle(
                   //   //         fontFamily: "GothamBook",
                   //   //         color: gMainColor,
-                  //   //         fontSize: 11.sp),),
+                  //   //         fontSize: 11.dp),),
                   //   //   );
                   //   // },
                   // ),
@@ -499,52 +498,53 @@ class _RegisterScreenState extends State<RegisterScreen> {
             height: 5.h,
           ),
           Center(
-            child: GestureDetector(
-              onTap: isLoading ? null : () {
-                if (nameFormKey.currentState!.validate() &&
-                    ageFormKey.currentState!.validate() &&
-                    emailFormKey.currentState!.validate() &&
-                    mobileFormKey.currentState!.validate()) {
-                  if (nameController.text.isNotEmpty &&
-                      ageController.text.isNotEmpty &&
-                      emailController.text.isNotEmpty &&
-                      mobileController.text.isNotEmpty) {
-                    if (_selectedGender != -1) {
-                      // testingMethod();
-                      submitEnquiryForm(
-                          nameController.text,
-                          ageController.text,
-                          _selectedGender == 0 ? 'male' : 'female',
-                          emailController.text,
-                          mobileController.text);
-                    } else {
-                      AppConfig().showSnackbar(
-                          context, 'Please Select Gender',
-                          isError: true);
+            child: IntrinsicWidth(
+              child: GestureDetector(
+                onTap: isLoading ? null : () {
+                  if (nameFormKey.currentState!.validate() &&
+                      ageFormKey.currentState!.validate() &&
+                      emailFormKey.currentState!.validate() &&
+                      mobileFormKey.currentState!.validate()) {
+                    if (nameController.text.isNotEmpty &&
+                        ageController.text.isNotEmpty &&
+                        emailController.text.isNotEmpty &&
+                        mobileController.text.isNotEmpty) {
+                      if (_selectedGender != -1) {
+                        // testingMethod();
+                        submitEnquiryForm(
+                            nameController.text,
+                            ageController.text,
+                            _selectedGender == 0 ? 'male' : 'female',
+                            emailController.text,
+                            mobileController.text);
+                      } else {
+                        AppConfig().showSnackbar(
+                            context, 'Please Select Gender',
+                            isError: true);
+                      }
                     }
                   }
-                }
-              },
-              child: Container(
-                width: 40.w,
-                height: 5.h,
-                // padding: EdgeInsets.symmetric(
-                //     vertical: 1.h, horizontal: 10.w),
-                decoration: BoxDecoration(
-                  color: eUser().buttonColor,
-                  borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
-                  // border: Border.all(
-                  //     width: eUser().buttonBorderWidth
-                  // ),
-                ),
-                child: (isLoading) ? buildThreeBounceIndicator(color: eUser().threeBounceIndicatorColor)
-                    : Center(
-                  child: Text(
-                    'Next',
-                    style: TextStyle(
-                      fontFamily: eUser().buttonTextFont,
-                      color: eUser().buttonTextColor,
-                      fontSize: eUser().buttonTextSize,
+                },
+                child: Container(
+                
+                  padding: EdgeInsets.symmetric(
+                      vertical: 1.5.h, horizontal: 5.w),
+                  decoration: BoxDecoration(
+                    color: eUser().buttonColor,
+                    borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
+                    // border: Border.all(
+                    //     width: eUser().buttonBorderWidth
+                    // ),
+                  ),
+                  child: (isLoading) ? buildThreeBounceIndicator(color: eUser().threeBounceIndicatorColor)
+                      : Center(
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                        fontFamily: eUser().buttonTextFont,
+                        color: eUser().buttonTextColor,
+                        fontSize: eUser().buttonTextSize,
+                      ),
                     ),
                   ),
                 ),
@@ -701,7 +701,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         phone: mobileNumber,
         countryCode: countryCode,
         deviceId: deviceId!,
-      fcmToken: fcmToken!
+      fcmToken: fcmToken ?? '',
     );
 
     print("registerUser:$res");

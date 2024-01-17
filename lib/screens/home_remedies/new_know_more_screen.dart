@@ -10,8 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/video/normal_video.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:video_player/video_player.dart';
 
 class NewKnowMoreScreen extends StatefulWidget {
@@ -164,7 +163,7 @@ class _NewKnowMoreScreenState extends State<NewKnowMoreScreen> {
                     Navigator.pop(context);
                   },
                 ),
-                SizedBox(height: 1.h),
+                SizedBox(height: 2.h),
                 TabBar(
                   // padding: EdgeInsets.symmetric(horizontal: 3.w),
                     labelColor: gBlackColor,
@@ -173,15 +172,15 @@ class _NewKnowMoreScreenState extends State<NewKnowMoreScreen> {
                     indicatorColor: gsecondaryColor,
                     labelPadding:
                     EdgeInsets.only(right: 8.w, top: 1.h, bottom: 1.h),
-                    indicatorPadding: EdgeInsets.only(right: 5.w),
+                    // indicatorPadding: EdgeInsets.only(right: 5.w),
                     unselectedLabelStyle: TextStyle(
                         fontFamily: kFontBook,
                         color: gHintTextColor,
-                        fontSize: 9.sp),
+                        fontSize: 12.dp),
                     labelStyle: TextStyle(
                         fontFamily: kFontMedium,
                         color: gBlackColor,
-                        fontSize: 11.sp),
+                        fontSize: 15.dp),
                     tabs: const [
                       Text('Know More'),
                       Text("Heal At Home"),

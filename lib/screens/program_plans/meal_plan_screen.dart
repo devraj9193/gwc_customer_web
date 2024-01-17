@@ -31,8 +31,7 @@ import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:sizer/sizer.dart';
-import 'package:get/get.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:get/get.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import '../../model/combined_meal_model/detox_nourish_model/detox_healing_common_model/child_meal_plan_details_model1.dart';
 import '../../model/combined_meal_model/meal_slot_model.dart';
@@ -367,7 +366,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                           style: TextStyle(
                             fontFamily: kFontMedium,
                             color: gWhiteColor,
-                            fontSize: 11.sp,
+                            fontSize: 11.dp,
                           ),
                         ),
                       ),
@@ -440,7 +439,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                       style: TextStyle(
                         fontFamily: kFontMedium,
                         color: gWhiteColor,
-                        fontSize: 11.sp,
+                        fontSize: 11.dp,
                       ),
                     ),
                   ),
@@ -1074,7 +1073,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                   style: TextStyle(
                       fontFamily: "GothamBook",
                       color: gTextColor,
-                      fontSize: 11.sp),
+                      fontSize: 11.dp),
                   decoration: InputDecoration(
                     suffixIcon: commentController
                         .text.isEmpty ||
@@ -1095,7 +1094,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                     hintStyle: TextStyle(
                       fontFamily: "GothamBook",
                       color: gTextColor,
-                      fontSize: 9.sp,
+                      fontSize: 9.dp,
                     ),
                   ),
                   textInputAction:
@@ -1272,9 +1271,9 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
           //   controller: _controller!,
           //   showVolume: false,
           //   showVideoProgress: !model.isChanged,
-          //   seekButtonIconSize: 10.sp,
-          //   playButtonIconSize: 14.sp,
-          //   replayButtonSize: 14.sp,
+          //   seekButtonIconSize: 10.dp,
+          //   playButtonIconSize: 14.dp,
+          //   replayButtonSize: 14.dp,
           //   showFullscreenBtn: true,
           // );
         },
@@ -1365,7 +1364,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             //         'Time',
             //         style: TextStyle(
             //           color: gWhiteColor,
-            //           fontSize: 11.sp,
+            //           fontSize: 11.dp,
             //           fontFamily: "GothamMedium",
             //         ),
             //       ),
@@ -1374,7 +1373,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             //       'Meal/Yoga',
             //       style: TextStyle(
             //         color: gWhiteColor,
-            //         fontSize: 11.sp,
+            //         fontSize: 11.dp,
             //         fontFamily: "GothamMedium",
             //       ),
             //     ),
@@ -1384,7 +1383,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             //         'Status',
             //         style: TextStyle(
             //           color: gWhiteColor,
-            //           fontSize: 11.sp,
+            //           fontSize: 11.dp,
             //           fontFamily: "GothamMedium",
             //         ),
             //       ),
@@ -1395,7 +1394,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
           DataTable(
             headingTextStyle: TextStyle(
               color: gWhiteColor,
-              fontSize: 5.sp,
+              fontSize: 5.dp,
               fontFamily: "GothamMedium",
             ),
             headingRowHeight: 5.h,
@@ -1409,7 +1408,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                   ' Time',
                   style: TextStyle(
                     color: eUser().userFieldLabelColor,
-                    fontSize: 11.sp,
+                    fontSize: 11.dp,
                     fontFamily: kFontBold,
                   ),
                 ),
@@ -1419,7 +1418,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                   'Meal/Yoga',
                   style: TextStyle(
                     color: eUser().userFieldLabelColor,
-                    fontSize: 11.sp,
+                    fontSize: 11.dp,
                     fontFamily: kFontBold,
                   ),
                 ),
@@ -1429,7 +1428,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                   ' Status',
                   style: TextStyle(
                     color: eUser().userFieldLabelColor,
-                    fontSize: 11.sp,
+                    fontSize: 11.dp,
                     fontFamily: kFontBold,
                   ),
                 ),
@@ -1463,7 +1462,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
               style: TextStyle(
                 height: 1.5,
                 color: MealPlanConstants().mealNameTextColor,
-                fontSize: 12.sp,
+                fontSize: 12.dp,
                 fontFamily: MealPlanConstants().mealNameFont,
               ),
             ),
@@ -1692,7 +1691,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                           ),
                           // Text(e.mealTime ?? "B/W 6-8am",
                           //   style: TextStyle(
-                          //       fontSize: 9.sp,
+                          //       fontSize: 9.dp,
                           //       fontFamily: kFontMedium
                           //   ),
                           // ),
@@ -1766,7 +1765,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                                 Text(
                                   'Followed',
                                   style: TextStyle(
-                                      fontSize: 8.sp,
+                                      fontSize: 8.dp,
                                       fontFamily: kFontMedium,
                                       color: gWhiteColor),
                                 ),
@@ -1798,7 +1797,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                                 Text(
                                   'Missed It',
                                   style: TextStyle(
-                                      fontSize: 8.sp,
+                                      fontSize: 8.dp,
                                       fontFamily: kFontMedium,
                                       color: gWhiteColor),
                                 ),
@@ -1824,7 +1823,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                             child: Text(
                               'Status',
                               style: TextStyle(
-                                  fontSize: 8.sp,
+                                  fontSize: 8.dp,
                                   fontFamily: kFontMedium,
                                   color: gWhiteColor),
                             ),
@@ -1913,7 +1912,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                   style: TextStyle(
                     fontFamily: kFontMedium,
                     color: gWhiteColor,
-                    fontSize: 11.sp,
+                    fontSize: 11.dp,
                   ),
                 ),
               ),
@@ -1936,7 +1935,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                   style: TextStyle(
                     fontFamily: kFontMedium,
                     color: gWhiteColor,
-                    fontSize: 11.sp,
+                    fontSize: 11.dp,
                   ),
                 ),
               ),
@@ -1957,7 +1956,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             style: TextStyle(
               height: 1.5,
               color: gTextColor,
-              fontSize: 8.sp,
+              fontSize: 8.dp,
               fontFamily: "GothamBold",
             ),
           ),
@@ -1987,7 +1986,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                     style: TextStyle(
                       height: 1.5,
                       color: gTextColor,
-                      fontSize: 8.sp,
+                      fontSize: 8.dp,
                       fontFamily: "GothamBook",
                     ),
                   ),
@@ -2011,7 +2010,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
           //     style: TextStyle(
           //       fontFamily: "GothamBook",
           //       color: gTextColor,
-          //       fontSize: 8.sp,
+          //       fontSize: 8.dp,
           //     ),
           //   ),
         ),
@@ -2021,7 +2020,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
         //     style: TextStyle(
         //       height: 1.5,
         //       color: gTextColor,
-        //       fontSize: 8.sp,
+        //       fontSize: 8.dp,
         //       fontFamily: "GothamBold",
         //     ),
         //   ),
@@ -2057,7 +2056,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
         //                   style: TextStyle(
         //                     height: 1.5,
         //                     color: gTextColor,
-        //                     fontSize: 8.sp,
+        //                     fontSize: 8.dp,
         //                     fontFamily: "GothamBook",
         //                   ),
         //                 ),
@@ -2089,7 +2088,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
         //   //     style: TextStyle(
         //   //       fontFamily: "GothamBook",
         //   //       color: gTextColor,
-        //   //       fontSize: 8.sp,
+        //   //       fontSize: 8.dp,
         //   //     ),
         //   //   ),
         // ),
@@ -2104,7 +2103,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             style: TextStyle(
               height: 1.5,
               color: gTextColor,
-              fontSize: 8.sp,
+              fontSize: 8.dp,
               fontFamily: "GothamBold",
             ),
           ),
@@ -2138,7 +2137,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                     style: TextStyle(
                       height: 1.5,
                       color: gTextColor,
-                      fontSize: 8.sp,
+                      fontSize: 8.dp,
                       fontFamily: "GothamBook",
                     ),
                   ),
@@ -2162,7 +2161,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
           //     style: TextStyle(
           //       fontFamily: "GothamBook",
           //       color: gTextColor,
-          //       fontSize: 8.sp,
+          //       fontSize: 8.dp,
           //     ),
           //   ),
         ),
@@ -2181,7 +2180,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             style: TextStyle(
               height: 1.5,
               color: gTextColor,
-              fontSize: 8.sp,
+              fontSize: 8.dp,
               fontFamily: kFontMedium,
             ),
           ),
@@ -2221,7 +2220,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                         style: TextStyle(
                           height: 1.5,
                           color: gTextColor,
-                          fontSize: 8.sp,
+                          fontSize: 8.dp,
                           fontFamily: kFontMedium,
                         ),
                       ),
@@ -2257,7 +2256,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
           //     style: TextStyle(
           //       fontFamily: "GothamBook",
           //       color: gTextColor,
-          //       fontSize: 8.sp,
+          //       fontSize: 8.dp,
           //     ),
           //   ),
         ),
@@ -2276,7 +2275,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             style: TextStyle(
               height: 1.5,
               color: gTextColor,
-              fontSize: 8.sp,
+              fontSize: 8.dp,
               fontFamily: "GothamBold",
             ),
           ),
@@ -2310,7 +2309,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                     style: TextStyle(
                       height: 1.5,
                       color: gTextColor,
-                      fontSize: 8.sp,
+                      fontSize: 8.dp,
                       fontFamily: "GothamBook",
                     ),
                   ),
@@ -2334,7 +2333,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
           //     style: TextStyle(
           //       fontFamily: "GothamBook",
           //       color: gTextColor,
-          //       fontSize: 8.sp,
+          //       fontSize: 8.dp,
           //     ),
           //   ),
         ),
@@ -2358,7 +2357,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
               style: TextStyle(
                 height: 1.5,
                 color: gTextColor,
-                fontSize: 8.sp,
+                fontSize: 8.dp,
                 fontFamily: "GothamBold",
               ),
             ),
@@ -2387,7 +2386,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                     style: TextStyle(
                       height: 1.5,
                       color: gTextColor,
-                      fontSize: 8.sp,
+                      fontSize: 8.dp,
                       fontFamily: "GothamBook",
                     ),
                   ),
@@ -2445,7 +2444,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                         style: TextStyle(
                             fontFamily: kFontBook,
                             color: buildDummyTextColor(),
-                            fontSize: 8.sp),
+                            fontSize: 8.dp),
                       ),
                     ),
                     Icon(
@@ -2530,7 +2529,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
             fontFamily: kFontBook,
             // color: (planStatus == index) ? color : gTextColor,
             color: (statusList[itemId] == title) ? color : gTextColor,
-            fontSize: 9.5.sp,
+            fontSize: 9.5.dp,
           ),
         ),
       ),
@@ -2552,7 +2551,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
         style: TextStyle(
           fontFamily: "GothamBook",
           color: (planStatus == index) ? color : gTextColor,
-          fontSize: 8.sp,
+          fontSize: 8.dp,
         ),
       ),
     );
@@ -2673,9 +2672,14 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
       // initVideoView(e.url);
     } else {
       print(e.url);
-
-      Navigator.push(context,
-          MaterialPageRoute(builder: (ctx) => Mp3Widget(url: e.url ?? '')));
+      setState(() {
+        isEnabled = !isEnabled;
+        videoName = e.name!;
+        mealTime = e.mealTime!;
+      });
+      initChewieView(e.url);
+      // Navigator.push(context,
+      //     MaterialPageRoute(builder: (ctx) => Mp3Widget(url: e.url ?? '')));
     }
     // _init(e.url);
     // Navigator.push(context, MaterialPageRoute(builder: (ctx)=> YogaVideoScreen(yogaDetails: e.toJson(),day: widget.day,)));
@@ -2738,7 +2742,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
                         color: statusList.isEmpty
                             ? textColor
                             : getTextColor(e.itemId!) ?? textColor,
-                        fontSize: 8.sp),
+                        fontSize: 8.dp),
                   ),
                 ),
                 Icon(
@@ -2983,7 +2987,7 @@ class _MealPlanScreenState extends State<MealPlanScreen> {
     //                   controller: _trackerVideoPlayerController!,
     //                   showVolume: false,
     //                   showVideoProgress: false,
-    //                   seekButtonIconSize: 10.sp,
+    //                   seekButtonIconSize: 10.dp,
     //                   playButtonIconSize: 14.sp,
     //                   replayButtonSize: 10.sp,
     //                 )

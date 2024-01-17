@@ -5,8 +5,7 @@ consultation stage is check_user_reports
 
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../widgets/constants.dart';
 
 class CheckUserReportsScreen extends StatelessWidget {

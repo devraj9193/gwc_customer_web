@@ -12,7 +12,7 @@ import 'package:get/get.dart';
 import 'package:gwc_customer_web/screens/profile_screens/reward/reward_screen.dart';
 import 'package:gwc_customer_web/screens/profile_screens/terms_conditions_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import '../../model/error_model.dart';
@@ -56,7 +56,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   ///ticket isReplied save
   late final UvDeskService _uvDeskService =
-  UvDeskService(uvDeskRepo: ticketRepository);
+      UvDeskService(uvDeskRepo: ticketRepository);
 
   NewTicketDetailsModel? threadsListModel;
 
@@ -70,7 +70,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       NewTicketDetailsModel model = result as NewTicketDetailsModel;
       threadsListModel = model;
       setState(() {
-        _pref.setBool("isReplied",model.ticket!.isReplied!);
+        _pref.setBool("isReplied", model.response.ticket!.isReplied!);
         // isReplied = model.ticket!.isReplied!;
 
         print("isReplied : ${_pref.getBool("isReplied")!}");
@@ -198,7 +198,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                          const MyProfileDetails(),
+                                        const MyProfileDetails(),
                                   ),
                                 );
                               }),
@@ -318,22 +318,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               //     // getChatGroupId();
                               //   }
                               //     }),
-                              profileTile("assets/images/noun-chat-5153452.png",
-                                  "Chat Support", () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) =>  TicketChatScreen(
-                                          userName: "${_pref.getString(AppConfig.User_Name)}",
-                                          thumbNail: "${_pref.getString(AppConfig.User_Profile)}",
-                                          ticketId: "${_pref.getString(AppConfig.User_ticket_id)}",
-                                          subject: '',
-                                          email: "${_pref.getString(AppConfig.User_Email)}",
-                                          ticketStatus: 1 ?? -1,
-                                        ),
+                              profileTile(
+                                "assets/images/noun-chat-5153452.png",
+                                "Chat Support",
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => TicketChatScreen(
+                                        userName:
+                                            "${_pref.getString(AppConfig.User_Name)}",
+                                        thumbNail:
+                                            "${_pref.getString(AppConfig.User_Profile)}",
+                                        ticketId:
+                                            "${_pref.getString(AppConfig.User_ticket_id)}",
+                                        subject: '',
+                                        email:
+                                            "${_pref.getString(AppConfig.User_Email)}",
+                                        ticketStatus: 1 ?? -1,
                                       ),
-                                    );
-                              },showBadge: widget.showBadge,
+                                    ),
+                                  );
+                                },
+                                showBadge: widget.showBadge,
                               ),
                               // profileTile(
                               //     "assets/images/support.png", "Raise a Ticket",
@@ -347,57 +354,62 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               // }),
                               profileTile("assets/images/new_ds/support.png",
                                   "Call Support", () {
-
                                 showSupportCallSheet(context);
                               }),
                             ],
                           ),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () => AppConfig().showSheet(
-                          context,
-                          logoutWidget(),
-                          bottomSheetHeight: 45.h,
-                          isDismissible: true,
-                        ),
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 30.w),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 1.h, horizontal: 3.w),
-                          decoration: BoxDecoration(
-                            color: gWhiteColor,
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: kLineColor,
-                                offset: Offset(2, 3),
-                                blurRadius: 5,
-                              )
-                            ],
-                            // border: Border.all(
-                            //   width: 1,
-                            //   color: kLineColor,
-                            // ),
-                          ),
-                          child: Row(
-                            children: [
-                              Image(
-                                image: const AssetImage(
-                                  "assets/images/Group 2744.png",
-                                ),
-                                height: 4.h,
+                      Center(
+                        child: IntrinsicWidth(
+                          child: GestureDetector(
+                            onTap: () => AppConfig().showSheet(
+                              context,
+                              logoutWidget(),
+                              bottomSheetHeight: 45.h,
+                              isDismissible: true,
+                            ),
+                            child: Container(
+                              // margin: EdgeInsets.symmetric(horizontal: 30.w),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 1.h, horizontal: 3.w),
+                              decoration: BoxDecoration(
+                                color: gWhiteColor,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: kLineColor,
+                                    offset: Offset(2, 3),
+                                    blurRadius: 5,
+                                  )
+                                ],
+                                // border: Border.all(
+                                //   width: 1,
+                                //   color: kLineColor,
+                                // ),
                               ),
-                              SizedBox(width: 3.w),
-                              Text(
-                                "Logout",
-                                style: TextStyle(
-                                  color: kTextColor,
-                                  fontFamily: kFontBook,
-                                  fontSize: 11.sp,
-                                ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image(
+                                    image: const AssetImage(
+                                      "assets/images/Group 2744.png",
+                                    ),
+                                    height: 4.h,
+                                  ),
+                                  SizedBox(width: 1.w),
+                                  Text(
+                                    "Logout",
+                                    style: TextStyle(
+                                      color: kTextColor,
+                                      fontFamily: kFontBook,
+                                      fontSize: 13.dp,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -424,44 +436,47 @@ class _SettingsScreenState extends State<SettingsScreen> {
             //   // color: gBlackColor.withOpacity(0.05),
             //   borderRadius: BorderRadius.circular(5),
             // ),
-            child: isReplied ? badges.Badge(
-                badgeAnimation: badges.BadgeAnimation.rotation(
-                  animationDuration: Duration(seconds: 1),
-                  colorChangeAnimationDuration: Duration(seconds: 1),
-                  loopAnimation: false,
-                  curve: Curves.fastOutSlowIn,
-                  colorChangeAnimationCurve: Curves.easeInCubic,
-                ),
-                badgeStyle: badges.BadgeStyle(
-                  shape: badges.BadgeShape.circle,
-                  badgeColor: gsecondaryColor.withOpacity(0.7),
-                  // padding: EdgeInsets.all(5),
-                  // borderRadius: BorderRadius.circular(4),
-                  borderSide: BorderSide(
-                      color: gsecondaryColor.withOpacity(0.7), width: 1),
-                  // borderGradient: badges.BadgeGradient.linear(
-                  //     colors: [Colors.red, Colors.black]),
-                  // badgeGradient: badges.BadgeGradient.linear(
-                  //   colors: [Colors.blue, Colors.yellow],
-                  //   begin: Alignment.topCenter,
-                  //   end: Alignment.bottomCenter,
-                  // ),
-                  elevation: 0,
-                ),
-                badgeContent: const Padding(
-                  padding: EdgeInsets.all(0.5),
-                  child: Text(
-                    '1',
-                    style: TextStyle(color: gWhiteColor),
+            child: isReplied
+                ? badges.Badge(
+                    badgeAnimation: badges.BadgeAnimation.rotation(
+                      animationDuration: Duration(seconds: 1),
+                      colorChangeAnimationDuration: Duration(seconds: 1),
+                      loopAnimation: false,
+                      curve: Curves.fastOutSlowIn,
+                      colorChangeAnimationCurve: Curves.easeInCubic,
+                    ),
+                    badgeStyle: badges.BadgeStyle(
+                      shape: badges.BadgeShape.circle,
+                      badgeColor: gsecondaryColor.withOpacity(0.7),
+                      // padding: EdgeInsets.all(5),
+                      // borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(
+                          color: gsecondaryColor.withOpacity(0.7), width: 1),
+                      // borderGradient: badges.BadgeGradient.linear(
+                      //     colors: [Colors.red, Colors.black]),
+                      // badgeGradient: badges.BadgeGradient.linear(
+                      //   colors: [Colors.blue, Colors.yellow],
+                      //   begin: Alignment.topCenter,
+                      //   end: Alignment.bottomCenter,
+                      // ),
+                      elevation: 0,
+                    ),
+                    badgeContent: const Padding(
+                      padding: EdgeInsets.all(0.5),
+                      child: Text(
+                        '1',
+                        style: TextStyle(color: gWhiteColor),
+                      ),
+                    ),
+                    child: Image(
+                      image: AssetImage(image),
+                      height: 4.5.h,
+                    ),
+                  )
+                : Image(
+                    image: AssetImage(image),
+                    height: 4.5.h,
                   ),
-                ),
-                child: Image(
-                  image: AssetImage(image),
-                  height: 3.5.h,
-                ),) : Image(
-              image: AssetImage(image),
-              height: 3.5.h,
-            ),
           ),
           SizedBox(width: 3.w),
           Expanded(
@@ -470,7 +485,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: TextStyle(
                 color: kTextColor,
                 fontFamily: kFontBook,
-                fontSize: 11.sp,
+                fontSize: 14.dp,
               ),
             ),
           ),
@@ -479,7 +494,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Icon(
               Icons.arrow_forward_ios,
               color: gBlackColor,
-              size: 1.8.h,
+              size: 2.5.h,
             ),
           ),
         ],
@@ -585,41 +600,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () => logOut(),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.h, horizontal: 12.w),
-                        decoration: BoxDecoration(
-                            color: gsecondaryColor,
-                            border: Border.all(color: kLineColor, width: 0.5),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Text(
-                          "YES",
-                          style: TextStyle(
-                            fontFamily: kFontMedium,
-                            color: gWhiteColor,
-                            fontSize: 11.sp,
+                    IntrinsicWidth(
+                      child: GestureDetector(
+                        onTap: () => logOut(),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 1.5.h, horizontal: 5.w),
+                          decoration: BoxDecoration(
+                              color: gsecondaryColor,
+                              border: Border.all(color: kLineColor, width: 0.5),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Text(
+                            "YES",
+                            style: TextStyle(
+                              fontFamily: kFontMedium,
+                              color: gWhiteColor,
+                              fontSize: 11.dp,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     SizedBox(width: 5.w),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.h, horizontal: 12.w),
-                        decoration: BoxDecoration(
-                            color: gWhiteColor,
-                            border: Border.all(color: kLineColor, width: 0.5),
-                            borderRadius: BorderRadius.circular(5)),
-                        child: Text(
-                          "NO",
-                          style: TextStyle(
-                            fontFamily: kFontMedium,
-                            color: gsecondaryColor,
-                            fontSize: 11.sp,
+                    IntrinsicWidth(
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 1.5.h, horizontal: 5.w),
+                          decoration: BoxDecoration(
+                              color: gWhiteColor,
+                              border: Border.all(color: kLineColor, width: 0.5),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: Text(
+                            "NO",
+                            style: TextStyle(
+                              fontFamily: kFontMedium,
+                              color: gsecondaryColor,
+                              fontSize: 11.dp,
+                            ),
                           ),
                         ),
                       ),
@@ -680,7 +699,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(
                   fontFamily: kFontMedium,
                   color: gsecondaryColor,
-                  fontSize: 11.sp,
+                  fontSize: 11.dp,
                 ),
               ),
             ),
@@ -736,9 +755,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: (isInAppCallPressed)
                         ? null
                         : () async {
-                      setState(() {
-                        openDialPad('${_pref.getString(AppConfig.SUPPORT_NUMBER)}');
-                      });
+                            setState(() {
+                              openDialPad(
+                                  '${_pref.getString(AppConfig.SUPPORT_NUMBER)}');
+                            });
                             // setstate(() {
                             //   isInAppCallPressed = true;
                             // });
@@ -769,12 +789,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         style: TextStyle(
                           fontFamily: kFontMedium,
                           color: gWhiteColor,
-                          fontSize: 11.sp,
+                          fontSize: 11.dp,
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(width: 5.w),
+                  // SizedBox(width: 5.w),
                   Visibility(
                     visible: false,
                     child: GestureDetector(
@@ -819,7 +839,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           style: TextStyle(
                             fontFamily: kFontMedium,
                             color: gsecondaryColor,
-                            fontSize: 11.sp,
+                            fontSize: 11.dp,
                           ),
                         ),
                       ),

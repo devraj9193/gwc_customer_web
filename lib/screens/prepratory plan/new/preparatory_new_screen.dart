@@ -12,8 +12,7 @@ import 'package:gwc_customer_web/screens/prepratory%20plan/new/dos_donts_program
 import 'package:gwc_customer_web/screens/program_plans/meal_pdf.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import '../../../model/combined_meal_model/meal_slot_model.dart';
 import '../../../services/prepratory_service/prepratory_service.dart';
 import 'meal_plan_recipe_details.dart';

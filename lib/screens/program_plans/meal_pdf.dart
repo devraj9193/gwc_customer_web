@@ -9,8 +9,7 @@ for video we r using chewie package
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/widgets/video/normal_video.dart';
-import 'package:sizer/sizer.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../../widgets/constants.dart';
 import '../../../widgets/widgets.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';

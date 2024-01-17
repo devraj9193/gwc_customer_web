@@ -9,8 +9,7 @@ var mrReadUrl = "/api/getData/is_mr_report_read";
  */
 
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
@@ -87,7 +86,7 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
                       height: 1.5,
                       fontFamily: kFontMedium,
                       color: gTextColor,
-                      fontSize: 12.sp),
+                      fontSize: 12.dp),
                 ),
               ),
               SizedBox(height: 2.h),

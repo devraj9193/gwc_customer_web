@@ -13,8 +13,7 @@ import 'package:gwc_customer_web/services/new_user_service/about_program_service
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/vlc_player/vlc_player_with_controls.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:visibility_detector/visibility_detector.dart';
  import 'package:wakelock_plus/wakelock_plus.dart';

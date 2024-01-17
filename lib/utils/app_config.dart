@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../model/ship_track_model/ship_track_activity_model.dart';
 import '../widgets/constants.dart';
 import 'package:get/get.dart';
@@ -265,7 +264,7 @@ class AppConfig{
                     ],
                   ),
                   child: CircleAvatar(
-                    maxRadius: 30.sp,
+                    maxRadius: 30.dp,
                     backgroundColor: kBottomSheetHeadCircleColor,
                     child: Image.asset(circleIcon ?? bsHeadBellIcon,
                       fit: BoxFit.scaleDown,

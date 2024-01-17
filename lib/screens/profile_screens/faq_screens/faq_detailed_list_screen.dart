@@ -3,10 +3,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:gwc_customer_web/model/faq_model/faq_list_model.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'faq_screen.dart';
 import 'package:intl/intl.dart';
+
 class FaqDetailedList extends StatefulWidget {
   List<FaqList>? faqList;
   FaqDetailedList({Key? key, this.faqList}) : super(key: key);
@@ -16,7 +16,6 @@ class FaqDetailedList extends StatefulWidget {
 }
 
 class _FaqDetailedListState extends State<FaqDetailedList> {
-
   List<FaqList> questions = [];
 
   @override
@@ -25,7 +24,7 @@ class _FaqDetailedListState extends State<FaqDetailedList> {
     super.initState();
     print("widget.faqList");
     print(widget.faqList);
-    if(widget.faqList != null){
+    if (widget.faqList != null) {
       questions.addAll(widget.faqList!);
     }
 
@@ -39,58 +38,60 @@ class _FaqDetailedListState extends State<FaqDetailedList> {
     return expansionQueries();
   }
 
-  expansionQueries(){
+  expansionQueries() {
     return SafeArea(
         child: Scaffold(
-          body: Column(
-            children: [
-              SizedBox(height: 1.h),
-              buildAppBar(() {
-                Navigator.pop(context);
-              }),
-              SizedBox(height: 3.h),
-              Expanded(child: (questions.isNotEmpty)
+      body: Column(
+        children: [
+          SizedBox(height: 1.h),
+          buildAppBar(() {
+            Navigator.pop(context);
+          }),
+          SizedBox(height: 3.h),
+          Expanded(
+              child: (questions.isNotEmpty)
                   ? ListView.builder(
-                  physics: ScrollPhysics(),
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: questions.length,
-                  itemBuilder: (_, index) {
-                    print("checking");
-                    print(questions[index].question!);
-                    return ExpansionTile(
-                      title: Text(
-                        questions[index].question ?? '',
-                        style: TextStyle(
-                          color: gTextColor,
-                          fontSize: 12.sp,
-                          fontFamily: kFontMedium,
-                        ),
-                      ),
-                      // leading: Image(
-                      //   image: AssetImage("assets/images/Group 2747.png"),
-                      // ),
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 20),
-                          child: buildMenuItem(
-                            text: Bidi.stripHtmlIfNeeded(questions[index].answer!),
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      itemCount: questions.length,
+                      itemBuilder: (_, index) {
+                        print("checking");
+                        print(questions[index].question!);
+                        return ExpansionTile(
+                          expandedAlignment: Alignment.topLeft,
+                          title: Text(
+                            questions[index].question ?? '',
+                            style: TextStyle(
+                              color: gTextColor,
+                              fontSize: 14.dp,
+                              fontFamily: kFontMedium,
+                            ),
                           ),
-                        )
-                      ],
-                    );
-                  })
+                          // leading: Image(
+                          //   image: AssetImage("assets/images/Group 2747.png"),
+                          // ),
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 1.w, vertical: 1.h),
+                              child: buildMenuItem(
+                                text: Bidi.stripHtmlIfNeeded(
+                                    questions[index].answer!),
+                              ),
+                            )
+                          ],
+                        );
+                      })
                   : Center(
-                child: Image(
-                  image: AssetImage("assets/images/no_data_found.png"),
-                  fit: BoxFit.scaleDown,
-                ),
-              )
-              )
-            ],
-          ),
-        )
-    );
+                      child: Image(
+                        image: AssetImage("assets/images/no_data_found.png"),
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ))
+        ],
+      ),
+    ));
   }
 
   Widget buildMenuItem({

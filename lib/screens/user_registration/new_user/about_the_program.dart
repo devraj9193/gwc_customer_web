@@ -17,7 +17,8 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:image_network/image_network.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -37,6 +38,7 @@ import 'register_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:video_player/video_player.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutTheProgram extends StatefulWidget {
   final bool isFromSitBackScreen;
@@ -266,66 +268,6 @@ class _AboutTheProgramState extends State<AboutTheProgram> {
                 Expanded(
                   child: _mainView(),
                 ),
-                Visibility(
-                  visible: !widget.isFromSitBackScreen,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: GestureDetector(
-                        onTap: () async {
-                          // pauseAllVideo();
-                          if (_chewieController != null) {
-                            _chewieController!.pause();
-                            // final show = _chewieController!.videoPlayerController.value.isPlaying;
-                            // if(show != null && show == true){
-                            //   _chewieController!.pause();
-                            // }
-                            print("tap");
-                            final res;
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) => const RegisterScreen(),
-                              ),
-                            );
-                          }
-                          // if(_testimonialChewieController != null){
-                          //   _testimonialChewieController!.dispose();
-                          //
-                          //   // final show = _testimonialChewieController!.videoPlayerController.value.isPlaying;
-                          //   // if(show != null && show == true){
-                          //   //   _testimonialChewieController!.pause();
-                          //   // }
-                          // }
-                        },
-                        child: Container(
-                          width: 40.w,
-                          height: 5.h,
-                          padding: EdgeInsets.symmetric(
-                              vertical: 1.h, horizontal: 15.w),
-                          decoration: BoxDecoration(
-                            color: eUser().buttonColor,
-                            borderRadius: BorderRadius.circular(
-                                eUser().buttonBorderRadius),
-                            // border: Border.all(
-                            //     color: eUser().buttonBorderColor,
-                            //     width: eUser().buttonBorderWidth
-                            // ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Next',
-                              style: TextStyle(
-                                fontFamily: eUser().buttonTextFont,
-                                color: eUser().buttonTextColor,
-                                fontSize: eUser().buttonTextSize,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                )
               ],
             ),
           ),
@@ -390,73 +332,138 @@ class _AboutTheProgramState extends State<AboutTheProgram> {
                             color: eUser().mainHeadingColor,
                             fontSize: eUser().mainHeadingFontSize),
                       ),
-                      SizedBox(
-                        height: 2.h,
-                      ),
+                      SizedBox(height: 2.h),
                       buildAboutProgramVideo(),
-                      // SizedBox(height: 2.h),
-                      Card(
-                        elevation: 7,
-                        child: SizedBox(
-                            height: 30.h,
-                            child: FutureBuilder(
-                              future: getCachedPdfViewer(aboutProgramPdf),
-                              builder: (_, snapFile) {
-                                if (snapFile.connectionState ==
-                                    ConnectionState.done) {
-                                  if (snapFile.data == null) {
-                                    print("from: network");
-                                    return SfPdfViewer.network(
-                                      aboutProgramPdf,
-                                      // asset('assets/GWC Program Details.pdf',
-                                      scrollDirection:
-                                          PdfScrollDirection.horizontal,
-                                      onDocumentLoaded: (details) async {
-                                        writePdfFile(details, aboutProgramPdf);
-                                      },
-                                    );
-                                  } else {
-                                    print("from: file ${snapFile.data}");
-                                    return SfPdfViewer.file(
-                                      snapFile.data as File,
-                                      scrollDirection:
-                                          PdfScrollDirection.horizontal,
-                                    );
-                                  }
-                                } else
-                                  return SizedBox();
-                              },
-                            )),
-                        // child: Container(
-                        //   padding: EdgeInsets.symmetric(
-                        //       vertical: 1.h, horizontal: 3.w),
-                        //   decoration: BoxDecoration(
-                        //     color: Colors.white,
-                        //     borderRadius: BorderRadius.circular(5),
-                        //     border: Border.all(color: gPrimaryColor, width: 1),
-                        //     boxShadow: [
-                        //       BoxShadow(
-                        //         color: Colors.grey.withOpacity(0.3),
-                        //         blurRadius: 20,
-                        //         offset: const Offset(2, 10),
-                        //       ),
-                        //     ],
-                        //   ),
-                        //   child: Image(
-                        //     image: AssetImage('assets/images/about_program.jpeg'),
-                        //   ),
-                        //   // child: Text(
-                        //   //   _programText,
-                        //   //   // 'Lorem lpsum is simply dummy text of the printing and typesetting industry. Lorem lpsum has been the industry\'s standard dummy text ever since the 1500s,when an unknown printer took a gallery of type and scrambled it to make a type specimen book.',
-                        //   //   style: TextStyle(
-                        //   //     height: 1.7,
-                        //   //     fontFamily: "GothamBook",
-                        //   //     color: gTextColor,
-                        //   //     fontSize: 9.sp,
-                        //   //   ),
-                        //   // ),
-                        // ),
+                      SizedBox(height: 2.h),
+
+                  aboutProgramPdf.isNotEmpty
+                      ? GestureDetector(
+                    onTap: () async {
+                      if (!await launchUrl(Uri.parse(
+                          aboutProgramPdf))) {
+                        throw Exception(
+                            'Could not launch $aboutProgramPdf');
+                      }
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(
+                          vertical: 2.h, horizontal: 0.w),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 2.h, horizontal: 3.w),
+                      decoration: BoxDecoration(
+                        color: gWhiteColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.3),
+                            blurRadius: 10,
+                            offset: const Offset(2, 3),
+                          ),
+                        ],
                       ),
+                      child: Row(
+                        children: [
+                          Image(
+                            height: 6.h,
+                            image: const AssetImage(
+                                "assets/images/Group 2722.png"),
+                          ),
+                          SizedBox(width: 1.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  aboutProgramPdf
+                                      .toString()
+                                      .split("/")
+                                      .last,
+                                  overflow:
+                                  TextOverflow.ellipsis,
+                                  textAlign: TextAlign.start,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                      height: 1.2,
+                                      fontFamily: kFontMedium,
+                                      color: gBlackColor,
+                                      fontSize: 15.dp),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 3.w),
+                          Icon(
+                            Icons.arrow_forward_ios_outlined,
+                            color: gsecondaryColor,
+                            size: 3.h,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                      : const SizedBox(),
+                      // Card(
+                      //   elevation: 7,
+                      //   child: SizedBox(
+                      //       height: 50.h,
+                      //       child: FutureBuilder(
+                      //         future: getCachedPdfViewer(aboutProgramPdf),
+                      //         builder: (_, snapFile) {
+                      //           if (snapFile.connectionState ==
+                      //               ConnectionState.done) {
+                      //             if (snapFile.data == null) {
+                      //               print("from: network : $aboutProgramPdf");
+                      //               return SfPdfViewer.network(
+                      //                 aboutProgramPdf,
+                      //                 // asset('assets/GWC Program Details.pdf',
+                      //                 scrollDirection:
+                      //                     PdfScrollDirection.horizontal,
+                      //                 onDocumentLoaded: (details) async {
+                      //                   writePdfFile(details, aboutProgramPdf);
+                      //                 },
+                      //               );
+                      //             } else {
+                      //               print("from: file ${snapFile.data}");
+                      //               return SfPdfViewer.file(
+                      //                 snapFile.data as File,
+                      //                 scrollDirection:
+                      //                     PdfScrollDirection.horizontal,
+                      //               );
+                      //             }
+                      //           } else
+                      //             return SizedBox();
+                      //         },
+                      //       )),
+                      //   // child: Container(
+                      //   //   padding: EdgeInsets.symmetric(
+                      //   //       vertical: 1.h, horizontal: 3.w),
+                      //   //   decoration: BoxDecoration(
+                      //   //     color: Colors.white,
+                      //   //     borderRadius: BorderRadius.circular(5),
+                      //   //     border: Border.all(color: gPrimaryColor, width: 1),
+                      //   //     boxShadow: [
+                      //   //       BoxShadow(
+                      //   //         color: Colors.grey.withOpacity(0.3),
+                      //   //         blurRadius: 20,
+                      //   //         offset: const Offset(2, 10),
+                      //   //       ),
+                      //   //     ],
+                      //   //   ),
+                      //   //   child: Image(
+                      //   //     image: AssetImage('assets/images/about_program.jpeg'),
+                      //   //   ),
+                      //   //   // child: Text(
+                      //   //   //   _programText,
+                      //   //   //   // 'Lorem lpsum is simply dummy text of the printing and typesetting industry. Lorem lpsum has been the industry\'s standard dummy text ever since the 1500s,when an unknown printer took a gallery of type and scrambled it to make a type specimen book.',
+                      //   //   //   style: TextStyle(
+                      //   //   //     height: 1.7,
+                      //   //   //     fontFamily: "GothamBook",
+                      //   //   //     color: gTextColor,
+                      //   //   //     fontSize: 9.sp,
+                      //   //   //   ),
+                      //   //   // ),
+                      //   // ),
+                      // ),
                       SizedBox(height: 2.h),
                       Text(
                         "Testimonial",
@@ -466,16 +473,73 @@ class _AboutTheProgramState extends State<AboutTheProgram> {
                             color: eUser().mainHeadingColor,
                             fontSize: eUser().mainHeadingFontSize),
                       ),
-                      SizedBox(
-                        height: 2.h,
-                      ),
+                      // SizedBox(height: 2.h),
                       buildTestimonial(),
-                      SizedBox(
-                        height: 2.h,
-                      ),
+                      // SizedBox(
+                      //   height: 2.h,
+                      // ),
                       // buildFeedback(feedbackList),
                       buildReviews(reviewList),
                       SizedBox(height: 2.h),
+                      Visibility(
+                        visible: !widget.isFromSitBackScreen,
+                        child: Center(
+                          child: IntrinsicWidth(
+                            child: GestureDetector(
+                              onTap: () async {
+                                // pauseAllVideo();
+                                if (_chewieController != null) {
+                                  _chewieController!.pause();
+                                  // final show = _chewieController!.videoPlayerController.value.isPlaying;
+                                  // if(show != null && show == true){
+                                  //   _chewieController!.pause();
+                                  // }
+                                  print("tap");
+                                  final res;
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const RegisterScreen(),
+                                    ),
+                                  );
+                                }
+                                // if(_testimonialChewieController != null){
+                                //   _testimonialChewieController!.dispose();
+                                //
+                                //   // final show = _testimonialChewieController!.videoPlayerController.value.isPlaying;
+                                //   // if(show != null && show == true){
+                                //   //   _testimonialChewieController!.pause();
+                                //   // }
+                                // }
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 1.h),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 1.5.h, horizontal: 5.w),
+                                decoration: BoxDecoration(
+                                  color: eUser().buttonColor,
+                                  borderRadius: BorderRadius.circular(
+                                      eUser().buttonBorderRadius),
+                                  // border: Border.all(
+                                  //     color: eUser().buttonBorderColor,
+                                  //     width: eUser().buttonBorderWidth
+                                  // ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Next',
+                                    style: TextStyle(
+                                      fontFamily: eUser().buttonTextFont,
+                                      color: eUser().buttonTextColor,
+                                      fontSize: eUser().buttonTextSize,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
                     ],
                   ),
                 );
@@ -517,7 +581,7 @@ class _AboutTheProgramState extends State<AboutTheProgram> {
   VideoPlayerController? videoPlayerController, testimonialVideoController;
   ChewieController? _chewieController, _testimonialChewieController;
 
-  bool showTestVideoControls = false, showAbtVideoControls = false;
+  bool showTestVideoControls = false, showAbtVideoControls = true;
 
   // ***************************************************
 
@@ -535,7 +599,8 @@ class _AboutTheProgramState extends State<AboutTheProgram> {
           // }
         },
         child: AspectRatio(
-          aspectRatio: 16 / 9,
+          aspectRatio:
+              MediaQuery.of(context).size.shortestSide < 600 ? 16 / 9 : 16 / 7,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
@@ -686,6 +751,7 @@ class _AboutTheProgramState extends State<AboutTheProgram> {
   buildReviews(List<String> reviewList) {
     if (reviewList.isNotEmpty) {
       return Container(
+        margin: EdgeInsets.symmetric(vertical: 2.h),
         padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -699,33 +765,34 @@ class _AboutTheProgramState extends State<AboutTheProgram> {
             ),
           ],
         ),
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20.h,
-              child: PageView(controller: reviewPageController, children: [
-                ...reviewList.map((e) => buildReviewsList(e)).toList()
-              ]
-                  // [
-                  //   buildFeedbackList(),
-                  //   buildFeedbackList(),
-                  //   buildFeedbackList(),
-                  // ],
-                  ),
-            ),
-            SmoothPageIndicator(
-              controller: reviewPageController,
-              count: reviewList.length,
-              axisDirection: Axis.horizontal,
-              effect: JumpingDotEffect(
-                dotColor: Colors.amberAccent,
-                activeDotColor: gsecondaryColor,
-                dotHeight: 1.h,
-                dotWidth: 2.w,
-                jumpScale: 2,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 40.h,
+                child: PageView(
+                  controller: reviewPageController,
+                  children: [
+                    ...reviewList.map((e) => buildReviewsList(e)).toList()
+                  ],
+                ),
               ),
-            ),
-          ],
+              SmoothPageIndicator(
+                controller: reviewPageController,
+                count: reviewList.length,
+                axisDirection: Axis.horizontal,
+                effect: JumpingDotEffect(
+                  dotColor: Colors.amberAccent,
+                  activeDotColor: gsecondaryColor,
+                  // dotHeight: 1.h,
+                  // dotWidth: 2.w,
+                  jumpScale: 2,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     } else {
@@ -812,12 +879,34 @@ class _AboutTheProgramState extends State<AboutTheProgram> {
   }
 
   buildReviewsList(String image) {
-    return Container(
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: CachedNetworkImageProvider(
+    return ImageNetwork(
+      image: image,
+      height: 300,
+      width: 300,
+      duration: 1500,
+      curve: Curves.easeIn,
+      onPointer: true,
+      debugPrint: false,
+      fullScreen: false,
+      fitAndroidIos: BoxFit.cover,
+      fitWeb: BoxFitWeb.contain,
+      borderRadius: BorderRadius.circular(10),
+      onLoading: const CircularProgressIndicator(
+        color: Colors.indigoAccent,
+      ),
+      onError: const Icon(
+        Icons.error,
+        color: Colors.red,
+      ),
+      onTap: () {
+        debugPrint("©gabriel_patrick_souza");
+      },
+    );
+    Image(
+      image: NetworkImage(
         image,
-      ))),
+      ),
+      fit: BoxFit.contain,
     );
   }
 

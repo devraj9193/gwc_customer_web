@@ -24,7 +24,7 @@ import 'package:gwc_customer_web/screens/program_plans/meal_plan_screen.dart';
 import 'package:gwc_customer_web/services/program_service/program_service.dart';
 import 'package:gwc_customer_web/widgets/open_alert_box.dart';
 import 'package:gwc_customer_web/widgets/vlc_player/vlc_player_with_controls.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:slide_to_confirm/slide_to_confirm.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../model/program_model/meal_plan_details_model/child_meal_plan_details_model.dart';
@@ -42,9 +42,7 @@ import '../prepratory plan/prepratory_meal_completed_screen.dart';
 import 'day_program_plans.dart';
 import 'package:http/http.dart' as http;
 
-enum ProgramMealType {
-  prepratory, detox, healing, transition
-}
+enum ProgramMealType { prepratory, detox, healing, transition }
 
 class ProgramPlanScreen extends StatefulWidget {
   final String from;
@@ -52,24 +50,27 @@ class ProgramPlanScreen extends StatefulWidget {
 
   /// this is for meal plans
   final bool? isPrepCompleted;
-  const ProgramPlanScreen({Key? key, required this.from, this.isPrepCompleted, this.videoLink}) : super(key: key);
+  const ProgramPlanScreen(
+      {Key? key, required this.from, this.isPrepCompleted, this.videoLink})
+      : super(key: key);
 
   @override
   State<ProgramPlanScreen> createState() => _ProgramPlanScreenState();
 }
 
 class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
-
   final _pref = AppConfig().preferences;
   bool isStarted = false;
 
-  String prepText = "Our preparatory phase transforms gut health by adapting your diet to your unique gut type, achieving optimal acid and enzyme levels. Say goodbye to harmful addictions and habits like smoking and drinking, "
+  String prepText =
+      "Our preparatory phase transforms gut health by adapting your diet to your unique gut type, achieving optimal acid and enzyme levels. Say goodbye to harmful addictions and habits like smoking and drinking, "
       "and hello to a new, healthier you. Before receiving our product kit, "
       "we encourage you to eat 6-7 meals a day and start breaking those bad habits that may be holding you back.\n\n"
       "So why wait? Start your journey towards detoxification and repair today with our program, and discover the power of optimal gut health. Your body will thank you! ";
-      // "The preparatory phase aids in the optimal preparation of the gastrointestinal tract for detoxification and repair. Gut acid and enzyme optimization can be achieved by adapting typical diets to your gut type and condition, as well as avoiding certain addictions/habits such as smoking, drinking, and so on."
-      // "Before receiving your product kit, eat 6-7 meals a day, break addictions, and eliminate bad habits. Start your custom plan now.";
-  String mealText = "Our approach on healing the condition: To cleanse and heal your stomach, we employ integrated Calm, Move, and Nourish modules that are tailored to your gut type. \n\nEvery meal is scheduled based on the Metabolic nature of your gut and its relationship to your biological clock. This implies that each food item at each meal time has a distinct role in resetting your gut's functionality by adjusting to your biological clock. ";
+  // "The preparatory phase aids in the optimal preparation of the gastrointestinal tract for detoxification and repair. Gut acid and enzyme optimization can be achieved by adapting typical diets to your gut type and condition, as well as avoiding certain addictions/habits such as smoking, drinking, and so on."
+  // "Before receiving your product kit, eat 6-7 meals a day, break addictions, and eliminate bad habits. Start your custom plan now.";
+  String mealText =
+      "Our approach on healing the condition: To cleanse and heal your stomach, we employ integrated Calm, Move, and Nourish modules that are tailored to your gut type. \n\nEvery meal is scheduled based on the Metabolic nature of your gut and its relationship to your biological clock. This implies that each food item at each meal time has a distinct role in resetting your gut's functionality by adjusting to your biological clock. ";
   String transText =
       "Congratulations on completing the Gut Wellness Program! It takes a lot of dedication and hard work to prioritize your health and make positive changes to your gut health. Now that you've worked hard to improve your gut health, it's time to transition back into your normal food habits.\n\n"
       "As you transition back to normal food habits, I want to remind you of the amazing benefits you will continue to experience. You have taken control of your gut health and are now able to enjoy a wider variety of foods without worrying about the discomfort and negative symptoms that once plagued you.\n\n"
@@ -79,19 +80,18 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(widget.videoLink != null && widget.videoLink!.isNotEmpty){
+    if (widget.videoLink != null && widget.videoLink!.isNotEmpty) {
       addUrlToVideoPlayerChewie(widget.videoLink!);
     }
     // addUrlToVideoPlayer("https://media.w3.org/2010/05/sintel/trailer.mp4");
   }
 
-
   @override
   void dispose() {
     print("dispose");
-    if(mounted){
-      if(videoPlayerController != null) videoPlayerController!.dispose();
-      if(_chewieController != null) _chewieController!.dispose();
+    if (mounted) {
+      if (videoPlayerController != null) videoPlayerController!.dispose();
+      if (_chewieController != null) _chewieController!.dispose();
 
       // if(_videoPlayerController != null) _videoPlayerController!.dispose();
       super.dispose();
@@ -104,191 +104,180 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
       child: Scaffold(
         body: SingleChildScrollView(
             child: Container(
-              height: 100.h,
-              padding: EdgeInsets.only(left: 4.w, right: 4.w, top: 1.h, bottom: 5.h),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  buildAppBar(() {
-                    Navigator.pop(context);
-                  }),
-                  SizedBox(
-                    height: 3.h,
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: buildPlans(),
-                  ),
-                  (isStarted)
-                      ? Center(child: buildThreeBounceIndicator(color: gsecondaryColor),)
-                  //     :
-                  // (widget.from == ProgramMealType.prepratory.name)
-                  //     ? startButtonWidget()
-                      : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      viewButtonWidget(),
-                      startButtonWidget()
-                    ],
-                  )
-                ],
+          height: 100.h,
+          padding:
+              EdgeInsets.only(left: 4.w, right: 4.w, top: 1.h, bottom: 0.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              buildAppBar(() {
+                Navigator.pop(context);
+              }),
+              SizedBox(
+                height: 3.h,
               ),
-            )
-        ),
+              Expanded(
+                flex: 3,
+                child: buildPlans(),
+              ),
+            ],
+          ),
+        )),
       ),
     );
   }
 
-  viewButtonWidget(){
+  viewButtonWidget() {
     return Center(
-      child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaleFactor: 0.8),
-        child: GestureDetector(
-          onTap: (){
-            // if(_videoPlayerController != null) _videoPlayerController!.stop();
-            if(_chewieController != null && _chewieController!.isPlaying == true)
-            {
-              if(videoPlayerController != null) videoPlayerController!.pause();
-              if(_chewieController != null) _chewieController!.pause();
-              return;
-            }
-            else{
-              if(videoPlayerController != null) videoPlayerController!.pause();
-              if(_chewieController != null) _chewieController!.pause();
+      child: IntrinsicWidth(
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 0.8),
+          child: GestureDetector(
+            onTap: () {
+              // if(_videoPlayerController != null) _videoPlayerController!.stop();
+              if (_chewieController != null &&
+                  _chewieController!.isPlaying == true) {
+                if (videoPlayerController != null)
+                  videoPlayerController!.pause();
+                if (_chewieController != null) _chewieController!.pause();
+                return;
+              } else {
+                if (videoPlayerController != null)
+                  videoPlayerController!.pause();
+                if (_chewieController != null) _chewieController!.pause();
 
-              if(widget.from == ProgramMealType.prepratory.name){
-                //get Preparatory day1 meals
-                print("isPlaying: ${_chewieController!.isPlaying}");
-                gotoScreen(CombinedPrepMealTransScreen(stage: 0,
-                  fromStartScreen: true,
-                ));
+                if (widget.from == ProgramMealType.prepratory.name) {
+                  //get Preparatory day1 meals
+                  print("isPlaying: ${_chewieController!.isPlaying}");
+                  gotoScreen(CombinedPrepMealTransScreen(
+                    stage: 0,
+                    fromStartScreen: true,
+                  ));
+                } else if (widget.from == ProgramMealType.detox.name) {
+                  //get Normal Program day1 meals
+                  final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
+                  final trackerUrl =
+                      _pref!.getString(AppConfig().trackerVideoUrl);
+
+                  gotoScreen(CombinedPrepMealTransScreen(
+                    stage: 1,
+                    fromStartScreen: true,
+                  ));
+                  // gotoScreen( MealPlanScreen(
+                  //   receipeVideoLink: mealUrl,
+                  //   trackerVideoLink: trackerUrl,
+                  //   viewDay1Details: true,
+                  // ),);
+                } else if (widget.from == ProgramMealType.healing.name) {
+                  //get Normal Program day1 meals
+                  final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
+                  final trackerUrl =
+                      _pref!.getString(AppConfig().trackerVideoUrl);
+
+                  _pref!.setString(AppConfig.STORE_MEAL_DATA, "");
+                  gotoScreen(CombinedPrepMealTransScreen(
+                    stage: 2,
+                    fromStartScreen: true,
+                  ));
+                  // gotoScreen( MealPlanScreen(
+                  //   receipeVideoLink: mealUrl,
+                  //   trackerVideoLink: trackerUrl,
+                  //   viewDay1Details: true,
+                  // ),);
+                } else if (widget.from == ProgramMealType.transition.name) {
+                  //get Transition day1 meals
+                  final trackerUrl =
+                      _pref!.getString(AppConfig().trackerVideoUrl);
+
+                  gotoScreen(CombinedPrepMealTransScreen(
+                    stage: 3,
+                    fromStartScreen: true,
+                  ));
+                  // gotoScreen(NewTransitionDesign(
+                  //   totalDays: '1',
+                  //   dayNumber: '1',
+                  //   trackerVideoLink: trackerUrl
+                  //   ,viewDay1Details: true,));
+                }
               }
-              else if(widget.from == ProgramMealType.detox.name){
-                //get Normal Program day1 meals
-                final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
-                final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
-
-                gotoScreen(
-                    CombinedPrepMealTransScreen(stage: 1,
-                      fromStartScreen: true,
-                    )
-                );
-                // gotoScreen( MealPlanScreen(
-                //   receipeVideoLink: mealUrl,
-                //   trackerVideoLink: trackerUrl,
-                //   viewDay1Details: true,
-                // ),);
-              }
-              else if(widget.from == ProgramMealType.healing.name){
-                //get Normal Program day1 meals
-                final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
-                final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
-
-                _pref!.setString(AppConfig.STORE_MEAL_DATA, "");
-                gotoScreen(
-                    CombinedPrepMealTransScreen(stage: 2,
-                      fromStartScreen: true,
-                    )
-                );
-                // gotoScreen( MealPlanScreen(
-                //   receipeVideoLink: mealUrl,
-                //   trackerVideoLink: trackerUrl,
-                //   viewDay1Details: true,
-                // ),);
-              }
-              else if(widget.from == ProgramMealType.transition.name){
-                //get Transition day1 meals
-                final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
-
-                gotoScreen(CombinedPrepMealTransScreen(stage: 3,
-                  fromStartScreen: true,
-                ));
-                // gotoScreen(NewTransitionDesign(
-                //   totalDays: '1',
-                //   dayNumber: '1',
-                //   trackerVideoLink: trackerUrl
-                //   ,viewDay1Details: true,));
-
-              }
-            }
-          },
-          child: Container(
-            width: 40.w,
-            height: 5.h,
-            padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 15.w),
-            decoration: BoxDecoration(
-              color: eUser().buttonColor,
-              borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
-              // border: Border.all(
-              //     color: eUser().buttonBorderColor,
-              //     width: eUser().buttonBorderWidth
-              // ),
-            ),
-            child: Center(child: Text(
-              'View',
-              style: TextStyle(
-                fontFamily: eUser().buttonTextFont,
-                color: eUser().buttonTextColor,
-                fontSize: eUser().buttonTextSize,
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+              decoration: BoxDecoration(
+                color: eUser().buttonColor,
+                borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
+                // border: Border.all(
+                //     color: eUser().buttonBorderColor,
+                //     width: eUser().buttonBorderWidth
+                // ),
               ),
-            )),
+              child: Center(
+                  child: Text(
+                'View',
+                style: TextStyle(
+                  fontFamily: eUser().buttonTextFont,
+                  color: eUser().buttonTextColor,
+                  fontSize: eUser().buttonTextSize,
+                ),
+              )),
+            ),
           ),
         ),
       ),
     );
   }
 
-
-  startButtonWidget(){
+  startButtonWidget() {
     return Center(
-      child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(textScaleFactor: 0.8),
-        child: GestureDetector(
-          onTap: () {
-            if(videoPlayerController != null) videoPlayerController!.pause();
-            if(_chewieController != null) _chewieController!.pause();
+      child: IntrinsicWidth(
+        child: MediaQuery(
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 0.8),
+          child: GestureDetector(
+            onTap: () {
+              if (videoPlayerController != null) videoPlayerController!.pause();
+              if (_chewieController != null) _chewieController!.pause();
 
-            showConfirmSheet();
-            // if (widget.from == ProgramMealType.detox.name){
-            //   showConfirmSheet();
-            // }
-            // else{
-            //   startProgram();
-            // }
-          },
-          child: Container(
-            width: 40.w,
-            height: 5.h,
-            padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 15.w),
-            decoration: BoxDecoration(
-              color: eUser().buttonColor,
-              borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
-              // border: Border.all(
-              //     color: eUser().buttonBorderColor,
-              //     width: eUser().buttonBorderWidth
-              // ),
-            ),
-            child: Center(child: Text(
-              'Start',
-              style: TextStyle(
-                fontFamily: eUser().buttonTextFont,
-                color: eUser().buttonTextColor,
-                fontSize: eUser().buttonTextSize,
+              showConfirmSheet();
+              // if (widget.from == ProgramMealType.detox.name){
+              //   showConfirmSheet();
+              // }
+              // else{
+              //   startProgram();
+              // }
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+              decoration: BoxDecoration(
+                color: eUser().buttonColor,
+                borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
+                // border: Border.all(
+                //     color: eUser().buttonBorderColor,
+                //     width: eUser().buttonBorderWidth
+                // ),
               ),
-            )),
+              child: Center(
+                  child: Text(
+                'Start',
+                style: TextStyle(
+                  fontFamily: eUser().buttonTextFont,
+                  color: eUser().buttonTextColor,
+                  fontSize: eUser().buttonTextSize,
+                ),
+              )),
+            ),
           ),
         ),
       ),
     );
   }
+
   /// instead of slider we r showing button for all stages
-  sliderWidget(){
+  sliderWidget() {
     return ConfirmationSlider(
         width: 95.w,
         text: "Slide To Start",
         sliderButtonContent: const Image(
-          image: AssetImage(
-              "assets/images/noun-arrow-1921075.png"),
+          image: AssetImage("assets/images/noun-arrow-1921075.png"),
         ),
         foregroundColor: kPrimaryColor,
         foregroundShape: BorderRadius.zero,
@@ -299,29 +288,26 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
           offset: const Offset(2, 10),
         ),
         textStyle: TextStyle(
-            fontFamily: kFontMedium,
-            color: gTextColor,
-            fontSize: 10.sp),
+            fontFamily: kFontMedium, color: gTextColor, fontSize: 10.dp),
         onConfirmation: () {
-          if(videoPlayerController != null) videoPlayerController!.pause();
-          if(_chewieController != null) _chewieController!.pause();
+          if (videoPlayerController != null) videoPlayerController!.pause();
+          if (_chewieController != null) _chewieController!.pause();
 
           showConfirmSheet();
-
         });
   }
 
   // **  *add url to video on initstate *************************
 
-
   VideoPlayerController? videoPlayerController;
-  ChewieController ? _chewieController;
+  ChewieController? _chewieController;
   addUrlToVideoPlayerChewie(String url) async {
     print("url" + url);
-    videoPlayerController = VideoPlayerController.network(Uri.parse(url).toString());
+    videoPlayerController =
+        VideoPlayerController.network(Uri.parse(url).toString());
     _chewieController = ChewieController(
         videoPlayerController: videoPlayerController!,
-        aspectRatio: 16/9,
+        aspectRatio: 16 / 9,
         autoInitialize: true,
         showOptions: false,
         autoPlay: true,
@@ -364,9 +350,7 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
         //   ),
         // ),
         hideControlsTimer: Duration(seconds: 3),
-        showControls: false
-
-    );
+        showControls: false);
     if (!await WakelockPlus.enabled) {
       WakelockPlus.enable();
     }
@@ -409,11 +393,11 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
   // }
 
   buildAboutStartSlideVideo() {
-    if(_chewieController != null){
+    if (_chewieController != null) {
       return Stack(
         children: [
           AspectRatio(
-            aspectRatio: 16/9,
+            aspectRatio: 14 / 6,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
@@ -423,7 +407,7 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
                 borderRadius: BorderRadius.circular(5),
                 child: Center(
                   child: OverlayVideo(
-                    isControlsVisible: false,
+                    isControlsVisible: true,
                     controller: _chewieController!,
                   ),
                 ),
@@ -475,7 +459,6 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
           //   ),
           // )
           // )
-
         ],
       );
       // return AspectRatio(
@@ -493,9 +476,9 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
       //           controller: _aboutSlideStartController!,
       //           showVolume: false,
       //           showVideoProgress: false,
-      //           seekButtonIconSize: 10.sp,
-      //           playButtonIconSize: 14.sp,
-      //           replayButtonSize: 10.sp,
+      //           seekButtonIconSize: 10.dp,
+      //           playButtonIconSize: 14.dp,
+      //           replayButtonSize: 10.dp,
       //         ),
       //         // child: VlcPlayer(
       //         //   controller: _videoPlayerController!,
@@ -536,9 +519,9 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
     //                   controller: _videoPlayerController!,
     //                   showVolume: false,
     //                   showVideoProgress: false,
-    //                   seekButtonIconSize: 10.sp,
-    //                   playButtonIconSize: 14.sp,
-    //                   replayButtonSize: 10.sp,
+    //                   seekButtonIconSize: 10.dp,
+    //                   playButtonIconSize: 14.dp,
+    //                   replayButtonSize: 10.dp,
     //                 )
     //             ),
     //           ),
@@ -607,9 +590,9 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
     //   //           controller: _aboutSlideStartController!,
     //   //           showVolume: false,
     //   //           showVideoProgress: false,
-    //   //           seekButtonIconSize: 10.sp,
-    //   //           playButtonIconSize: 14.sp,
-    //   //           replayButtonSize: 10.sp,
+    //   //           seekButtonIconSize: 10.dp,
+    //   //           playButtonIconSize: 14.dp,
+    //   //           replayButtonSize: 10.dp,
     //   //         ),
     //   //         // child: VlcPlayer(
     //   //         //   controller: _videoPlayerController!,
@@ -630,122 +613,140 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
 
   buildPlans() {
     final double height = MediaQuery.of(context).size.height;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // const Image(
-        //   image: AssetImage("assets/images/Group 4852.png"),
-        // ),
-        buildAboutStartSlideVideo(),
-        (height <= 600) ? SizedBox(height: 1.5.h) : SizedBox(height: 4.h),
-        Flexible(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Text(
-                  (widget.from == ProgramMealType.prepratory.name)
-                      ? prepText
-                      : widget.from == ProgramMealType.detox.name
-                      ? mealText
-                      : transText,
-                  textAlign: TextAlign.justify,
-                  style: TextStyle(
-                      height: 1.5,
-                      fontFamily: kFontMedium,
-                      color: gTextColor,
-                      fontSize: 10.sp),
-                ),
-                // Visibility(
-                //   visible: !(widget.from == ProgramMealType.prepratory.name),
-                //   child: TextButton(
-                //       onPressed: (){
-                //         // if(_videoPlayerController != null) _videoPlayerController!.stop();
-                //         if(_chewieController != null && _chewieController!.isPlaying == true)
-                //         {
-                //           if(videoPlayerController != null) videoPlayerController!.pause();
-                //           if(_chewieController != null) _chewieController!.pause();
-                //           return;
-                //         }
-                //         else{
-                //           if(videoPlayerController != null) videoPlayerController!.pause();
-                //           if(_chewieController != null) _chewieController!.pause();
-                //
-                //           if(widget.from == ProgramMealType.prepratory.name){
-                //             //get Preparatory day1 meals
-                //             print("isPlaying: ${_chewieController!.isPlaying}");
-                //             gotoScreen(PreparatoryPlanScreen(dayNumber: "1", totalDays: '2',viewDay1Details: true,
-                //               isPrepStarted: true,
-                //             ));
-                //           }
-                //           else if(widget.from == ProgramMealType.detox.name){
-                //             //get Normal Program day1 meals
-                //             final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
-                //             final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
-                //
-                //             gotoScreen(
-                //                 CombinedPrepMealTransScreen(stage: 1,
-                //                   fromStartScreen: true,
-                //                 )
-                //             );
-                //             // gotoScreen( MealPlanScreen(
-                //             //   receipeVideoLink: mealUrl,
-                //             //   trackerVideoLink: trackerUrl,
-                //             //   viewDay1Details: true,
-                //             // ),);
-                //           }
-                //           else if(widget.from == ProgramMealType.healing.name){
-                //             //get Normal Program day1 meals
-                //             final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
-                //             final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
-                //
-                //             _pref!.setString(AppConfig.STORE_MEAL_DATA, "");
-                //             gotoScreen(
-                //                 CombinedPrepMealTransScreen(stage: 2,
-                //                   fromStartScreen: true,
-                //                 )
-                //             );
-                //             // gotoScreen( MealPlanScreen(
-                //             //   receipeVideoLink: mealUrl,
-                //             //   trackerVideoLink: trackerUrl,
-                //             //   viewDay1Details: true,
-                //             // ),);
-                //           }
-                //           else if(widget.from == ProgramMealType.transition.name){
-                //             //get Transition day1 meals
-                //             final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
-                //
-                //             gotoScreen(CombinedPrepMealTransScreen(stage: 3,
-                //               fromStartScreen: true,
-                //             ));
-                //             // gotoScreen(NewTransitionDesign(
-                //             //   totalDays: '1',
-                //             //   dayNumber: '1',
-                //             //   trackerVideoLink: trackerUrl
-                //             //   ,viewDay1Details: true,));
-                //
-                //           }
-                //         }
-                //       },
-                //       //Preparatory Meal Plan
-                //       child: Text("View Day1 "
-                //           "${(widget.from == ProgramMealType.prepratory.name) ? 'Prepratory Meal Plan'
-                //           : (widget.from == ProgramMealType.transition.name) ? 'Transition Meal Plan'
-                //           : (widget.from == ProgramMealType.detox.name) ? 'Detox Meal Plan'
-                //           : 'Healing Meal Plan'} >",
-                //         style: TextStyle(
-                //             height: 1.5,
-                //             fontFamily: kFontBold,
-                //             color: gsecondaryColor,
-                //             fontSize: 11.sp
-                //         ),
-                //       )
-                //   ),
-                // ),
-              ],
-            ),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // const Image(
+          //   image: AssetImage("assets/images/Group 4852.png"),
+          // ),
+          buildAboutStartSlideVideo(),
+          (height <= 600) ? SizedBox(height: 1.5.h) : SizedBox(height: 4.h),
+          Column(
+            children: [
+              Text(
+                (widget.from == ProgramMealType.prepratory.name)
+                    ? prepText
+                    : widget.from == ProgramMealType.detox.name
+                        ? mealText
+                        : transText,
+                textAlign: TextAlign.justify,
+                style: TextStyle(
+                    height: 1.5,
+                    fontFamily: kFontMedium,
+                    color: gTextColor,
+                    fontSize: 13.dp),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: (isStarted)
+                    ? Center(
+                        child:
+                            buildThreeBounceIndicator(color: gsecondaryColor),
+                      )
+                    //     :
+                    // (widget.from == ProgramMealType.prepratory.name)
+                    //     ? startButtonWidget()
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          viewButtonWidget(),
+                          SizedBox(width: 3.w),
+                          startButtonWidget(),
+                        ],
+                      ),
+              ),
+              // Visibility(
+              //   visible: !(widget.from == ProgramMealType.prepratory.name),
+              //   child: TextButton(
+              //       onPressed: (){
+              //         // if(_videoPlayerController != null) _videoPlayerController!.stop();
+              //         if(_chewieController != null && _chewieController!.isPlaying == true)
+              //         {
+              //           if(videoPlayerController != null) videoPlayerController!.pause();
+              //           if(_chewieController != null) _chewieController!.pause();
+              //           return;
+              //         }
+              //         else{
+              //           if(videoPlayerController != null) videoPlayerController!.pause();
+              //           if(_chewieController != null) _chewieController!.pause();
+              //
+              //           if(widget.from == ProgramMealType.prepratory.name){
+              //             //get Preparatory day1 meals
+              //             print("isPlaying: ${_chewieController!.isPlaying}");
+              //             gotoScreen(PreparatoryPlanScreen(dayNumber: "1", totalDays: '2',viewDay1Details: true,
+              //               isPrepStarted: true,
+              //             ));
+              //           }
+              //           else if(widget.from == ProgramMealType.detox.name){
+              //             //get Normal Program day1 meals
+              //             final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
+              //             final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+              //
+              //             gotoScreen(
+              //                 CombinedPrepMealTransScreen(stage: 1,
+              //                   fromStartScreen: true,
+              //                 )
+              //             );
+              //             // gotoScreen( MealPlanScreen(
+              //             //   receipeVideoLink: mealUrl,
+              //             //   trackerVideoLink: trackerUrl,
+              //             //   viewDay1Details: true,
+              //             // ),);
+              //           }
+              //           else if(widget.from == ProgramMealType.healing.name){
+              //             //get Normal Program day1 meals
+              //             final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
+              //             final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+              //
+              //             _pref!.setString(AppConfig.STORE_MEAL_DATA, "");
+              //             gotoScreen(
+              //                 CombinedPrepMealTransScreen(stage: 2,
+              //                   fromStartScreen: true,
+              //                 )
+              //             );
+              //             // gotoScreen( MealPlanScreen(
+              //             //   receipeVideoLink: mealUrl,
+              //             //   trackerVideoLink: trackerUrl,
+              //             //   viewDay1Details: true,
+              //             // ),);
+              //           }
+              //           else if(widget.from == ProgramMealType.transition.name){
+              //             //get Transition day1 meals
+              //             final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+              //
+              //             gotoScreen(CombinedPrepMealTransScreen(stage: 3,
+              //               fromStartScreen: true,
+              //             ));
+              //             // gotoScreen(NewTransitionDesign(
+              //             //   totalDays: '1',
+              //             //   dayNumber: '1',
+              //             //   trackerVideoLink: trackerUrl
+              //             //   ,viewDay1Details: true,));
+              //
+              //           }
+              //         }
+              //       },
+              //       //Preparatory Meal Plan
+              //       child: Text("View Day1 "
+              //           "${(widget.from == ProgramMealType.prepratory.name) ? 'Prepratory Meal Plan'
+              //           : (widget.from == ProgramMealType.transition.name) ? 'Transition Meal Plan'
+              //           : (widget.from == ProgramMealType.detox.name) ? 'Detox Meal Plan'
+              //           : 'Healing Meal Plan'} >",
+              //         style: TextStyle(
+              //             height: 1.5,
+              //             fontFamily: kFontBold,
+              //             color: gsecondaryColor,
+              //             fontSize: 11.dp
+              //         ),
+              //       )
+              //   ),
+              // ),
+            ],
           )
-        )
-      ],
+        ],
+      ),
     );
   }
 
@@ -761,73 +762,43 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
     ),
   );
 
-  void startProgram() async{
+  void startProgram() async {
     setState(() {
       isStarted = true;
     });
     // await _videoPlayerController!.stop();
     String? start;
-    if(widget.from == ProgramMealType.prepratory.name){
+    if (widget.from == ProgramMealType.prepratory.name) {
       start = "2";
-    }
-    else if(widget.from == ProgramMealType.detox.name){
+    } else if (widget.from == ProgramMealType.detox.name) {
       start = "1";
-    }
-    else if(widget.from == ProgramMealType.healing.name){
+    } else if (widget.from == ProgramMealType.healing.name) {
       start = "4";
-    }
-    else if(widget.from == ProgramMealType.transition.name){
+    } else if (widget.from == ProgramMealType.transition.name) {
       start = "3";
     }
 
-    if(start != null){
+    if (start != null) {
       // Future.delayed(Duration(seconds: 10)).then((value) {
       //   setState(() {
       //     isStarted = false;
       //   });
       // });
-      final response = await ProgramService(repository: repository).startProgramOnSwipeService(start);
+      final response = await ProgramService(repository: repository)
+          .startProgramOnSwipeService(start);
 
-      if(response.runtimeType == StartProgramOnSwipeModel){
+      if (response.runtimeType == StartProgramOnSwipeModel) {
         //PrepratoryPlanScreen()
-        if(widget.from == ProgramMealType.prepratory.name){
+        if (widget.from == ProgramMealType.prepratory.name) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              maintainState: false,
-              builder: (context) =>
-                  CombinedPrepMealTransScreen(stage: 0)
-                  // PreparatoryPlanScreen(dayNumber: "1", totalDays: '1',),
-            ),
+                maintainState: false,
+                builder: (context) => CombinedPrepMealTransScreen(stage: 0)
+                // PreparatoryPlanScreen(dayNumber: "1", totalDays: '1',),
+                ),
           );
-        }
-        else if(widget.from == ProgramMealType.detox.name){
-          // if(widget.isPrepCompleted != null && widget.isPrepCompleted == true){
-          //   Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => const PrepratoryMealCompletedScreen(),
-          //     ),
-          //   );
-          // }
-          // else{
-            final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
-            final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
-
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    CombinedPrepMealTransScreen(stage: 1)
-                //     MealPlanScreen(
-                //   receipeVideoLink: mealUrl,
-                //   trackerVideoLink: trackerUrl,
-                // ),
-              ),
-            );
-          // }
-        }
-        else if(widget.from == ProgramMealType.healing.name){
+        } else if (widget.from == ProgramMealType.detox.name) {
           // if(widget.isPrepCompleted != null && widget.isPrepCompleted == true){
           //   Navigator.pushReplacement(
           //     context,
@@ -843,31 +814,52 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    CombinedPrepMealTransScreen(stage: 2)
-              //     MealPlanScreen(
-              //   receipeVideoLink: mealUrl,
-              //   trackerVideoLink: trackerUrl,
-              // ),
-            ),
+                builder: (context) => CombinedPrepMealTransScreen(stage: 1)
+                //     MealPlanScreen(
+                //   receipeVideoLink: mealUrl,
+                //   trackerVideoLink: trackerUrl,
+                // ),
+                ),
           );
           // }
-        }
-        else if(widget.from == ProgramMealType.transition.name){
+        } else if (widget.from == ProgramMealType.healing.name) {
+          // if(widget.isPrepCompleted != null && widget.isPrepCompleted == true){
+          //   Navigator.pushReplacement(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (context) => const PrepratoryMealCompletedScreen(),
+          //     ),
+          //   );
+          // }
+          // else{
+          final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
           final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
 
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              maintainState: false,
-              builder: (context) =>
-                  CombinedPrepMealTransScreen(stage: 3)
-              //     NewTransitionDesign(
-              //     totalDays: '1',
-              //     dayNumber: '1',
-              //     trackerVideoLink: trackerUrl
-              // ),
-            ),
+                builder: (context) => CombinedPrepMealTransScreen(stage: 2)
+                //     MealPlanScreen(
+                //   receipeVideoLink: mealUrl,
+                //   trackerVideoLink: trackerUrl,
+                // ),
+                ),
+          );
+          // }
+        } else if (widget.from == ProgramMealType.transition.name) {
+          final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                maintainState: false,
+                builder: (context) => CombinedPrepMealTransScreen(stage: 3)
+                //     NewTransitionDesign(
+                //     totalDays: '1',
+                //     dayNumber: '1',
+                //     trackerVideoLink: trackerUrl
+                // ),
+                ),
           );
 
           // Navigator.pushReplacement(
@@ -881,8 +873,7 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
           //   ),
           // );
         }
-      }
-      else{
+      } else {
         ErrorModel model = response as ErrorModel;
         Get.snackbar(
           "",
@@ -892,14 +883,14 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: gsecondaryColor.withOpacity(0.55),
         );
-        AppConfig().showSnackbar(context, model.message ?? AppConfig.oopsMessage);
+        AppConfig()
+            .showSnackbar(context, model.message ?? AppConfig.oopsMessage);
       }
       setState(() {
         isStarted = false;
       });
     }
   }
-
 
   // ********** To DISPLAY MEALS, PREP MEAL, TRANS MEAL *******************
 
@@ -934,114 +925,112 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
       ErrorModel model = result as ErrorModel;
       debugPrint(model.message ?? '');
       Future.delayed(Duration(seconds: 0)).whenComplete(() {
-       AppConfig().showSnackbar(context, "Something went worng!", isError: true);
+        AppConfig()
+            .showSnackbar(context, "Something went worng!", isError: true);
       });
     }
     print(result);
   }
 
-
-
   // **********************************************************************
 
- gotoScreen(screenName){
-   Navigator.push(
-     context,
-     MaterialPageRoute(
-       builder: (context) => screenName,
-     ),
-   );
- }
+  gotoScreen(screenName) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => screenName,
+      ),
+    );
+  }
 
   void showConfirmSheet() {
-    return AppConfig().showSheet(context,
-        Column(
-          mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Flexible(
-          child: Center(
-            child: Image.asset("assets/images/slide_start_popup.png",
+    return AppConfig().showSheet(
+      context,
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Center(
+            child: Image.asset(
+              "assets/images/slide_start_popup.png",
               fit: BoxFit.fill,
-              width: 80.w,
+              // width: 80.w,
+              height: 35.h,
             ),
           ),
-        ),
-        SizedBox(width: 2.5.h),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("Once you tap yes, tomorrow will be considered the 1st day of your "
+          SizedBox(height: 2.5.h),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Once you tap yes, tomorrow will be considered the 1st day of your "
                 "${(widget.from == ProgramMealType.prepratory.name) ? ProgramMealType.prepratory.name : widget.from == ProgramMealType.detox.name ? ProgramMealType.detox.name : widget.from == ProgramMealType.healing.name ? ProgramMealType.healing.name : ProgramMealType.transition.name}."
                 "\nAre you sure?",
-              style: TextStyle(
-                  fontSize: bottomSheetHeadingFontSize,
-                  fontFamily: bottomSheetHeadingFontFamily,
-                  height: 1.65
+                style: TextStyle(
+                    fontSize: bottomSheetHeadingFontSize,
+                    fontFamily: bottomSheetHeadingFontFamily,
+                    height: 1.65),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
           ),
-        ),
-        SizedBox(height: 2.5.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GestureDetector(
-              onTap: () async{
-                startProgram();
-                Navigator.pop(context);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                    vertical: 1.h, horizontal: 8.5.w
-                ),
-                decoration: BoxDecoration(
-                    color: gsecondaryColor,
-                    border: Border.all(color: kLineColor, width: 0.5),
-                    borderRadius: BorderRadius.circular(5)),
-                child: Text(
-                  "Yes",
-                  style: TextStyle(
-                    fontFamily: kFontMedium,
-                    color: gWhiteColor,
-                    fontSize: 11.sp,
+          SizedBox(height: 2.5.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () async {
+                  startProgram();
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                  decoration: BoxDecoration(
+                      color: gsecondaryColor,
+                      border: Border.all(color: kLineColor, width: 0.5),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Text(
+                    "Yes",
+                    style: TextStyle(
+                      fontFamily: kFontMedium,
+                      color: gWhiteColor,
+                      fontSize: 12.dp,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(width: 5.w),
-            GestureDetector(
-              onTap: (){
-                Navigator.pop(context);
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                    vertical: 1.h, horizontal: 8.5.w),
-                decoration: BoxDecoration(
-                    color: gWhiteColor,
-                    border: Border.all(color: kLineColor, width: 0.5),
-                    borderRadius: BorderRadius.circular(5)),
-                child: Text(
-                  "No",
-                  style: TextStyle(
-                    fontFamily: kFontMedium,
-                    color: gsecondaryColor,
-                    fontSize: 11.sp,
+              SizedBox(width: 5.w),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                  decoration: BoxDecoration(
+                      color: gWhiteColor,
+                      border: Border.all(color: kLineColor, width: 0.5),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Text(
+                    "No",
+                    style: TextStyle(
+                      fontFamily: kFontMedium,
+                      color: gsecondaryColor,
+                      fontSize: 12.dp,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-        SizedBox(height: 1.h)
-      ],
-    ),
-        bottomSheetHeight: 70.h,
+            ],
+          ),
+          SizedBox(height: 1.h)
+        ],
+      ),
+      bottomSheetHeight: 75.h,
       circleIcon: bsHeadPinIcon,
       isDismissible: true,
     );
   }
-
 }

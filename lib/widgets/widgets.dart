@@ -6,8 +6,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sizer/sizer.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import 'constants.dart';
 import 'package:im_animations/im_animations.dart';
@@ -19,7 +18,7 @@ class CommonDecoration {
     return InputDecoration(
         hintText: hintText,
         hintStyle: TextStyle(
-            fontFamily: "GothamBook", color: gTextColor, fontSize: 10.sp),
+            fontFamily: "GothamBook", color: gTextColor, fontSize: 10.dp),
         border: InputBorder.none,
         suffixIcon: suffixIcon
         // controller.text.isEmpty
@@ -76,7 +75,7 @@ class CommonButton {
         style: TextStyle(
           fontFamily: "GothamRoundedBold",
           color: Colors.white,
-          fontSize: 13.sp,
+          fontSize: 13.dp,
         ),
       ),
       onPressed: func,
@@ -96,7 +95,7 @@ class CommonButton {
         style: TextStyle(
           fontFamily: "GothamRoundedBold",
           color: Colors.white,
-          fontSize: 13.sp,
+          fontSize: 13.dp,
         ),
       ),
       onPressed: func,
@@ -107,7 +106,7 @@ class CommonButton {
 TextStyle buildTextStyle({Color? color, String? fontFamily}) {
   return TextStyle(
     color: color ?? kTextColor,
-    fontSize: 10.sp,
+    fontSize: 13.dp,
     height: 1.35,
     fontFamily: fontFamily ?? kFontMedium,
   );
@@ -131,7 +130,7 @@ buildTapCount(String title, int count) {
         child: Text(
           count.toString(),
           style: TextStyle(
-            fontSize: 7.sp,
+            fontSize: 7.dp,
             fontFamily: "GothamMedium",
             color: gWhiteColor,
           ),
@@ -171,7 +170,7 @@ buildThreeBounceIndicator({Color? color}) {
   return Center(
     child: SpinKitThreeBounce(
       color: color ?? gMainColor,
-      size: 15,
+      size: 30,
     ),
   );
 }
@@ -185,7 +184,7 @@ SnackbarController buildSnackBar(String title, String subTitle) {
       style: TextStyle(
         fontFamily: "PoppinsSemiBold",
         color: kWhiteColor,
-        fontSize: 13.sp,
+        fontSize: 13.dp,
       ),
     ),
     messageText: Text(
@@ -193,7 +192,7 @@ SnackbarController buildSnackBar(String title, String subTitle) {
       style: TextStyle(
         fontFamily: "PoppinsMedium",
         color: kWhiteColor,
-        fontSize: 12.sp,
+        fontSize: 12.dp,
       ),
     ),
     backgroundColor: kPrimaryColor.withOpacity(0.5),
@@ -246,7 +245,7 @@ buildAppBar(
             ),
           ),
           SizedBox(
-            width: 15,
+            width: 1.5.w,
           ),
           Visibility(
             visible: showLogo,
@@ -291,7 +290,7 @@ buildAppBar(
             ),
           ),
           SizedBox(
-            width: 3.25.w,
+            width: 1.w,
           ),
           Visibility(
             visible: showHelpIcon,
@@ -304,7 +303,7 @@ buildAppBar(
             ),
           ),
           SizedBox(
-            width: 3.25.w,
+            width: 1.w,
           ),
           Visibility(
             visible: showSupportIcon,
@@ -330,7 +329,7 @@ buildLabelTextField(String name,
       text: TextSpan(
           text: name,
           style: TextStyle(
-            fontSize: fontSize ?? 9.sp,
+            fontSize: fontSize ?? 13.dp,
             color: gBlackColor,
             height: 1.35,
             fontFamily: kFontMedium,
@@ -339,7 +338,7 @@ buildLabelTextField(String name,
             TextSpan(
               text: ' *',
               style: TextStyle(
-                fontSize: 9.sp,
+                fontSize: 13.dp,
                 color: kPrimaryColor,
                 fontFamily: "PoppinsSemiBold",
               ),
@@ -348,7 +347,7 @@ buildLabelTextField(String name,
   return Text(
     'Full Name:*',
     style: TextStyle(
-      fontSize: 9.sp,
+      fontSize: 9.dp,
       color: kTextColor,
       fontFamily: "PoppinsSemiBold",
     ),
@@ -369,7 +368,8 @@ Future<CroppedFile?> cropSelectedImage(String filePath) async {
         IOSUiSettings(
           title: 'Cropper',
         ),
-      ]);
+      ],
+  );
 }
 
 showDialogWidget(
@@ -389,11 +389,11 @@ showDialogWidget(
       builder: (context) => AlertDialog(
             backgroundColor: kPrimaryColor,
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15.0.sp))),
+                borderRadius: BorderRadius.all(Radius.circular(15.0.dp))),
             contentPadding: EdgeInsets.only(top: 1.h),
             content: Container(
               decoration: const BoxDecoration(
-                // borderRadius: BorderRadius.only(bottomRight: Radius.circular(15.0.sp), bottomLeft: Radius.circular(15.0.sp)),
+                // borderRadius: BorderRadius.only(bottomRight: Radius.circular(15.0.dp), bottomLeft: Radius.circular(15.0.dp)),
                 color: Colors.white,
               ),
               padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
@@ -406,7 +406,7 @@ showDialogWidget(
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: kPrimaryColor,
-                        fontSize: 16.sp,
+                        fontSize: 16.dp,
                       )),
                   const SizedBox(
                     height: 5.0,
@@ -429,7 +429,7 @@ showDialogWidget(
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: kPrimaryColor,
-                                    fontSize: 15.sp,
+                                    fontSize: 15.dp,
                                   )),
                             ),
                           ],
@@ -447,28 +447,28 @@ showDialogWidget(
                               GestureDetector(
                                 onTap: cancelButtonClick,
                                 child: Container(
-                                    padding: EdgeInsets.all(7.sp),
+                                    padding: EdgeInsets.all(7.dp),
                                     decoration: BoxDecoration(
                                         color: Colors.amber,
                                         borderRadius: BorderRadius.circular(3)),
                                     child: Text(cancelButtonText ?? "NO",
                                         style: TextStyle(
                                           color: kPrimaryColor,
-                                          fontSize: 12.sp,
+                                          fontSize: 12.dp,
                                         ))),
                               ),
                               SizedBox(width: 3.w),
                               GestureDetector(
                                 onTap: okButtonClick,
                                 child: Container(
-                                    padding: EdgeInsets.all(7.sp),
+                                    padding: EdgeInsets.all(7.dp),
                                     decoration: BoxDecoration(
                                         color: kPrimaryColor,
                                         borderRadius: BorderRadius.circular(3)),
                                     child: Text(okButtonText,
                                         style: TextStyle(
                                           color: Colors.amber,
-                                          fontSize: 12.sp,
+                                          fontSize: 12.dp,
                                         ))),
                               )
                             ],
@@ -476,14 +476,14 @@ showDialogWidget(
                         : GestureDetector(
                             onTap: okButtonClick,
                             child: Container(
-                                padding: EdgeInsets.all(7.sp),
+                                padding: EdgeInsets.all(7.dp),
                                 decoration: BoxDecoration(
                                     color: kPrimaryColor,
                                     borderRadius: BorderRadius.circular(3)),
                                 child: Text(okButtonText,
                                     style: TextStyle(
                                       color: Colors.amber,
-                                      fontSize: 12.sp,
+                                      fontSize: 12.dp,
                                     ))),
                           ),
                   ),
@@ -515,7 +515,7 @@ showDialogWidget(
 //               title,
 //               style: TextStyle(
 //                 fontFamily: "PoppinsMedium",
-//                 fontSize: 13.sp,
+//                 fontSize: 13.dp,
 //                 color: kPrimaryColor,
 //               ),
 //             ),
@@ -734,9 +734,9 @@ VideoWidget(ChewieController controller) {
             //   virtualDisplay: true,
             //   showVolume: false,
             //   showVideoProgress: true,
-            //   seekButtonIconSize: 10.sp,
-            //   playButtonIconSize: 14.sp,
-            //   replayButtonSize: 14.sp,
+            //   seekButtonIconSize: 10.dp,
+            //   playButtonIconSize: 14.dp,
+            //   replayButtonSize: 14.dp,
             //   showFullscreenBtn: true,
             // )
           ),

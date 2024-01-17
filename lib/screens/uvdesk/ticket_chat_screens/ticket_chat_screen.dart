@@ -2,8 +2,7 @@ import 'package:chatview/chatview.dart';
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/screens/uvdesk/ticket_chat_screens/theme.dart';
 import 'package:http/http.dart' as http;
-import 'package:sizer/sizer.dart';
-
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../../model/error_model.dart';
 import '../../../model/uvdesk_model/new_ticket_details_model.dart';
 import '../../../repository/api_service.dart';
@@ -68,7 +67,7 @@ class _TicketChatScreenState extends State<TicketChatScreen> {
     if (result.runtimeType == NewTicketDetailsModel) {
       print("Threads List");
       NewTicketDetailsModel model = result as NewTicketDetailsModel;
-      messageList = model.ticket!.threads;
+      messageList = model.response.ticket!.threads;
       getData(messageList);
       print("threads List : $messageList");
     } else {

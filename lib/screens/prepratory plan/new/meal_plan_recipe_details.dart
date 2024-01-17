@@ -6,9 +6,9 @@ other 2 params not using now
  */
 
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart';
-import 'package:gwc_customer_web/widgets/constants.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:image_network/image_network.dart';
 import '../../../model/combined_meal_model/detox_nourish_model/detox_healing_common_model/child_meal_plan_details_model1.dart';
 import '../../../model/combined_meal_model/meal_slot_model.dart';
 import '../../../widgets/widgets.dart';
@@ -82,6 +82,7 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
   @override
   Widget build(BuildContext context) {
     print("mealPlanRecipes : ${widget.mealPlanRecipe?.name}");
+    print("mealPlanRecipes Image : ${mealPlanRecipes?.itemImage}");
     return SafeArea(
       child: Scaffold(
         backgroundColor: gBackgroundColor,
@@ -98,52 +99,80 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                           top: 0,
                           left: 0,
                           right: 0,
-                          child: Container(
-                            height: 33.h,
-                            decoration: BoxDecoration(
-                              image: (mealPlanRecipes?.itemImage != null &&
-                                      mealPlanRecipes?.itemImage != "")
-                                  ? DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                        mealPlanRecipes?.itemImage ?? '',
-                                      ),
-                                      fit: BoxFit.fill)
-                                  : const DecorationImage(
-                                      image: AssetImage(
-                                        "assets/images/meal_placeholder.png",
-                                      ),
-                                      fit: BoxFit.fill),
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(20),
-                                bottomRight: Radius.circular(20),
-                              ),
+                          child:
+                          ImageNetwork(
+                            image: mealPlanRecipes?.itemImage ?? '',
+                            height: 35.h,
+                             width: double.maxFinite,
+                            duration: 1500,
+                             curve: Curves.easeInOutQuart,
+                            onPointer: true,
+                            debugPrint: false,
+                            fullScreen: false,
+                            fitAndroidIos: BoxFit.cover,
+                            fitWeb: BoxFitWeb.fill,
+                            borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(20),
+                              bottomRight: Radius.circular(20),
                             ),
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  top: 0.h,
-                                  left: 0.w,
-                                  child: buildAppBar(
-                                    () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ),
-                                // Positioned(
-                                //   right: 5.w,
-                                //   bottom: 5.h,
-                                //   child: GestureDetector(
-                                //     onTap: () {},
-                                //     child: Icon(
-                                //       Icons.smart_display,
-                                //       color: gWhiteColor,
-                                //       size: 4.h,
-                                //     ),
-                                //   ),
-                                // ),
-                              ],
+                            onLoading: const CircularProgressIndicator(
+                              color: Colors.indigoAccent,
                             ),
+                            onError: const Image(image: AssetImage(
+                              "assets/images/meal_placeholder.png",
+                            ),
+                              fit: BoxFit.fill,
+                            ),
+                            onTap: () {
+                              debugPrint("©gabriel_patrick_souza");
+                            },
                           ),
+                          // Container(
+                          //   height: 33.h,
+                          //   decoration: BoxDecoration(
+                          //     image: (mealPlanRecipes?.itemImage != null &&
+                          //             mealPlanRecipes?.itemImage != "")
+                          //         ? DecorationImage(
+                          //             image: CachedNetworkImageProvider(
+                          //               mealPlanRecipes?.itemImage ?? '',
+                          //             ),
+                          //             fit: BoxFit.fill)
+                          //         : const DecorationImage(
+                          //             image: AssetImage(
+                          //               "assets/images/meal_placeholder.png",
+                          //             ),
+                          //             fit: BoxFit.fill),
+                          //     borderRadius: const BorderRadius.only(
+                          //       bottomLeft: Radius.circular(20),
+                          //       bottomRight: Radius.circular(20),
+                          //     ),
+                          //   ),
+                          //   child: Stack(
+                          //     children: [
+                          //       Positioned(
+                          //         top: 0.h,
+                          //         left: 0.w,
+                          //         child: buildAppBar(
+                          //           () {
+                          //             Navigator.pop(context);
+                          //           },
+                          //         ),
+                          //       ),
+                          //       // Positioned(
+                          //       //   right: 5.w,
+                          //       //   bottom: 5.h,
+                          //       //   child: GestureDetector(
+                          //       //     onTap: () {},
+                          //       //     child: Icon(
+                          //       //       Icons.smart_display,
+                          //       //       color: gWhiteColor,
+                          //       //       size: 4.h,
+                          //       //     ),
+                          //       //   ),
+                          //       // ),
+                          //     ],
+                          //   ),
+                          // ),
                         ),
                         Positioned(
                           top: 29.h,
@@ -242,17 +271,17 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                               labelStyle: TextStyle(
                                   fontFamily: kFontMedium,
                                   color: gPrimaryColor,
-                                  fontSize: 12.sp),
+                                  fontSize: 15.dp),
                               unselectedLabelStyle: TextStyle(
                                   fontFamily: kFontBook,
                                   color: gHintTextColor,
-                                  fontSize: 10.sp),
+                                  fontSize: 13.dp),
                               labelPadding: EdgeInsets.only(
                                   right: 10.w,
                                   left: 2.w,
                                   top: 1.h,
                                   bottom: 1.h),
-                              indicatorPadding: EdgeInsets.only(right: 7.w),
+                              // indicatorPadding: EdgeInsets.only(right: 7.w),
                               tabs: const [
                                 Text('How to make it'),
                                 Text('Variations'),
@@ -290,51 +319,78 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                           top: 0,
                           left: 0,
                           right: 0,
-                          child: Container(
-                            height: 33.h,
-                            decoration: BoxDecoration(
-                              image: (meals?.itemPhoto != null)
-                                  ? DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                        meals?.itemPhoto ?? '',
-                                      ),
-                                      fit: BoxFit.fill)
-                                  : const DecorationImage(
-                                      image: AssetImage(
-                                        "assets/images/meal_placeholder.png",
-                                      ),
-                                      fit: BoxFit.fill),
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(20),
-                                bottomRight: Radius.circular(20),
+                          child: ClipRRect(borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20),
+                          ),
+                            child: ImageNetwork(
+                              image: mealPlanRecipes?.itemImage ?? '',
+                              height: 33.h,
+                              width: double.maxFinite,
+                              duration: 1500,
+                              // curve: Curves.,
+                              onPointer: true,
+                              debugPrint: false,
+                              fullScreen: false,
+                              fitAndroidIos: BoxFit.cover,
+                              fitWeb: BoxFitWeb.cover,
+                              borderRadius: BorderRadius.circular(70),
+                              onLoading: const CircularProgressIndicator(
+                                color: Colors.indigoAccent,
                               ),
-                            ),
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  top: 0.h,
-                                  left: 0.w,
-                                  child: buildAppBar(
-                                    () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ),
-                                // Positioned(
-                                //   right: 5.w,
-                                //   bottom: 5.h,
-                                //   child: GestureDetector(
-                                //     onTap: () {},
-                                //     child: Icon(
-                                //       Icons.smart_display,
-                                //       color: gWhiteColor,
-                                //       size: 4.h,
-                                //     ),
-                                //   ),
-                                // ),
-                              ],
+                              onError: const Image(image: AssetImage(
+                                "assets/images/meal_placeholder.png",
+                              ),),
+                              onTap: () {
+                                debugPrint("©gabriel_patrick_souza");
+                              },
                             ),
                           ),
+                          // Container(
+                          //   height: 33.h,
+                          //   decoration: BoxDecoration(
+                          //     image: (meals?.itemPhoto != null)
+                          //         ? DecorationImage(
+                          //             image: CachedNetworkImageProvider(
+                          //               meals?.itemPhoto ?? '',
+                          //             ),
+                          //             fit: BoxFit.fill)
+                          //         : const DecorationImage(
+                          //             image: AssetImage(
+                          //               "assets/images/meal_placeholder.png",
+                          //             ),
+                          //             fit: BoxFit.fill),
+                          //     borderRadius: const BorderRadius.only(
+                          //       bottomLeft: Radius.circular(20),
+                          //       bottomRight: Radius.circular(20),
+                          //     ),
+                          //   ),
+                          //   child: Stack(
+                          //     children: [
+                          //       Positioned(
+                          //         top: 0.h,
+                          //         left: 0.w,
+                          //         child: buildAppBar(
+                          //           () {
+                          //             Navigator.pop(context);
+                          //           },
+                          //         ),
+                          //       ),
+                          //       // Positioned(
+                          //       //   right: 5.w,
+                          //       //   bottom: 5.h,
+                          //       //   child: GestureDetector(
+                          //       //     onTap: () {},
+                          //       //     child: Icon(
+                          //       //       Icons.smart_display,
+                          //       //       color: gWhiteColor,
+                          //       //       size: 4.h,
+                          //       //     ),
+                          //       //   ),
+                          //       // ),
+                          //     ],
+                          //   ),
+                          // ),
                         ),
                         Positioned(
                           top: 29.h,
@@ -366,10 +422,10 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                                   style: TextStyle(
                                     color: gBlackColor,
                                     fontFamily: kFontBold,
-                                    fontSize: 11.sp,
+                                    fontSize: 15.dp,
                                   ),
                                 ),
-                                SizedBox(height: 0.5.h),
+                                SizedBox(height: 1.5.h),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -380,22 +436,22 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                                         color: gHintTextColor,
                                         height: 1.3,
                                         fontFamily: kFontBook,
-                                        fontSize: 10.sp,
+                                        fontSize: 14.dp,
                                       ),
                                     ),
                                     Icon(
                                       Icons.timer_outlined,
                                       color: gHintTextColor,
-                                      size: 2.h,
+                                      size: 2.5.h,
                                     ),
-                                    SizedBox(width: 1.w),
+                                    SizedBox(width: 0.5.w),
                                     Text(
-                                      " - ${meals?.cookingTime ?? ''}",
+                                      " -  ${meals?.cookingTime ?? ''}",
                                       style: TextStyle(
                                         color: gHintTextColor,
                                         height: 1.3,
                                         fontFamily: kFontBook,
-                                        fontSize: 10.sp,
+                                        fontSize: 14.dp,
                                       ),
                                     ),
                                   ],
@@ -418,7 +474,7 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                             style: TextStyle(
                               color: gBlackColor,
                               fontFamily: kFontBold,
-                              fontSize: 11.sp,
+                              fontSize: 15.dp,
                             ),
                           ),
                           SizedBox(height: 1.h),
@@ -433,17 +489,17 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                               labelStyle: TextStyle(
                                   fontFamily: kFontMedium,
                                   color: gPrimaryColor,
-                                  fontSize: 12.sp),
+                                  fontSize: 15.dp),
                               unselectedLabelStyle: TextStyle(
                                   fontFamily: kFontBook,
                                   color: gHintTextColor,
-                                  fontSize: 10.sp),
+                                  fontSize: 13.dp),
                               labelPadding: EdgeInsets.only(
                                   right: 10.w,
                                   left: 2.w,
                                   top: 1.h,
                                   bottom: 1.h),
-                              indicatorPadding: EdgeInsets.only(right: 7.w),
+                              // indicatorPadding: EdgeInsets.only(right: 7.w),
                               tabs: const [
                                 Text('How to make it'),
                                 Text('Variations'),
@@ -485,7 +541,7 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
               style: TextStyle(
                 color: gBlackColor,
                 fontFamily: kFontBold,
-                fontSize: 11.sp,
+                fontSize: 15.dp,
               ),
             ),
           ),
@@ -498,7 +554,7 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                     color: gHintTextColor,
                     height: 1.3,
                     fontFamily: kFontBook,
-                    fontSize: 10.sp,
+                    fontSize: 13.dp,
                   ),
                 )
               : Text(
@@ -507,7 +563,7 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                     color: gHintTextColor,
                     height: 1.3,
                     fontFamily: kFontBook,
-                    fontSize: 10.sp,
+                    fontSize: 13.dp,
                   ),
                 ),
         ],
@@ -517,7 +573,7 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
 
   buildIngredients(List<Ingredient>? ingredient) {
     return SizedBox(
-      height: 17.h,
+      height: 20.h,
       child: ListView.builder(
         shrinkWrap: true,
         scrollDirection: Axis.horizontal,
@@ -542,7 +598,7 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                     image: const AssetImage(
                       'assets/images/empty_stomach.png',
                     ),
-                    height: 5.h,
+                    height: 6.h,
                   ),
                   SizedBox(height: 0.5.h),
                   Text(
@@ -554,7 +610,7 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                     style: TextStyle(
                       color: gBlackColor,
                       fontFamily: kFontBold,
-                      fontSize: 8.sp,
+                      fontSize: 10.dp,
                     ),
                   ),
                   SizedBox(height: 0.5.h),
@@ -562,11 +618,13 @@ class _MealPlanRecipeDetailsState extends State<MealPlanRecipeDetails>
                     '${ingredient?[index].qty} ${ingredient?[index].unit}',
                     // ingredientColor[index].subTitle,
                     textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: gHintTextColor,
                       // height: 1,
                       fontFamily: kFontBook,
-                      fontSize: 8.sp,
+                      fontSize: 10.dp,
                     ),
                   ),
                 ],

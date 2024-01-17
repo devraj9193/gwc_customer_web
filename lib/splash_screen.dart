@@ -32,7 +32,7 @@ import 'package:gwc_customer_web/widgets/open_alert_box.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'model/enquiry_status_model.dart';
 import 'model/error_model.dart';
 import 'repository/api_service.dart';
@@ -379,19 +379,19 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
   }
 
   startTimer(){
-    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (_currentPage < 1) {
-        _currentPage++;
-      } else {
-        _currentPage = 1;
-      }
-
-      _pageController.animateToPage(
-        _currentPage,
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeIn,
-      );
-    });
+    // _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+    //   if (_currentPage < 1) {
+    //     _currentPage++;
+    //   } else {
+    //     _currentPage = 1;
+    //   }
+    //
+    //   _pageController.animateToPage(
+    //     _currentPage,
+    //     duration: const Duration(milliseconds: 350),
+    //     curve: Curves.easeIn,
+    //   );
+    // });
     getScreen();
   }
 
@@ -472,30 +472,39 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
     double width = MediaQuery.of(context).size.width;
     //I/flutter (13659): Ssamsung Mobile wdth: 384.0 * height: 781.8666666666667
     print("Ssamsung Mobile wdth: $width * height: $height");
-    return Scaffold(
+    return
+      Scaffold(
       body: Stack(
         children: <Widget>[
-          PageView(
-            reverse: false,
-            onPageChanged: (int page) {
-              setState(() {
-                _currentPage = page;
-              });
-            },
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _pageController,
-            children: <Widget>[
-              // splashImage(),
-              if(enquiryStatus != null)
-              (enquiryStatus!.isEven)
-                  ? SitBackScreen()
-                  : !isLogin
-                  ? ExistingUser()
-                  : (evalStatus!.contains("no_evaluation") || evalStatus!.contains("pending"))
-                  ? EvaluationFormScreen(isFromSplashScreen: true,)
-                  : DashboardScreen(index: 2,)
-            ],
-          ),
+          if(enquiryStatus != null)
+            (enquiryStatus!.isEven)
+                ? SitBackScreen()
+                : !isLogin
+                ? ExistingUser()
+                : (evalStatus!.contains("no_evaluation") || evalStatus!.contains("pending"))
+                ? EvaluationFormScreen(isFromSplashScreen: true,)
+                : DashboardScreen(index: 2,),
+          // PageView(
+          //   reverse: false,
+          //   onPageChanged: (int page) {
+          //     setState(() {
+          //       _currentPage = page;
+          //     });
+          //   },
+          //   physics: const NeverScrollableScrollPhysics(),
+          //   controller: _pageController,
+          //   children: <Widget>[
+          //     // splashImage(),
+          //     if(enquiryStatus != null)
+          //     (enquiryStatus!.isEven)
+          //         ? SitBackScreen()
+          //         : !isLogin
+          //         ? ExistingUser()
+          //         : (evalStatus!.contains("no_evaluation") || evalStatus!.contains("pending"))
+          //         ? EvaluationFormScreen(isFromSplashScreen: true,)
+          //         : DashboardScreen(index: 2,)
+          //   ],
+          // ),
         ],
       ),
     );

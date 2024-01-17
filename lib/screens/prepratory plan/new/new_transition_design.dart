@@ -25,8 +25,7 @@ import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/vlc_player/vlc_player_with_controls.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
 import 'package:lottie/lottie.dart';
-import 'package:sizer/sizer.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../repository/post_program_repo/post_program_repository.dart';

@@ -12,10 +12,12 @@ here we need to pass
 
  */
 
+import 'dart:developer';
 import 'dart:io';
 import 'package:async/async.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/model/error_model.dart';
 import 'package:gwc_customer_web/model/profile_model/feedback_model.dart';
 import 'package:gwc_customer_web/repository/profile_repository/feedback_repo.dart';
@@ -24,8 +26,7 @@ import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/unfocus_widget.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
 import 'package:http/http.dart';
-import 'package:sizer/sizer.dart';
-import 'dart:math' as math;
+import 'package:flutter_sizer/flutter_sizer.dart';import 'dart:math' as math;
 import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
 import 'package:http/http.dart' as http;
 import '../../repository/api_service.dart';
@@ -109,7 +110,7 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
       'feedback' : feedbackController.text
     };
 
-    final res = await FeedbackService(repository: repository).submitFeedbackService(feedback, newList);
+    final res = await FeedbackService(repository: repository).submitFeedbackService(feedback, files);
 
     if(res.runtimeType == FeedbackModel){
       FeedbackModel model = res as FeedbackModel;
@@ -147,7 +148,7 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
                           fontFamily: "GothamRoundedBold_21016",
                           color: gTextColor,
                           height: 2,
-                          fontSize: 12.sp
+                          fontSize: 12.dp
                       ),
                     ),
                     Text('What do you think of the program',
@@ -155,7 +156,7 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
                         fontFamily: "GothamBold",
                         color: gTextColor,
                         height: 2,
-                        fontSize: 11.sp,
+                        fontSize: 11.dp,
                       ),
                     ),
                     SizedBox(
@@ -169,7 +170,7 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
                       style: TextStyle(
                         fontFamily: "GothamMedium",
                         color: gTextColor,
-                        fontSize: 9.5.sp,
+                        fontSize: 9.5.dp,
                       ),
                     ),
                     SizedBox(
@@ -215,7 +216,7 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
                               style: TextStyle(
                                 fontFamily: "GothamRoundedBold_21016",
                                 color: feedbackController.text.isEmpty ? gPrimaryColor : gMainColor,
-                                fontSize: 12.sp,
+                                fontSize: 12.dp,
                               ),
                             ),
                           ),
@@ -264,7 +265,7 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
                       fontFamily: "GothamRoundedBold_21016",
                       color: gWhiteColor,
                       height: 2,
-                      fontSize: 12.sp
+                      fontSize: 12.dp
                   ),
                 ),
                 SizedBox(
@@ -304,7 +305,7 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
                     style: TextStyle(
                       fontFamily: "GothamBold",
                       color: gTextColor,
-                      fontSize: 11.sp,
+                      fontSize: 11.dp,
                     ),
                   ),
                   SizedBox(
@@ -361,13 +362,18 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
                     style: TextStyle(
                         fontFamily: "GothamRoundedBold_21016",
                         color: gPrimaryColor,
-                        fontSize: 11.sp),
+                        fontSize: 11.dp),
                   ),
-                  if(files.isNotEmpty)
-                    Image.file(
-                      File(files.first.path.toString()),
-                      width: 65.w,
-                      height: 15.h,
+                  if (files.isNotEmpty)
+                    ListView.builder(
+                      itemCount: files.length,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: ScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final file = files[index];
+                        return buildRecordList(file, index: index);
+                      },
                     ),
                   SizedBox(
                     height: 10.h,
@@ -417,30 +423,73 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
     );
   }
 
-  void pickFromFile() async{
-    final result = await FilePicker.platform
-        .pickFiles(
-      withReadStream: true,
-      type: FileType.any,
-      // allowedExtensions: ['pdf', 'jpg', 'png'],
-      allowMultiple: false,
+  buildRecordList(PlatformFile file, {int? index}) {
+    return ListTile(
+      shape: Border(bottom: BorderSide()),
+      // leading: SizedBox(
+      //     width: 50, height: 50, child: Image.file(File(filename.path!))),
+      title: Text(
+        file.name.split("/").last,
+        textAlign: TextAlign.start,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontFamily: kFontBold,
+          fontSize: 11.dp,
+        ),
+      ),
+      trailing: GestureDetector(
+          onTap: () {
+            files.removeAt(index!);
+            item.removeAt(index);
+            newList.removeAt(index);
+            setState(() {});
+          },
+          child: const Icon(
+            Icons.delete_outline_outlined,
+            color: gMainColor,
+          )),
     );
-    if (result == null) return;
+  }
 
-    if(result.files.first.extension!.contains("png") || result.files.first.extension!.contains("jpg")){
-      if(getFileSize(File(result.paths.first!)) <= 2){
-        print("filesize: ${getFileSize(File(result.paths.first!))}Mb");
-        files.add(result.files.first);
-        addFilesToList(File(result.paths.first!));
+  PlatformFile? objFile;
+  List<PlatformFile>? _paths;
+  List item = [];
+
+  void pickFromFile() async{
+    try {
+      _paths = (await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowMultiple: true,
+        onFileLoading: (FilePickerStatus status) => print(status),
+        allowedExtensions: ['png', 'jpg', 'jpeg'],
+      ))
+          ?.files;
+
+      var path2 =_paths?.single.bytes;
+
+      var path3 = _paths?.single.name;
+
+      if (!item.contains(path3)) {
+        item.add(path3);
+        File file = File(path3 ?? "");
+        setState(() {
+          objFile = _paths?.single;
+          files.add(objFile!);
+          // _finalFiles.add(file);
+          print("files : $files");
+          // print("_finalFiles : $_finalFiles");
+        });
+      } else {
+        // Scaffold.of(globalkey2.currentContext??context)
+        AppConfig().showSnackbar(context, "File Already Exist", isError: true);
       }
-      else{
-        AppConfig().showSnackbar(context, "File size must be <2Mb", isError: true);
-      }
+
+    } on PlatformException catch (e) {
+      log('Unsupported operation' + e.toString());
+    } catch (e) {
+      log(e.toString());
     }
-    else{
-      AppConfig().showSnackbar(context, "Please select png/jpg files", isError: true);
-    }
-    setState(() {});
   }
 
   getFileSize(File file){
@@ -468,7 +517,15 @@ class _FeedbackRatingScreenState extends State<FeedbackRatingScreen> {
           filename: fileFormatList[i].path);
       newList.add(multipartFile);
     }
-
+    for (var element in files) {
+      newList.add(
+        await http.MultipartFile.fromBytes(
+          "files[]",
+          element.bytes as List<int>,
+          filename: element.name,
+        ),
+      );
+    }
     setState(() {});
   }
 
