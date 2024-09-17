@@ -28,11 +28,17 @@ import '../../model/consultation_model/appointment_booking/appointment_book_mode
 import '../../model/consultation_model/appointment_booking/child_doctor_model.dart';
 import '../../model/consultation_model/appointment_slot_model.dart';
 import '../../model/consultation_model/child_slots_model.dart';
+import '../../model/consultation_model/follow_up_slot_model.dart';
+import '../../model/consultation_model/ppc_slots_model.dart';
 import '../../model/error_model.dart';
+import '../../model/shift_slots_model/shift_slots_model.dart';
+import '../../model/shift_slots_model/unique_slots_model.dart';
 import '../../repository/api_service.dart';
 import '../../repository/consultation_repository/get_slots_list_repository.dart';
+import '../../repository/shift_slots_repo/shift_slots_repo.dart';
 import '../../repository/user_slot_for_schedule_repository/schedule_slot_repository.dart';
 import '../../services/consultation_service/consultation_service.dart';
+import '../../services/shift_slots_service/shift_slots_service.dart';
 import '../../services/user_slot_for_schedule_service/user_slot_for_schedule_service.dart';
 import '../../utils/app_config.dart';
 import '../../widgets/constants.dart';
@@ -101,36 +107,49 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
     // getPPSlotsList(selectedDate);
   }
 
+  List<UniqueSlot> newConsultationSlotList = [];
+  List<MatchedPpcSlot>? ppcNewSlotList = [];
+
   getSlotsList(DateTime selectedDate) async {
     print("PPSlot : ${widget.isPostProgram}");
     if (!widget.isPostProgram) {
       setState(() {
         isLoading = true;
       });
-      String appointment_id = '';
-      if (widget.isReschedule)
+      if (widget.isReschedule) {
         print("appointment_id : ${_pref.getString(AppConfig.appointmentId)}");
-      appointment_id = "${_pref.getString(AppConfig.appointmentId)}";
+      }
       // print(appointment_id);
-      final res = await (() => ConsultationService(repository: repository)
-              .getAppointmentSlotListService(
-                  DateFormat('yyyy-MM-dd').format(selectedDate),
-                  appointmentId: (widget.isReschedule) ? appointment_id : null))
-          .withRetries(3);
-      print("getSlotlist" + res.runtimeType.toString());
+      final res = await (() =>
+          ShiftSlotsService(repository: repo).getConsultationSlotsService(
+            DateFormat('yyyy-MM-dd').format(selectedDate),
+          )).withRetries(3);
+      // ConsultationService(repository: repository)
+      //     .getAppointmentSlotListService(
+      //         DateFormat('yyyy-MM-dd').format(selectedDate),
+      //         appointmentId: (widget.isReschedule) ? appointment_id : null))
+      // .withRetries(3);
+      print("getSlotList" + res.runtimeType.toString());
 
-      if (res.runtimeType == SlotModel) {
-        SlotModel result = res;
+      if (res.runtimeType == UniqueSlotsModel) {
+        UniqueSlotsModel result = res;
         setState(() {
-          slotList = result.data!;
+          for (var e in result.uniqueSlots) {
+            if (e.isShow != 0) {
+              newConsultationSlotList.add(e);
+
+              print("slotsElement : ${newConsultationSlotList.length}");
+            }
+          }
+          // newConsultationSlotList = result.uniqueSlots!;
           isLoading = false;
-          if (slotList!.isEmpty) {
+          if (newConsultationSlotList.isEmpty) {
             slotErrorText = AppConfig.slotErrorText;
           }
         });
       } else {
         ErrorModel result = res;
-        slotList!.clear();
+        newConsultationSlotList.clear();
         // AppConfig().showSnackbar(context, result.message ?? '', isError: true);
         setState(() {
           isLoading = false;
@@ -149,30 +168,26 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
       setState(() {
         isLoading = true;
       });
-      String appointment_id = '';
-      if (widget.isReschedule)
-        appointment_id = "${_pref.getString(AppConfig.appointmentId)}";
-      // print(appointment_id);
-      final res = await (() => GetUserScheduleSlotsForService(
-                  repository: ppRepository)
-              .getFollowUpSlotsScheduleService(
-                  DateFormat('yyyy-MM-dd').format(selectedDate),
-                  appointmentId: (widget.isReschedule) ? appointment_id : null))
-          .withRetries(3);
-      print("getPPSlotlist" + res.runtimeType.toString());
 
-      if (res.runtimeType == SlotModel) {
-        SlotModel result = res;
+      final res = await (() => ConsultationService(repository: repository)
+              .getPpcAppointmentSlotListService(
+            DateFormat('yyyy-MM-dd').format(selectedDate),
+            _pref.getString(AppConfig.userDoctorId).toString() ?? '',
+          )).withRetries(3);
+      print("getPPSlotList" + res.runtimeType.toString());
+
+      if (res.runtimeType == PpcSlotsModel) {
+        PpcSlotsModel result = res;
         setState(() {
-          slotList = result.data!;
+          ppcNewSlotList = result.matchedPpcSlots;
           isLoading = false;
-          if (slotList!.isEmpty) {
+          if (ppcNewSlotList!.isEmpty) {
             slotErrorText = AppConfig.slotErrorText;
           }
         });
       } else {
         ErrorModel result = res;
-        slotList!.clear();
+        ppcNewSlotList!.clear();
         // AppConfig().showSnackbar(context, result.message ?? '', isError: true);
         setState(() {
           isLoading = false;
@@ -259,6 +274,12 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
                   child: buildAppBar(() {
                     Navigator.pop(context);
                   })),
+              SizedBox(height: 2.h),
+              (!widget.isReschedule) ? buildDoctor() : buildDoctorExpList(),
+              SizedBox(height: 1.h),
+              SizedBox(
+                height: 2.h,
+              ),
               Padding(
                   padding: EdgeInsets.only(left: 4.w, right: 4.w),
                   child: _mainView())
@@ -270,145 +291,178 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
   }
 
   _mainView() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 2.h),
-        (!widget.isReschedule) ? buildDoctor() : buildDoctorExpList(),
-        SizedBox(height: 1.h),
-        SizedBox(
-          height: 2.h,
-        ),
-        Visibility(
-          visible: widget.isReschedule,
-          child: Center(
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                children: <TextSpan>[
-                  TextSpan(
-                    text: 'Your Previous Appointment was Booked ',
-                    style: TextStyle(
-                      height: 1.5,
-                      fontSize: 15.dp,
-                      fontFamily: kFontBook,
-                      color: gBlackColor,
-                    ),
-                  ),
-                  TextSpan(
-                    text: (widget.prevBookingDate != null)
-                        ? '@ ${getTime()}  ${DateFormat('dd MMM yyyy').format(DateTime.parse((widget.prevBookingDate.toString()))).toString()}'
-                        : '',
-                    style: TextStyle(
-                      height: 1.5,
-                      fontSize: 13.dp,
-                      fontFamily: kFontMedium,
-                      color: gsecondaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Visibility(
-          visible: widget.isReschedule,
-          child: SizedBox(
-            height: 3.h,
-          ),
-        ),
-        Text(
-          "Choose Your Preferred Day",
-          style: TextStyle(
-              fontFamily: kFontBold,
-              color: eUser().mainHeadingColor,
-              fontSize: 15.dp),
-        ),
-        buildChooseDay(),
-        SizedBox(
-          height: 1.h,
-        ),
-        Text(
-          "Choose Your Preferred Time",
-          style: TextStyle(
-              fontFamily: kFontBold,
-              color: eUser().mainHeadingColor,
-              fontSize: 15.dp),
-        ),
-        SizedBox(height: 2.h),
-        SizedBox(
-          width: double.infinity,
-          child: (isLoading)
-              ? Center(
-                  child: buildCircularIndicator(),
-                )
-              : (slotList!.isEmpty)
-                  ? Center(
-                      child: Text(
-                        slotErrorText,
+    return Center(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.shortestSide > 600
+            ? 40.w
+            : double.maxFinite,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Visibility(
+              visible: widget.isReschedule,
+              child: Center(
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'Your Previous Appointment was Booked ',
                         style: TextStyle(
-                            fontFamily: kFontBold,
-                            color: gHintTextColor,
-                            fontSize: 13.dp),
-                      ),
-                    )
-                  : Wrap(
-                      alignment: WrapAlignment.center,
-                      runSpacing: 20,
-                      spacing: 20,
-                      children: [
-                        // ...list.map((e) => buildChooseTime(e)).toList(),
-                        ...slotList!.values
-                            .map((e) => buildChooseTime(e))
-                            .toList()
-                      ],
-                    ),
-        ),
-        SizedBox(
-          height: 6.h,
-        ),
-        Center(
-          child: IntrinsicWidth(
-            child: GestureDetector(
-              onTap: (isSelected.isEmpty || showBookingProgress)
-                  ? () {
-                      AppConfig().showSnackbar(context, 'Please select time');
-                    }
-                  : () {
-                      buildConfirm(
-                          DateFormat('yyyy-MM-dd').format(selectedDate),
-                          selectedTimeSlotFullName);
-                    },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
-                decoration: BoxDecoration(
-                  color: eUser().buttonColor,
-                  borderRadius:
-                      BorderRadius.circular(eUser().buttonBorderRadius),
-                  // border: Border.all(
-                  //     color: eUser().buttonBorderColor,
-                  //     width: eUser().buttonBorderWidth
-                  // ),
-                ),
-                child: (showBookingProgress)
-                    ? buildThreeBounceIndicator(
-                        color: eUser().threeBounceIndicatorColor)
-                    : Center(
-                        child: Text(
-                          'Next',
-                          style: TextStyle(
-                            fontFamily: eUser().buttonTextFont,
-                            color: eUser().buttonTextColor,
-                            fontSize: eUser().buttonTextSize,
-                          ),
+                          height: 1.5,
+                          fontSize: 15.dp,
+                          fontFamily: kFontBook,
+                          color: gBlackColor,
                         ),
                       ),
+                      TextSpan(
+                        text: (widget.prevBookingDate != null)
+                            ? '@ ${getTime()}  ${DateFormat('dd MMM yyyy').format(DateTime.parse((widget.prevBookingDate.toString()))).toString()}'
+                            : '',
+                        style: TextStyle(
+                          height: 1.5,
+                          fontSize: 13.dp,
+                          fontFamily: kFontMedium,
+                          color: gsecondaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
-        )
-      ],
+            Visibility(
+              visible: widget.isReschedule,
+              child: SizedBox(
+                height: 3.h,
+              ),
+            ),
+            Text(
+              "Choose Your Preferred Day",
+              style: TextStyle(
+                  fontFamily: kFontBold,
+                  color: eUser().mainHeadingColor,
+                  fontSize: 15.dp),
+            ),
+            buildChooseDay(),
+            SizedBox(
+              height: 1.h,
+            ),
+            Text(
+              "Choose Your Preferred Time",
+              style: TextStyle(
+                  fontFamily: kFontBold,
+                  color: eUser().mainHeadingColor,
+                  fontSize: 15.dp),
+            ),
+            SizedBox(height: 2.h),
+            widget.isPostProgram
+                ? SizedBox(
+                    width: double.infinity,
+                    child: (isLoading)
+                        ? Center(
+                            child: buildCircularIndicator(),
+                          )
+                        : (ppcNewSlotList!.isEmpty)
+                            ? Center(
+                                child: Text(
+                                  slotErrorText,
+                                  style: TextStyle(
+                                      fontFamily: kFontBold,
+                                      color: gHintTextColor,
+                                      fontSize: 13.dp),
+                                ),
+                              )
+                            : Wrap(
+                                alignment: WrapAlignment.center,
+                                runSpacing: 20,
+                                spacing: 20,
+                                children: [
+                                  // ...list.map((e) => buildChooseTime(e)).toList(),
+                                  ...ppcNewSlotList!
+                                      .map((e) => buildPpcNewChooseTime(e))
+                                      .toList()
+                                ],
+                              ),
+                  )
+                : SizedBox(
+                    width: double.infinity,
+                    child: (isLoading)
+                        ? Center(
+                            child: buildCircularIndicator(),
+                          )
+                        : (newConsultationSlotList!.isEmpty)
+                            ? Center(
+                                child: Text(
+                                  slotErrorText,
+                                  style: TextStyle(
+                                      fontFamily: kFontBold,
+                                      color: gHintTextColor,
+                                      fontSize: 13.dp),
+                                ),
+                              )
+                            : Wrap(
+                                alignment: WrapAlignment.center,
+                                runSpacing: 20,
+                                spacing: 20,
+                                children: [
+                                  // ...list.map((e) => buildChooseTime(e)).toList(),
+                                  ...newConsultationSlotList
+                                      .map((e) =>
+                                          buildNewConsultationChooseTime(e))
+                                      .toList()
+                                ],
+                              ),
+                  ),
+            SizedBox(
+              height: 6.h,
+            ),
+            Center(
+              child: IntrinsicWidth(
+                child: GestureDetector(
+                  onTap: (isSelected.isEmpty || showBookingProgress)
+                      ? () {
+                          AppConfig()
+                              .showSnackbar(context, 'Please select time');
+                        }
+                      : () {
+                          buildConfirm(
+                              DateFormat('yyyy-MM-dd').format(selectedDate),
+                              selectedTimeSlotFullName);
+                        },
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                    decoration: BoxDecoration(
+                      color: eUser().buttonColor,
+                      borderRadius:
+                          BorderRadius.circular(eUser().buttonBorderRadius),
+                      // border: Border.all(
+                      //     color: eUser().buttonBorderColor,
+                      //     width: eUser().buttonBorderWidth
+                      // ),
+                    ),
+                    child: (showBookingProgress)
+                        ? buildThreeBounceIndicator(
+                            color: eUser().threeBounceIndicatorColor)
+                        : Center(
+                            child: Text(
+                              'Next',
+                              style: TextStyle(
+                                fontFamily: eUser().buttonTextFont,
+                                color: eUser().buttonTextColor,
+                                fontSize: eUser().buttonTextSize,
+                              ),
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -444,14 +498,18 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
   }
 
   buildDoctorExpList() {
-    return Center(child:IntrinsicWidth(child: buildDoctorList(),),);
+    return Center(
+      child: IntrinsicWidth(
+        child: buildDoctorList(),
+      ),
+    );
   }
 
   buildFeedbackList(String assetName) {
     return Center(
       child: IntrinsicWidth(
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 1.5.h,horizontal: 2.w),
+          padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 2.w),
           decoration: BoxDecoration(
               color: gWhiteColor,
               borderRadius: BorderRadius.circular(20),
@@ -556,14 +614,14 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
                     fontFamily: kFontBold, color: gWhiteColor, fontSize: 15.dp),
               ),
               SizedBox(height: 1.5.h),
-              Text(
-                "${widget.doctorDetails?.experience ?? ''}Yr Experience" ?? '',
-                style: TextStyle(
-                    fontFamily: kFontMedium,
-                    color: gWhiteColor,
-                    fontSize: 14.dp),
-              ),
-              SizedBox(height: 1.5.h),
+              // Text(
+              //   "${widget.doctorDetails?.experience ?? ''}Yr Experience" ?? '',
+              //   style: TextStyle(
+              //       fontFamily: kFontMedium,
+              //       color: gWhiteColor,
+              //       fontSize: 14.dp),
+              // ),
+              // SizedBox(height: 1.5.h),
               Text(
                 widget.doctorDetails?.specialization?.name ?? '',
                 style: TextStyle(
@@ -655,11 +713,15 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
             isLoading = true;
             isSelected = "";
           });
+          newConsultationSlotList.clear();
+          ppcNewSlotList?.clear();
           getSlotsList(selectedDate);
         },
       ),
     );
   }
+
+  String selectedSlotsDoctorId = "";
 
   Widget buildChooseTime(ChildSlotModel model) {
     String slotName = model.slot!.substring(0, 5);
@@ -711,6 +773,108 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
     );
   }
 
+  Widget buildNewConsultationChooseTime(UniqueSlot model) {
+    String slotName = model.slot.substring(0, 5);
+    return GestureDetector(
+      onTap: model.isBooked == 1
+          ? null
+          : () {
+              setState(() {
+                isSelected = slotName;
+                selectedTimeSlotFullName = model.slot ?? '';
+                selectedSlotsDoctorId = model.userId.toString() ?? '';
+              });
+            },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.5.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: eUser().buttonBorderColor, width: 1),
+          borderRadius: BorderRadius.circular(8),
+          color: (model.isBooked == 0 && isSelected != slotName)
+              ? gWhiteColor
+              : model.isBooked == 1
+                  ? gsecondaryColor
+                  : gPrimaryColor,
+          boxShadow: (model.isBooked == 0 && isSelected != slotName)
+              ? [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 1,
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 20,
+                    offset: const Offset(2, 10),
+                  ),
+                ],
+        ),
+        child: Text(
+          slotName,
+          style: TextStyle(
+            fontSize: 13.dp,
+            fontFamily: kFontBook,
+            color: (model.isBooked != 0 || isSelected == slotName)
+                ? gWhiteColor
+                : gTextColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildPpcNewChooseTime(MatchedPpcSlot model) {
+    String slotName = model.slot.substring(0, 5);
+    return GestureDetector(
+      onTap: model.isBooked == 1
+          ? null
+          : () {
+              setState(() {
+                isSelected = slotName;
+                selectedTimeSlotFullName = model.slot ?? '';
+                selectedSlotsDoctorId = model.userId.toString() ?? '';
+              });
+            },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.5.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: eUser().buttonBorderColor, width: 1),
+          borderRadius: BorderRadius.circular(8),
+          color: (model.isBooked == 0 && isSelected != slotName)
+              ? gWhiteColor
+              : model.isBooked == 1
+                  ? gsecondaryColor
+                  : gPrimaryColor,
+          boxShadow: (model.isBooked == 0 && isSelected != slotName)
+              ? [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 1,
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    blurRadius: 20,
+                    offset: const Offset(2, 10),
+                  ),
+                ],
+        ),
+        child: Text(
+          slotName,
+          style: TextStyle(
+            fontSize: 13.dp,
+            fontFamily: kFontBook,
+            color: (model.isBooked != 0 || isSelected == slotName)
+                ? gWhiteColor
+                : gTextColor,
+          ),
+        ),
+      ),
+    );
+  }
+
   void buildConfirm(String slotDate, String slotTime) {
     String? appointmentId;
     if (widget.isReschedule) {
@@ -720,6 +884,12 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
   }
 
   final ConsultationRepository repository = ConsultationRepository(
+    apiClient: ApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
+  final ShiftSlotsRepository repo = ShiftSlotsRepository(
     apiClient: ApiClient(
       httpClient: http.Client(),
     ),
@@ -737,7 +907,7 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
     });
     print(widget.isPostProgram);
     final res = await ConsultationService(repository: repository)
-        .bookAppointmentService(date, slotTime,
+        .bookAppointmentService(date, slotTime, selectedSlotsDoctorId,
             appointmentId: (widget.isReschedule) ? appointmentId : null,
             isPostprogram: widget.isPostProgram);
     print("bookAppointment : " + res.runtimeType.toString());
@@ -755,9 +925,11 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
       _pref.setString(
           AppConfig.KALEYRA_SUCCESS_ID, result.kaleyraSuccessId ?? '');
 
+      print("Appointment Id : ${_pref.getString(AppConfig.appointmentId)}");
+
       // _pref.setString(AppConfig.doctorId, result.doctorId ?? '');
 
-       AppConfig().showSnackbar(context, result.data ?? '',isError: false);
+      AppConfig().showSnackbar(context, result.data ?? '', isError: false);
       Navigator.of(context)
           .pushAndRemoveUntil(
               MaterialPageRoute(

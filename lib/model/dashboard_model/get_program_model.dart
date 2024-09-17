@@ -5,7 +5,8 @@ class GetProgramModel {
   GetProgramModel({this.data, this.value});
 
   GetProgramModel.fromJson(Map<String, dynamic> json) {
-    print('json:=== $json  ${json['data'].runtimeType} ${json['value'].runtimeType}');
+    print(
+        'json:=== $json  ${json['data'].runtimeType} ${json['value'].runtimeType}');
     data = json['data'].toString();
     value = (json['value'] != null ? new Value.fromJson(json['value']) : null);
   }
@@ -34,27 +35,39 @@ class Value {
   String? healingCurrentDay;
   String? isDetoxCompleted;
   String? isHealingCompleted;
+  String? nourishProgram;
+  String? nourishStartedDate;
+  String? nourishTotalDays;
+  String? nourishPresentDay;
+  String? nourishCompletedDay;
+  String? isNourishCompleted;
   String? createdAt;
   String? updatedAt;
   Program? program;
 
   Value(
       {this.id,
-        this.userId,
-        this.startVideoUrl,
-        this.tracker_video_url,
-        this.recipeVideo,
-        this.programId,
-        this.isActive,
-        this.startProgram,
-        this.healingStartProgram,
-        this.mealCurrentDay,
-        this.healingCurrentDay,
-        this.isDetoxCompleted,
-        this.isHealingCompleted,
-        this.createdAt,
-        this.updatedAt,
-        this.program});
+      this.userId,
+      this.startVideoUrl,
+      this.tracker_video_url,
+      this.recipeVideo,
+      this.programId,
+      this.isActive,
+      this.startProgram,
+      this.healingStartProgram,
+      this.mealCurrentDay,
+      this.healingCurrentDay,
+      this.isDetoxCompleted,
+      this.isHealingCompleted,
+      this.nourishProgram,
+      this.nourishStartedDate,
+      this.nourishTotalDays,
+      this.nourishPresentDay,
+      this.nourishCompletedDay,
+      this.isNourishCompleted,
+      this.createdAt,
+      this.updatedAt,
+      this.program});
 
   Value.fromJson(Map<String, dynamic> json) {
     print("value from json: $json");
@@ -69,13 +82,27 @@ class Value {
     healingStartProgram = json['healing_program'].toString();
     mealCurrentDay = json['detox_present_day'].toString();
     healingCurrentDay = json['healing_present_day'].toString();
-    isDetoxCompleted = (json['is_detox_completed'] != null) ? json['is_detox_completed'].toString() : "0";
-    isHealingCompleted = (json['is_healing_completed'] != null) ? json['is_healing_completed'].toString() : "0";
+    isDetoxCompleted = (json['is_detox_completed'] != null)
+        ? json['is_detox_completed'].toString()
+        : "0";
+    isHealingCompleted = (json['is_healing_completed'] != null)
+        ? json['is_healing_completed'].toString()
+        : "0";
+    nourishProgram = json['nourish_program'].toString();
+    nourishStartedDate = json['nourish_started_date'].toString();
+    nourishTotalDays = json['nourish_total_days'].toString();
+    nourishPresentDay = json['nourish_present_day'].toString();
+    nourishCompletedDay = json['nourish_completed_day'].toString();
+    isNourishCompleted = (json['is_nourish_completed'] != null)
+        ? json['is_nourish_completed'].toString()
+        : "0";
     createdAt = json['created_at'].toString();
     updatedAt = json['updated_at'].toString();
-    program = json['detox_days'] != null ? new Program.fromJson(json['detox_days'])
+    program = json['detox_days'] != null
+        ? new Program.fromJson(json['detox_days'])
         : json['healing_days'] != null
-        ? new Program.fromJson(json['healing_days']) : null;
+            ? new Program.fromJson(json['healing_days'])
+            : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -113,15 +140,15 @@ class Program {
 
   Program(
       {this.id,
-        this.issueId,
-        this.programId,
-        this.name,
-        this.noOfDays,
-        this.desc,
-        this.price,
-        this.profile,
-        this.createdAt,
-        this.updatedAt});
+      this.issueId,
+      this.programId,
+      this.name,
+      this.noOfDays,
+      this.desc,
+      this.price,
+      this.profile,
+      this.createdAt,
+      this.updatedAt});
 
   Program.fromJson(Map<String, dynamic> json) {
     print("program from json: $json");

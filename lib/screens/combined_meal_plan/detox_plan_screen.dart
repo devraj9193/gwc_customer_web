@@ -24,43 +24,47 @@ import 'dart:ui';
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:easy_scroll_to_index/easy_scroll_to_index.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:gwc_customer_web/model/program_model/program_days_model/child_program_day.dart';
+import 'package:gwc_customer_web/screens/combined_meal_plan/tracker_widgets/new-day_tracker.dart';
+import 'package:gwc_customer_web/screens/combined_meal_plan/widgets/thumbnail_widget.dart';
 import 'package:gwc_customer_web/screens/combined_meal_plan/yoga_video_screen.dart';
+import 'package:image_network/image_network.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:simple_tooltip/simple_tooltip.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:http/http.dart' as http;
 import 'package:video_player/video_player.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:chewie/chewie.dart';
 
-import '../../model/combined_meal_model/combined_meal_model.dart';
 import '../../model/combined_meal_model/detox_nourish_model/child_detox_model.dart';
 import '../../model/combined_meal_model/detox_nourish_model/detox_healing_common_model/child_meal_plan_details_model1.dart';
 import '../../model/combined_meal_model/detox_nourish_model/detox_healing_common_model/detox_healing_model.dart';
+import '../../model/combined_meal_model/meal_plan_tracker_modl/send_meal_plan_tracker_model.dart';
+import '../../model/combined_meal_model/new_detox_model.dart';
 import '../../model/error_model.dart';
-import '../../model/program_model/proceed_model/send_proceed_program_model.dart';
+import '../../model/program_model/proceed_model/get_proceed_model.dart';
 import '../../repository/api_service.dart';
 import '../../repository/program_repository/program_repository.dart';
 import '../../services/program_service/program_service.dart';
 import '../../services/vlc_service/check_state.dart';
 import '../../utils/app_config.dart';
 import '../../widgets/constants.dart';
-import '../../widgets/mp3/mp3_widget.dart';
-import '../../widgets/open_alert_box.dart';
 import '../../widgets/pip_package.dart';
 import '../../widgets/unfocus_widget.dart';
 import '../../widgets/video/normal_video.dart';
 import '../../widgets/widgets.dart';
 import '../dashboard_screen.dart';
-import '../home_remedies/home_remedies_screen.dart';
 import '../prepratory plan/new/meal_plan_recipe_details.dart';
-import '../program_plans/day_tracker_ui/day_tracker.dart';
+import '../profile_screens/my_yoga_screens/meal_plan_yoga_video.dart';
 import '../program_plans/meal_pdf.dart';
-import '../program_plans/program_start_screen.dart';
+import 'meal_plan_portrait_video.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetoxPlanScreen extends StatefulWidget {
   /// this one not using
@@ -82,6 +86,9 @@ class DetoxPlanScreen extends StatefulWidget {
   /// when it becomes true
   final bool isHealingStarted;
   final ValueSetter<bool>? onChanged;
+  final NewDetoxModel? detoxModel;
+  final String mealNote;
+
   const DetoxPlanScreen(
       {Key? key,
       this.transStage,
@@ -90,7 +97,9 @@ class DetoxPlanScreen extends StatefulWidget {
       this.viewDay1Details = false,
       this.showBlur = false,
       this.isHealingStarted = false,
-      this.onChanged})
+      this.onChanged,
+      this.detoxModel,
+      required this.mealNote})
       : super(key: key);
 
   @override
@@ -227,6 +236,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
   int? presentDay;
   int? selectedDay;
   bool? isDayCompleted;
+  bool? isTrackerSubmitted;
   List<ChildProgramDayModel> listData = [];
 
   bool isOpened = false;
@@ -417,7 +427,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
   @override
   void initState() {
     super.initState();
-    getProgramData();
+    getProgramData(widget.detoxModel, widget.mealNote);
 
     // if (!widget.viewDay1Details) getProgramDays();
     // if (widget.viewDay1Details) {
@@ -433,7 +443,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
   }
 
   hideToolTip() {
-    Future.delayed(Duration(seconds: 5)).then((value) {
+    Future.delayed(Duration(seconds: 0)).then((value) {
       setState(() {
         shoppingToolTip = false;
         showToolTip = false;
@@ -604,9 +614,12 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                     showShimmer = true;
                     selectedDay = int.parse(listData[index].dayNumber!);
                     isDayCompleted = listData[index].isCompleted == 1;
+                    isTrackerSubmitted =
+                        listData[index].isTrackerSubmitted == 1;
                     commentController.clear();
                   });
                   print("isDayCompleted: $isDayCompleted");
+                  print("isTrackerSubmitted: $isTrackerSubmitted");
                   getMealFromDay(selectedDay!);
                   // // selectedDay = int.parse(listData[index].dayNumber!);
                   // print(
@@ -680,28 +693,33 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                   // // // );
                   if (int.parse(listData[index].dayNumber!) == 1) {
                   } else {
-                    for (int i = 0; i < presentDay!-1; i++) {
+                    for (int i = 0; i < presentDay! - 1; i++) {
                       setState(() {
                         showShimmer = true;
                         selectedDay = int.parse(listData[index].dayNumber!);
                         isDayCompleted = listData[index].isCompleted == 1;
+                        isTrackerSubmitted =
+                            listData[index].isTrackerSubmitted == 1;
                         commentController.clear();
                       });
                       print(presentDay);
-                      print("index : ${index !=i}");
-                      if (listData[i].isCompleted == 0 && index != i ) {
+                      print("index : ${index != i}");
+                      if (listData[i].isTrackerSubmitted == 0 && index != i) {
                         WidgetsBinding.instance.addPostFrameCallback((_) {
                           showMoreTextSheet(listData[i].dayNumber);
                         });
                         break;
-                      }else{
+                      } else {
                         setState(() {
                           showShimmer = true;
                           selectedDay = int.parse(listData[index].dayNumber!);
                           isDayCompleted = listData[index].isCompleted == 1;
+                          isTrackerSubmitted =
+                              listData[index].isTrackerSubmitted == 1;
                           commentController.clear();
                         });
                         print("isDayCompleted: $isDayCompleted");
+                        print("isTrackerSubmitted: $isTrackerSubmitted");
                         getMealFromDay(selectedDay!);
                       }
                     }
@@ -713,44 +731,44 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
       child: Opacity(
         opacity: (widget.viewDay1Details) ? 1.0 : getOpacity(index, listData),
         child: Container(
-            // height: 5.h,
-            decoration: BoxDecoration(
-                border: Border.all(
-                    width: 1, color: MealPlanConstants().dayBorderColor),
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(15),
-                  bottomLeft: Radius.circular(15),
-                ),
-                color: (listData[index].dayNumber == selectedDay.toString())
-                    ? kNumberCircleAmber
-                    : (listData[index].isCompleted == 1)
-                        ? MealPlanConstants().dayBgSelectedColor
-                        : (listData[index].dayNumber == presentDay.toString())
-                            ? MealPlanConstants().dayBgPresentdayColor
-                            : MealPlanConstants().dayBgNormalColor),
-            margin: EdgeInsets.symmetric(vertical: 0.h,horizontal: 1.w),
-            padding: EdgeInsets.symmetric(horizontal: 2.w,vertical: 0.h),
-            child: Center(
-              child: Text(
-                'DAY ${listData[index].dayNumber!}',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize:
-                        (listData[index].dayNumber == presentDay.toString() ||
-                                listData[index].dayNumber == nextDay.toString())
-                            ? MealPlanConstants().presentDayTextSize
-                            : MealPlanConstants().DisableDayTextSize,
-                    fontFamily:
-                        (listData[index].dayNumber == presentDay.toString() ||
-                                listData[index].dayNumber == nextDay.toString())
-                            ? MealPlanConstants().dayTextFontFamily
-                            : MealPlanConstants().dayUnSelectedTextFontFamily,
-                    color: (listData[index].isCompleted == 1 ||
-                            listData[index].dayNumber == presentDay.toString())
-                        ? MealPlanConstants().dayTextSelectedColor
-                        : MealPlanConstants().dayTextColor),
+          // height: 5.h,
+          decoration: BoxDecoration(
+              border: Border.all(
+                  width: 1, color: MealPlanConstants().dayBorderColor),
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(15),
+                bottomLeft: Radius.circular(15),
               ),
+              color: (listData[index].dayNumber == selectedDay.toString())
+                  ? kNumberCircleAmber
+                  : (listData[index].isCompleted == 1)
+                      ? MealPlanConstants().dayBgSelectedColor
+                      : (listData[index].dayNumber == presentDay.toString())
+                          ? MealPlanConstants().dayBgPresentdayColor
+                          : MealPlanConstants().dayBgNormalColor),
+          margin: EdgeInsets.symmetric(vertical: 0.h, horizontal: 1.w),
+          padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.h),
+          child: Center(
+            child: Text(
+              'DAY ${listData[index].dayNumber!}',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize:
+                      (listData[index].dayNumber == presentDay.toString() ||
+                              listData[index].dayNumber == nextDay.toString())
+                          ? MealPlanConstants().presentDayTextSize
+                          : MealPlanConstants().DisableDayTextSize,
+                  fontFamily:
+                      (listData[index].dayNumber == presentDay.toString() ||
+                              listData[index].dayNumber == nextDay.toString())
+                          ? MealPlanConstants().dayTextFontFamily
+                          : MealPlanConstants().dayUnSelectedTextFontFamily,
+                  color: (listData[index].isCompleted == 1 ||
+                          listData[index].dayNumber == presentDay.toString())
+                      ? MealPlanConstants().dayTextSelectedColor
+                      : MealPlanConstants().dayTextColor),
             ),
+          ),
         ),
       ),
     );
@@ -762,7 +780,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
     statusList.clear();
     _childDetoxModel!.details!.forEach((key, value) {
       print("value==> $key $value");
-      DetoxHealingModel _model = value as DetoxHealingModel;
+      DetoxHealingModel _model = value;
       if (key == day.toString()) {
         mealPlanData1 = _model.data!;
       }
@@ -897,178 +915,186 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
   backgroundWidgetForPIP() {
     return IgnorePointer(
       ignoring: widget.showBlur,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Padding(
-          //   padding: EdgeInsets.only(top: 1.h, left: 3.w, right: 3.w),
-          //   child: Column(
-          //     crossAxisAlignment: CrossAxisAlignment.start,
-          //     children: [
-          //       // need to change padding
-          //       Row(
-          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //         children: [
-          //           Row(
-          //             children: [
-          //               SizedBox(
-          //                 width: 2.h,
-          //                 child: IconButton(
-          //                   onPressed: () {
-          //                     Navigator.pop(context);
-          //                   },
-          //                   icon: Icon(
-          //                     Icons.arrow_back_ios,
-          //                     color: gMainColor,
-          //                   ),
-          //                 ),
-          //               ),
-          //               SizedBox(
-          //                 width: 15,
-          //               ),
-          //               SizedBox(
-          //                 height: 6.h,
-          //                 child: const Image(
-          //                   image:
-          //                   AssetImage("assets/images/Gut welness logo.png"),
-          //                 ),
-          //                 //SvgPicture.asset("assets/images/splash_screen/Inside Logo.svg"),
-          //               ),
-          //             ],
-          //           ),
-          //           Row(
-          //             mainAxisSize: MainAxisSize.min,
-          //             children: [
-          //               // SimpleTooltip(
-          //               //   borderColor: gWhiteColor,
-          //               //   maxWidth: 50.w,
-          //               //   ballonPadding: EdgeInsets.symmetric(
-          //               //       horizontal: 0.w, vertical: 0.h),
-          //               //   arrowTipDistance: 2,
-          //               //   arrowLength: 10,
-          //               //   arrowBaseWidth: 10,
-          //               //   hideOnTooltipTap: true,
-          //               //   // targetCenter: const Offset(3,4),
-          //               //   tooltipTap: () {
-          //               //     setState(() {
-          //               //       shoppingToolTip = false;
-          //               //     });
-          //               //   },
-          //               //   animationDuration: const Duration(seconds: 3),
-          //               //   show: shoppingToolTip,
-          //               //   tooltipDirection: TooltipDirection.down,
-          //               //   child: Align(
-          //               //     alignment: Alignment.center,
-          //               //     child: GestureDetector(
-          //               //       onTap: () {
-          //               //           shoppingToolTip = false;
-          //               //           Navigator.of(context).push(
-          //               //             MaterialPageRoute(
-          //               //               builder: (context) => CookKitTracking(
-          //               //                 currentStage: '',
-          //               //                 initialIndex: 1,
-          //               //               ),
-          //               //             ),
-          //               //           );
-          //               //       },
-          //               //       child: Image(
-          //               //         height: 3.h,
-          //               //         image: AssetImage("assets/images/list.png"),
-          //               //       ),
-          //               //     ),
-          //               //   ),
-          //               //   content: Text(
-          //               //     "Tap here for Shopping List",
-          //               //     style: TextStyle(
-          //               //         fontSize: PPConstants().topViewSubFontSize,
-          //               //         fontFamily: MealPlanConstants().mealNameFont,
-          //               //         color: gHintTextColor),
-          //               //   ),
-          //               // ),
-          //               IconButton(
-          //                 icon: Icon(
-          //                   Icons.help_outline_rounded,
-          //                   color: gMainColor,
-          //                 ),
-          //                 onPressed: () {
-          //                   Navigator.push(
-          //                       context,
-          //                       MaterialPageRoute(
-          //                           builder: (ctx) => HomeRemediesScreen()));
-          //
-          //                   // if (planNotePdfLink != null ||
-          //                   //     planNotePdfLink!.isNotEmpty) {
-          //                   //   Navigator.push(
-          //                   //       context,
-          //                   //       MaterialPageRoute(
-          //                   //           builder: (ctx) => MealPdf(
-          //                   //             pdfLink: planNotePdfLink!,
-          //                   //             heading: "Note",
-          //                   //             isVideoWidgetVisible: false,
-          //                   //             headCircleIcon: bsHeadPinIcon,
-          //                   //             topHeadColor: kBottomSheetHeadGreen,
-          //                   //             isSheetCloseNeeded: true,
-          //                   //             sheetCloseOnTap: () {
-          //                   //               Navigator.pop(context);
-          //                   //             },
-          //                   //           )));
-          //                   // } else {
-          //                   //   AppConfig().showSnackbar(
-          //                   //       context, "Note Link Not available",
-          //                   //       isError: true);
-          //                   // }
-          //                 },
-          //               ),
-          //             ],
-          //           )
-          //         ],
-          //       ),
-          //       SizedBox(height: 1.h),
-          Visibility(
-            // visible: !widget.viewDay1Details,
-            child: Container(
-              padding: EdgeInsets.only(top: 2.h,left: 2.w),
-              height: 6.h,
-              child: EasyScrollToIndex(
-                controller: _scrollController, // ScrollToIndexController
-                itemCount: listData.length,
-                itemWidth: 4.w,
-                itemHeight: 4.h,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) {
-                  return dayItems(index);
-                },
+      child: Center(
+        child: SizedBox(
+          width: MediaQuery.of(context).size.shortestSide > 600
+              ? 50.w
+              : double.maxFinite,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Padding(
+              //   padding: EdgeInsets.only(top: 1.h, left: 3.w, right: 3.w),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       // need to change padding
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Row(
+              //             children: [
+              //               SizedBox(
+              //                 width: 2.h,
+              //                 child: IconButton(
+              //                   onPressed: () {
+              //                     Navigator.pop(context);
+              //                   },
+              //                   icon: Icon(
+              //                     Icons.arrow_back_ios,
+              //                     color: gMainColor,
+              //                   ),
+              //                 ),
+              //               ),
+              //               SizedBox(
+              //                 width: 15,
+              //               ),
+              //               SizedBox(
+              //                 height: 6.h,
+              //                 child: const Image(
+              //                   image:
+              //                   AssetImage("assets/images/Gut welness logo.png"),
+              //                 ),
+              //                 //SvgPicture.asset("assets/images/splash_screen/Inside Logo.svg"),
+              //               ),
+              //             ],
+              //           ),
+              //           Row(
+              //             mainAxisSize: MainAxisSize.min,
+              //             children: [
+              //               // SimpleTooltip(
+              //               //   borderColor: gWhiteColor,
+              //               //   maxWidth: 50.w,
+              //               //   ballonPadding: EdgeInsets.symmetric(
+              //               //       horizontal: 0.w, vertical: 0.h),
+              //               //   arrowTipDistance: 2,
+              //               //   arrowLength: 10,
+              //               //   arrowBaseWidth: 10,
+              //               //   hideOnTooltipTap: true,
+              //               //   // targetCenter: const Offset(3,4),
+              //               //   tooltipTap: () {
+              //               //     setState(() {
+              //               //       shoppingToolTip = false;
+              //               //     });
+              //               //   },
+              //               //   animationDuration: const Duration(seconds: 3),
+              //               //   show: shoppingToolTip,
+              //               //   tooltipDirection: TooltipDirection.down,
+              //               //   child: Align(
+              //               //     alignment: Alignment.center,
+              //               //     child: GestureDetector(
+              //               //       onTap: () {
+              //               //           shoppingToolTip = false;
+              //               //           Navigator.of(context).push(
+              //               //             MaterialPageRoute(
+              //               //               builder: (context) => CookKitTracking(
+              //               //                 currentStage: '',
+              //               //                 initialIndex: 1,
+              //               //               ),
+              //               //             ),
+              //               //           );
+              //               //       },
+              //               //       child: Image(
+              //               //         height: 3.h,
+              //               //         image: AssetImage("assets/images/list.png"),
+              //               //       ),
+              //               //     ),
+              //               //   ),
+              //               //   content: Text(
+              //               //     "Tap here for Shopping List",
+              //               //     style: TextStyle(
+              //               //         fontSize: PPConstants().topViewSubFontSize,
+              //               //         fontFamily: MealPlanConstants().mealNameFont,
+              //               //         color: gHintTextColor),
+              //               //   ),
+              //               // ),
+              //               IconButton(
+              //                 icon: Icon(
+              //                   Icons.help_outline_rounded,
+              //                   color: gMainColor,
+              //                 ),
+              //                 onPressed: () {
+              //                   Navigator.push(
+              //                       context,
+              //                       MaterialPageRoute(
+              //                           builder: (ctx) => HomeRemediesScreen()));
+              //
+              //                   // if (planNotePdfLink != null ||
+              //                   //     planNotePdfLink!.isNotEmpty) {
+              //                   //   Navigator.push(
+              //                   //       context,
+              //                   //       MaterialPageRoute(
+              //                   //           builder: (ctx) => MealPdf(
+              //                   //             pdfLink: planNotePdfLink!,
+              //                   //             heading: "Note",
+              //                   //             isVideoWidgetVisible: false,
+              //                   //             headCircleIcon: bsHeadPinIcon,
+              //                   //             topHeadColor: kBottomSheetHeadGreen,
+              //                   //             isSheetCloseNeeded: true,
+              //                   //             sheetCloseOnTap: () {
+              //                   //               Navigator.pop(context);
+              //                   //             },
+              //                   //           )));
+              //                   // } else {
+              //                   //   AppConfig().showSnackbar(
+              //                   //       context, "Note Link Not available",
+              //                   //       isError: true);
+              //                   // }
+              //                 },
+              //               ),
+              //             ],
+              //           )
+              //         ],
+              //       ),
+              //       SizedBox(height: 1.h),
+              Visibility(
+                // visible: !widget.viewDay1Details,
+                child: Container(
+                  padding: EdgeInsets.only(top: 2.h, left: 2.w),
+                  height: 6.h,
+                  child: EasyScrollToIndex(
+                    controller: _scrollController, // ScrollToIndexController
+                    itemCount: listData.length,
+                    itemWidth: 4.w,
+                    itemHeight: 4.h,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (BuildContext context, int index) {
+                      return dayItems(index);
+                    },
+                  ),
+                ),
               ),
-            ),
-          ),
-          //     ],
-          //   ),
-          // ),
-          // SizedBox(height: 1.h),
-          Expanded(
-            child: (isLoading)
-                ? Center(
-                    child: buildCircularIndicator(),
-                  )
-                : (mealPlanData1 != null)
-                    ? UnfocusWidget(
-                        child: SizedBox(
-                          child: SingleChildScrollView(
-                            child: (showShimmer)
-                                ? IgnorePointer(
-                                    child: Shimmer.fromColors(
-                                    baseColor: Colors.grey.withOpacity(0.3),
-                                    highlightColor:
-                                        Colors.grey.withOpacity(0.7),
-                                    child: mainView(),
-                                  ))
-                                : mainView(),
-                          ),
-                        ),
+              //     ],
+              //   ),
+              // ),
+              // SizedBox(height: 1.h),
+              Expanded(
+                child: (isLoading)
+                    ? Center(
+                        child: buildCircularIndicator(),
                       )
-                    : SizedBox.shrink(),
+                    : (mealPlanData1 != null)
+                        ? UnfocusWidget(
+                            child: SizedBox(
+                              child: SingleChildScrollView(
+                                child: (showShimmer)
+                                    ? IgnorePointer(
+                                        child: Shimmer.fromColors(
+                                        baseColor: Colors.grey.withOpacity(0.3),
+                                        highlightColor:
+                                            Colors.grey.withOpacity(0.7),
+                                        child: mainView(),
+                                        period: const Duration(microseconds: 0),
+                                      ))
+                                    : mainView(),
+                              ),
+                            ),
+                          )
+                        : SizedBox.shrink(),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -1082,18 +1108,53 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
         padding: EdgeInsets.symmetric(horizontal: 3.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(height: 1.h),
-            Text(
-              // "Day ${widget.day} Meal Plan",
-              (selectedDay == null || presentDay == 0)
-                  ? "Detox Plan"
-                  : "Day ${selectedDay} Detox Plan",
-              style: TextStyle(
-                  fontFamily: eUser().mainHeadingFont,
-                  color: eUser().mainHeadingColor,
-                  fontSize: eUser().mainHeadingFontSize),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  // "Day ${widget.day} Meal Plan",
+                  (selectedDay == null || presentDay == 0)
+                      ? "Detox Plan"
+                      : "Day ${selectedDay} Detox Plan",
+                  style: TextStyle(
+                      fontFamily: eUser().mainHeadingFont,
+                      color: eUser().mainHeadingColor,
+                      fontSize: eUser().mainHeadingFontSize),
+                ),
+                (widget.mealNote == "null" || widget.mealNote == "")
+                    ? const SizedBox()
+                    : GestureDetector(
+                        onTap: () {
+                          print("meal note : ${widget.mealNote}");
+                          Future.delayed(const Duration(seconds: 0))
+                              .then((value) {
+                            return showMoreBenefitsTextSheet(widget.mealNote,
+                                isMealNote: true);
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 1.h, horizontal: 3.w),
+                          decoration: BoxDecoration(
+                            color: gsecondaryColor,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: gMainColor, width: 1),
+                          ),
+                          child: Text(
+                            'Important Note',
+                            style: TextStyle(
+                              fontFamily: kFontMedium,
+                              color: gWhiteColor,
+                              fontSize: 13.dp,
+                            ),
+                          ),
+                        ),
+                      ),
+              ],
             ),
             if (presentDay == 0 && selectedDay == 0)
               Text(
@@ -1187,11 +1248,15 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
               ),
             if (presentDay != 0)
               Visibility(
-                visible: buttonVisibility(),
+                visible:
+                    (isDayCompleted == false && isTrackerSubmitted == false),
+                // buttonVisibility(),
                 child: Center(
                   child: IntrinsicWidth(
                     child: GestureDetector(
-                      onTap:
+                      onTap: isSent
+                          ? null
+                          :
                           // (){
                           //   print("statusList.length: ${statusList.length}");
                           //   print("lst.length ${lst.length}");
@@ -1203,25 +1268,25 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                   isError: true)
                               : () {
                                   print("this one $presentDay");
-                                  for (int i = 0; i < presentDay!; i++) {
-                                    print(presentDay);
-                                    if (listData[i].isCompleted == 0 &&
-                                        i + 1 != selectedDay!) {
-                                      AppConfig().showSnackbar(context,
-                                          "Please Complete Day ${listData[i].dayNumber}",
-                                          isError: true);
-                                      break;
-                                    } else if (listData[i].isCompleted == 1) {
-                                      print("completed already");
-                                    } else if (i + 1 == presentDay ||
-                                        i + 1 == selectedDay) {
-                                      print("u can access $presentDay");
+                                  // for (int i = 0; i < presentDay!; i++) {
+                                  //   print(presentDay);
+                                  //   if (listData[i].isCompleted == 0 &&
+                                  //       i + 1 != selectedDay!) {
+                                  //     AppConfig().showSnackbar(context,
+                                  //         "Please Complete Day ${listData[i].dayNumber}",
+                                  //         isError: true);
+                                  //     break;
+                                  //   } else if (listData[i].isCompleted == 1) {
+                                  //     print("completed already");
+                                  //   } else if (i + 1 == presentDay ||
+                                  //       i + 1 == selectedDay) {
+                                  //     print("u can access $presentDay");
                                       sendData();
-                                      break;
-                                    } else {
-                                      print("u r trying else");
-                                    }
-                                  }
+                                    //   break;
+                                    // } else {
+                                    //   print("u r trying else");
+                                    // }
+                                  // }
                                 },
                       child: Container(
                         margin: EdgeInsets.symmetric(vertical: 2.h),
@@ -1240,16 +1305,18 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                           //     width: eUser().buttonBorderWidth),
                         ),
                         child: Center(
-                          child: Text(
-                            btnText,
-                            // 'Proceed to Day $proceedToDay',
-                            style: TextStyle(
-                              fontFamily: eUser().buttonTextFont,
-                              color: eUser().buttonTextColor,
-                              // color: (statusList.length != lst.length) ? gPrimaryColor : gMainColor,
-                              fontSize: eUser().buttonTextSize,
-                            ),
-                          ),
+                          child: isSent
+                              ? buildThreeBounceIndicator(color: gWhiteColor)
+                              : Text(
+                                  btnText,
+                                  // 'Proceed to Day $proceedToDay',
+                                  style: TextStyle(
+                                    fontFamily: eUser().buttonTextFont,
+                                    color: eUser().buttonTextColor,
+                                    // color: (statusList.length != lst.length) ? gPrimaryColor : gMainColor,
+                                    fontSize: eUser().buttonTextSize,
+                                  ),
+                                ),
                         ),
                       ),
                     ),
@@ -1257,9 +1324,66 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                 ),
               ),
             Visibility(
-              visible: (!buttonVisibility() &&
-                  ((presentDay ?? 0) >= (selectedDay ?? 1)) &&
-                  !widget.viewDay1Details),
+              visible: (isDayCompleted == true && isTrackerSubmitted == false),
+              // buttonVisibility(),
+              child: Center(
+                child: IntrinsicWidth(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (ctx) => NewDayTracker(
+                            phases: "2",
+                            proceedProgramDayModel: SubmitMealPlanTrackerModel(
+                              day: selectedDay.toString(),
+                              mealPlanType: "1",
+                            ),
+                            trackerVideoLink: widget.trackerVideoLink,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      margin: EdgeInsets.symmetric(vertical: 2.h),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 5.w, vertical: 1.5.h),
+                      // width:
+                      //     btnText.length > 22 ? 75.w : 60.w,
+                      // height: 5.h,
+                      decoration: BoxDecoration(
+                        color: (statusList.length == lst.length)
+                            ? eUser().buttonColor
+                            : tableHeadingBg,
+                        borderRadius:
+                            BorderRadius.circular(eUser().buttonBorderRadius),
+                        // border: Border.all(color: eUser().buttonBorderColor,
+                        //     width: eUser().buttonBorderWidth),
+                      ),
+                      child: Center(
+                        child: isSent
+                            ? buildThreeBounceIndicator(color: gWhiteColor)
+                            : Text(
+                                "Tracker",
+                                // 'Proceed to Day $proceedToDay',
+                                style: TextStyle(
+                                  fontFamily: eUser().buttonTextFont,
+                                  color: eUser().buttonTextColor,
+                                  // color: (statusList.length != lst.length) ? gPrimaryColor : gMainColor,
+                                  fontSize: eUser().buttonTextSize,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Visibility(
+              visible: (isDayCompleted == true && isTrackerSubmitted == true),
+              // (!buttonVisibility() &&
+              //     ((presentDay ?? 0) >= (selectedDay ?? 1)) &&
+              //     !widget.viewDay1Details),
               child: Center(
                 child: IntrinsicWidth(
                   child: Container(
@@ -1422,344 +1546,408 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                 ),
               ),
             ),
-            ...value
-                .map(
-                  (e) => Column(
-                    children: [
-                      Container(
-                        height: 140,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                (value.indexOf(e) == 0) &&
-                                        mealPlanData1.values
-                                                .toList()
-                                                .indexWhere((element) =>
-                                                    element == value) ==
-                                            1
-                                    ? SimpleTooltip(
-                                        borderColor: gWhiteColor,
-                                        maxWidth: 50.w,
-                                        ballonPadding: EdgeInsets.symmetric(
-                                            horizontal: 1.w, vertical: 0.5.h),
-                                        arrowTipDistance: -10,
-                                        arrowLength: 10,
-                                        arrowBaseWidth: 10,
-                                        // targetCenter: const Offset(3,4),
-                                        tooltipTap: () {
-                                          setState(() {
-                                            showToolTip = false;
-                                          });
-                                        },
-                                        animationDuration:
-                                            const Duration(seconds: 3),
-                                        show: showToolTip,
-                                        tooltipDirection: TooltipDirection.up,
-                                        child: Align(
-                                          alignment: Alignment.center,
-                                          child: GestureDetector(
-                                            onTap:
-                                                // e.url == null
-                                                //     ? null
-                                                //     :
-                                                e.type == 'item'
-                                                    ? (e.howToPrepare == null)
-                                                        ? () {
-                                                            AppConfig().showSnackbar(
-                                                                context,
-                                                                "No Recipe Found",
-                                                                isError: true,
-                                                                bottomPadding:
-                                                                    10);
-                                                          }
-                                                        : () {
-                                                            setState(() {
-                                                              showToolTip =
-                                                                  false;
-                                                            });
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        MealPlanRecipeDetails(
-                                                                  mealPlanRecipe:
-                                                                      e,
-                                                                  isFromProgram:
-                                                                      true,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }
-                                                    : () => showVideo(e),
-                                            child: Container(
-                                              height: 120,
-                                              width: 160,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(15),
-                                              ),
-                                              child: (e.itemImage != null &&
-                                                      e.itemImage!.isNotEmpty)
-                                                  ? ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
-                                                      child: CachedNetworkImage(
-                                                        imageUrl: e.itemImage!,
-                                                        errorWidget:
-                                                            (ctx, _, __) {
-                                                          return Image.asset(
-                                                            (e.type != 'item' &&
-                                                                    e.type !=
-                                                                        'null')
-                                                                ? 'assets/images/yoga_placeholder.png'
-                                                                : 'assets/images/meal_placeholder.png',
-                                                            fit: BoxFit.fill,
-                                                          );
-                                                        },
-                                                        fit: BoxFit.fill,
+            ...value.map((e) {
+              final a = e.recipeVideoUrl;
+
+              final file = a?.split(".").last;
+
+              String format = file.toString();
+
+              print("video : $format");
+
+              print("Item Thumbnail : ${e.itemImage}");
+
+              print("indexssss : ${value.indexOf(e)}");
+
+              String ben = (e.benefits != null || e.benefits != "")
+                  ? e.benefits!.replaceAll(RegExp(r'[^\w\s]+'), '')
+                  : '';
+
+              print("benefits : ${e.name} ${ben.length}");
+
+              return Column(
+                children: [
+                  Container(
+                    height: 140,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // (value.indexOf(e) == 0) &&
+                        mealPlanData1.values.toList().indexWhere(
+                                    (element) => element == value) ==
+                                1
+                            ? SimpleTooltip(
+                                borderColor: gWhiteColor,
+                                maxWidth: 50.w,
+                                ballonPadding: EdgeInsets.symmetric(
+                                    horizontal: 1.w, vertical: 0.5.h),
+                                arrowTipDistance: -10,
+                                arrowLength: 10,
+                                arrowBaseWidth: 10,
+                                // targetCenter: const Offset(3,4),
+                                tooltipTap: () {
+                                  setState(() {
+                                    showToolTip = false;
+                                  });
+                                },
+                                animationDuration: const Duration(seconds: 3),
+                                show: showToolTip,
+                                tooltipDirection: TooltipDirection.up,
+                                child: ThumbnailWidget(
+                                  mealName: e.mealTypeName,
+                                  thumbnail: e.itemImage,
+                                  type: e.type,
+                                  func: e.type == 'item'
+                                      ? (e.howToPrepare == null)
+                                          ? () {
+                                              AppConfig().showSnackbar(
+                                                  context, "No Recipe Found",
+                                                  isError: true,
+                                                  bottomPadding: 10);
+                                            }
+                                          : () {
+                                              setState(() {
+                                                showToolTip = false;
+                                              });
+                                              format == "mp4"
+                                                  ? Get.to(
+                                                      () =>
+                                                          MealPlanPortraitVideo(
+                                                        videoUrl:
+                                                            e.recipeVideoUrl ??
+                                                                '',
+                                                        heading: e.mealTypeName ==
+                                                                    "null" ||
+                                                                e.mealTypeName ==
+                                                                    ""
+                                                            ? e.name ?? ''
+                                                            : e.mealTypeName ??
+                                                                '',
                                                       ),
                                                     )
-                                                  : ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              15),
-                                                      child: Image.asset(
-                                                        (e.type != 'item' &&
-                                                                e.type !=
-                                                                    'null')
-                                                            ? 'assets/images/yoga_placeholder.png'
-                                                            : 'assets/images/meal_placeholder.png',
-                                                        fit: BoxFit.fill,
-                                                      ),
-                                                    ),
-                                            ),
-                                          ),
-                                        ),
-                                        content: Text(
-                                          "Tap here for Recipe",
-                                          style: TextStyle(
-                                              fontSize: PPConstants()
-                                                  .topViewSubFontSize,
-                                              fontFamily: MealPlanConstants()
-                                                  .mealNameFont,
-                                              color: gHintTextColor),
-                                        ),
-                                      )
-                                    : Align(
-                                        alignment: Alignment.center,
-                                        child: GestureDetector(
-                                          onTap: e.type == 'item'
-                                              ? (e.howToPrepare == null)
-                                                  ? () {
-                                                      AppConfig().showSnackbar(
-                                                          context,
-                                                          "No Recipe Found",
-                                                          isError: true,
-                                                          bottomPadding: 10);
-                                                    }
-                                                  : () {
-                                                      setState(() {
-                                                        showToolTip = false;
-                                                      });
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              MealPlanRecipeDetails(
-                                                            mealPlanRecipe: e,
-                                                            isFromProgram: true,
-                                                          ),
+                                                  : Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            MealPlanRecipeDetails(
+                                                          mealPlanRecipe: e,
+                                                          isFromProgram: true,
                                                         ),
-                                                      );
-                                                    }
-                                              : () => showVideo(e),
-                                          child: Container(
-                                            height: 120,
-                                            width: 160,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                            ),
-                                            child: (e.itemImage != null &&
-                                                    e.itemImage!.isNotEmpty)
-                                                ? ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                    child: CachedNetworkImage(
-                                                      imageUrl: e.itemImage!,
-                                                      errorWidget:
-                                                          (ctx, _, __) {
-                                                        return Image.asset(
-                                                          (e.type != 'item' &&
-                                                                  e.type !=
-                                                                      'null')
-                                                              ? 'assets/images/yoga_placeholder.png'
-                                                              : 'assets/images/meal_placeholder.png',
-                                                          fit: BoxFit.fill,
-                                                        );
-                                                      },
-                                                      fit: BoxFit.fill,
+                                                      ),
+                                                    );
+                                            }
+                                      : () => showVideo(e),
+                                ),
+                                content: Text(
+                                  "Tap here for Recipe",
+                                  style: TextStyle(
+                                      fontSize:
+                                          PPConstants().topViewSubFontSize,
+                                      fontFamily:
+                                          MealPlanConstants().mealNameFont,
+                                      color: gHintTextColor),
+                                ),
+                              )
+                            : ThumbnailWidget(
+                                mealName: e.mealTypeName,
+                                thumbnail: e.itemImage,
+                                type: e.type,
+                                func: e.type == 'item'
+                                    ? (e.howToPrepare == null)
+                                        ? () {
+                                            AppConfig().showSnackbar(
+                                                context, "No Recipe Found",
+                                                isError: true,
+                                                bottomPadding: 10);
+                                          }
+                                        : () {
+                                            setState(() {
+                                              showToolTip = false;
+                                            });
+                                            format == "mp4"
+                                                ? Get.to(
+                                                    () => MealPlanPortraitVideo(
+                                                      videoUrl:
+                                                          e.recipeVideoUrl ??
+                                                              '',
+                                                      heading: e.mealTypeName ==
+                                                                  "null" ||
+                                                              e.mealTypeName ==
+                                                                  ""
+                                                          ? e.name ?? ''
+                                                          : e.mealTypeName ??
+                                                              '',
                                                     ),
                                                   )
-                                                : ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            15),
-                                                    child: Image.asset(
-                                                      (e.type != 'item' &&
-                                                              e.type != 'null')
-                                                          ? 'assets/images/yoga_placeholder.png'
-                                                          : 'assets/images/meal_placeholder.png',
-                                                      fit: BoxFit.fill,
+                                                : Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          MealPlanRecipeDetails(
+                                                        mealPlanRecipe: e,
+                                                        isFromProgram: true,
+                                                      ),
                                                     ),
-                                                  ),
-                                          ),
-                                        ),
-                                      ),
-                              ],
-                            ),
-                            SizedBox(width: 1.5.w),
-                            Expanded(
-                              child: Column(
-                                // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Visibility(
-                                    visible: e.subTitle != null ||
-                                        e.subTitle!.isNotEmpty,
-                                    child: Text(
-                                      e.subTitle ?? "* Must Have",
+                                                  );
+                                          }
+                                    : (e.url!.split('.').last == "pdf")
+                                        ? () async {
+                                            print("pdf url : ${e.url}");
+                                            if (await canLaunchUrl(
+                                                Uri.parse(e.url ?? ''))) {
+                                              launch(e.url ?? '');
+                                            } else {
+                                              // can't launch url, there is some error
+                                              throw "Could not launch ${e.url}";
+                                            }
+                                          }
+                                        : () => showVideo(e),
+                              ),
+                        SizedBox(width: 1.5.w),
+                        Expanded(
+                          child: Column(
+                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Visibility(
+                                visible: e.subTitle != null ||
+                                    e.subTitle!.isNotEmpty,
+                                child: Text(
+                                  e.subTitle ?? "* Must Have",
+                                  style: TextStyle(
+                                    fontSize:
+                                        MealPlanConstants().mustHaveFontSize,
+                                    fontFamily:
+                                        MealPlanConstants().mustHaveFont,
+                                    color:
+                                        MealPlanConstants().mustHaveTextColor,
+                                  ),
+                                ),
+                              ),
+                              e.mealTypeName == "null" || e.mealTypeName == ""
+                                  ? Text(
+                                      e.name ?? '',
                                       style: TextStyle(
-                                        fontSize: MealPlanConstants()
-                                            .mustHaveFontSize,
-                                        fontFamily:
-                                            MealPlanConstants().mustHaveFont,
-                                        color: MealPlanConstants()
-                                            .mustHaveTextColor,
+                                          fontSize: MealPlanConstants()
+                                              .mealNameFontSize,
+                                          fontFamily:
+                                              MealPlanConstants().mealNameFont,
+                                          color: gHintTextColor),
+                                    )
+                                  : Text(
+                                      e.mealTypeName ?? '',
+                                      style: TextStyle(
+                                          fontSize: MealPlanConstants()
+                                              .mealNameFontSize,
+                                          fontFamily:
+                                              MealPlanConstants().mealNameFont,
+                                          color: gHintTextColor),
+                                    ),
+                              // Text(e.mealTime ?? "B/W 6-8am",
+                              //   style: TextStyle(
+                              //       fontSize: 9.dp,
+                              //       fontFamily: kFontMedium
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   height: 8,
+                              // ),
+                              SizedBox(height: 1.5.h),
+                              e.type == "item"
+                                  ? (e.benefits != null || e.benefits != "")
+                                      ? RichText(
+                                          textAlign: TextAlign.start,
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                text: ben.substring(
+                                                        0,
+                                                        int.parse(
+                                                            "${(ben.length * 0.208).toInt()}")) +
+                                                    "...",
+                                                style: TextStyle(
+                                                    height: 1.6,
+                                                    fontFamily: kFontBook,
+                                                    color: eUser()
+                                                        .mainHeadingColor,
+                                                    fontSize:
+                                                        bottomSheetSubHeadingSFontSize),
+                                              ),
+                                              WidgetSpan(
+                                                child: InkWell(
+                                                  mouseCursor:
+                                                      SystemMouseCursors.click,
+                                                  onTap: () {
+                                                    showMoreBenefitsTextSheet(
+                                                        e.benefits ?? '');
+                                                  },
+                                                  child: Text(
+                                                    "read more",
+                                                    style: TextStyle(
+                                                        height: 1.6,
+                                                        fontFamily: kFontBook,
+                                                        color: gsecondaryColor,
+                                                        fontSize:
+                                                            bottomSheetSubHeadingSFontSize),
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          textScaler: TextScaler.linear(0.85),
+                                        )
+                                      // Row(
+                                      //         children: [
+                                      //           Expanded(
+                                      //             child: Text(
+                                      //               e.benefits?.split(" \n*").first ??
+                                      //                   '',
+                                      //               style: TextStyle(
+                                      //                   fontFamily:
+                                      //                       eUser().userTextFieldFont,
+                                      //                   height: 1.2,
+                                      //                   color:
+                                      //                       eUser().userTextFieldColor,
+                                      //                   fontSize: 14.dp),
+                                      //             ),
+                                      //
+                                      //           ),
+                                      //           WidgetSpan(
+                                      //             child: InkWell(
+                                      //               mouseCursor: SystemMouseCursors.click,
+                                      //               onTap: () {},
+                                      //               child: Text(
+                                      //                 "more",
+                                      //                 style: TextStyle(
+                                      //                     height: 1.3,
+                                      //                     fontFamily: kFontBook,
+                                      //                     color: gsecondaryColor,
+                                      //                     fontSize:
+                                      //                     bottomSheetSubHeadingSFontSize),
+                                      //               ),
+                                      //             ),
+                                      //           )
+                                      //         ],
+                                      //       )
+                                      // Expanded(
+                                      //         child: SingleChildScrollView(
+                                      //           child: Column(
+                                      //             mainAxisSize: MainAxisSize.min,
+                                      //             children: [
+                                      //               ...e.benefits!
+                                      //                   .split('* ')
+                                      //                   .map((element) {
+                                      //                 if (element.isNotEmpty) {
+                                      //                   return Row(
+                                      //                     crossAxisAlignment:
+                                      //                         CrossAxisAlignment.start,
+                                      //                     children: [
+                                      //                       Padding(
+                                      //                         padding: EdgeInsets.only(
+                                      //                             top: 0.3.h),
+                                      //                         child: Icon(
+                                      //                           Icons.circle_sharp,
+                                      //                           color: gGreyColor,
+                                      //                           size: 1.h,
+                                      //                         ),
+                                      //                       ),
+                                      //                       SizedBox(width: 0.5.w),
+                                      //                       Expanded(
+                                      //                         child: Text(
+                                      //                           element ?? '',
+                                      //                           style: TextStyle(
+                                      //                               fontFamily: eUser()
+                                      //                                   .userTextFieldFont,
+                                      //                               height: 1.2,
+                                      //                               color: eUser()
+                                      //                                   .userTextFieldColor,
+                                      //                               fontSize: eUser()
+                                      //                                   .userTextFieldHintFontSize),
+                                      //                         ),
+                                      //                       ),
+                                      //                     ],
+                                      //                   );
+                                      //                 } else {
+                                      //                   return const SizedBox();
+                                      //                 }
+                                      //               })
+                                      //             ],
+                                      //           ),
+                                      //         ),
+                                      //       )
+                                      : const SizedBox()
+                                  : const SizedBox(),
+                              // Expanded(
+                              //   child: Text(
+                              //     e.benefits!.replaceAll("* ", '\n') ?? '',
+                              //     // "- Good for Health and super food\n\n- Good for Health and super food\n\n- Good for Health and super food\n\n- Very Effective and quick recipe,\n\n- Ready To Cook",
+                              //     style: TextStyle(
+                              //         fontSize: MealPlanConstants()
+                              //             .benifitsFontSize,
+                              //         fontFamily:
+                              //             MealPlanConstants().benifitsFont),
+                              //     overflow: TextOverflow.visible,
+                              //   ),
+                              // ),
+                              SizedBox(
+                                height: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: !widget.viewDay1Details,
+                          child: GestureDetector(
+                            onTap: () {
+                              print(selectedDay);
+                              print(presentDay);
+
+                              // if (
+                              // // !buttonVisibility() &&
+                              // //     ((presentDay ?? 0) >=
+                              // //         (selectedDay ?? 1)) &&
+                              //     !widget.viewDay1Details) {
+                              //   return;
+                              // } else {
+                              showFollowedSheet(e);
+                              // }ddddddd
+                            },
+                            child: (statusList.isNotEmpty &&
+                                    statusList.containsKey(e.itemId) &&
+                                    statusList[e.itemId] == list[0])
+                                ? Align(
+                                    alignment: Alignment.topCenter,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 4),
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                              eUser().buttonBorderRadius),
+                                          color: gPrimaryColor),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Followed',
+                                            style: TextStyle(
+                                                fontSize: 10.dp,
+                                                fontFamily: kFontMedium,
+                                                color: gWhiteColor),
+                                          ),
+                                          Image.asset(
+                                            'assets/images/followed2.png',
+                                            width: 20,
+                                            height: 20,
+                                          )
+                                        ],
                                       ),
                                     ),
-                                  ),
-                                  Text(
-                                    e.name ?? 'Morning Yoga',
-                                    style: TextStyle(
-                                        fontSize: MealPlanConstants()
-                                            .mealNameFontSize,
-                                        fontFamily:
-                                            MealPlanConstants().mealNameFont,
-                                        color: gHintTextColor),
-                                  ),
-                                  // Text(e.mealTime ?? "B/W 6-8am",
-                                  //   style: TextStyle(
-                                  //       fontSize: 9.dp,
-                                  //       fontFamily: kFontMedium
-                                  //   ),
-                                  // ),
-                                  // SizedBox(
-                                  //   height: 8,
-                                  // ),
-                                  SizedBox(height: 0.5.h),
-                                  (e.benefits != null)
-                                      ? Expanded(
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                ...e.benefits!
-                                                    .split('* ')
-                                                    .map((element) {
-                                                  if (element.isNotEmpty) {
-                                                    return Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsets.only(
-                                                                  top: 0.3.h),
-                                                          child: Icon(
-                                                            Icons.circle_sharp,
-                                                            color: gGreyColor,
-                                                            size: 1.h,
-                                                          ),
-                                                        ),
-                                                        SizedBox(width: 0.5.w),
-                                                        Expanded(
-                                                          child: Text(
-                                                            element ?? '',
-                                                            style: TextStyle(
-                                                                fontFamily: eUser()
-                                                                    .userTextFieldFont,
-                                                                height: 1.2,
-                                                                color: eUser()
-                                                                    .userTextFieldColor,
-                                                                fontSize: eUser()
-                                                                    .userTextFieldHintFontSize),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  } else
-                                                    return SizedBox();
-                                                })
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      : const SizedBox(),
-                                  // Expanded(
-                                  //   child: Text(
-                                  //     e.benefits!.replaceAll("* ", '\n') ?? '',
-                                  //     // "- Good for Health and super food\n\n- Good for Health and super food\n\n- Good for Health and super food\n\n- Very Effective and quick recipe,\n\n- Ready To Cook",
-                                  //     style: TextStyle(
-                                  //         fontSize: MealPlanConstants()
-                                  //             .benifitsFontSize,
-                                  //         fontFamily:
-                                  //             MealPlanConstants().benifitsFont),
-                                  //     overflow: TextOverflow.visible,
-                                  //   ),
-                                  // ),
-                                  SizedBox(
-                                    height: 4,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Visibility(
-                              visible: !widget.viewDay1Details,
-                              child: GestureDetector(
-                                onTap: () {
-                                  print(selectedDay);
-                                  print(presentDay);
-
-                                  if (!buttonVisibility() &&
-                                      ((presentDay ?? 0) >=
-                                          (selectedDay ?? 1)) &&
-                                      !widget.viewDay1Details) {
-                                    return;
-                                  } else {
-                                    showFollowedSheet(e);
-                                  }
-
-                                  // print(
-                                  //   value.indexWhere((element) {
-                                  //     print(element.name);
-                                  //     print(e.name);
-                                  //     return element.name == e.name;
-                                  //   }),
-                                  // );
-                                },
-                                child: (statusList.isNotEmpty &&
+                                  )
+                                : (statusList.isNotEmpty &&
                                         statusList.containsKey(e.itemId) &&
-                                        statusList[e.itemId] == list[0])
+                                        statusList[e.itemId] == list[1])
                                     ? Align(
                                         alignment: Alignment.topCenter,
                                         child: Container(
@@ -1769,19 +1957,19 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(eUser()
                                                       .buttonBorderRadius),
-                                              color: gPrimaryColor),
+                                              color: gsecondaryColor),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text(
-                                                'Followed',
+                                                'Missed It',
                                                 style: TextStyle(
                                                     fontSize: 10.dp,
                                                     fontFamily: kFontMedium,
                                                     color: gWhiteColor),
                                               ),
                                               Image.asset(
-                                                'assets/images/followed2.png',
+                                                'assets/images/unfollowed.png',
                                                 width: 20,
                                                 height: 20,
                                               )
@@ -1789,74 +1977,116 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                                           ),
                                         ),
                                       )
-                                    : (statusList.isNotEmpty &&
-                                            statusList.containsKey(e.itemId) &&
-                                            statusList[e.itemId] == list[1])
-                                        ? Align(
-                                            alignment: Alignment.topCenter,
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 6,
-                                                      vertical: 4),
-                                              decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius
-                                                      .circular(eUser()
-                                                          .buttonBorderRadius),
-                                                  color: gsecondaryColor),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text(
-                                                    'Missed It',
-                                                    style: TextStyle(
-                                                        fontSize: 10.dp,
-                                                        fontFamily: kFontMedium,
-                                                        color: gWhiteColor),
-                                                  ),
-                                                  Image.asset(
-                                                    'assets/images/unfollowed.png',
-                                                    width: 20,
-                                                    height: 20,
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                        : Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: Container(
-                                              padding: EdgeInsets.symmetric(
-                                                  horizontal: 10, vertical: 8),
-                                              decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius
-                                                      .circular(eUser()
-                                                          .buttonBorderRadius),
-                                                  color: Colors.grey),
-                                              child: Text(
-                                                'Status',
-                                                style: TextStyle(
-                                                    fontSize: 10.dp,
-                                                    fontFamily: kFontMedium,
-                                                    color: gWhiteColor),
-                                              ),
-                                            ),
+                                    : Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 8),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(eUser()
+                                                      .buttonBorderRadius),
+                                              color: Colors.grey),
+                                          child: Text(
+                                            'Status',
+                                            style: TextStyle(
+                                                fontSize: 10.dp,
+                                                fontFamily: kFontMedium,
+                                                color: gWhiteColor),
                                           ),
-                              ),
-                            ),
-                          ],
+                                        ),
+                                      ),
+                          ),
                         ),
-                      ),
-                      const Divider(),
-                    ],
+                      ],
+                    ),
                   ),
-                )
-                .toList(),
+                  const Divider(),
+                ],
+              );
+            }).toList(),
           ],
         ),
       );
     });
     return _data;
+  }
+
+  showMoreBenefitsTextSheet(String text, {bool isMealNote = false}) {
+    return AppConfig().showSheet(
+        context,
+        Padding(
+          padding: EdgeInsets.only(left: 5.w),
+          child: isMealNote
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Important Note : ',
+                        style: TextStyle(
+                            fontFamily: eUser().mainHeadingFont,
+                            color: eUser().mainHeadingColor,
+                            fontSize: eUser().mainHeadingFontSize),
+                      ),
+                    ),
+                    SizedBox(height: 1.5.h),
+                    Align(
+                      alignment: Alignment.center,
+                      child: HtmlWidget(
+                        text,
+                        // style: AllListText().subHeadingText(),
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ...text.split('* ').map((element) {
+                      if (element.isNotEmpty) {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 0.3.h),
+                              child: Icon(
+                                Icons.circle_sharp,
+                                color: gGreyColor,
+                                size: 1.h,
+                              ),
+                            ),
+                            SizedBox(width: 0.5.w),
+                            Expanded(
+                              child: Text(
+                                element ?? '',
+                                style: TextStyle(
+                                    fontFamily: eUser().userTextFieldFont,
+                                    height: 1.2,
+                                    color: eUser().userTextFieldColor,
+                                    fontSize:
+                                        eUser().userTextFieldHintFontSize),
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return const SizedBox();
+                      }
+                    }),
+                    SizedBox(height: 1.h)
+                  ],
+                ),
+        ),
+        bottomSheetHeight: 50.h,
+        circleIcon: bsHeadBulbIcon,
+        isDismissible: true,
+        isSheetCloseNeeded: true, sheetCloseOnTap: () {
+      Navigator.pop(context);
+    });
   }
 
   /// followed and unfollowed sheet
@@ -1918,8 +2148,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                 Navigator.pop(context);
               },
               child: Container(
-                padding:
-                    EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
                 decoration: BoxDecoration(
                     color: gsecondaryColor,
                     border: Border.all(color: kLineColor, width: 0.5),
@@ -1941,8 +2170,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
                 Navigator.pop(context);
               },
               child: Container(
-                padding:
-                    EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
                 decoration: BoxDecoration(
                     color: gPrimaryColor,
                     border: Border.all(color: kLineColor, width: 0.5),
@@ -2105,7 +2333,7 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
     setState(() {
       isSent = true;
     });
-    ProceedProgramDayModel? model;
+    SubmitMealPlanTrackerModel? model;
     List<PatientMealTracking> tracking = [];
 
     statusList.forEach((key, value) {
@@ -2117,10 +2345,11 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
     });
 
     print(tracking);
-    model = ProceedProgramDayModel(
+    model = SubmitMealPlanTrackerModel(
       patientMealTracking: tracking,
       comment: commentController.text.isEmpty ? null : commentController.text,
       day: selectedDay.toString(),
+      mealPlanType: "1",
     );
     List dummy = [];
     model.patientMealTracking!.forEach((element) {
@@ -2128,17 +2357,42 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
     });
     print('dummy: $dummy');
 
-    // showSymptomsTrackerSheet(context, model);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (ctx) => TrackerUI(
-          proceedProgramDayModel: model,
-          from: ProgramMealType.detox.name,
-          trackerVideoLink: widget.trackerVideoLink,
+    final result = await ProgramService(repository: repository)
+        .submitMealPlanService(model);
+
+    print("result: $result");
+
+    if (result.runtimeType == GetProceedModel) {
+      setState(() {
+        isSent = false;
+      });
+      final _pref = AppConfig().preferences;
+      final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => NewDayTracker(
+            phases: "2",
+            proceedProgramDayModel: model,
+            trackerVideoLink: widget.trackerVideoLink,
+          ),
+          //     TrackerUI(
+          //   proceedProgramDayModel: model,
+          //   from: ProgramMealType.detox.name,
+          //   trackerVideoLink: widget.trackerVideoLink,
+          // ),
         ),
-      ),
-    );
+      );
+    } else {
+      setState(() {
+        isSent = false;
+      });
+      ErrorModel model = result as ErrorModel;
+      AppConfig().showSnackbar(context, model.message ?? '', isError: true);
+    }
+
+    // showSymptomsTrackerSheet(context, model);
   }
 
   showPdf(String itemUrl, String? receipeName) {
@@ -2174,31 +2428,47 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
   }
 
   showVideo(ChildMealPlanDetailsModel1 e) async {
+    print("url : ${e.url!.split('.').last}");
     if (e.url!.split('.').last == "mp4") {
-      setState(() {
-        isEnabled = !isEnabled;
-        videoName = e.name!;
-        mealTime = e.mealTime!;
-      });
-      YogaVideoPlayer(
-        url: e.url.toString(),
-      );
-      initChewieView(e.url);
+      // setState(() {
+      //   isEnabled = !isEnabled;
+      //   videoName = e.name!;
+      //   mealTime = e.mealTime!;
+      // });
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (ctx) => MealPlanYogaVideo(
+                    videoUrl: e.url ?? '',
+                    heading: e.name ?? '',
+                  )));
+
+      // YogaVideoPlayer(
+      //   url: e.url.toString(),
+      // );
+      // initChewieView(e.url);
       // initVideoView(e.url);
     } else {
       print(e.url);
-      setState(() {
-        isEnabled = !isEnabled;
-        videoName = e.name!;
-        mealTime = e.mealTime!;
-      });
-      YogaVideoPlayer(
-        url: e.url.toString(),
-      );
-      initChewieView(e.url);
+      if (await canLaunchUrl(Uri.parse(e.url ?? ''))) {
+        launch(e.url ?? '');
+      } else {
+        // can't launch url, there is some error
+        throw "Could not launch ${e.url}";
+      }
+      // setState(() {
+      //   isEnabled = !isEnabled;
+      //   videoName = e.name!;
+      //   mealTime = e.mealTime!;
+      // });
+      // YogaVideoPlayer(
+      //   url: e.url.toString(),
+      // );
+      // initChewieView(e.url);
       // Navigator.push(context,
       //     MaterialPageRoute(builder: (ctx) => Mp3Widget(url: e.url ?? '')));
     }
+
     // _init(e.url);
     // Navigator.push(context, MaterialPageRoute(builder: (ctx)=> YogaVideoScreen(yogaDetails: e.toJson(),day: widget.day,)));
   }
@@ -2303,74 +2573,74 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
   }
 
   bool showMealVideo = false;
-  showSymptomsTrackerSheet(BuildContext context, ProceedProgramDayModel model) {
-    return AppConfig().showSheet(context,
-        StatefulBuilder(builder: (_, setState) {
-      return SizedBox(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            videoMp4Widget(
-                videoName: "Know more about Symptoms Tracker",
-                onTap: () {
-                  addTrackerUrlToChewiePlayer(widget.trackerVideoLink ?? '');
-                  // addTrackerUrlToVideoPlayer(widget.trackerVideoLink ?? '');
-                  setState(() {
-                    showMealVideo = true;
-                  });
-                }),
-            Stack(
-              children: [
-                TrackerUI(
-                  proceedProgramDayModel: model,
-                  from: ProgramMealType.detox.name,
-                ),
-                Visibility(
-                  visible: showMealVideo,
-                  child: Positioned(
-                      child: Center(child: buildMealVideo(onTap: () async {
-                    setState(() {
-                      showMealVideo = false;
-                    });
-                    if (await WakelockPlus.enabled == true) {
-                      WakelockPlus.disable();
-                    }
-                    if (_sheetVideoController != null)
-                      _sheetVideoController!.dispose();
-                    if (_sheetChewieController != null)
-                      _sheetChewieController!.dispose();
-
-                    // if (_trackerVideoPlayerController != null) _trackerVideoPlayerController!.dispose();
-                  }))),
-                )
-              ],
-            )
-          ],
-        ),
-      );
-    }), circleIcon: bsHeadPinIcon, bottomSheetHeight: 90.h);
-
-    return showModalBottomSheet(
-        isDismissible: false,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        context: context,
-        enableDrag: false,
-        builder: (ctx) {
-          return Wrap(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TrackerUI(
-                  proceedProgramDayModel: model,
-                  from: ProgramMealType.detox.name,
-                ),
-              )
-            ],
-          );
-        });
-  }
+  // showSymptomsTrackerSheet(BuildContext context, ProceedProgramDayModel model) {
+  //   return AppConfig().showSheet(context,
+  //       StatefulBuilder(builder: (_, setState) {
+  //     return SizedBox(
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           videoMp4Widget(
+  //               videoName: "Know more about Symptoms Tracker",
+  //               onTap: () {
+  //                 addTrackerUrlToChewiePlayer(widget.trackerVideoLink ?? '');
+  //                 // addTrackerUrlToVideoPlayer(widget.trackerVideoLink ?? '');
+  //                 setState(() {
+  //                   showMealVideo = true;
+  //                 });
+  //               }),
+  //           Stack(
+  //             children: [
+  //               TrackerUI(
+  //                 proceedProgramDayModel: model,
+  //                 from: ProgramMealType.detox.name,
+  //               ),
+  //               Visibility(
+  //                 visible: showMealVideo,
+  //                 child: Positioned(
+  //                     child: Center(child: buildMealVideo(onTap: () async {
+  //                   setState(() {
+  //                     showMealVideo = false;
+  //                   });
+  //                   if (await WakelockPlus.enabled == true) {
+  //                     WakelockPlus.disable();
+  //                   }
+  //                   if (_sheetVideoController != null)
+  //                     _sheetVideoController!.dispose();
+  //                   if (_sheetChewieController != null)
+  //                     _sheetChewieController!.dispose();
+  //
+  //                   // if (_trackerVideoPlayerController != null) _trackerVideoPlayerController!.dispose();
+  //                 }))),
+  //               )
+  //             ],
+  //           )
+  //         ],
+  //       ),
+  //     );
+  //   }), circleIcon: bsHeadPinIcon, bottomSheetHeight: 90.h);
+  //
+  //   return showModalBottomSheet(
+  //       isDismissible: false,
+  //       isScrollControlled: true,
+  //       backgroundColor: Colors.transparent,
+  //       context: context,
+  //       enableDrag: false,
+  //       builder: (ctx) {
+  //         return Wrap(
+  //           children: [
+  //             Padding(
+  //               padding: const EdgeInsets.all(8.0),
+  //               child: TrackerUI(
+  //                 proceedProgramDayModel: model,
+  //                 from: ProgramMealType.detox.name,
+  //               ),
+  //             )
+  //           ],
+  //         );
+  //       });
+  // }
 
   videoMp4Widget({required VoidCallback onTap, String? videoName}) {
     return InkWell(
@@ -2531,64 +2801,134 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
     }
   }
 
-  getProgramData() async {
+  getProgramData(NewDetoxModel? detoxModel, String mealNote) async {
     setState(() {
       showShimmer = true;
     });
+
     // print(selectedDay);
     // statusList.clear();
     // lst.clear();
-    final result =
-        await ProgramService(repository: repository).getCombinedMealService();
-    print("result: $result");
+    // final result =
+    //     await ProgramService(repository: repository).getCombinedMealService();
+    // print("result: $result");
+    //
+    // if (result.runtimeType == CombinedMealModel) {
+    //   print("meal plan");
+    //   CombinedMealModel model = result as CombinedMealModel;
 
-    if (result.runtimeType == CombinedMealModel) {
-      print("meal plan");
-      CombinedMealModel model = result as CombinedMealModel;
+    if (detoxModel != null) {
+      _childDetoxModel = detoxModel.value;
 
-      if (model.detox != null) {
-        _childDetoxModel = model.detox!.value!;
-        if (model.detox!.totalDays != null) {
-          totalDays = model.detox!.totalDays ?? 5;
-        }
+      print("meal note : $mealNote");
+
+      if (mealNote == "null" || mealNote == "") {
+      } else {
+        Future.delayed(const Duration(seconds: 0)).then((value) {
+          return showMoreBenefitsTextSheet(mealNote, isMealNote: true);
+        });
       }
 
-      print('detox.values:${model.detox!.value!.details!.entries}');
-      model.detox!.value!.details!.forEach((key, value) {
-        print("day: $key");
-        print(value.toMap());
-        value.data!.forEach((k, v1) {
-          print("$k -- $v1");
-        });
-      });
-
-      storeDetails();
-    } else {
-      ErrorModel model = result as ErrorModel;
-      print("error: ${model.message}");
-      // errorMsg = model.message ?? '';
-      // Future.delayed(Duration(seconds: 0)).whenComplete(() {
-      //   setState(() {
-      //     showShimmer = false;
-      //     isLoading = false;
-      //   });
-      //   showAlert(context, model.status!,
-      //       isSingleButton: !(model.status != '401'), positiveButton: () {
-      //         if (model.status == '401') {
-      //           Navigator.pop(context);
-      //           Navigator.pop(context);
-      //         } else {
-      //           getMeals();
-      //           Navigator.pop(context);
-      //         }
-      //       });
-      // });
+      if (detoxModel.totalDays != null) {
+        totalDays = detoxModel.totalDays ?? 5;
+      }
     }
+
+    print('detox.values:${detoxModel!.value!.details!.entries}');
+    detoxModel.value!.details!.forEach((key, value) {
+      print("day: $key");
+      print(value.toMap());
+      value.data!.forEach((k, v1) {
+        print("$k -- $v1");
+      });
+    });
+
+    storeDetails();
+    // } else {
+    //   ErrorModel model = result as ErrorModel;
+    //   print("error: ${model.message}");
+    //   // errorMsg = model.message ?? '';
+    //   // Future.delayed(Duration(seconds: 0)).whenComplete(() {
+    //   //   setState(() {
+    //   //     showShimmer = false;
+    //   //     isLoading = false;
+    //   //   });
+    //   //   showAlert(context, model.status!,
+    //   //       isSingleButton: !(model.status != '401'), positiveButton: () {
+    //   //         if (model.status == '401') {
+    //   //           Navigator.pop(context);
+    //   //           Navigator.pop(context);
+    //   //         } else {
+    //   //           getMeals();
+    //   //           Navigator.pop(context);
+    //   //         }
+    //   //       });
+    //   // });
+    // }
     setState(() {
       showShimmer = false;
     });
-    print(result);
+    // print(result);
   }
+
+  // getProgramData() async {
+  //   setState(() {
+  //     showShimmer = true;
+  //   });
+  //   // print(selectedDay);
+  //   // statusList.clear();
+  //   // lst.clear();
+  //   final result =
+  //       await ProgramService(repository: repository).getCombinedMealService();
+  //   print("result: $result");
+  //
+  //   if (result.runtimeType == CombinedMealModel) {
+  //     print("meal plan");
+  //     CombinedMealModel model = result as CombinedMealModel;
+  //
+  //     if (model.detox != null) {
+  //       _childDetoxModel = model.detox!.value!;
+  //       if (model.detox!.totalDays != null) {
+  //         totalDays = model.detox!.totalDays ?? 5;
+  //       }
+  //     }
+  //
+  //     print('detox.values:${model.detox!.value!.details!.entries}');
+  //     model.detox!.value!.details!.forEach((key, value) {
+  //       print("day: $key");
+  //       print(value.toMap());
+  //       value.data!.forEach((k, v1) {
+  //         print("$k -- $v1");
+  //       });
+  //     });
+  //
+  //     storeDetails();
+  //   } else {
+  //     ErrorModel model = result as ErrorModel;
+  //     print("error: ${model.message}");
+  //     // errorMsg = model.message ?? '';
+  //     // Future.delayed(Duration(seconds: 0)).whenComplete(() {
+  //     //   setState(() {
+  //     //     showShimmer = false;
+  //     //     isLoading = false;
+  //     //   });
+  //     //   showAlert(context, model.status!,
+  //     //       isSingleButton: !(model.status != '401'), positiveButton: () {
+  //     //         if (model.status == '401') {
+  //     //           Navigator.pop(context);
+  //     //           Navigator.pop(context);
+  //     //         } else {
+  //     //           getMeals();
+  //     //           Navigator.pop(context);
+  //     //         }
+  //     //       });
+  //     // });
+  //   }
+  //   setState(() {
+  //     showShimmer = false;
+  //   });
+  //   print(result);
+  // }
 
   storeDetails() {
     presentDay = int.tryParse(_childDetoxModel!.currentDay!) ?? 1;
@@ -2605,24 +2945,32 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
 
     _childDetoxModel!.details!.forEach((key, value) {
       print("value==> $key $value");
-      DetoxHealingModel _model = value as DetoxHealingModel;
+      DetoxHealingModel _model = value;
       print(_model.isDayCompleted);
-      listData.add(ChildProgramDayModel(
+      listData.add(
+        ChildProgramDayModel(
           dayNumber: _model.programDay,
           isCompleted: (_model.isDayCompleted != "")
               ? int.parse(_model.isDayCompleted!)
-              : 0));
+              : 0,
+          isTrackerSubmitted: (_model.isTrackerSubmitted != "")
+              ? int.parse(_model.isTrackerSubmitted!)
+              : 0,
+        ),
+      );
     });
 
     listData.forEach((element) {
       if (int.parse(element.dayNumber!) == presentDay) {
         isDayCompleted = element.isCompleted == 1 ? true : false;
+        isTrackerSubmitted = element.isTrackerSubmitted == 1 ? true : false;
       }
     });
 
     getMealFromDay(presentDay!);
 
     print(isDayCompleted);
+    print("isTracker : $isTrackerSubmitted");
 
     // listData.forEach((element) {
     //   print(element.toJson());
@@ -2634,23 +2982,23 @@ class _DetoxPlanScreenState extends State<DetoxPlanScreen> {
     /// if && -> than clap will get after isDetoxCompleted becomes 1-> this will happpens from cron or when button clicked
     /// if || -> than clap will show once last day has completed
     ///
-    if ((listData.last.isCompleted == 1 ||
-            _childDetoxModel!.isDetoxCompleted == "1") ||
-        _childDetoxModel!.isDetoxCompleted == "1") {
-      if (widget.isHealingStarted == false) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!isOpened) {
-            setState(() {
-              isOpened = true;
-            });
-            buildDayCompletedClap();
-          }
-        });
-      }
-    }
+    // if ((listData.last.isCompleted == 1 ||
+    //         _childDetoxModel!.isDetoxCompleted == "1") ||
+    //     _childDetoxModel!.isDetoxCompleted == "1") {
+    //   if (widget.isHealingStarted == false) {
+    //     WidgetsBinding.instance.addPostFrameCallback((_) {
+    //       if (!isOpened) {
+    //         setState(() {
+    //           isOpened = true;
+    //         });
+    //         buildDayCompletedClap();
+    //       }
+    //     });
+    //   }
+    // }
     for (int i = 0; i < presentDay!; i++) {
       print(presentDay);
-      if (listData[i].isCompleted == 0 && i + 1 != selectedDay!) {
+      if (listData[i].isTrackerSubmitted == 0 && i + 1 != selectedDay!) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           showMoreTextSheet(listData[i].dayNumber);
         });

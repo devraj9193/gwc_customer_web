@@ -749,6 +749,8 @@ class _AboutTheProgramState extends State<AboutTheProgram> {
   }
 
   buildReviews(List<String> reviewList) {
+
+    print("review : ${reviewList.length}");
     if (reviewList.isNotEmpty) {
       return Container(
         margin: EdgeInsets.symmetric(vertical: 2.h),

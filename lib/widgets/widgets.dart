@@ -65,8 +65,8 @@ class CommonButton {
   static ElevatedButton sendButton(func, String title) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: gPrimaryColor,
-        onSurface: kSecondaryColor,
+        backgroundColor: gPrimaryColor,
+        disabledForegroundColor: kSecondaryColor.withOpacity(0.38), disabledBackgroundColor: kSecondaryColor.withOpacity(0.12),
         padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 25.w),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
@@ -86,7 +86,7 @@ class CommonButton {
   static ElevatedButton submitButton(func, String title) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        primary: gPrimaryColor,
+        backgroundColor: gPrimaryColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         padding: EdgeInsets.symmetric(vertical: 0.5.h, horizontal: 20.w),
       ),
@@ -215,6 +215,7 @@ buildAppBar(
       bool showHelpIcon = false,
       VoidCallback? helpOnTap,
       bool showSupportIcon = false,
+      bool isProfileScreen = false,
       VoidCallback? supportOnTap,
       Color? helpIconColor,
       String? badgeNotification,
@@ -233,19 +234,14 @@ buildAppBar(
         children: [
           Visibility(
             visible: isBackEnable,
-            child: SizedBox(
-              width: 2.h,
-              child: IconButton(
-                onPressed: func,
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: gMainColor,
-                ),
+            child: IconButton(
+              onPressed: func,
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: gMainColor,
+                size: 3.5.h,
               ),
             ),
-          ),
-          SizedBox(
-            width: 1.5.w,
           ),
           Visibility(
             visible: showLogo,
@@ -273,7 +269,7 @@ buildAppBar(
                   ? buildCustomBadge(
                 child: Icon(
                   Icons.notifications,
-                  color: gHintTextColor,
+                  color: isProfileScreen ? gWhiteColor : gHintTextColor,
                 ),
                 // child: Icon(Icons.notifications,color: gHintTextColor,)
                 // SvgPicture.asset(
@@ -284,7 +280,7 @@ buildAppBar(
               )
                   : Icon(
                 Icons.notifications,
-                color: gHintTextColor,
+                color:  isProfileScreen ? gWhiteColor : gHintTextColor,
               ),
               onTap: notificationOnTap,
             ),
@@ -298,8 +294,10 @@ buildAppBar(
               child: ImageIcon(
                 AssetImage("assets/images/new_ds/help.png"),
                 color: helpIconColor ?? gHintTextColor,
+                size: 3.h,
               ),
               onTap: helpOnTap,
+
             ),
           ),
           SizedBox(
@@ -351,6 +349,49 @@ buildLabelTextField(String name,
       color: kTextColor,
       fontFamily: "PoppinsSemiBold",
     ),
+  );
+}
+
+buildLabelTextFields(String name,
+    {double? fontSize, double textScaleFactor = 0.9, Key? key, bool questionSub = false}) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      RichText(
+        key: key,
+        textScaleFactor: textScaleFactor,
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          text: name,
+          style: TextStyle(
+            fontSize: fontSize ?? 13.dp,
+            color: gBlackColor,
+            height: 1.35,
+            fontFamily: kFontMedium,
+          ),
+          children: [
+            TextSpan(
+              text: ' *',
+              style: TextStyle(
+                fontSize: 13.dp,
+                color: gsecondaryColor,
+                fontFamily: "PoppinsSemiBold",
+              ),
+            ),
+          ],
+        ),
+      ),
+      questionSub ? Text(
+        "Note: Refer below given Bristol Stool chart",
+        textAlign: TextAlign.start,
+        style: TextStyle(
+            fontFamily: kFontBook,
+            color: gHintTextColor,
+            height: 1.3,
+            fontSize: subHeadingFont),
+      ) : const SizedBox(),
+    ],
   );
 }
 

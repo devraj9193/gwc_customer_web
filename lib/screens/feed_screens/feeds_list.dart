@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/screens/feed_screens/video_player.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_network/image_network.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:stories_for_flutter/stories_for_flutter.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
@@ -94,11 +95,11 @@ class _FeedsListState extends State<FeedsList> {
                 buildAppBar(() {},
                     isBackEnable: false,
                     showNotificationIcon: true, notificationOnTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const NotificationScreen()));
-                }),
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const NotificationScreen()));
+                    }),
                 // SizedBox(height: 3.h),
                 Visibility(
                   visible: false,
@@ -126,10 +127,16 @@ class _FeedsListState extends State<FeedsList> {
                       Text('PodCast'),
                     ]),
                 Expanded(
-                  child: TabBarView(children: [
-                    buildFeed(context),
-                    buildPodCast(),
-                  ]),
+                  child: Center(
+                    child: SizedBox(width: MediaQuery.of(context).size.shortestSide > 600 ? 50.w : double.maxFinite,
+                      child: TabBarView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          children: [
+                            buildFeed(context),
+                            buildPodCast(),
+                          ],),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -191,406 +198,455 @@ class _FeedsListState extends State<FeedsList> {
                               String format = file.toString();
                               final String subText =
                                   "${list[index].feed?.description}";
+
+                              print("profile : ${list[index]
+                                  .feed
+                                  ?.addedBy
+                                  ?.profile}");
                               return (list[index].feed?.isFeed == "1")
                                   ? format == "mp4"
-                                      ? Container(
-                                          height: 17.h,
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 1.h),
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 2.h, horizontal: 3.w),
-                                          width: double.maxFinite,
+                                  ? Container(
+                                height: 17.h,
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 1.h),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 2.h, horizontal: 3.w),
+                                width: double.maxFinite,
+                                decoration: BoxDecoration(
+                                  color: gWhiteColor,
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey
+                                          .withOpacity(0.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(2, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      // height: 15.h,
+                                      //  width: 30.w,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                        BorderRadius.circular(10),
+                                        child:
+                                        FadeInImage.memoryNetwork(
+                                          placeholder:
+                                          placeHolderImage!.buffer
+                                              .asUint8List(),
+                                          image:
+                                          "${list[index].feed?.thumbnail}",
+                                          fit: BoxFit.fill,
+                                          width: 28.w,
+                                          // height: 10.h,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 1.w),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .spaceBetween,
+                                        children: [
+                                          Text(
+                                            list[index].feed?.title ??
+                                                "Lorem",
+                                            maxLines: 1,
+                                            overflow:
+                                            TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: 11.dp,
+                                                height: 1.5,
+                                                fontFamily:
+                                                kFontMedium,
+                                                color: gTextColor),
+                                          ),
+                                          RichText(
+                                            textAlign:
+                                            TextAlign.start,
+                                            textScaleFactor: 0.85,
+                                            maxLines: 4,
+                                            text: TextSpan(children: [
+                                              TextSpan(
+                                                text: subText.substring(
+                                                    0,
+                                                    int.parse(
+                                                        "${(subText.length * 0.498).toInt()}")) +
+                                                    "...",
+                                                style: TextStyle(
+                                                    height: 1.3,
+                                                    fontFamily:
+                                                    kFontBook,
+                                                    color: eUser()
+                                                        .mainHeadingColor,
+                                                    fontSize:
+                                                    bottomSheetSubHeadingSFontSize),
+                                              ),
+                                              WidgetSpan(
+                                                child: InkWell(
+                                                    mouseCursor:
+                                                    SystemMouseCursors
+                                                        .click,
+                                                    onTap: () {
+                                                      showMoreTextSheet(
+                                                          subText);
+                                                    },
+                                                    child: Text(
+                                                      "more",
+                                                      style: TextStyle(
+                                                          height: 1.3,
+                                                          fontFamily:
+                                                          kFontBook,
+                                                          color:
+                                                          gsecondaryColor,
+                                                          fontSize:
+                                                          bottomSheetSubHeadingSFontSize),
+                                                    )),
+                                              )
+                                            ]),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                  child: Text(
+                                                    list[index].ago ??
+                                                        "2 minutes ago",
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                        kFontMedium,
+                                                        color: gTextColor,
+                                                        fontSize: 8.dp),
+                                                  )),
+                                              Visibility(
+                                                visible: true,
+                                                child:
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.of(
+                                                        context)
+                                                        .push(
+                                                      MaterialPageRoute(
+                                                        builder: (ct) =>
+                                                            VideoPlayerMeedu(
+                                                              videoUrl:
+                                                              "${list[index].image}",
+                                                              isFullScreen:
+                                                              true,
+                                                            ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Icon(
+                                                    Icons
+                                                        .play_circle_outline,
+                                                    color:
+                                                    gsecondaryColor,
+                                                    size: 4.h,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // SizedBox(width: 1.w),
+                                    // Container(
+                                    //   color: gTextColor,
+                                    //   height: 2.h,
+                                    //   width: 0.5.w,
+                                    // ),
+                                    // SizedBox(width: 1.w),
+                                    // Text(
+                                    //   "See more",
+                                    //   style: TextStyle(
+                                    //     fontSize: 9.dp,
+                                    //     color: gPrimaryColor,
+                                    //     fontFamily: "GothamBook",
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
+                              )
+                                  : Container(
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 1.h),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 2.h, horizontal: 3.w),
+                                width: double.maxFinite,
+                                decoration: BoxDecoration(
+                                  color: gWhiteColor,
+                                  borderRadius:
+                                  BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey
+                                          .withOpacity(0.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(2, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.all(5),
                                           decoration: BoxDecoration(
                                             color: gWhiteColor,
                                             borderRadius:
-                                                BorderRadius.circular(10),
+                                            BorderRadius.circular(
+                                                100),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.3),
-                                                blurRadius: 10,
-                                                offset: const Offset(2, 3),
+                                                  blurRadius: 2, color: Colors.grey.withOpacity(0.5))
+                                            ],
+                                          ),
+                                          child: ImageNetwork(
+                                            image: list[index]
+                                                .feed
+                                                ?.addedBy
+                                                ?.profile ??
+                                                '',
+                                            height: 40,
+                                            width: 40,
+                                            // duration: 1500,
+                                            curve: Curves.easeIn,
+                                            onPointer: true,
+                                            debugPrint: false,
+                                            fullScreen: false,
+                                            fitAndroidIos:
+                                            BoxFit.cover,
+                                            fitWeb: BoxFitWeb.contain,
+                                            borderRadius:
+                                            BorderRadius.circular(
+                                                70),
+                                            onError: const Icon(
+                                              Icons.error,
+                                              color: Colors.red,
+                                            ),
+                                            onTap: () {
+                                              debugPrint(
+                                                  "©gabriel_patrick_souza");
+                                            },
+                                          ),
+                                        ),
+                                        // CircleAvatar(
+                                        //   backgroundImage: NetworkImage(
+                                        //       "${list[index].feed?.addedBy?.profile}"),
+                                        // ),
+                                        // SizedBox(
+                                        //   height: 5.h,
+                                        //   width: 10.w,
+                                        //   child: ClipRRect(
+                                        //     borderRadius:
+                                        //         BorderRadius.circular(
+                                        //             8),
+                                        //     child: const Image(
+                                        //       image: AssetImage(
+                                        //           "assets/images/cheerful.png"),
+                                        //     ),
+                                        //   ),
+                                        // ),
+                                        SizedBox(width: 2.w),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment
+                                                .start,
+                                            children: [
+                                              Text(
+                                                list[index]
+                                                    .feed
+                                                    ?.addedBy
+                                                    ?.name ??
+                                                    "Mr. Lorem Ipsum",
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                    kFontMedium,
+                                                    color:
+                                                    gBlackColor,
+                                                    fontSize: 15.dp),
+                                              ),
+                                              SizedBox(height: 0.5.h),
+                                              Text(
+                                                list[index].ago ??
+                                                    "2 minutes ago",
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                    kFontMedium,
+                                                    color: gTextColor,
+                                                    fontSize: 12.dp),
                                               ),
                                             ],
                                           ),
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                // height: 15.h,
-                                                //  width: 30.w,
-                                                child: ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  child:
-                                                      FadeInImage.memoryNetwork(
-                                                    placeholder:
-                                                        placeHolderImage!.buffer
-                                                            .asUint8List(),
-                                                    image:
-                                                        "${list[index].feed?.thumbnail}",
-                                                    fit: BoxFit.fill,
-                                                    width: 28.w,
-                                                    // height: 10.h,
+                                        ),
+                                        Visibility(
+                                          visible: false,
+                                          child: GestureDetector(
+                                            onTap: () {},
+                                            child: const Icon(
+                                              Icons.more_vert,
+                                              color: gTextColor,
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                    SizedBox(height: 1.h),
+                                    Text(
+                                      list[index].feed?.title ??
+                                          "Lorem",
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          fontSize: 15.dp,
+                                          fontFamily: kFontMedium,
+                                          color: gTextColor),
+                                    ),
+                                    SizedBox(height: 0.5.h),
+                                    subText.isEmpty
+                                        ? const SizedBox()
+                                        : RichText(
+                                      textAlign:
+                                      TextAlign.start,
+                                      textScaleFactor: 0.85,
+                                      maxLines: 4,
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: subText.substring(
+                                                0,
+                                                int.parse(
+                                                    "${(subText.length * 0.498).toInt()}")) +
+                                                "...",
+                                            style: TextStyle(
+                                                height: 1.3,
+                                                fontFamily:
+                                                kFontBook,
+                                                color: eUser()
+                                                    .mainHeadingColor,
+                                                fontSize:
+                                                bottomSheetSubHeadingSFontSize),
+                                          ),
+                                          WidgetSpan(
+                                            child: InkWell(
+                                              mouseCursor:
+                                              SystemMouseCursors
+                                                  .click,
+                                              onTap: () {
+                                                Navigator.of(
+                                                    context)
+                                                    .push(
+                                                  MaterialPageRoute(
+                                                    builder: (ct) =>
+                                                        FeedsDetailsScreen(
+                                                          profile:
+                                                          "${list[index].feed?.addedBy?.profile}",
+                                                          userName:
+                                                          "${list[index].feed?.addedBy?.name}",
+                                                          userAddress:
+                                                          "${list[index].ago}",
+                                                          reelsImage:
+                                                          '${list[index].image}',
+                                                          comments:
+                                                          '${list[index].feed?.title}',
+                                                          description:
+                                                          '${list[index].feed?.description}',
+                                                        ),
                                                   ),
+                                                );
+                                              },
+                                              child: Text(
+                                                "more",
+                                                style: TextStyle(
+                                                    height: 1.3,
+                                                    fontFamily:
+                                                    kFontBook,
+                                                    color:
+                                                    gsecondaryColor,
+                                                    fontSize:
+                                                    bottomSheetSubHeadingSFontSize),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 1.h),
+                                    buildFeedImageView(
+                                        list[index].image!),
+                                    // SizedBox(height: 1.h),
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment
+                                          .spaceBetween,
+                                      children: [
+                                        Visibility(
+                                          visible: false,
+                                          child: Row(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {},
+                                                child: Image(
+                                                  image: const AssetImage(
+                                                      "assets/images/Union 4.png"),
+                                                  height: 2.h,
                                                 ),
                                               ),
                                               SizedBox(width: 1.w),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      list[index].feed?.title ??
-                                                          "Lorem",
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: TextStyle(
-                                                          fontSize: 11.dp,
-                                                          height: 1.5,
-                                                          fontFamily:
-                                                              kFontMedium,
-                                                          color: gTextColor),
-                                                    ),
-                                                    RichText(
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      textScaleFactor: 0.85,
-                                                      maxLines: 4,
-                                                      text: TextSpan(children: [
-                                                        TextSpan(
-                                                          text: subText.substring(
-                                                                  0,
-                                                                  int.parse(
-                                                                      "${(subText.length * 0.498).toInt()}")) +
-                                                              "...",
-                                                          style: TextStyle(
-                                                              height: 1.3,
-                                                              fontFamily:
-                                                                  kFontBook,
-                                                              color: eUser()
-                                                                  .mainHeadingColor,
-                                                              fontSize:
-                                                                  bottomSheetSubHeadingSFontSize),
-                                                        ),
-                                                        WidgetSpan(
-                                                          child: InkWell(
-                                                              mouseCursor:
-                                                                  SystemMouseCursors
-                                                                      .click,
-                                                              onTap: () {
-                                                                showMoreTextSheet(
-                                                                    subText);
-                                                              },
-                                                              child: Text(
-                                                                "more",
-                                                                style: TextStyle(
-                                                                    height: 1.3,
-                                                                    fontFamily:
-                                                                        kFontBook,
-                                                                    color:
-                                                                        gsecondaryColor,
-                                                                    fontSize:
-                                                                        bottomSheetSubHeadingSFontSize),
-                                                              )),
-                                                        )
-                                                      ]),
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Expanded(
-                                                            child: Text(
-                                                          list[index].ago ??
-                                                              "2 minutes ago",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  kFontMedium,
-                                                              color: gTextColor,
-                                                              fontSize: 8.dp),
-                                                        )),
-                                                        Visibility(
-                                                          visible: true,
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .push(
-                                                                MaterialPageRoute(
-                                                                  builder: (ct) =>
-                                                                      VideoPlayerMeedu(
-                                                                    videoUrl:
-                                                                        "${list[index].image}",
-                                                                    isFullScreen:
-                                                                        true,
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            },
-                                                            child: Icon(
-                                                              Icons
-                                                                  .play_circle_outline,
-                                                              color:
-                                                                  gsecondaryColor,
-                                                              size: 4.h,
-                                                            ),
-                                                          ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ],
+                                              Text(
+                                                list[index]
+                                                    .likes
+                                                    .toString(),
+                                                style: TextStyle(
+                                                    fontFamily:
+                                                    kFontMedium,
+                                                    color: gTextColor,
+                                                    fontSize: 8.dp),
+                                              ),
+                                              SizedBox(width: 4.w),
+                                              GestureDetector(
+                                                onTap: () {},
+                                                child: Image(
+                                                  image: const AssetImage(
+                                                      "assets/images/noun_chat_1079099.png"),
+                                                  height: 2.h,
                                                 ),
                                               ),
-                                              // SizedBox(width: 1.w),
-                                              // Container(
-                                              //   color: gTextColor,
-                                              //   height: 2.h,
-                                              //   width: 0.5.w,
-                                              // ),
-                                              // SizedBox(width: 1.w),
-                                              // Text(
-                                              //   "See more",
-                                              //   style: TextStyle(
-                                              //     fontSize: 9.dp,
-                                              //     color: gPrimaryColor,
-                                              //     fontFamily: "GothamBook",
-                                              //   ),
-                                              // ),
-                                            ],
-                                          ),
-                                        )
-                                      : Container(
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 1.h),
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 2.h, horizontal: 3.w),
-                                          width: double.maxFinite,
-                                          decoration: BoxDecoration(
-                                            color: gWhiteColor,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.3),
-                                                blurRadius: 10,
-                                                offset: const Offset(2, 3),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  CircleAvatar(
-                                                    backgroundImage: NetworkImage(
-                                                        "${list[index].feed?.addedBy?.profile}"),
-                                                  ),
-                                                  // SizedBox(
-                                                  //   height: 5.h,
-                                                  //   width: 10.w,
-                                                  //   child: ClipRRect(
-                                                  //     borderRadius:
-                                                  //         BorderRadius.circular(
-                                                  //             8),
-                                                  //     child: const Image(
-                                                  //       image: AssetImage(
-                                                  //           "assets/images/cheerful.png"),
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
-                                                  SizedBox(width: 1.w),
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          list[index]
-                                                                  .feed
-                                                                  ?.addedBy
-                                                                  ?.name ??
-                                                              "Mr. Lorem Ipsum",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  kFontMedium,
-                                                              color:
-                                                                  gBlackColor,
-                                                              fontSize: 11.dp),
-                                                        ),
-                                                        SizedBox(height: 0.5.h),
-                                                        Text(
-                                                          list[index].ago ??
-                                                              "2 minutes ago",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  kFontMedium,
-                                                              color: gTextColor,
-                                                              fontSize: 8.dp),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  Visibility(
-                                                    visible: false,
-                                                    child: GestureDetector(
-                                                      onTap: () {},
-                                                      child: const Icon(
-                                                        Icons.more_vert,
-                                                        color: gTextColor,
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(height: 1.h),
+                                              SizedBox(width: 1.w),
                                               Text(
-                                                list[index].feed?.title ??
-                                                    "Lorem",
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                                                list[index]
+                                                    .comments
+                                                    ?.length
+                                                    .toString() ??
+                                                    "132",
                                                 style: TextStyle(
-                                                    fontSize: 11.dp,
-                                                    fontFamily: kFontMedium,
-                                                    color: gTextColor),
-                                              ),
-                                              SizedBox(height: 0.5.h),
-                                              subText.isEmpty
-                                                  ? const SizedBox()
-                                                  : RichText(
-                                                      textAlign:
-                                                          TextAlign.start,
-                                                      textScaleFactor: 0.85,
-                                                      maxLines: 4,
-                                                      text: TextSpan(children: [
-                                                        TextSpan(
-                                                          text: subText.substring(
-                                                                  0,
-                                                                  int.parse(
-                                                                      "${(subText.length * 0.498).toInt()}")) +
-                                                              "...",
-                                                          style: TextStyle(
-                                                              height: 1.3,
-                                                              fontFamily:
-                                                                  kFontBook,
-                                                              color: eUser()
-                                                                  .mainHeadingColor,
-                                                              fontSize:
-                                                                  bottomSheetSubHeadingSFontSize),
-                                                        ),
-                                                        WidgetSpan(
-                                                          child: InkWell(
-                                                              mouseCursor:
-                                                                  SystemMouseCursors
-                                                                      .click,
-                                                              onTap: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .push(
-                                                                  MaterialPageRoute(
-                                                                    builder: (ct) =>
-                                                                        FeedsDetailsScreen(
-                                                                      profile:
-                                                                          "${list[index].feed?.addedBy?.profile}",
-                                                                      userName:
-                                                                          "${list[index].feed?.addedBy?.name}",
-                                                                      userAddress:
-                                                                          "${list[index].ago}",
-                                                                      reelsImage:
-                                                                          '${list[index].image}',
-                                                                      comments:
-                                                                          '${list[index].feed?.title}',
-                                                                      description:
-                                                                          '${list[index].feed?.description}',
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                              child: Text(
-                                                                "more",
-                                                                style: TextStyle(
-                                                                    height: 1.3,
-                                                                    fontFamily:
-                                                                        kFontBook,
-                                                                    color:
-                                                                        gsecondaryColor,
-                                                                    fontSize:
-                                                                        bottomSheetSubHeadingSFontSize),
-                                                              ),),
-                                                        ),
-                                                      ],),
-                                                    ),
-                                              SizedBox(height: 1.h),
-                                              buildFeedImageView(
-                                                  list[index].image!),
-                                              // SizedBox(height: 1.h),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Visibility(
-                                                    visible: false,
-                                                    child: Row(
-                                                      children: [
-                                                        GestureDetector(
-                                                          onTap: () {},
-                                                          child: Image(
-                                                            image: const AssetImage(
-                                                                "assets/images/Union 4.png"),
-                                                            height: 2.h,
-                                                          ),
-                                                        ),
-                                                        SizedBox(width: 1.w),
-                                                        Text(
-                                                          list[index]
-                                                              .likes
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  kFontMedium,
-                                                              color: gTextColor,
-                                                              fontSize: 8.dp),
-                                                        ),
-                                                        SizedBox(width: 4.w),
-                                                        GestureDetector(
-                                                          onTap: () {},
-                                                          child: Image(
-                                                            image: const AssetImage(
-                                                                "assets/images/noun_chat_1079099.png"),
-                                                            height: 2.h,
-                                                          ),
-                                                        ),
-                                                        SizedBox(width: 1.w),
-                                                        Text(
-                                                          list[index]
-                                                                  .comments
-                                                                  ?.length
-                                                                  .toString() ??
-                                                              "132",
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  kFontMedium,
-                                                              color: gTextColor,
-                                                              fontSize: 8.dp),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
+                                                    fontFamily:
+                                                    kFontMedium,
+                                                    color: gTextColor,
+                                                    fontSize: 8.dp),
                                               ),
                                             ],
                                           ),
-                                        )
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )
                                   : const SizedBox();
                             }),
                           );
@@ -616,74 +672,88 @@ class _FeedsListState extends State<FeedsList> {
   buildFeedImageView(List<dynamic> imageUrl) {
     return imageUrl.length > 1
         ? Column(
+      children: [
+        SizedBox(
+          height:MediaQuery.of(context).size.shortestSide < 600 ? 60.h : 120.h,
+          child: PageView(
+            controller: pageController,
             children: [
-              SizedBox(
-                height: 35.h,
-                child: PageView(
-                  controller: pageController,
-                  children: [
-                    ...imageUrl.map((e) {
-                      print("feed image : $e");
-                      return Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 2.w),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(5),
-                          child: Image(
-                            image: NetworkImage(e),
-                          ),
-                          // FadeInImage.memoryNetwork(
-                          //   placeholder:
-                          //       placeHolderImage!.buffer.asUint8List(),
-                          //   image: e,
-                          //   fit: BoxFit.fill,
-                          //   placeholderErrorBuilder: (_, __, ___) {
-                          //     return Image.asset(
-                          //         "assets/images/placeholder.png");
-                          //   },
-                          // ),
-                        ),
-                      );
-                    }).toList(),
-                  ],
-                ),
-              ),
-              SizedBox(height: 1.h),
-              SmoothPageIndicator(
-                controller: pageController,
-                count: imageUrl.length,
-                axisDirection: Axis.horizontal,
-                effect: ExpandingDotsEffect(
-                  dotColor: kNumberCircleRed.withOpacity(0.5),
-                  activeDotColor: gsecondaryColor,
-                  dotHeight: 2.h,
-                  dotWidth: 1.w,
-                  // jumpScale: 2,
-                ),
-              ),
-            ],
-          )
-        : ListView.builder(
-            itemCount: imageUrl.length,
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
-            itemBuilder: (context, index) {
-              final file = imageUrl[index];
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 2.w),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(5),
-                  child: FadeInImage.memoryNetwork(
-                    placeholder: placeHolderImage!.buffer.asUint8List(),
-                    image: file,
-                    fit: BoxFit.fill,
-                    placeholderErrorBuilder: (_, __, ___) {
-                      return Image.asset("assets/images/placeholder.png");
+              ...imageUrl.map((e) {
+                print("feed image : $e");
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  child: ImageNetwork(
+                    image: "$e",
+                    height: MediaQuery.of(context).size.shortestSide < 600 ? 60.h : 100.h,
+                    width: 100.w,
+                    // duration: 1500,
+                    curve: Curves.easeIn,
+                    onPointer: true,
+                    debugPrint: false,
+                    fullScreen: false,
+                    fitAndroidIos: BoxFit.cover,
+                    fitWeb: BoxFitWeb.fill,
+                    borderRadius: BorderRadius.circular(10),
+                    onLoading: const CircularProgressIndicator(
+                      color: Colors.indigoAccent,
+                    ),
+                    onError: Image.asset("assets/images/placeholder.png"),
+                    onTap: () {
+                      debugPrint("©gabriel_patrick_souza");
                     },
                   ),
-                ),
-              );
+                );
+              }).toList(),
+            ],
+          ),
+        ),
+        SizedBox(height: 1.h),
+        SmoothPageIndicator(
+          controller: pageController,
+          count: imageUrl.length,
+          axisDirection: Axis.horizontal,
+          effect: ExpandingDotsEffect(
+            dotColor: kNumberCircleRed.withOpacity(0.5),
+            activeDotColor: gsecondaryColor,
+            // dotHeight: 2.h,
+            // dotWidth: 1.w,
+            // jumpScale: 2,
+          ),
+        ),
+      ],
+    )
+        : ListView.builder(
+      itemCount: imageUrl.length,
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      itemBuilder: (context, index) {
+        final file = imageUrl[index];
+        print("feed imagee: $file");
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 2.w),
+          child: ImageNetwork(
+            image: "$file",
+            height: MediaQuery.of(context).size.shortestSide < 600 ? 60.h : 100.h,
+            width: 100.w,
+            // duration: 1500,
+            curve: Curves.easeIn,
+            onPointer: true,
+            debugPrint: false,
+            fullScreen: false,
+            fitAndroidIos: BoxFit.cover,
+            fitWeb: BoxFitWeb.fill,
+            borderRadius: BorderRadius.circular(10),
+            onLoading: const CircularProgressIndicator(
+              color: Colors.indigoAccent,
+            ),
+            onError: Image.asset("assets/images/placeholder.png"),
+            onTap: () {
+              debugPrint("©gabriel_patrick_souza");
             },
-          );
+          ),
+        );
+      },
+    );
   }
 
   buildPodCast() {
@@ -726,169 +796,169 @@ class _FeedsListState extends State<FeedsList> {
                                   "${list[index].feed?.description}";
                               return (list[index].feed?.isFeed == "2")
                                   ? Container(
-                                      height: 17.h,
-                                      margin:
-                                          EdgeInsets.symmetric(vertical: 1.h),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 2.h, horizontal: 3.w),
-                                      width: double.maxFinite,
-                                      decoration: BoxDecoration(
-                                        color: gWhiteColor,
-                                        borderRadius: BorderRadius.circular(10),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.3),
-                                            blurRadius: 10,
-                                            offset: const Offset(2, 3),
-                                          ),
-                                        ],
+                                height: 17.h,
+                                margin:
+                                EdgeInsets.symmetric(vertical: 1.h),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 2.h, horizontal: 3.w),
+                                width: double.maxFinite,
+                                decoration: BoxDecoration(
+                                  color: gWhiteColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.3),
+                                      blurRadius: 10,
+                                      offset: const Offset(2, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      // height: 15.h,
+                                      //  width: 30.w,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                        BorderRadius.circular(10),
+                                        child: FadeInImage.memoryNetwork(
+                                          placeholder: placeHolderImage!
+                                              .buffer
+                                              .asUint8List(),
+                                          image:
+                                          "${list[index].feed?.thumbnail}",
+                                          fit: BoxFit.fill,
+                                          width: 28.w,
+                                          // height: 10.h,
+                                        ),
                                       ),
-                                      child: Row(
+                                    ),
+                                    SizedBox(width: 1.w),
+                                    Expanded(
+                                      child: Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .spaceBetween,
                                         children: [
-                                          SizedBox(
-                                            // height: 15.h,
-                                            //  width: 30.w,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              child: FadeInImage.memoryNetwork(
-                                                placeholder: placeHolderImage!
-                                                    .buffer
-                                                    .asUint8List(),
-                                                image:
-                                                    "${list[index].feed?.thumbnail}",
-                                                fit: BoxFit.fill,
-                                                width: 28.w,
-                                                // height: 10.h,
-                                              ),
-                                            ),
+                                          Text(
+                                            list[index].feed?.title ??
+                                                "Lorem",
+                                            maxLines: 1,
+                                            overflow:
+                                            TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontSize: 15.sp,
+                                                height: 1.5,
+                                                fontFamily: kFontMedium,
+                                                color: gTextColor),
                                           ),
-                                          SizedBox(width: 1.w),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  list[index].feed?.title ??
-                                                      "Lorem",
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                      fontSize: 15.sp,
-                                                      height: 1.5,
-                                                      fontFamily: kFontMedium,
-                                                      color: gTextColor),
-                                                ),
-                                                RichText(
-                                                  textAlign: TextAlign.start,
-                                                  textScaleFactor: 0.85,
-                                                  maxLines: 4,
-                                                  text: TextSpan(children: [
-                                                    TextSpan(
-                                                      text: subText.substring(
-                                                              0,
-                                                              int.parse(
-                                                                  "${(subText.length * 0.498).toInt()}")) +
-                                                          "...",
+                                          RichText(
+                                            textAlign: TextAlign.start,
+                                            textScaleFactor: 0.85,
+                                            maxLines: 4,
+                                            text: TextSpan(children: [
+                                              TextSpan(
+                                                text: subText.substring(
+                                                    0,
+                                                    int.parse(
+                                                        "${(subText.length * 0.498).toInt()}")) +
+                                                    "...",
+                                                style: TextStyle(
+                                                    height: 1.3,
+                                                    fontFamily: kFontBook,
+                                                    color: eUser()
+                                                        .mainHeadingColor,
+                                                    fontSize:
+                                                    bottomSheetSubHeadingSFontSize),
+                                              ),
+                                              WidgetSpan(
+                                                child: InkWell(
+                                                    mouseCursor:
+                                                    SystemMouseCursors
+                                                        .click,
+                                                    onTap: () {
+                                                      showMoreTextSheet(
+                                                          subText);
+                                                    },
+                                                    child: Text(
+                                                      "more",
                                                       style: TextStyle(
                                                           height: 1.3,
-                                                          fontFamily: kFontBook,
-                                                          color: eUser()
-                                                              .mainHeadingColor,
-                                                          fontSize:
-                                                              bottomSheetSubHeadingSFontSize),
-                                                    ),
-                                                    WidgetSpan(
-                                                      child: InkWell(
-                                                          mouseCursor:
-                                                              SystemMouseCursors
-                                                                  .click,
-                                                          onTap: () {
-                                                            showMoreTextSheet(
-                                                                subText);
-                                                          },
-                                                          child: Text(
-                                                            "more",
-                                                            style: TextStyle(
-                                                                height: 1.3,
-                                                                fontFamily:
-                                                                    kFontBook,
-                                                                color:
-                                                                    gsecondaryColor,
-                                                                fontSize:
-                                                                    bottomSheetSubHeadingSFontSize),
-                                                          )),
-                                                    )
-                                                  ]),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Expanded(
-                                                        child: Text(
-                                                      list[index].ago ??
-                                                          "2 minutes ago",
-                                                      style: TextStyle(
                                                           fontFamily:
-                                                              kFontMedium,
-                                                          color: gTextColor,
-                                                          fontSize: 8.sp),
-                                                    )),
-                                                    Visibility(
-                                                      visible: true,
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.of(context)
-                                                              .push(
-                                                            MaterialPageRoute(
-                                                              builder: (ct) =>
-                                                                  VideoPlayerMeedu(
-                                                                videoUrl:
-                                                                    "${list[index].image}",
-                                                                isFullScreen:
-                                                                    true,
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                        child: Icon(
-                                                          Icons
-                                                              .play_circle_outline,
+                                                          kFontBook,
                                                           color:
-                                                              gsecondaryColor,
-                                                          size: 4.h,
-                                                        ),
-                                                      ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
+                                                          gsecondaryColor,
+                                                          fontSize:
+                                                          bottomSheetSubHeadingSFontSize),
+                                                    )),
+                                              )
+                                            ]),
                                           ),
-                                          // SizedBox(width: 1.w),
-                                          // Container(
-                                          //   color: gTextColor,
-                                          //   height: 2.h,
-                                          //   width: 0.5.w,
-                                          // ),
-                                          // SizedBox(width: 1.w),
-                                          // Text(
-                                          //   "See more",
-                                          //   style: TextStyle(
-                                          //     fontSize: 9.sp,
-                                          //     color: gPrimaryColor,
-                                          //     fontFamily: "GothamBook",
-                                          //   ),
-                                          // ),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                  child: Text(
+                                                    list[index].ago ??
+                                                        "2 minutes ago",
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                        kFontMedium,
+                                                        color: gTextColor,
+                                                        fontSize: 8.sp),
+                                                  )),
+                                              Visibility(
+                                                visible: true,
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.of(context)
+                                                        .push(
+                                                      MaterialPageRoute(
+                                                        builder: (ct) =>
+                                                            VideoPlayerMeedu(
+                                                              videoUrl:
+                                                              "${list[index].image}",
+                                                              isFullScreen:
+                                                              true,
+                                                            ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Icon(
+                                                    Icons
+                                                        .play_circle_outline,
+                                                    color:
+                                                    gsecondaryColor,
+                                                    size: 4.h,
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ],
                                       ),
-                                    )
+                                    ),
+                                    // SizedBox(width: 1.w),
+                                    // Container(
+                                    //   color: gTextColor,
+                                    //   height: 2.h,
+                                    //   width: 0.5.w,
+                                    // ),
+                                    // SizedBox(width: 1.w),
+                                    // Text(
+                                    //   "See more",
+                                    //   style: TextStyle(
+                                    //     fontSize: 9.sp,
+                                    //     color: gPrimaryColor,
+                                    //     fontFamily: "GothamBook",
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
+                              )
                                   : const SizedBox();
                             }),
                           );
@@ -956,37 +1026,37 @@ class _FeedsListState extends State<FeedsList> {
                     storyItemList: list
                         .map(
                           (e) => StoryItem(
-                              name: "${e.feed?.title}",
-                              thumbnail: NetworkImage(
-                                "${e.feed?.thumbnail}",
-                              ),
-                              stories: [
-                                Scaffold(
-                                  body: Container(
-                                    decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(
-                                          "${e.image}",
-                                        ),
-                                      ),
+                          name: "${e.feed?.title}",
+                          thumbnail: NetworkImage(
+                            "${e.feed?.thumbnail}",
+                          ),
+                          stories: [
+                            Scaffold(
+                              body: Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: NetworkImage(
+                                      "${e.image}",
                                     ),
                                   ),
                                 ),
-                                // Scaffold(
-                                //   body: Container(
-                                //     decoration: const BoxDecoration(
-                                //       image: DecorationImage(
-                                //         fit: BoxFit.cover,
-                                //         image: AssetImage(
-                                //           "assets/images/placeholder.png",
-                                //         ),
-                                //       ),
-                                //     ),
-                                //   ),
-                                // ),
-                              ]),
-                        )
+                              ),
+                            ),
+                            // Scaffold(
+                            //   body: Container(
+                            //     decoration: const BoxDecoration(
+                            //       image: DecorationImage(
+                            //         fit: BoxFit.cover,
+                            //         image: AssetImage(
+                            //           "assets/images/placeholder.png",
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                          ]),
+                    )
                         .toList(),
                   );
                 }

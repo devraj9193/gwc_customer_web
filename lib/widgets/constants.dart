@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';const newDashboardGreenButtonColor = Color(0xffA7CB52);
+import 'package:flutter_sizer/flutter_sizer.dart';const
+newDashboardGreenButtonColor = Color(0xffA7CB52);
 const newDashboardLightGreyButtonColor = Color(0xffB9B4B4);
 
 const gPrimaryColor = Color(0xff4E7215);
@@ -15,6 +16,8 @@ const gBlackColor = Color(0xff000000);
 const gWhiteColor = Color(0xffFFFFFF);
 const gHintTextColor = Color(0xff676363);
 const kLineColor = Color(0xffB9B4B4);
+
+const profileBackGroundColor = Color(0xffF8FAF9);
 
 const tabBarHintColor = Color(0xffBBBBBB);
 
@@ -66,10 +69,8 @@ const newDashboardGMGIcon = "assets/images/new_ds/gmg.png";
 const newDashboardChatIcon = "assets/images/new_ds/chat.png";
 const newDashboardAppointmentIcon = "assets/images/new_ds/calender.png";
 
-
 // const kButtonColor = Color(0xffD10034);
 const kButtonColor = gsecondaryColor;
-
 
 /// tracker ui fonts
 double headingFont = 16.dp;
@@ -78,10 +79,6 @@ double questionFont = 15.dp;
 
 double smTextFontSize = 13.dp;
 double smText9FontSize = 11.dp;
-
-
-
-
 
 const kBottomSheetHeadYellow = Color(0xffFFE281);
 const kBottomSheetHeadGreen = Color(0xffA7C652);
@@ -256,8 +253,8 @@ class MealPlanConstants{
   var dayBgSelectedColor = newDashboardGreenButtonColor;
   var dayBgPresentdayColor = gsecondaryColor;
   double dayBorderRadius = 8.0;
-  double presentDayTextSize = 12.dp;
-  double DisableDayTextSize = 12.dp;
+  double presentDayTextSize = 14.dp;
+  double DisableDayTextSize = 14.dp;
   var dayTextFontFamily = kFontMedium;
   var dayUnSelectedTextFontFamily = kFontBook;
 
@@ -271,7 +268,7 @@ class MealPlanConstants{
 
   var mealNameTextColor = gBlackColor;
   var mealNameFont = kFontMedium;
-  double mealNameFontSize = 14.dp;
+  double mealNameFontSize = 16.dp;
 
   var benifitsFont = kFontBook;
   double benifitsFontSize = 10.dp;

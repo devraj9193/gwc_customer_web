@@ -10,42 +10,42 @@ class MealPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            width: MediaQuery.of(context).size.width * 0.85,
-            height: MediaQuery.of(context).size.height * 0.74,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(35),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        width: MediaQuery.of(context).size.width * 0.85,
+        height: MediaQuery.of(context).size.height * 0.74,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(35),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(38),
+              child: Image.asset('assets/images/meal_popup.png',
+                fit: BoxFit.fill,
+                filterQuality: FilterQuality.high,
+              ),
             ),
-            child: Column(
+            Text('Your Meal Plan is Ready.\nThis usually takes 3 - 5 days for delivery.\nAre you ready to receive the shipment?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                height: 1.2,
+                fontFamily: kFontBold,
+                color: gBlackColor,
+                fontSize: 13.sp,
+              ),),
+            SizedBox(height: 5.h,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(38),
-                  child: Image.asset('assets/images/meal_popup.png',
-                    fit: BoxFit.fill,
-                    filterQuality: FilterQuality.high,
-                  ),
-                ),
-                Text('Your Meal Plan is Ready.\nThis usually takes 3 - 5 days for delivery.\nAre you ready to receive the shipment?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                   height: 1.2,
-                  fontFamily: kFontBold,
-                  color: gBlackColor,
-                  fontSize: 13.sp,
-                ),),
-                SizedBox(height: 5.h,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    buildButton('No', noButton),
-                    buildButton('Yes', yesButton, isFilledColor: true)
-                  ],
-                ),
-                SizedBox(height: 5.h,),
+                buildButton('No', noButton),
+                buildButton('Yes', yesButton, isFilledColor: true)
               ],
             ),
-          ),
+            SizedBox(height: 5.h,),
+          ],
+        ),
+      ),
     );
 
   }
@@ -71,18 +71,18 @@ class MealPopup extends StatelessWidget {
       ),
     );
     return ElevatedButton(
-        onPressed: onTap,
-        child: Text(name,
-          style: TextStyle(
-            fontFamily: "GothamRoundedBold_21016",
-            color: isFilledColor ? gMainColor : gPrimaryColor,
-            fontSize: 10.sp,
-          ),
+      onPressed: onTap,
+      child: Text(name,
+        style: TextStyle(
+          fontFamily: "GothamRoundedBold_21016",
+          color: isFilledColor ? gMainColor : gPrimaryColor,
+          fontSize: 10.sp,
         ),
+      ),
       style: ElevatedButton.styleFrom(
-          side: BorderSide(width: 1.0,
-            color: gMainColor,),
-        primary: isFilledColor ? gPrimaryColor : gWhiteColor
+        side: BorderSide(width: 1.0,
+          color: gMainColor,),
+        // primary: isFilledColor ? gPrimaryColor : gWhiteColor
       ),
     );
   }

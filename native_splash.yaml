@@ -1,0 +1,11 @@
+flutter_native_splash:
+  android: true
+  ios: true
+  web: true
+
+  color: "#E8D574"
+  color_web: "#E8D574"
+  color_dark_web: "#E8D574"
+  #  background_image: "assets/images/Group 2657.png"
+  image: "assets/logo_gif/2.gif"
+#  branding: "assets/images/progress_logo1.png"

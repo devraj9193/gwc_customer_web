@@ -130,9 +130,11 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: newUI(),
+              child: SizedBox(width: MediaQuery.of(context).size.shortestSide > 600 ? 50.w : double.maxFinite,
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: newUI(),
+                ),
               ),
             ),
           ],
@@ -379,7 +381,7 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
         backgroundColor: Colors.transparent.withOpacity(0),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
-            Radius.circular(15.0.sp),
+            Radius.circular(15.0.dp),
           ),
         ),
         contentPadding: EdgeInsets.only(top: 1.h),

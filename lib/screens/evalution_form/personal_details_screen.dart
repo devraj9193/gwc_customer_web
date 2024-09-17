@@ -10,7 +10,7 @@ here we need to pass pincode for that api
  */
 
 import 'dart:convert';
-import 'package:dropdown_button2/custom_dropdown_button2.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +18,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart' hide GetStringUtils;
 import 'package:gwc_customer_web/widgets/dart_extensions.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:http/http.dart' as http;
 import '../../../utils/app_config.dart';
 import '../../model/country_model.dart';
 import '../../model/dashboard_model/report_upload_model/report_upload_model.dart';
@@ -71,6 +72,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   final emailKey = GlobalKey<FormState>();
   final ageKey = GlobalKey<FormState>();
   final genderKey = GlobalKey<FormState>();
+  final professionKey = GlobalKey<FormState>();
   final flatKey = GlobalKey<FormState>();
   final addresskey = GlobalKey<FormState>();
   final pincodeKey = GlobalKey<FormState>();
@@ -103,6 +105,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
   TextEditingController address1Controller = TextEditingController();
   TextEditingController address2Controller = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController professionController = TextEditingController();
   TextEditingController mobileController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController stateController = TextEditingController();
@@ -405,10 +408,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                 MaterialPageRoute(
                   builder: (_) => TicketChatScreen(
                     userName: "${_pref?.getString(AppConfig.User_Name)}",
-                    thumbNail:
-                    "${_pref?.getString(AppConfig.User_Profile)}",
-                    ticketId:
-                    "${_pref?.getString(AppConfig.User_ticket_id)}",
+                    thumbNail: "${_pref?.getString(AppConfig.User_Profile)}",
+                    ticketId: _pref?.getString(AppConfig.User_ticket_id) ?? '',
                     subject: '',
                     email: "${_pref?.getString(AppConfig.User_Email)}",
                     ticketStatus: 1 ?? -1,
@@ -550,25 +551,29 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                     //     width: eUser().buttonBorderWidth
                     // ),
                   ),
-                  child: widget.showData ? Center(
-                    child: Text(
-                       "Next" ,
-                      style: TextStyle(
-                        fontFamily: eUser().buttonTextFont,
-                        color: eUser().buttonTextColor,
-                        fontSize: eUser().buttonTextSize,
-                      ),
-                    ),) : isSubmitPressed
-                      ? buildThreeBounceIndicator(color: gWhiteColor)
-                      : Center(
+                  child: widget.showData
+                      ? Center(
                           child: Text(
-                           'Submit',
-                          style: TextStyle(
-                            fontFamily: eUser().buttonTextFont,
-                            color: eUser().buttonTextColor,
-                            fontSize: eUser().buttonTextSize,
+                            "Next",
+                            style: TextStyle(
+                              fontFamily: eUser().buttonTextFont,
+                              color: eUser().buttonTextColor,
+                              fontSize: eUser().buttonTextSize,
+                            ),
                           ),
-                        ),),
+                        )
+                      : isSubmitPressed
+                          ? buildThreeBounceIndicator(color: gWhiteColor)
+                          : Center(
+                              child: Text(
+                                'Submit',
+                                style: TextStyle(
+                                  fontFamily: eUser().buttonTextFont,
+                                  color: eUser().buttonTextColor,
+                                  fontSize: eUser().buttonTextSize,
+                                ),
+                              ),
+                            ),
                 ),
               ),
             ),
@@ -635,8 +640,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
               controller: fnameController,
               cursorColor: kPrimaryColor,
               validator: (value) {
-                if (value!.isEmpty ||
-                    !RegExp(r"^[a-z A-Z]").hasMatch(value)) {
+                if (value!.isEmpty || !RegExp(r"^[a-z A-Z]").hasMatch(value)) {
                   AppConfig().showSnackbar(
                       context, "Please enter your First Name",
                       isError: true, bottomPadding: 100);
@@ -661,8 +665,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
               controller: lnameController,
               cursorColor: kPrimaryColor,
               validator: (value) {
-                if (value!.isEmpty ||
-                    !RegExp(r"^[a-z A-Z]").hasMatch(value)) {
+                if (value!.isEmpty || !RegExp(r"^[a-z A-Z]").hasMatch(value)) {
                   return 'Please enter your Last Name';
                 } else {
                   return null;
@@ -709,12 +712,12 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                       Text(
                         'Single',
                         style: buildTextStyle(
-                            color: maritalStatus == "Single"
-                                ? kTextColor
-                                : gHintTextColor,
-                            fontFamily: maritalStatus == "Single"
-                                ? kFontMedium
-                                : kFontBook,
+                          color: maritalStatus == "Single"
+                              ? kTextColor
+                              : gHintTextColor,
+                          fontFamily: maritalStatus == "Single"
+                              ? kFontMedium
+                              : kFontBook,
                         ),
                       ),
                     ],
@@ -976,6 +979,28 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: 2.h,
+            ),
+            buildLabelTextField('Profession',
+                fontSize: questionFont, key: professionKey),
+            TextFormField(
+              textCapitalization: TextCapitalization.sentences,
+              controller: professionController,
+              cursorColor: kPrimaryColor,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return 'Please enter your Profession';
+                } else {
+                  return null;
+                }
+              },
+              decoration: CommonDecoration.buildTextInputDecoration(
+                  "Your answer", professionController),
+              textInputAction: TextInputAction.next,
+              textAlign: TextAlign.start,
+              keyboardType: TextInputType.streetAddress,
             ),
             SizedBox(
               height: 2.h,
@@ -2231,7 +2256,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
                               .remove(otherText);
                         }
 
-                        print("Medical Interventions : $selectedmedicalInterventionsDoneBeforeList");
+                        print(
+                            "Medical Interventions : $selectedmedicalInterventionsDoneBeforeList");
                       });
                     },
                   ),
@@ -2427,6 +2453,11 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             duration: const Duration(milliseconds: 1000));
         AppConfig().showSnackbar(context, "Please Select Marital Status",
             isError: true, bottomPadding: 100);
+      } else if (professionController.text.isEmpty) {
+        Scrollable.ensureVisible(professionKey.currentContext!,
+            duration: const Duration(milliseconds: 1000));
+        AppConfig().showSnackbar(context, "Please Mention Your Profession",
+            isError: true, bottomPadding: 100);
       } else if (address1Controller.text.isEmpty) {
         Scrollable.ensureVisible(flatKey.currentContext!,
             duration: const Duration(milliseconds: 1000));
@@ -2590,6 +2621,11 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
             duration: const Duration(milliseconds: 1000));
         AppConfig().showSnackbar(context, "Please Select Marital Status",
             isError: true, bottomPadding: 100);
+      } else if (professionController.text.isEmpty) {
+        Scrollable.ensureVisible(professionKey.currentContext!,
+            duration: const Duration(milliseconds: 1000));
+        AppConfig().showSnackbar(context, "Please Mention Your Profession",
+            isError: true, bottomPadding: 100);
       } else if (address1Controller.text.isEmpty) {
         Scrollable.ensureVisible(flatKey.currentContext!,
             duration: const Duration(milliseconds: 1000));
@@ -2748,6 +2784,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
       email: emailController.text,
       age: ageController.text,
       gender: gender,
+      profession: professionController.text.capitalize(),
       address1: "No. " + address1Controller.text,
       address2: address2Controller.text,
       city: cityController.text,
@@ -2801,7 +2838,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
       setState(() {
         isSubmitPressed = false;
       });
-      _pref!.setString(AppConfig.EVAL_STATUS, "evaluation_done");
+      // _pref!.setString(AppConfig.EVAL_STATUS, "evaluation_done");
       // AppConfig().showSnackbar(context, result.message ?? '');
       Navigator.push(
         context,
@@ -2852,48 +2889,192 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Expanded(
-            child: CustomDropdownButton2(
-              // buttonHeight: 25,
-              // buttonWidth: 45.w,
-              hint: 'Feet',
-              dropdownItems: lst,
-              value: ft == -1 ? null : ft.toString(),
-              onChanged: (value) {
-                setState(() {
-                  ft = int.tryParse(value!) ?? -1;
-                });
-              },
-              buttonDecoration: BoxDecoration(
-                color: gWhiteColor,
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: gMainColor, width: 1),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton2<String>(
+                isExpanded: true,
+                hint: Text(
+                  'Feet',
+                  style: TextStyle(
+                    fontSize: 14.dp,
+                    fontFamily: kFontMedium,
+                    color: gBlackColor,
+                  ),
+                ),
+                items: lst
+                    .map((String item) => DropdownMenuItem<String>(
+                          value: item,
+                          child: Text(
+                            item,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: gBlackColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ))
+                    .toList(),
+                value: ft == -1 ? null : ft.toString(),
+                onChanged: (value) {
+                  setState(() {
+                    ft = int.tryParse(value!) ?? -1;
+                  });
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: 50,
+                  width: 160,
+                  padding: const EdgeInsets.only(left: 14, right: 14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: Colors.black26,
+                    ),
+                    color: gWhiteColor,
+                  ),
+                  elevation: 2,
+                ),
+                iconStyleData: IconStyleData(
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down_outlined,
+                  ),
+                  iconSize: 14.dp,
+                  iconEnabledColor: gBlackColor,
+                  iconDisabledColor: Colors.grey,
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  maxHeight: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    color: gWhiteColor,
+                  ),
+                  offset: const Offset(-20, 0),
+                  scrollbarTheme: ScrollbarThemeData(
+                    radius: const Radius.circular(40),
+                    thickness: MaterialStateProperty.all(6),
+                    thumbVisibility: MaterialStateProperty.all(true),
+                  ),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  height: 40,
+                  padding: EdgeInsets.only(left: 14, right: 14),
+                ),
               ),
-              icon: Icon(Icons.keyboard_arrow_down_outlined),
             ),
+            // CustomDropdownButton2(
+            //   // buttonHeight: 25,
+            //   // buttonWidth: 45.w,
+            //   hint: 'Feet',
+            //   dropdownItems: lst,
+            //   value: ft == -1 ? null : ft.toString(),
+            //   onChanged: (value) {
+            //     setState(() {
+            //       ft = int.tryParse(value!) ?? -1;
+            //     });
+            //   },
+            //   buttonDecoration: BoxDecoration(
+            //     color: gWhiteColor,
+            //     borderRadius: BorderRadius.circular(5),
+            //     border: Border.all(color: gMainColor, width: 1),
+            //   ),
+            //   icon: Icon(Icons.keyboard_arrow_down_outlined),
+            // ),
           ),
           SizedBox(
             width: 10,
           ),
           Expanded(
-            child: CustomDropdownButton2(
-              // buttonHeight: 25,
-              // buttonWidth: 45.w,
-
-              hint: 'Inches',
-              dropdownItems: lst1,
-              value: (inches == -1) ? null : inches.toString(),
-              onChanged: (value) {
-                setState(() {
-                  inches = int.tryParse(value!) ?? -1;
-                });
-              },
-              buttonDecoration: BoxDecoration(
-                color: gWhiteColor,
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: gMainColor, width: 1),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton2<String>(
+                isExpanded: true,
+                hint: Text(
+                  'Inches',
+                  style: TextStyle(
+                    fontSize: 14.dp,
+                    fontFamily: kFontMedium,
+                    color: gBlackColor,
+                  ),
+                ),
+                items: lst1
+                    .map((String item) => DropdownMenuItem<String>(
+                          value: item,
+                          child: Text(
+                            item,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: gBlackColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ))
+                    .toList(),
+                value: (inches == -1) ? null : inches.toString(),
+                onChanged: (value) {
+                  setState(() {
+                    inches = int.tryParse(value!) ?? -1;
+                  });
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: 50,
+                  width: 160,
+                  padding: const EdgeInsets.only(left: 14, right: 14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: Colors.black26,
+                    ),
+                    color: gWhiteColor,
+                  ),
+                  elevation: 2,
+                ),
+                iconStyleData: IconStyleData(
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down_outlined,
+                  ),
+                  iconSize: 14.dp,
+                  iconEnabledColor: gBlackColor,
+                  iconDisabledColor: Colors.grey,
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  maxHeight: 200,
+                  width: 200,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    color: gWhiteColor,
+                  ),
+                  offset: const Offset(-20, 0),
+                  scrollbarTheme: ScrollbarThemeData(
+                    radius: const Radius.circular(40),
+                    thickness: MaterialStateProperty.all(6),
+                    thumbVisibility: MaterialStateProperty.all(true),
+                  ),
+                ),
+                menuItemStyleData: const MenuItemStyleData(
+                  height: 40,
+                  padding: EdgeInsets.only(left: 14, right: 14),
+                ),
               ),
-              icon: Icon(Icons.keyboard_arrow_down_outlined),
             ),
+            // CustomDropdownButton2(
+            //   // buttonHeight: 25,
+            //   // buttonWidth: 45.w,
+            //
+            //   hint: 'Inches',
+            //   dropdownItems: lst1,
+            //   value: (inches == -1) ? null : inches.toString(),
+            //   onChanged: (value) {
+            //     setState(() {
+            //       inches = int.tryParse(value!) ?? -1;
+            //     });
+            //   },
+            //   buttonDecoration: BoxDecoration(
+            //     color: gWhiteColor,
+            //     borderRadius: BorderRadius.circular(5),
+            //     border: Border.all(color: gMainColor, width: 1),
+            //   ),
+            //   icon: Icon(Icons.keyboard_arrow_down_outlined),
+            // ),
           ),
         ],
       ),
@@ -3529,6 +3710,7 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
     emailController.text = model.patient?.user?.email ?? '';
     print("age: ${model.patient?.user?.toJson()}");
     ageController.text = model.patient?.user?.age ?? '';
+    professionController.text = model.patient?.user?.profession ?? '';
     address1Controller.text = model.patient?.user?.address ?? '';
     address2Controller.text = model.patient?.address2 ?? '';
     stateController.text = model.patient?.state ?? '';
@@ -3627,11 +3809,12 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
     });
     urinSmellController.text = model.urineSmellOther ?? '';
 
-    selectedUrinLooksList
-        .addAll(List.from(jsonDecode(model.urineLookLike ?? '')));
-    selectedUrinLooksList = List.from(
-        (selectedUrinLooksList[0].split(',') as List).map((e) => e).toList());
-    urineLookLikeValue = selectedUrinLooksList.first;
+    // selectedUrinLooksList
+    //     .addAll(List.from(jsonDecode(model.urineLookLike ?? '')));
+    // selectedUrinLooksList = List.from(
+    //     (selectedUrinLooksList[0].split(',') as List).map((e) => e).toList());
+    urineLookLikeValue = model.urineLookLike ?? '';
+        // selectedUrinLooksList.first;
     // urinLooksList.forEach((element) {
     //   if(selectedUrinLooksList.any((element1) => element1 == element.title)){
     //     element.value = true;
@@ -3784,7 +3967,8 @@ class _PersonalDetailsScreenState extends State<PersonalDetailsScreen> {
         setState(() {
           stateController.text = model.response.postOffice.first.state ?? '';
           cityController.text = model.response.postOffice.first.district ?? '';
-          countryController.text = model.response.postOffice.first.country ?? '';
+          countryController.text =
+              model.response.postOffice.first.country ?? '';
         });
       }
     } else {

@@ -28,7 +28,7 @@ class ChildSlotModel {
 
   factory ChildSlotModel.fromJson(Map<String, dynamic> json) => ChildSlotModel(
     isBooked: json["is_booked"].toString(),
-    slot: json["slot"],
+    slot: json["slot"].toString(),
   );
 
   Map<String, dynamic> toJson() => {

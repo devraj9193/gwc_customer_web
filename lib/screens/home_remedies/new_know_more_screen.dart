@@ -11,6 +11,7 @@ import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/video/normal_video.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:image_network/image_network.dart';
 import 'package:video_player/video_player.dart';
 
 class NewKnowMoreScreen extends StatefulWidget {
@@ -291,13 +292,28 @@ class _NewKnowMoreScreenState extends State<NewKnowMoreScreen> {
           minScale: 0.5,
           maxScale: 2,
           child: Center(
-            child: FadeInImage(
-              placeholder: AssetImage("assets/images/placeholder.png"),
-              image: NetworkImage("${Uri.parse(knowMore)}"),
-              imageErrorBuilder: (_, __, ___) {
-                return Image.asset("assets/images/placeholder.png");
+            child:  ImageNetwork(
+              image: knowMore,
+              height: 100.h,
+              width: 100.w,
+              fitAndroidIos: BoxFit.contain,
+              fitWeb: BoxFitWeb.contain,
+              onLoading: const CircularProgressIndicator(
+                color: Colors.indigoAccent,
+              ),
+              onError: Image.asset(
+                  "assets/images/placeholder.png"),
+              onTap: () {
+                debugPrint("©gabriel_patrick_souza");
               },
             ),
+            // FadeInImage(
+            //   placeholder: AssetImage("assets/images/placeholder.png"),
+            //   image: NetworkImage("${Uri.parse(knowMore)}"),
+            //   imageErrorBuilder: (_, __, ___) {
+            //     return Image.asset("assets/images/placeholder.png");
+            //   },
+            // ),
             // child: FadeInImage.memoryNetwork(
             //   placeholder: placeHolderImage!.buffer.asUint8List(),
             //   image: "${Uri.parse(knowMore)}",

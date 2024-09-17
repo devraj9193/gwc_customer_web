@@ -82,7 +82,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _pref = await SharedPreferences.getInstance();
     setState(() {
       deviceId = _pref!.getString(AppConfig().deviceId);
-      fcmToken = _pref!.getString(AppConfig.FCM_TOKEN);
+      // fcmToken = _pref!.getString(AppConfig.FCM_TOKEN);
+      fcmToken = _pref!.getString(AppConfig.FCM_WEB_TOKEN);
     });
     print("fcm token: $fcmToken");
     print("devId: $deviceId");
@@ -693,6 +694,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() {
       isLoading = true;
     });
+    print("fcmToken : $fcmToken");
     final res = await _userRegisterService.registerUserService(
         name: name,
         age: int.parse(age),
@@ -701,7 +703,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         phone: mobileNumber,
         countryCode: countryCode,
         deviceId: deviceId!,
-      fcmToken: fcmToken ?? '',
+      fcmToken: '',
+      webDeviceToken: fcmToken ?? '',
     );
 
     print("registerUser:$res");

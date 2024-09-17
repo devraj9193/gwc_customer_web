@@ -9,6 +9,7 @@ class ChildEvalUser {
   String? countryCode;
   String? phone;
   String? gender;
+  String? profession;
   String? profile;
   String? address;
   String? otp;
@@ -34,6 +35,7 @@ class ChildEvalUser {
         this.countryCode,
         this.phone,
         this.gender,
+        this.profession,
         this.profile,
         this.address,
         this.otp,
@@ -60,6 +62,7 @@ class ChildEvalUser {
     countryCode = json['country_code'] ?? '';
     phone = json['phone'] ?? '';
     gender = json['gender'] ?? '';
+    profession = json['profession'] ?? '';
     profile = json['profile'] ?? '';
     address = json['address'] ?? '';
     otp = json['otp'] ?? '';
@@ -87,6 +90,7 @@ class ChildEvalUser {
     data['country_code'] = this.countryCode;
     data['phone'] = this.phone;
     data['gender'] = this.gender;
+    data['profession'] = this.profession;
     data['profile'] = this.profile;
     data['address'] = this.address;
     data['otp'] = this.otp;

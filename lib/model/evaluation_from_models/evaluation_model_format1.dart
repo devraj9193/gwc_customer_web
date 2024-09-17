@@ -6,6 +6,7 @@ class EvaluationModelFormat1{
   String email;
   String age;
   String gender;
+  String profession;
   String address1;
   String address2;
   String state;
@@ -44,6 +45,7 @@ class EvaluationModelFormat1{
       required this.email,
       required this.age,
       required this.gender,
+        required this.profession,
       required this.address1,
       required this.address2,
       required this.state,
@@ -83,6 +85,7 @@ class EvaluationModelFormat1{
     data['email'] = this.email;
     data['age'] = this.age;
     data['gender'] = this.gender;
+    data['profession'] = this.profession;
     data['address'] = this.address1;
     data['address2'] = this.address2;
     data['city'] = this.city;
@@ -123,6 +126,7 @@ class EvaluationModelFormat1{
       email: map['email'] as String,
       age: map['age'] as String,
       gender: map['gender'] as String,
+        profession : map['profession'] as String,
       address1: map['address'] as String,
       address2: map['address2'] as String,
       state: map['state'] as String,

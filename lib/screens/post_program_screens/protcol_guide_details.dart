@@ -28,6 +28,7 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    Navigator.pop(context);
     viewPdf();
   }
 

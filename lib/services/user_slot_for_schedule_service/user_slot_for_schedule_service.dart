@@ -16,8 +16,7 @@ class GetUserScheduleSlotsForService{
     return await repository.getFollowUpSlotsScheduleRepo(selectedDate,appointmentId: appointmentId);
   }
 
-  Future submitSlotSelectedService(String selectedDate, String startTime, String endTime) async{
-    print("start: $startTime");
-    return await repository.submitSlotSelectedRepo(selectedDate, startTime, endTime);
+  Future submitSlotSelectedService(Map data) async{
+    return await repository.submitSlotSelectedRepo(data);
   }
 }

@@ -15,6 +15,7 @@ import '../../widgets/exit_widget.dart';
 import '../../widgets/widgets.dart';
 import '../gut_list_screens/new_stages_data.dart';
 import '../user_registration/existing_user.dart';
+import 'evaluation_form_page1.dart';
 import 'personal_details_screen.dart';
 
 class EvaluationFormScreen extends StatefulWidget {
@@ -37,7 +38,9 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
     // TODO: implement initState
     super.initState();
     print("_currentUser: ${_pref.getString(AppConfig.User_Name)}");
-    _currentUser = _pref.getString(AppConfig.User_Name) ?? '';
+    setState(() {
+      _currentUser = _pref.getString(AppConfig.User_Name) ?? '';
+    });
   }
 
   @override
@@ -171,7 +174,8 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => const PersonalDetailsScreen(),
+                              builder: (context) => const EvaluationFormPage1(),
+                              // const PersonalDetailsScreen(showData: true,),
                             ),
                           );
                       

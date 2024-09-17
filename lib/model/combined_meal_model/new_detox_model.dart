@@ -2,6 +2,7 @@ import 'detox_nourish_model/child_detox_model.dart';
 
 class NewDetoxModel {
   String? data;
+  String? mealNote;
   int? totalDays;
   ChildDetoxModel? value;
   /// isHealingStarted this is for showing clap sheet in detox screen
@@ -9,11 +10,12 @@ class NewDetoxModel {
   /// isNourishStarted this is for showing clap sheet in healing screen
   // bool? isNourishStarted;
 
-  NewDetoxModel({this.data, this.totalDays, this.value});
+  NewDetoxModel({this.data, this.mealNote, this.totalDays, this.value});
 
   NewDetoxModel.fromJson(Map<String, dynamic> json) {
     data = json['data'];
     totalDays = json['total_days'];
+    mealNote = json['meal_note'].toString();
     value = json['value'] != null ? new ChildDetoxModel.fromJson(json['value']) : null;
     isHealingStarted = json['is_healing_started'] != null  ? json['is_healing_started'].toString() == "1" ? true : false : false;
     // isNourishStarted = json['is_nourish_started'] != null  ? json['is_nourish_started'].toString() == "1" ? true : false : false;
@@ -23,6 +25,7 @@ class NewDetoxModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['data'] = this.data;
+    data['meal_note'] = this.mealNote;
     data['total_days'] = this.totalDays;
 
     if (this.value != null) {

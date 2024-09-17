@@ -13,7 +13,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:gwc_customer_web/model/evaluation_from_models/get_evaluation_model/child_get_evaluation_data_model.dart';
 import 'package:gwc_customer_web/repository/evaluation_form_repository/evanluation_form_repo.dart';
 import 'package:gwc_customer_web/services/evaluation_fome_service/evaluation_form_service.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:http/http.dart' as http;
 import '../../../utils/app_config.dart';
 import '../../model/error_model.dart';
 import '../../model/evaluation_from_models/get_evaluation_model/get_evaluationdata_model.dart';
@@ -94,7 +95,6 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
   List selectedMealPreferenceList = [];
   List selectedHungerPatternList = [];
   List selectedBowelPatternList = [];
-
 
   final tongueCoatingList = [
     CheckBoxSettings(title: "Clear"),
@@ -359,8 +359,7 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
             ),
       child: SafeArea(
         child: Scaffold(
-          body:
-          LayoutBuilder(builder: (context, constraints) {
+          body: LayoutBuilder(builder: (context, constraints) {
             return Stack(
               fit: StackFit.expand,
               children: [
@@ -459,30 +458,33 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: Padding(
-        padding:
-            EdgeInsets.symmetric(horizontal: (widget.isFromProfile) ? 2 : 0,vertical:(widget.isFromProfile) ? 2.h : 0 ),
+        padding: EdgeInsets.symmetric(
+            horizontal: (widget.isFromProfile) ? 2 : 0,
+            vertical: (widget.isFromProfile) ? 2.h : 0),
         child: Column(
           children: [
             if (!widget.isFromProfile)
               Padding(
-                padding: EdgeInsets.only(left: 1.8.w, right: 1.w, top: 1.h, bottom: 1.h),
+                  padding: EdgeInsets.only(
+                      left: 1.8.w, right: 1.w, top: 1.h, bottom: 1.h),
                   child: buildAppBar(() {
-      Navigator.pop(context);
-    })
-              ),
+                    Navigator.pop(context);
+                  })),
             Padding(
               padding: EdgeInsets.only(left: 4.w, right: 4.w),
-              child: _mainView(model)
+              child: SizedBox(
+                // width: MediaQuery.of(context).size.shortestSide > 600 ? 40.w : double.maxFinite,
+                child: _mainView(model),
+              ),
             )
             // SizedBox(height: 1.h),
-
           ],
         ),
       ),
     );
   }
 
-  _mainView(ChildGetEvaluationDataModel? model){
+  _mainView(ChildGetEvaluationDataModel? model) {
     return Column(
       children: [
         buildPersonalDetails(model),
@@ -637,6 +639,10 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
         SizedBox(height: 1.h),
         buildGenderButton(
             "${model?.patient?.user?.gender.toString().capitalize()}"),
+        SizedBox(height: 1.h),
+        buildLabelTextField('Profession', fontSize: questionFont),
+        SizedBox(height: 1.h),
+        buildContainer(model?.patient?.user?.profession ?? ''),
         // Row(
         //   children: [
         //     Radio(
@@ -857,7 +863,8 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
         SizedBox(height: 1.h),
         buildLabelTextField("Urine Color", fontSize: questionFont),
         SizedBox(height: 1.h),
-        buildUrineColorRadioButton("${model?.urineColor.toString().capitalize()}"),
+        buildUrineColorRadioButton(
+            "${model?.urineColor.toString().capitalize()}"),
         buildContainer(model?.urineColorOther ?? ""),
         SizedBox(height: 1.h),
         buildLabelTextField("Urine Smell", fontSize: questionFont),
@@ -1049,7 +1056,8 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
           ],
         ),
         SizedBox(height: 2.h),
-        buildLabelTextField("To Customize Your Meal Plans & Make It As Simple & Easy For You To Follow As Possible",
+        buildLabelTextField(
+            "To Customize Your Meal Plans & Make It As Simple & Easy For You To Follow As Possible",
             fontSize: questionFont),
         SizedBox(height: 1.h),
         Visibility(
@@ -1061,7 +1069,7 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
             horizontalTitleGap: 0,
             dense: true,
             contentPadding:
-            const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
             leading: const Icon(
               Icons.radio_button_checked,
               color: gsecondaryColor,
@@ -1081,12 +1089,13 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
           visible: model?.vegNonVegVeganOther != null,
           child: buildContainer(model?.vegNonVegVeganOther ?? ""),
         ),
-        buildLabelTextField("What Do You Usually Have As Your Morning Beverage/Snack", fontSize: questionFont),
+        buildLabelTextField(
+            "What Do You Usually Have As Your Morning Beverage/Snack",
+            fontSize: questionFont),
         SizedBox(height: 1.h),
         buildContainer(model?.earlyMorning ?? ""),
         SizedBox(height: 1.h),
-        buildLabelTextField(
-            "What Do You Usually Have For Breakfast",
+        buildLabelTextField("What Do You Usually Have For Breakfast",
             fontSize: questionFont),
         SizedBox(height: 1.h),
         buildContainer(model?.breakfast ?? ""),
@@ -1097,8 +1106,7 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
         SizedBox(height: 1.h),
         buildContainer(model?.midDay ?? ""),
         SizedBox(height: 1.h),
-        buildLabelTextField(
-            "What Do You Usually Have For Lunch",
+        buildLabelTextField("What Do You Usually Have For Lunch",
             fontSize: questionFont),
         SizedBox(height: 1.h),
         buildContainer(model?.lunch ?? ""),
@@ -1109,14 +1117,12 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
         SizedBox(height: 1.h),
         buildContainer(model?.evening ?? ""),
         SizedBox(height: 1.h),
-        buildLabelTextField(
-            "What Do You Usually Have For Dinner",
+        buildLabelTextField("What Do You Usually Have For Dinner",
             fontSize: questionFont),
         SizedBox(height: 1.h),
         buildContainer(model?.dinner ?? ""),
         SizedBox(height: 1.h),
-        buildLabelTextField(
-            "What Do You Usually Have Post Dinner/Beverage",
+        buildLabelTextField("What Do You Usually Have Post Dinner/Beverage",
             fontSize: questionFont),
         SizedBox(height: 1.h),
         buildContainer(model?.postDinner ?? ""),
@@ -1463,7 +1469,7 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
           backgroundColor: getColor(Colors.white, const Color(0xffCBFE86)),
         ),
         child: Padding(
-          padding:  EdgeInsets.symmetric(vertical: 1.h),
+          padding: EdgeInsets.symmetric(vertical: 1.h),
           child: Row(
             children: [
               Expanded(
@@ -1516,7 +1522,8 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
         .addAll(List.from(jsonDecode(anyUrinationIssue ?? '')));
     selectedUrinationList = List.from(
         (selectedUrinationList[0].split(',') as List).map((e) => e).toList());
-    urineColorValue = selectedUrinationList.first.toString().trim().toTitleCase();
+    urineColorValue =
+        selectedUrinationList.first.toString().trim().toTitleCase();
 
     return ListView.builder(
       shrinkWrap: true,
@@ -1686,10 +1693,6 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
   buildMaritalStatusButton(String title) {
     print("maritalStatus: $title");
     selectedMaritalStatus = title.split(",");
-    // selectedMaritalStatus.add(List.from(jsonDecode(title ?? '')));
-    // selectedMaritalStatus = List.from(
-    //     (selectedMaritalStatus[0].split(',') as List).map((e) => e).toList());
-    // maritalStatus = selectedMaritalStatus.first.toString().toTitleCase();
     print(selectedMaritalStatus);
     print("maritalStatus1: $maritalStatus");
     return ListView.builder(
@@ -1938,13 +1941,14 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
           horizontalTitleGap: 0,
           dense: true,
           contentPadding:
-          const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: const Icon(
             Icons.radio_button_checked,
             color: gsecondaryColor,
           ),
           title: Text(
-            selectedTongueCoatingList[index].toString().trim().toTitleCase() ?? "",
+            selectedTongueCoatingList[index].toString().trim().toTitleCase() ??
+                "",
             style: TextStyle(
               fontSize: 10.sp,
               height: 1.3,
@@ -2055,7 +2059,7 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
           horizontalTitleGap: 0,
           dense: true,
           contentPadding:
-          const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: const Icon(
             Icons.radio_button_checked,
             color: gsecondaryColor,
@@ -2172,7 +2176,7 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
           horizontalTitleGap: 0,
           dense: true,
           contentPadding:
-          const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: const Icon(
             Icons.radio_button_checked,
             color: gsecondaryColor,
@@ -2289,13 +2293,14 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
           horizontalTitleGap: 0,
           dense: true,
           contentPadding:
-          const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: const Icon(
             Icons.radio_button_checked,
             color: gsecondaryColor,
           ),
           title: Text(
-            selectedMealPreferenceList[index].toString().trim().toTitleCase() ?? "",
+            selectedMealPreferenceList[index].toString().trim().toTitleCase() ??
+                "",
             style: TextStyle(
               fontSize: 10.sp,
               height: 1.3,
@@ -2406,13 +2411,14 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
           horizontalTitleGap: 0,
           dense: true,
           contentPadding:
-          const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: const Icon(
             Icons.radio_button_checked,
             color: gsecondaryColor,
           ),
           title: Text(
-            selectedHungerPatternList[index].toString().trim().toTitleCase() ?? "",
+            selectedHungerPatternList[index].toString().trim().toTitleCase() ??
+                "",
             style: TextStyle(
               fontSize: 10.sp,
               height: 1.3,
@@ -2446,13 +2452,14 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
           horizontalTitleGap: 0,
           dense: true,
           contentPadding:
-          const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: const Icon(
             Icons.radio_button_checked,
             color: gsecondaryColor,
           ),
           title: Text(
-            selectedBowelPatternList[index].toString().trim().toTitleCase() ?? "",
+            selectedBowelPatternList[index].toString().trim().toTitleCase() ??
+                "",
             style: TextStyle(
               fontSize: 10.sp,
               height: 1.3,
@@ -2547,7 +2554,8 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
     selectedUrinColorList.addAll(List.from(jsonDecode(title ?? '')));
     selectedUrinColorList = List.from(
         (selectedUrinColorList[0].split(',') as List).map((e) => e).toList());
-    urineColorValue = selectedUrinColorList.first.toString().trim().toTitleCase();
+    urineColorValue =
+        selectedUrinColorList.first.toString().trim().toTitleCase();
 
     return ListView.builder(
       shrinkWrap: true,
@@ -2668,27 +2676,27 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
     //   physics: const NeverScrollableScrollPhysics(),
     //   itemCount: selectedUrinLooksList.length,
     //   itemBuilder: (context, index) {
-        return ListTile(
-          visualDensity: VisualDensity(vertical: -3), // to compact
-          minVerticalPadding: 0,
-          minLeadingWidth: 30,
-          horizontalTitleGap: 0,
-          dense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-          leading: const Icon(
-            Icons.radio_button_checked,
-            color: gsecondaryColor,
-          ),
-          title: Text(
-            urineLookLike ?? "",
-            style: TextStyle(
-              fontSize: 10.sp,
-              height: 1.3,
-              color: gBlackColor,
-              fontFamily: kFontBook,
-            ),
-          ),
-        );
+    return ListTile(
+      visualDensity: VisualDensity(vertical: -3), // to compact
+      minVerticalPadding: 0,
+      minLeadingWidth: 30,
+      horizontalTitleGap: 0,
+      dense: true,
+      contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+      leading: const Icon(
+        Icons.radio_button_checked,
+        color: gsecondaryColor,
+      ),
+      title: Text(
+        urineLookLike ?? "",
+        style: TextStyle(
+          fontSize: 10.sp,
+          height: 1.3,
+          color: gBlackColor,
+          fontFamily: kFontBook,
+        ),
+      ),
+    );
     //   },
     // );
   }
@@ -2876,13 +2884,14 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
     return splitStrings;
   }
 
-
   void getDetails(ChildGetEvaluationDataModel? model) {
     //---- health checkbox1 ----//
     print(model?.listProblems);
     print("health1");
     List lifeStyle = splitString(jsonDecode("${model?.listProblems}")
-        .toString().replaceAll('[', '').replaceAll(']', ''));
+        .toString()
+        .replaceAll('[', '')
+        .replaceAll(']', ''));
     print("lifeStyle: $lifeStyle");
     selectedHealthCheckBox1 = lifeStyle;
     print("selectedHealthCheckBox1: $selectedHealthCheckBox1");
@@ -2962,12 +2971,11 @@ class _EvaluationGetDetailsState extends State<EvaluationGetDetails> {
     return font;
   }
 
-
   String totTitle(String input) {
     final List<String> splitStr = input.split(' ');
     for (int i = 0; i < splitStr.length; i++) {
       splitStr[i] =
-      '${splitStr[i][0].toUpperCase()}${splitStr[i].substring(1)}';
+          '${splitStr[i][0].toUpperCase()}${splitStr[i].substring(1)}';
     }
     final output = splitStr.join(' ');
     return output;

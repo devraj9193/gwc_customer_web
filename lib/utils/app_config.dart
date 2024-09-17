@@ -76,7 +76,9 @@ class AppConfig{
   static const String EVAL_STATUS = 'eval_status';
   static const String last_login = "last_login";
   static const String FCM_TOKEN = "fcm_token";
+  static const String FCM_WEB_TOKEN = "fcm_web_token";
   static const String SHIPPING_ADDRESS = "ship_address";
+  static const String userId = "userId";
   static const String User_Name = "userName";
   static const String USER_ID = "userId";
   static const String User_Profile ="userProfile";
@@ -133,6 +135,8 @@ class AppConfig{
 
   static String appointmentId = "appoint_id";
 
+  static String userDoctorId = "user_doctor_id";
+
   static String isPrepTrackerCompleted = "isPrepTrackerSubmitted";
 
   static String eval1 = "eval1";
@@ -140,11 +144,12 @@ class AppConfig{
 
   static String gutHealthTrackerZeroCount = 'gutHealthTrackerZeroCount';
   static String gutHealthTrackerOneCount = 'gutHealthTrackerOneCount';
-
-
+  
   //---Razorpay secret keys -----------------
+
   static const KEY_ID = "rzp_test_mGdJGjZKpJswFa";
   static const SECRET_KEY = "A9AgMVJOVRe1199AiprO0n7u";
+
   // ------------------END ------------
 
   SharedPreferences? preferences;

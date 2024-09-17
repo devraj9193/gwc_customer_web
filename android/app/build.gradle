@@ -103,6 +103,10 @@ android {
 
             resValue "string", "fb_provider_id", "com.facebook.app.FacebookContentProvider{app_id_2}"
 
+            ndk {
+                abiFilters 'armeabi-v7a'
+            }
+
         }
     }
     configurations {
@@ -158,5 +162,12 @@ dependencies {
 
     implementation 'androidx.work:work-runtime-ktx:2.8.1'
     implementation 'com.google.firebase:firebase-messaging:23.1.2'
+
+    def exoplayer_version = "...specify-version-here...."
+    implementation "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
+    implementation "com.google.android.exoplayer:exoplayer-dash:$exoplayer_version"
+    implementation "com.google.android.exoplayer:exoplayer-hls:$exoplayer_version"
+    implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:$exoplayer_version"
+
 
 }

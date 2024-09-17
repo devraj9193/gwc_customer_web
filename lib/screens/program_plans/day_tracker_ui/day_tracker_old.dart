@@ -4,7 +4,7 @@
 // import 'package:get/get.dart';
 // import 'package:gwc_customer/model/error_model.dart';
 // import 'package:gwc_customer/model/program_model/proceed_model/get_proceed_model.dart';
-// import 'package:gwc_customer/model/program_model/proceed_model/send_proceed_program_model.dart';
+// import 'package:gwc_customer/model/program_model/proceed_model/send_meal_plan_tracker_model.dart';
 // import 'package:gwc_customer/repository/api_service.dart';
 // import 'package:gwc_customer/repository/program_repository/program_repository.dart';
 // import 'package:gwc_customer/screens/evalution_form/check_box_settings.dart';
@@ -884,29 +884,29 @@
 //             SizedBox(
 //               height: 2.5.h,
 //             ),
-//             // buildLabelTextField("Have You Missed Anything In Your Meal Or Yoga Plan Today?"),
-//             // SizedBox(
-//             //   height: 1.h,
-//             // ),
-//             // ...missedAnything.map((e) => Row(
-//             //   children: [
-//             //     Radio<String>(
-//             //       value: e,
-//             //       activeColor: kPrimaryColor,
-//             //       groupValue: selectedMissedAnything,
-//             //       onChanged: (value) {
-//             //         setState(() {
-//             //           selectedMissedAnything = value as String;
-//             //         });
-//             //       },
-//             //     ),
-//             //     Text(
-//             //       e,
-//             //       style: buildTextStyle(),
-//             //     ),
-//             //   ],
-//             // )),
-//             // showRespectiveWidget()
+//             buildLabelTextField("Have You Missed Anything In Your Meal Or Yoga Plan Today?"),
+//             SizedBox(
+//               height: 1.h,
+//             ),
+//             ...missedAnything.map((e) => Row(
+//               children: [
+//                 Radio<String>(
+//                   value: e,
+//                   activeColor: kPrimaryColor,
+//                   groupValue: selectedMissedAnything,
+//                   onChanged: (value) {
+//                     setState(() {
+//                       selectedMissedAnything = value as String;
+//                     });
+//                   },
+//                 ),
+//                 Text(
+//                   e,
+//                   style: buildTextStyle(),
+//                 ),
+//               ],
+//             )),
+//             showRespectiveWidget(),
 //             symptomsTracker()
 //           ],
 //         ),

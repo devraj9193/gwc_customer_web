@@ -9,6 +9,7 @@ var submitProgramFeedbackFormUrl = "${AppConfig().BASE_URL}/api/submitForm/progr
  */
 
 import 'dart:io';
+import 'package:flutter_emoji_feedback/flutter_emoji_feedback.dart';
 import 'package:gwc_customer_web/screens/medical_program_feedback_screen/post_gut_type_diagnosis.dart';
 import 'package:http/http.dart';
 import 'package:async/async.dart';
@@ -16,6 +17,7 @@ import 'package:async/async.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:reviews_slider/reviews_slider.dart';
 import 'package:tcard/tcard.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
@@ -313,86 +315,90 @@ class _TCardPageState extends State<TCardPage> {
       child: Scaffold(
         body: Padding(
           padding: EdgeInsets.only(left: 3.w, right: 3.w, top: 1.h),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                buildAppBar(() {
-                  Navigator.pop(context);
-                }),
-                SizedBox(
-                  height: 1.h,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Gut Wellness Club Program Feedback ",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          fontFamily: kFontBold,
-                          color: gBlackColor,
-                          height: 1.5,
-                          fontSize: headingFont),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              buildAppBar(() {
+                Navigator.pop(context);
+              }),
+              SizedBox(
+                height: 1.h,
+              ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Gut Wellness Club Program Feedback ",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                        fontFamily: kFontBold,
+                        color: gBlackColor,
+                        height: 1.5,
+                        fontSize: headingFont),
+                  ),
+                  SizedBox(
+                    width: 2.w,
+                  ),
+                  Expanded(
+                    child: Container(
+                      height: 1,
+                      color: kLineColor,
                     ),
-                    SizedBox(
-                      width: 2.w,
-                    ),
-                    Expanded(
-                      child: Container(
-                        height: 1,
-                        color: kLineColor,
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  "We'd Love To Know How We Made You Feel",
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      fontFamily: kFontMedium,
-                      color: gHintTextColor,
-                      height: 1.3,
-                      fontSize: subHeadingFont),
-                ),
-                SizedBox(
-                  height: 1.h,
-                ),
-                // (programContinuesdStatus == null) ?  Container(
-                //   height: 60.h,
-                //   width: double.maxFinite,
-                //   padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 3.w),
-                //   decoration: BoxDecoration(
-                //     color: colors[0].withOpacity(1),
-                //     borderRadius: BorderRadius.circular(16.0),
-                //     boxShadow: [
-                //       BoxShadow(
-                //         offset: const Offset(0, 17),
-                //         blurRadius: 10.0,
-                //         color: gWhiteColor.withOpacity(0.3),
-                //       )
-                //     ],
-                //   ),
-                //   child: Center(
-                //     child: Column(
-                //       crossAxisAlignment: CrossAxisAlignment.center,
-                //       mainAxisAlignment: MainAxisAlignment.center,
-                //       children: [
-                //         buildLabelTextField('Tell us about your program status ',
-                //             fontSize: headingFont),
-                //         SizedBox(height: 3.h),
-                //         buildButtonText(list[0], 0),
-                //         buildButtonText(list[1], 0),
-                //         SizedBox(height: 2.h),
-                //       ],
-                //     ),
-                //   ),
-                // ):
-                Center(
+                  ),
+                ],
+              ),
+              Text(
+                "We'd Love To Know How We Made You Feel",
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                    fontFamily: kFontMedium,
+                    color: gHintTextColor,
+                    height: 1.3,
+                    fontSize: subHeadingFont),
+              ),
+              SizedBox(
+                height: 1.h,
+              ),
+              // (programContinuesdStatus == null) ?  Container(
+              //   height: 60.h,
+              //   width: double.maxFinite,
+              //   padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 3.w),
+              //   decoration: BoxDecoration(
+              //     color: colors[0].withOpacity(1),
+              //     borderRadius: BorderRadius.circular(16.0),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         offset: const Offset(0, 17),
+              //         blurRadius: 10.0,
+              //         color: gWhiteColor.withOpacity(0.3),
+              //       )
+              //     ],
+              //   ),
+              //   child: Center(
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              //         buildLabelTextField('Tell us about your program status ',
+              //             fontSize: headingFont),
+              //         SizedBox(height: 3.h),
+              //         buildButtonText(list[0], 0),
+              //         buildButtonText(list[1], 0),
+              //         SizedBox(height: 2.h),
+              //       ],
+              //     ),
+              //   ),
+              // ):
+              Expanded(
+                child: Center(
                   child: TCard(
                     cards: cards,
                     lockYAxis: true,
-                    size: Size(MediaQuery.of(context).size.shortestSide < 600 ? double.maxFinite : 60.w, 80.h),
+                    size: Size(
+                        MediaQuery.of(context).size.shortestSide < 600
+                            ? double.maxFinite
+                            : 60.w,
+                        80.h),
                     delaySlideFor: 300,
                     controller: _controller,
                     onForward: (index, info) {
@@ -419,53 +425,54 @@ class _TCardPageState extends State<TCardPage> {
                     },
                   ),
                 ),
-                SizedBox(height: 1.h),
-                Center(
-                  child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () {
-                          _controller.back();
-                        },
-                        child: const Icon(
-                          Icons.arrow_back_ios,
-                        ),
+              ),
+              SizedBox(height: 1.h),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        _controller.back();
+                      },
+                      child: const Icon(
+                        Icons.arrow_back_ios,
                       ),
-                      SizedBox(width: 5.w),
-                      Text(
-                        "${_index + 1} of ${colors.length}",
-                        style: TextStyle(
-                          fontSize: 9.sp,
-                          color: gHintTextColor,
-                          height: 1.35,
-                          fontFamily: kFontMedium,
-                        ),
+                    ),
+                    SizedBox(width: 5.w),
+                    Text(
+                      "${_index + 1} of ${colors.length}",
+                      style: TextStyle(
+                        fontSize: 9.sp,
+                        color: gHintTextColor,
+                        height: 1.35,
+                        fontFamily: kFontMedium,
                       ),
-                      SizedBox(width: 5.w),
-                      GestureDetector(
-                        onTap: () {
-                          print(_index);
-                          print(submittedIndex);
-                          print(_index == colors.length - 1);
-                          if (submittedIndex == _index &&
-                              _index != colors.length - 1) {
-                            _controller.forward();
-                          } else {}
-                        },
-                        child: Icon(
-                          Icons.arrow_forward_ios,
-                          color: (submittedIndex == _index &&
-                                  _index != colors.length - 1)
-                              ? gBlackColor
-                              : gGreyColor,
-                        ),
+                    ),
+                    SizedBox(width: 5.w),
+                    GestureDetector(
+                      onTap: () {
+                        print(_index);
+                        print(submittedIndex);
+                        print(_index == colors.length - 1);
+                        if (submittedIndex == _index &&
+                            _index != colors.length - 1) {
+                          _controller.forward();
+                        } else {}
+                      },
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: (submittedIndex == _index &&
+                                _index != colors.length - 1)
+                            ? gBlackColor
+                            : gGreyColor,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -496,7 +503,10 @@ class _TCardPageState extends State<TCardPage> {
           value: healthCheckBox.value,
           tileColor: gWhiteColor,
           checkColor: gWhiteColor,
-          shape: RoundedRectangleBorder(),
+          side: WidgetStateBorderSide.resolveWith(
+            (states) => const BorderSide(width: 1.5, color: gWhiteColor),
+          ),
+          shape: const RoundedRectangleBorder(),
           onChanged: (v) {
             if (from == 'afterProgram') {
               if (healthCheckBox.title == afterTheProgram.last.title) {
@@ -668,98 +678,101 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildLabelTextField(
-                  'Changes I see after the program\n(Pick all that apply)',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              ListView(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  ...afterTheProgram
-                      .map((e) =>
-                          buildHealthCheckBox(e, 'afterProgram', setstate))
-                      .toList(),
-                  Visibility(
-                    visible: selectedAfterTheProgram.any(
-                        (element) => element == afterTheProgram.last.title),
-                    child: TextFormField(
-                      textCapitalization: TextCapitalization.sentences,
-                      controller: afterTheProgramController,
-                      cursorColor: kPrimaryColor,
-                      validator: (value) {
-                        if (value!.isEmpty &&
-                            selectedAfterTheProgram
-                                .any((element) => element.contains("Other:"))) {
-                          return 'Please Mention Other Details with minimum 2 characters';
-                        } else {
-                          return null;
-                        }
-                      },
-                      decoration: InputDecoration(
-                        hintText: "Your Answer",
-                        hintStyle: TextStyle(
-                            fontFamily: eUser().userTextFieldHintFont,
-                            fontSize: eUser().userTextFieldHintFontSize,
-                            color: gWhiteColor),
-                        counterText: "",
-                        border: const UnderlineInputBorder(
-                          borderSide: BorderSide(
-                              color: gWhiteColor,
-                              width: 1.0,
-                              style: BorderStyle.solid),
+          child: SingleChildScrollView(
+            child: Column(
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2.h),
+                buildLabelTextField(
+                    'Changes I see after the program\n(Pick all that apply)',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                ListView(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    ...afterTheProgram
+                        .map((e) =>
+                            buildHealthCheckBox(e, 'afterProgram', setstate))
+                        .toList(),
+                    Visibility(
+                      visible: selectedAfterTheProgram.any(
+                          (element) => element == afterTheProgram.last.title),
+                      child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
+                        controller: afterTheProgramController,
+                        cursorColor: kPrimaryColor,
+                        validator: (value) {
+                          if (value!.isEmpty &&
+                              selectedAfterTheProgram.any(
+                                  (element) => element.contains("Other:"))) {
+                            return 'Please Mention Other Details with minimum 2 characters';
+                          } else {
+                            return null;
+                          }
+                        },
+                        decoration: InputDecoration(
+                          hintText: "Your Answer",
+                          hintStyle: TextStyle(
+                              fontFamily: eUser().userTextFieldHintFont,
+                              fontSize: eUser().userTextFieldHintFontSize,
+                              color: gWhiteColor),
+                          counterText: "",
+                          border: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                                color: gWhiteColor,
+                                width: 1.0,
+                                style: BorderStyle.solid),
+                          ),
+                          // suffixIcon: suffixIcon,
+                          // enabledBorder: enabledBorder,
+                          // focusedBorder: focusBoder,
                         ),
-                        // suffixIcon: suffixIcon,
-                        // enabledBorder: enabledBorder,
-                        // focusedBorder: focusBoder,
+                        textInputAction: TextInputAction.next,
+                        textAlign: TextAlign.start,
+                        keyboardType: TextInputType.text,
                       ),
-                      textInputAction: TextInputAction.next,
-                      textAlign: TextAlign.start,
-                      keyboardType: TextInputType.text,
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 2.h,
-              ),
-              GestureDetector(
-                onTap: () {
-                  if (selectedAfterTheProgram.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One !",
-                        isError: true, bottomPadding: 10);
-                  } else if (selectedAfterTheProgram
-                          .any((element) => element.contains("Other:")) &&
-                      afterTheProgramController.text.isEmpty) {
-                    AppConfig().showSnackbar(
-                        context, "Please Enter your answer",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 0;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                  ],
+                ),
+                SizedBox(
+                  height: 2.h,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedAfterTheProgram.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Any One !",
+                          isError: true, bottomPadding: 10);
+                    } else if (selectedAfterTheProgram
+                            .any((element) => element.contains("Other:")) &&
+                        afterTheProgramController.text.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Enter your answer",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 0;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -782,120 +795,122 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField(
-                  'To What Extent Did The Program Heal Your Gut Issues',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              buildPercentageButton(
-                  gutIssuesList[0],
-                  selectedPercentage == gutIssuesList[0]
-                      ? gsecondaryColor
-                      : gWhiteColor, () {
-                submittedIndex = 1;
-                setState(() {
-                  changedIndex1(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField(
+                    'To What Extent Did The Program Heal Your Gut Issues',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                buildPercentageButton(
                     gutIssuesList[0],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(
-                  gutIssuesList[1],
-                  selectedPercentage == gutIssuesList[1]
-                      ? gsecondaryColor
-                      : gWhiteColor, () {
-                submittedIndex = 1;
-                setState(() {
-                  changedIndex1(
+                    selectedPercentage == gutIssuesList[0]
+                        ? gsecondaryColor
+                        : gWhiteColor, () {
+                  submittedIndex = 1;
+                  setState(() {
+                    changedIndex1(
+                      gutIssuesList[0],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(
                     gutIssuesList[1],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(
-                  gutIssuesList[2],
-                  selectedPercentage == gutIssuesList[2]
-                      ? gMainColor
-                      : gWhiteColor, () {
-                submittedIndex = 1;
-                setState(() {
-                  changedIndex1(
+                    selectedPercentage == gutIssuesList[1]
+                        ? gsecondaryColor
+                        : gWhiteColor, () {
+                  submittedIndex = 1;
+                  setState(() {
+                    changedIndex1(
+                      gutIssuesList[1],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(
                     gutIssuesList[2],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(
-                  gutIssuesList[3],
-                  selectedPercentage == gutIssuesList[3]
-                      ? gMainColor
-                      : gWhiteColor, () {
-                submittedIndex = 1;
-                setState(() {
-                  changedIndex1(
+                    selectedPercentage == gutIssuesList[2]
+                        ? gMainColor
+                        : gWhiteColor, () {
+                  submittedIndex = 1;
+                  setState(() {
+                    changedIndex1(
+                      gutIssuesList[2],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(
                     gutIssuesList[3],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(
-                  gutIssuesList[4],
-                  selectedPercentage == gutIssuesList[4]
-                      ? newDashboardGreenButtonColor
-                      : gWhiteColor, () {
-                submittedIndex = 1;
-                setState(() {
-                  changedIndex1(
+                    selectedPercentage == gutIssuesList[3]
+                        ? gMainColor
+                        : gWhiteColor, () {
+                  submittedIndex = 1;
+                  setState(() {
+                    changedIndex1(
+                      gutIssuesList[3],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(
                     gutIssuesList[4],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(
-                  gutIssuesList[5],
-                  selectedPercentage == gutIssuesList[5]
-                      ? newDashboardGreenButtonColor
-                      : gWhiteColor, () {
-                submittedIndex = 1;
-                setState(() {
-                  changedIndex1(
+                    selectedPercentage == gutIssuesList[4]
+                        ? newDashboardGreenButtonColor
+                        : gWhiteColor, () {
+                  submittedIndex = 1;
+                  setState(() {
+                    changedIndex1(
+                      gutIssuesList[4],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(
                     gutIssuesList[5],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (selectedPercentage.isEmpty) {
-                    AppConfig().showSnackbar(
-                        context, "Please Select Gut Issues",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 1;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                    selectedPercentage == gutIssuesList[5]
+                        ? newDashboardGreenButtonColor
+                        : gWhiteColor, () {
+                  submittedIndex = 1;
+                  setState(() {
+                    changedIndex1(
+                      gutIssuesList[5],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedPercentage.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Gut Issues",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 1;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -918,120 +933,122 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField(
-                  'How well did you stick to the plan given to you (meal plan / yoga plan / breathing exercises)? ',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              buildPercentageButton(
-                  breathingList[0],
-                  selectedBreathing == breathingList[0]
-                      ? gsecondaryColor
-                      : gWhiteColor, () {
-                submittedIndex = 2;
-                setState(() {
-                  changedIndex2(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField(
+                    'How well did you stick to the plan given to you (meal plan / yoga plan / breathing exercises)? ',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                buildPercentageButton(
                     breathingList[0],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(
-                  breathingList[1],
-                  selectedBreathing == breathingList[1]
-                      ? gsecondaryColor
-                      : gWhiteColor, () {
-                submittedIndex = 2;
-                setState(() {
-                  changedIndex2(
+                    selectedBreathing == breathingList[0]
+                        ? gsecondaryColor
+                        : gWhiteColor, () {
+                  submittedIndex = 2;
+                  setState(() {
+                    changedIndex2(
+                      breathingList[0],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(
                     breathingList[1],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(
-                  breathingList[2],
-                  selectedBreathing == breathingList[2]
-                      ? gMainColor
-                      : gWhiteColor, () {
-                submittedIndex = 2;
-                setState(() {
-                  changedIndex2(
+                    selectedBreathing == breathingList[1]
+                        ? gsecondaryColor
+                        : gWhiteColor, () {
+                  submittedIndex = 2;
+                  setState(() {
+                    changedIndex2(
+                      breathingList[1],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(
                     breathingList[2],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(
-                  breathingList[3],
-                  selectedBreathing == breathingList[3]
-                      ? gMainColor
-                      : gWhiteColor, () {
-                submittedIndex = 2;
-                setState(() {
-                  changedIndex2(
+                    selectedBreathing == breathingList[2]
+                        ? gMainColor
+                        : gWhiteColor, () {
+                  submittedIndex = 2;
+                  setState(() {
+                    changedIndex2(
+                      breathingList[2],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(
                     breathingList[3],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(
-                  breathingList[4],
-                  selectedBreathing == breathingList[4]
-                      ? newDashboardGreenButtonColor
-                      : gWhiteColor, () {
-                submittedIndex = 2;
-                setState(() {
-                  changedIndex2(
+                    selectedBreathing == breathingList[3]
+                        ? gMainColor
+                        : gWhiteColor, () {
+                  submittedIndex = 2;
+                  setState(() {
+                    changedIndex2(
+                      breathingList[3],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(
                     breathingList[4],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(
-                  breathingList[5],
-                  selectedBreathing == breathingList[5]
-                      ? newDashboardGreenButtonColor
-                      : gWhiteColor, () {
-                submittedIndex = 2;
-                setState(() {
-                  changedIndex2(
+                    selectedBreathing == breathingList[4]
+                        ? newDashboardGreenButtonColor
+                        : gWhiteColor, () {
+                  submittedIndex = 2;
+                  setState(() {
+                    changedIndex2(
+                      breathingList[4],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(
                     breathingList[5],
-                  );
-                  // _controller.forward();
-                });
-              }),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (selectedBreathing.isEmpty) {
-                    AppConfig().showSnackbar(
-                        context, "Please Select Plan Given to you.",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 2;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                    selectedBreathing == breathingList[5]
+                        ? newDashboardGreenButtonColor
+                        : gWhiteColor, () {
+                  submittedIndex = 2;
+                  setState(() {
+                    changedIndex2(
+                      breathingList[5],
+                    );
+                    // _controller.forward();
+                  });
+                }),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedBreathing.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Plan Given to you.",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 2;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1054,61 +1071,63 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField('Was The Meal Plan Easy To Follow',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              buildPercentageButton(yesNo[0],
-                  mealyesno == yesNo[0] ? gsecondaryColor : gWhiteColor, () {
-                setState(() {
-                  changedIndex3(
-                    yesNo[0],
-                  );
-                  submittedIndex = 3;
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(yesNo[1],
-                  mealyesno == yesNo[1] ? gsecondaryColor : gWhiteColor, () {
-                setState(() {
-                  changedIndex3(
-                    yesNo[1],
-                  );
-                  submittedIndex = 3;
-                  // _controller.forward();
-                });
-              }),
-              SizedBox(height: 4.h),
-              GestureDetector(
-                onTap: () {
-                  if (mealyesno.isEmpty) {
-                    AppConfig().showSnackbar(
-                        context, "Please Select Meal Plan Easy To Follow.",
-                        isError: true, bottomPadding: 10);
-                  } else {
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField('Was The Meal Plan Easy To Follow',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                buildPercentageButton(yesNo[0],
+                    mealyesno == yesNo[0] ? gsecondaryColor : gWhiteColor, () {
+                  setState(() {
+                    changedIndex3(
+                      yesNo[0],
+                    );
                     submittedIndex = 3;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(yesNo[1],
+                    mealyesno == yesNo[1] ? gsecondaryColor : gWhiteColor, () {
+                  setState(() {
+                    changedIndex3(
+                      yesNo[1],
+                    );
+                    submittedIndex = 3;
+                    // _controller.forward();
+                  });
+                }),
+                SizedBox(height: 4.h),
+                GestureDetector(
+                  onTap: () {
+                    if (mealyesno.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Meal Plan Easy To Follow.",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 3;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1131,61 +1150,63 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField('Was The Yoga Plan Easy To Follow',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              buildPercentageButton(yesNo[0],
-                  yogayesno == yesNo[0] ? gsecondaryColor : gWhiteColor, () {
-                setState(() {
-                  changedIndex4(
-                    yesNo[0],
-                  );
-                  submittedIndex = 4;
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(yesNo[1],
-                  yogayesno == yesNo[1] ? gsecondaryColor : gWhiteColor, () {
-                setState(() {
-                  changedIndex4(
-                    yesNo[1],
-                  );
-                  submittedIndex = 4;
-                  // _controller.forward();
-                });
-              }),
-              SizedBox(height: 4.h),
-              GestureDetector(
-                onTap: () {
-                  if (yogayesno.isEmpty) {
-                    AppConfig().showSnackbar(
-                        context, "Please Select Yoga Plan Easy To Follow.",
-                        isError: true, bottomPadding: 10);
-                  } else {
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField('Was The Yoga Plan Easy To Follow',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                buildPercentageButton(yesNo[0],
+                    yogayesno == yesNo[0] ? gsecondaryColor : gWhiteColor, () {
+                  setState(() {
+                    changedIndex4(
+                      yesNo[0],
+                    );
                     submittedIndex = 4;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(yesNo[1],
+                    yogayesno == yesNo[1] ? gsecondaryColor : gWhiteColor, () {
+                  setState(() {
+                    changedIndex4(
+                      yesNo[1],
+                    );
+                    submittedIndex = 4;
+                    // _controller.forward();
+                  });
+                }),
+                SizedBox(height: 4.h),
+                GestureDetector(
+                  onTap: () {
+                    if (yogayesno.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Yoga Plan Easy To Follow.",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 4;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1208,122 +1229,124 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField('Comments On The Meal Or Yoga Plans',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              Container(
-                height: 10.h,
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border:
-                      Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField('Comments On The Meal Or Yoga Plans',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                Container(
+                  height: 10.h,
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                        color: Colors.grey.withOpacity(0.3), width: 1),
+                  ),
+                  child: TextFormField(
+                    maxLines: null, // Set this
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: mealHighLightController,
+                    cursorColor: kPrimaryColor,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Your Answer';
+                      } else if (value.length < 2) {
+                        return emptyStringMsg;
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Your Answer",
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontFamily: eUser().userTextFieldHintFont,
+                        color: eUser().userTextFieldHintColor,
+                        fontSize: eUser().userTextFieldHintFontSize,
+                      ),
+                    ),
+                    // textInputAction: TextInputAction.next,
+                    textAlign: TextAlign.start,
+                    keyboardType: TextInputType.multiline,
+                  ),
                 ),
-                child: TextFormField(
-                  maxLines: null, // Set this
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: mealHighLightController,
-                  cursorColor: kPrimaryColor,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter Your Answer';
-                    } else if (value.length < 2) {
-                      return emptyStringMsg;
+                SizedBox(height: 2.h),
+                buildLabelTextField(
+                    'Has The Program Improved Your Health In Another Way Apart From Your Gut Issues? Please mention',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                Container(
+                  height: 10.h,
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                        color: Colors.grey.withOpacity(0.3), width: 1),
+                  ),
+                  child: TextFormField(
+                    maxLines: null, // Set this
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: improvedHealthController,
+                    cursorColor: kPrimaryColor,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Your Answer';
+                      } else if (value.length < 2) {
+                        return emptyStringMsg;
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Your Answer",
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontFamily: eUser().userTextFieldHintFont,
+                        color: eUser().userTextFieldHintColor,
+                        fontSize: eUser().userTextFieldHintFontSize,
+                      ),
+                    ),
+                    // textInputAction: TextInputAction.next,
+                    textAlign: TextAlign.start,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (mealHighLightController.text.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Add Comments",
+                          isError: true, bottomPadding: 10);
+                    } else if (improvedHealthController.text.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Add Comments",
+                          isError: true, bottomPadding: 10);
                     } else {
-                      return null;
+                      submittedIndex = 5;
+                      _controller.forward();
                     }
                   },
-                  decoration: InputDecoration(
-                    hintText: "Your Answer",
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontFamily: eUser().userTextFieldHintFont,
-                      color: eUser().userTextFieldHintColor,
-                      fontSize: eUser().userTextFieldHintFontSize,
-                    ),
-                  ),
-                  // textInputAction: TextInputAction.next,
-                  textAlign: TextAlign.start,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              buildLabelTextField(
-                  'Has The Program Improved Your Health In Another Way Apart From Your Gut Issues? Please mention',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              Container(
-                height: 10.h,
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border:
-                      Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
-                ),
-                child: TextFormField(
-                  maxLines: null, // Set this
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: improvedHealthController,
-                  cursorColor: kPrimaryColor,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter Your Answer';
-                    } else if (value.length < 2) {
-                      return emptyStringMsg;
-                    } else {
-                      return null;
-                    }
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Your Answer",
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontFamily: eUser().userTextFieldHintFont,
-                      color: eUser().userTextFieldHintColor,
-                      fontSize: eUser().userTextFieldHintFontSize,
-                    ),
-                  ),
-                  // textInputAction: TextInputAction.next,
-                  textAlign: TextAlign.start,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (mealHighLightController.text.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Add Comments",
-                        isError: true, bottomPadding: 10);
-                  } else if (improvedHealthController.text.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Add Comments",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 5;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1346,122 +1369,124 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField(
-                  'What Were The Positive Highlights Of Your Program',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              Container(
-                height: 10.h,
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border:
-                      Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField(
+                    'What Were The Positive Highlights Of Your Program',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                Container(
+                  height: 10.h,
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                        color: Colors.grey.withOpacity(0.3), width: 1),
+                  ),
+                  child: TextFormField(
+                    maxLines: null, // Set this
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: positiveController,
+                    cursorColor: kPrimaryColor,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Your Answer';
+                      } else if (value.length < 2) {
+                        return emptyStringMsg;
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Your Answer",
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontFamily: eUser().userTextFieldHintFont,
+                        color: eUser().userTextFieldHintColor,
+                        fontSize: eUser().userTextFieldHintFontSize,
+                      ),
+                    ),
+                    // textInputAction: TextInputAction.next,
+                    textAlign: TextAlign.start,
+                    keyboardType: TextInputType.multiline,
+                  ),
                 ),
-                child: TextFormField(
-                  maxLines: null, // Set this
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: positiveController,
-                  cursorColor: kPrimaryColor,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter Your Answer';
-                    } else if (value.length < 2) {
-                      return emptyStringMsg;
+                SizedBox(height: 2.h),
+                buildLabelTextField(
+                    'What Were The Negative Highlights Of Your Program',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                Container(
+                  height: 10.h,
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                        color: Colors.grey.withOpacity(0.3), width: 1),
+                  ),
+                  child: TextFormField(
+                    maxLines: null, // Set this
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: negativeController,
+                    cursorColor: kPrimaryColor,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Your Answer';
+                      } else if (value.length < 2) {
+                        return emptyStringMsg;
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Your Answer",
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontFamily: eUser().userTextFieldHintFont,
+                        color: eUser().userTextFieldHintColor,
+                        fontSize: eUser().userTextFieldHintFontSize,
+                      ),
+                    ),
+                    // textInputAction: TextInputAction.next,
+                    textAlign: TextAlign.start,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (positiveController.text.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Add Comments",
+                          isError: true, bottomPadding: 10);
+                    } else if (negativeController.text.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Add Comments",
+                          isError: true, bottomPadding: 10);
                     } else {
-                      return null;
+                      submittedIndex = 6;
+                      _controller.forward();
                     }
                   },
-                  decoration: InputDecoration(
-                    hintText: "Your Answer",
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontFamily: eUser().userTextFieldHintFont,
-                      color: eUser().userTextFieldHintColor,
-                      fontSize: eUser().userTextFieldHintFontSize,
-                    ),
-                  ),
-                  // textInputAction: TextInputAction.next,
-                  textAlign: TextAlign.start,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              buildLabelTextField(
-                  'What Were The Negative Highlights Of Your Program',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              Container(
-                height: 10.h,
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border:
-                      Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
-                ),
-                child: TextFormField(
-                  maxLines: null, // Set this
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: negativeController,
-                  cursorColor: kPrimaryColor,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter Your Answer';
-                    } else if (value.length < 2) {
-                      return emptyStringMsg;
-                    } else {
-                      return null;
-                    }
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Your Answer",
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontFamily: eUser().userTextFieldHintFont,
-                      color: eUser().userTextFieldHintColor,
-                      fontSize: eUser().userTextFieldHintFontSize,
-                    ),
-                  ),
-                  // textInputAction: TextInputAction.next,
-                  textAlign: TextAlign.start,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (positiveController.text.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Add Comments",
-                        isError: true, bottomPadding: 10);
-                  } else if (negativeController.text.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Add Comments",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 6;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1484,51 +1509,53 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField(
-                  "Feedback on Infusions\n(Pick all that apply)",
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              ListView(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  ...feedbackOnKitItems
-                      .map((e) => buildKitItemsListButton(
-                          e, 'influsions', selectedInfusions))
-                      .toList(),
-                ],
-              ),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (selectedInfusions.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 7;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField(
+                    "Feedback on Infusions\n(Pick all that apply)",
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                ListView(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    ...feedbackOnKitItems
+                        .map((e) => buildKitItemsListButton(
+                            e, 'influsions', selectedInfusions))
+                        .toList(),
+                  ],
+                ),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedInfusions.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Select Any One",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 7;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1551,50 +1578,52 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField("Feedback on Soups\n(Pick all that apply)",
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              ListView(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  ...feedbackOnKitItems
-                      .map((e) =>
-                          buildKitItemsListButton(e, 'soups', selectedSoups))
-                      .toList(),
-                ],
-              ),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (selectedSoups.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    _controller.forward();
-                    submittedIndex = 8;
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField("Feedback on Soups\n(Pick all that apply)",
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                ListView(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    ...feedbackOnKitItems
+                        .map((e) =>
+                            buildKitItemsListButton(e, 'soups', selectedSoups))
+                        .toList(),
+                  ],
+                ),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedSoups.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Select Any One",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      _controller.forward();
+                      submittedIndex = 8;
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1617,51 +1646,53 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField(
-                  "Feedback on Porridges\n(Pick all that apply)",
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              ListView(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  ...feedbackOnKitItems
-                      .map((e) => buildKitItemsListButton(
-                          e, 'porridges', selectedPorridges))
-                      .toList(),
-                ],
-              ),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (selectedPorridges.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 9;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField(
+                    "Feedback on Porridges\n(Pick all that apply)",
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                ListView(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    ...feedbackOnKitItems
+                        .map((e) => buildKitItemsListButton(
+                            e, 'porridges', selectedPorridges))
+                        .toList(),
+                  ],
+                ),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedPorridges.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Select Any One",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 9;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1684,50 +1715,52 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField("Feedback on Podi\n(Pick all that apply)",
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              ListView(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  ...feedbackOnKitItems
-                      .map((e) =>
-                          buildKitItemsListButton(e, 'podi', selectedPodi))
-                      .toList(),
-                ],
-              ),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (selectedPodi.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 10;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField("Feedback on Podi\n(Pick all that apply)",
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                ListView(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    ...feedbackOnKitItems
+                        .map((e) =>
+                            buildKitItemsListButton(e, 'podi', selectedPodi))
+                        .toList(),
+                  ],
+                ),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedPodi.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Select Any One",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 10;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1750,50 +1783,52 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField("Feedback on Kheer\n(Pick all that apply)",
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              ListView(
-                shrinkWrap: true,
-                physics: const BouncingScrollPhysics(),
-                children: [
-                  ...feedbackOnKitItems
-                      .map((e) =>
-                          buildKitItemsListButton(e, 'kheer', selectedKheer))
-                      .toList(),
-                ],
-              ),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (selectedKheer.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 11;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: const BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField("Feedback on Kheer\n(Pick all that apply)",
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                ListView(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  children: [
+                    ...feedbackOnKitItems
+                        .map((e) =>
+                            buildKitItemsListButton(e, 'kheer', selectedKheer))
+                        .toList(),
+                  ],
+                ),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedKheer.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Select Any One",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 11;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(5),
+                      decoration: const BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1816,123 +1851,125 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField(
-                  'Please let us know if there is anything about the kit items that you think we could improve ',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              Container(
-                height: 10.h,
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border:
-                      Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField(
+                    'Please let us know if there is anything about the kit items that you think we could improve ',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                Container(
+                  height: 10.h,
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                        color: Colors.grey.withOpacity(0.3), width: 1),
+                  ),
+                  child: TextFormField(
+                    maxLines: null, // Set this
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: kitItemsController,
+                    cursorColor: kPrimaryColor,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Your Answer';
+                      } else if (value.length < 2) {
+                        return emptyStringMsg;
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Your Answer",
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontFamily: eUser().userTextFieldHintFont,
+                        color: eUser().userTextFieldHintColor,
+                        fontSize: eUser().userTextFieldHintFontSize,
+                      ),
+                    ),
+                    // textInputAction: TextInputAction.next,
+                    textAlign: TextAlign.start,
+                    keyboardType: TextInputType.multiline,
+                  ),
                 ),
-                child: TextFormField(
-                  maxLines: null, // Set this
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: kitItemsController,
-                  cursorColor: kPrimaryColor,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter Your Answer';
-                    } else if (value.length < 2) {
-                      return emptyStringMsg;
+                SizedBox(height: 2.h),
+                buildLabelTextField(
+                    'If you feel that we could use some improvement, kindly offer your suggestions. ',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                Container(
+                  height: 10.h,
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                        color: Colors.grey.withOpacity(0.3), width: 1),
+                  ),
+                  child: TextFormField(
+                    maxLines: null, // Set this
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: suggestionsController,
+                    cursorColor: kPrimaryColor,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Your Answer';
+                      } else if (value.length < 2) {
+                        return emptyStringMsg;
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Your Answer",
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontFamily: eUser().userTextFieldHintFont,
+                        color: eUser().userTextFieldHintColor,
+                        fontSize: eUser().userTextFieldHintFontSize,
+                      ),
+                    ),
+                    // textInputAction: TextInputAction.next,
+                    textAlign: TextAlign.start,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (kitItemsController.text.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Add Comments",
+                          isError: true, bottomPadding: 10);
+                    } else if (suggestionsController.text.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Add Comments",
+                          isError: true, bottomPadding: 10);
                     } else {
-                      return null;
+                      submittedIndex = 12;
+                      _controller.forward();
                     }
                   },
-                  decoration: InputDecoration(
-                    hintText: "Your Answer",
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontFamily: eUser().userTextFieldHintFont,
-                      color: eUser().userTextFieldHintColor,
-                      fontSize: eUser().userTextFieldHintFontSize,
-                    ),
-                  ),
-                  // textInputAction: TextInputAction.next,
-                  textAlign: TextAlign.start,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              buildLabelTextField(
-                  'If you feel that we could use some improvement, kindly offer your suggestions. ',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              Container(
-                height: 10.h,
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border:
-                      Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
-                ),
-                child: TextFormField(
-                  maxLines: null, // Set this
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: suggestionsController,
-                  cursorColor: kPrimaryColor,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter Your Answer';
-                    } else if (value.length < 2) {
-                      return emptyStringMsg;
-                    } else {
-                      return null;
-                    }
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Your Answer",
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontFamily: eUser().userTextFieldHintFont,
-                      color: eUser().userTextFieldHintColor,
-                      fontSize: eUser().userTextFieldHintFontSize,
-                    ),
-                  ),
-                  // textInputAction: TextInputAction.next,
-                  textAlign: TextAlign.start,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (kitItemsController.text.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Add Comments",
-                        isError: true, bottomPadding: 10);
-                  } else if (suggestionsController.text.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Add Comments",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 12;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1955,123 +1992,125 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField(
-                  'Can We Get A Brief Testimonial (50-100 words)',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              Container(
-                height: 10.h,
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border:
-                      Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField(
+                    'Can We Get A Brief Testimonial (50-100 words)',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                Container(
+                  height: 10.h,
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                        color: Colors.grey.withOpacity(0.3), width: 1),
+                  ),
+                  child: TextFormField(
+                    maxLines: null, // Set this
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: testimonialController,
+                    cursorColor: kPrimaryColor,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Your Answer';
+                      } else if (value.length < 2) {
+                        return emptyStringMsg;
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Your Answer",
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontFamily: eUser().userTextFieldHintFont,
+                        color: eUser().userTextFieldHintColor,
+                        fontSize: eUser().userTextFieldHintFontSize,
+                      ),
+                    ),
+                    // textInputAction: TextInputAction.next,
+                    textAlign: TextAlign.start,
+                    keyboardType: TextInputType.multiline,
+                  ),
                 ),
-                child: TextFormField(
-                  maxLines: null, // Set this
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: testimonialController,
-                  cursorColor: kPrimaryColor,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter Your Answer';
-                    } else if (value.length < 2) {
-                      return emptyStringMsg;
+                SizedBox(height: 2.h),
+                buildLabelTextField(
+                    'Please Mention Names & Numbers Of People You did Like To Refer This Program To (If Any)',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                Container(
+                  height: 10.h,
+                  padding: EdgeInsets.symmetric(horizontal: 3.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(
+                        color: Colors.grey.withOpacity(0.3), width: 1),
+                  ),
+                  child: TextFormField(
+                    maxLines: null, // Set this
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: referenceController,
+                    cursorColor: kPrimaryColor,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter Your Answer';
+                      } else if (value.length < 2) {
+                        return emptyStringMsg;
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Your Answer",
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontFamily: eUser().userTextFieldHintFont,
+                        color: eUser().userTextFieldHintColor,
+                        fontSize: eUser().userTextFieldHintFontSize,
+                      ),
+                    ),
+                    // textInputAction: TextInputAction.next,
+                    textAlign: TextAlign.start,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    if (testimonialController.text.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Add Comments",
+                          isError: true, bottomPadding: 10);
+                    } else if (referenceController.text.isEmpty) {
+                      AppConfig().showSnackbar(context, "Please Add Comments",
+                          isError: true, bottomPadding: 10);
                     } else {
-                      return null;
+                      submittedIndex = 13;
+                      _controller.forward();
                     }
                   },
-                  decoration: InputDecoration(
-                    hintText: "Your Answer",
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontFamily: eUser().userTextFieldHintFont,
-                      color: eUser().userTextFieldHintColor,
-                      fontSize: eUser().userTextFieldHintFontSize,
-                    ),
-                  ),
-                  // textInputAction: TextInputAction.next,
-                  textAlign: TextAlign.start,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              buildLabelTextField(
-                  'Please Mention Names & Numbers Of People You did Like To Refer This Program To (If Any)',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              Container(
-                height: 10.h,
-                padding: EdgeInsets.symmetric(horizontal: 3.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(5),
-                  border:
-                      Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
-                ),
-                child: TextFormField(
-                  maxLines: null, // Set this
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: referenceController,
-                  cursorColor: kPrimaryColor,
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter Your Answer';
-                    } else if (value.length < 2) {
-                      return emptyStringMsg;
-                    } else {
-                      return null;
-                    }
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Your Answer",
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                      fontFamily: eUser().userTextFieldHintFont,
-                      color: eUser().userTextFieldHintColor,
-                      fontSize: eUser().userTextFieldHintFontSize,
-                    ),
-                  ),
-                  // textInputAction: TextInputAction.next,
-                  textAlign: TextAlign.start,
-                  keyboardType: TextInputType.multiline,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  if (testimonialController.text.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Add Comments",
-                        isError: true, bottomPadding: 10);
-                  } else if (referenceController.text.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Add Comments",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 13;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -2094,72 +2133,77 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField(
-                  'Would You Like To Sign Up For Our Membership That Gives You Support Plans, Lifestyle Management & Discounts On Future Programs & Consultations',
-                  fontSize: headingFont),
-              SizedBox(height: 3.h),
-              buildPercentageButton(yesNo[0],
-                  supportPlans == yesNo[0] ? gsecondaryColor : gWhiteColor, () {
-                setState(() {
-                  changedIndex5(
-                    yesNo[0],
-                  );
-                  submittedIndex = 14;
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(yesNo[1],
-                  supportPlans == yesNo[1] ? gsecondaryColor : gWhiteColor, () {
-                setState(() {
-                  changedIndex5(
-                    yesNo[1],
-                  );
-                  submittedIndex = 14;
-                  // _controller.forward();
-                });
-              }),
-              buildPercentageButton(yesNo[2],
-                  supportPlans == yesNo[2] ? gsecondaryColor : gWhiteColor, () {
-                setState(() {
-                  changedIndex5(
-                    yesNo[2],
-                  );
-                  submittedIndex = 14;
-                  // _controller.forward();
-                });
-              }),
-              SizedBox(height: 4.h),
-              GestureDetector(
-                onTap: () {
-                  if (supportPlans.isEmpty) {
-                    AppConfig().showSnackbar(
-                        context, "Please Select Support Plan.",
-                        isError: true, bottomPadding: 10);
-                  } else {
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField(
+                    'Would You Like To Sign Up For Our Membership That Gives You Support Plans, Lifestyle Management & Discounts On Future Programs & Consultations',
+                    fontSize: headingFont),
+                SizedBox(height: 3.h),
+                buildPercentageButton(yesNo[0],
+                    supportPlans == yesNo[0] ? gsecondaryColor : gWhiteColor,
+                    () {
+                  setState(() {
+                    changedIndex5(
+                      yesNo[0],
+                    );
                     submittedIndex = 14;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(yesNo[1],
+                    supportPlans == yesNo[1] ? gsecondaryColor : gWhiteColor,
+                    () {
+                  setState(() {
+                    changedIndex5(
+                      yesNo[1],
+                    );
+                    submittedIndex = 14;
+                    // _controller.forward();
+                  });
+                }),
+                buildPercentageButton(yesNo[2],
+                    supportPlans == yesNo[2] ? gsecondaryColor : gWhiteColor,
+                    () {
+                  setState(() {
+                    changedIndex5(
+                      yesNo[2],
+                    );
+                    submittedIndex = 14;
+                    // _controller.forward();
+                  });
+                }),
+                SizedBox(height: 4.h),
+                GestureDetector(
+                  onTap: () {
+                    if (supportPlans.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Support Plan.",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 14;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -2182,105 +2226,107 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              buildLabelTextField(
-                  "Can We Get A Picture Of You To Put A Face To This Feedback?",
-                  fontSize: headingFont,
-                  isMandatory: false),
-              SizedBox(height: 3.h),
-              GestureDetector(
-                onTap: () async {
-                  final result = await FilePicker.platform
-                      .pickFiles(withReadStream: true, allowMultiple: false);
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                buildLabelTextField(
+                    "Can We Get A Picture Of You To Put A Face To This Feedback?",
+                    fontSize: headingFont,
+                    isMandatory: false),
+                SizedBox(height: 3.h),
+                GestureDetector(
+                  onTap: () async {
+                    final result = await FilePicker.platform
+                        .pickFiles(withReadStream: true, allowMultiple: false);
 
-                  if (result == null) return;
-                  if (result.files.first.extension!.contains("png") ||
-                      result.files.first.extension!.contains("jpg") ||
-                      result.files.first.extension!.contains("jpeg")) {
-                    var path3 = result.files.single.name;
-                    File file = File(path3 ?? "");
-                    medicalRecords.add(result.files.first);
-                    _finalFiles.add(file);
-                    // addFilesToList(File(result.paths.first!));
-                  } else {
-                    AppConfig().showSnackbar(
-                        context, "Please select png/jpg/jpeg files",
-                        isError: true);
-                  }
+                    if (result == null) return;
+                    if (result.files.first.extension!.contains("png") ||
+                        result.files.first.extension!.contains("jpg") ||
+                        result.files.first.extension!.contains("jpeg")) {
+                      var path3 = result.files.single.name;
+                      File file = File(path3 ?? "");
+                      medicalRecords.add(result.files.first);
+                      _finalFiles.add(file);
+                      // addFilesToList(File(result.paths.first!));
+                    } else {
+                      AppConfig().showSnackbar(
+                          context, "Please select png/jpg/jpeg files",
+                          isError: true);
+                    }
 
-                  setState(() {});
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    border: Border.all(
-                        color: gHintTextColor.withOpacity(0.3), width: 1),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.file_upload_outlined,
-                        color: gsecondaryColor,
-                        size: 2.5.h,
-                      ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      Text(
-                        'Add File',
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          color: gsecondaryColor,
-                          fontFamily: "GothamMedium",
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              (_finalFiles.isEmpty)
-                  ? SizedBox()
-                  : Center(
-                      child: SizedBox(
-                        height: 27.h,
-                        child: ListView.builder(
-                          itemCount: _finalFiles.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) {
-                            final file = _finalFiles[index];
-                            return buildFile(file, index);
-                          },
-                        ),
-                      ),
-                    ),
-              SizedBox(height: 2.h),
-              GestureDetector(
-                onTap: () {
-                  submittedIndex = 15;
-                  _controller.forward();
-                },
-                child: Center(
+                    setState(() {});
+                  },
                   child: Container(
-                    padding: EdgeInsets.all(5),
                     decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 3.h,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                          color: gHintTextColor.withOpacity(0.3), width: 1),
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.file_upload_outlined,
+                          color: gsecondaryColor,
+                          size: 2.5.h,
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          'Add File',
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            color: gsecondaryColor,
+                            fontFamily: "GothamMedium",
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                (_finalFiles.isEmpty)
+                    ? SizedBox()
+                    : Center(
+                        child: SizedBox(
+                          height: 27.h,
+                          child: ListView.builder(
+                            itemCount: _finalFiles.length,
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              final file = _finalFiles[index];
+                              return buildFile(file, index);
+                            },
+                          ),
+                        ),
+                      ),
+                SizedBox(height: 2.h),
+                GestureDetector(
+                  onTap: () {
+                    submittedIndex = 15;
+                    _controller.forward();
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 3.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -2303,89 +2349,96 @@ class _TCardPageState extends State<TCardPage> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: buildLabelTextField("Give us a feedback on",
-                    fontSize: headingFont),
-              ),
-              SizedBox(height: 2.h),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  text: "Support from Doctors during the program",
-                  style: TextStyle(
-                    fontSize: 13.dp,
-                    color: gWhiteColor,
-                    height: 1.35,
-                    fontFamily: kFontBook,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: buildLabelTextField("Give us a feedback on",
+                      fontSize: headingFont),
+                ),
+                SizedBox(height: 2.h),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: "Support from Doctors during the program",
+                    style: TextStyle(
+                      fontSize: 13.dp,
+                      color: gWhiteColor,
+                      height: 1.35,
+                      fontFamily: kFontBook,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: ' *',
+                        style: TextStyle(
+                          fontSize: 13.dp,
+                          color: kPrimaryColor,
+                          fontFamily: "PoppinsSemiBold",
+                        ),
+                      ),
+                    ],
                   ),
-                  children: [
-                    TextSpan(
-                      text: ' *',
-                      style: TextStyle(
-                        fontSize: 13.dp,
-                        color: kPrimaryColor,
-                        fontFamily: "PoppinsSemiBold",
+                ),
+                buildRating1(),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: "Chat Support",
+                    style: TextStyle(
+                      fontSize: 13.dp,
+                      color: gWhiteColor,
+                      height: 1.35,
+                      fontFamily: kFontBook,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: ' *',
+                        style: TextStyle(
+                          fontSize: 13.dp,
+                          color: kPrimaryColor,
+                          fontFamily: "PoppinsSemiBold",
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                buildRating2(),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: "Home remedies during the program",
+                    style: TextStyle(
+                      fontSize: 13.dp,
+                      color: gWhiteColor,
+                      height: 1.35,
+                      fontFamily: kFontBook,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: ' *',
+                        style: TextStyle(
+                          fontSize: 13.dp,
+                          color: kPrimaryColor,
+                          fontFamily: "PoppinsSemiBold",
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                buildRating3(),
+                SizedBox(height: 2.h),
+                SizedBox(
+                  width: 30.w,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: gsecondaryColor,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              buildRatingButton(),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  text: "Chat Support",
-                  style: TextStyle(
-                    fontSize: 13.dp,
-                    color: gWhiteColor,
-                    height: 1.35,
-                    fontFamily: kFontBook,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: ' *',
-                      style: TextStyle(
-                        fontSize: 13.dp,
-                        color: kPrimaryColor,
-                        fontFamily: "PoppinsSemiBold",
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              buildRatingButton1(),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  text: "Home remedies during the program",
-                  style: TextStyle(
-                    fontSize: 13.dp,
-                    color: gWhiteColor,
-                    height: 1.35,
-                    fontFamily: kFontBook,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: ' *',
-                      style: TextStyle(
-                        fontSize: 13.dp,
-                        color: kPrimaryColor,
-                        fontFamily: "PoppinsSemiBold",
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              buildRatingButton2(),
-              SizedBox(height: 2.h),
-              Center(
-                child: IntrinsicWidth(
-                  child: GestureDetector(
-                    onTap: () {
+                    onPressed: () {
                       if (!isLoading) {
                         if (rating1.isEmpty ||
                             rating2.isEmpty ||
@@ -2421,245 +2474,106 @@ class _TCardPageState extends State<TCardPage> {
                               referenceController.text.toString(),
                               supportPlans.toString(),
                               "0"
-                              // ifDiscontinuedController.text.toString(),
-                              );
+                            // ifDiscontinuedController.text.toString(),
+                          );
                         }
                       }
                     },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 1.5.h, horizontal: 5.w),
-                      decoration: BoxDecoration(
-                        color: eUser().buttonColor,
-                        borderRadius:
-                            BorderRadius.circular(eUser().buttonBorderRadius),
-                        // border: Border.all(
-                        //     color: eUser().buttonBorderColor,
-                        //     width: eUser().buttonBorderWidth
-                        // ),
-                      ),
-                      child: (isLoading)
-                          ? buildThreeBounceIndicator(
-                              color: eUser().threeBounceIndicatorColor)
-                          : Center(
-                              child: Text(
-                              'Submit',
-                              style: TextStyle(
-                                fontFamily: eUser().buttonTextFont,
-                                color: eUser().buttonTextColor,
-                                fontSize: eUser().buttonTextSize,
-                              ),
-                            )),
-                    ),
+                    child: (isLoading)
+                        ? buildThreeBounceIndicator(
+                        color: eUser().threeBounceIndicatorColor)
+                        : Center(
+                        child: Text(
+                          'Submit',
+                          style: TextStyle(
+                            fontFamily: eUser().buttonTextFont,
+                            color: eUser().buttonTextColor,
+                            fontSize: eUser().buttonTextSize,
+                          ),
+                        ),),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
     });
   }
 
-  buildRatingButton() {
-    return StatefulBuilder(builder: (_, setState) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 2.h),
-        child: RatingBar.builder(
-          initialRating: 0,
-          itemCount: 5,
-          unratedColor: gWhiteColor,
-          itemBuilder: (context, index) {
-            switch (index) {
-              case 0:
-                return Icon(
-                  Icons.star,
-                  color: gsecondaryColor,
-                  size: 3.h,
-                );
-              case 1:
-                return Icon(
-                  Icons.star,
-                  color: gsecondaryColor,
-                  size: 3.h,
-                );
-              case 2:
-                return Icon(
-                  Icons.star,
-                  color: gMainColor,
-                  size: 3.h,
-                );
-              case 3:
-                return Icon(
-                  Icons.star,
-                  color: newDashboardGreenButtonColor,
-                  size: 3.h,
-                );
-              case 4:
-                return Icon(
-                  Icons.star,
-                  color: newDashboardGreenButtonColor,
-                  size: 3.h,
-                );
-            }
-            return Container();
-          },
-          onRatingUpdate: (rating) {
-            if (rating == 5.0) {
-              rating1 = "Very Good";
-            } else if (rating == 4.0) {
-              rating1 = "Good";
-            } else if (rating == 3.0) {
-              rating1 = "Average";
-            } else if (rating == 2.0) {
-              rating1 = "Below Average";
-            } else if (rating == 1.0) {
-              rating1 = "Poor";
-            } else if (rating == 0.0) {
-              AppConfig().showSnackbar(context, "Please Select Rating",
-                  isError: true, bottomPadding: 10);
-            }
+  int ratings1 = 4;
+  int ratings2 = 4;
+  int ratings3 = 4;
 
-            // rating1 = rating.toString();
-            print("rating1 : $rating1");
-          },
-        ),
+  buildRating1() {
+    return StatefulBuilder(builder: (_, setstate) {
+      return Padding(
+        padding: EdgeInsets.symmetric(vertical: 2.h,horizontal: 2.w),
+        child: ReviewSlider(
+            initialValue:ratings1,
+            onChange: (int value) {
+              ratings1 = value;
+              if (ratings1 == 4.0) {
+                rating1 = "Very Good";
+              } else if (ratings1 == 3.0) {
+                rating1 = "Good";
+              } else if (ratings1 == 2.0) {
+                rating1 = "Average";
+              } else if (ratings1 == 1.0) {
+                rating1 = "Below Average";
+              } else if (ratings1 == 0.0) {
+                rating1 = "Poor";
+              }
+              print("ratings1 : $ratings1");
+            }),
       );
     });
   }
 
-  buildRatingButton1() {
-    return StatefulBuilder(builder: (_, setState) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 2.h),
-        child: RatingBar.builder(
-          initialRating: 0,
-          itemCount: 5,
-          unratedColor: gWhiteColor,
-          itemBuilder: (context, index) {
-            switch (index) {
-              case 0:
-                return Icon(
-                  Icons.star,
-                  color: gsecondaryColor,
-                  size: 3.h,
-                );
-              case 1:
-                return Icon(
-                  Icons.star,
-                  color: gsecondaryColor,
-                  size: 3.h,
-                );
-              case 2:
-                return Icon(
-                  Icons.star,
-                  color: gMainColor,
-                  size: 3.h,
-                );
-              case 3:
-                return Icon(
-                  Icons.star,
-                  color: newDashboardGreenButtonColor,
-                  size: 3.h,
-                );
-              case 4:
-                return Icon(
-                  Icons.star,
-                  color: newDashboardGreenButtonColor,
-                  size: 3.h,
-                );
-            }
-            return Container();
-          },
-          onRatingUpdate: (rating) {
-            if (rating == 5.0) {
+  buildRating2() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 2.h,horizontal: 2.w),
+      child: ReviewSlider(
+          initialValue:ratings2,
+          onChange: (int value) {
+            ratings2 = value;
+            if (ratings2 == 4.0) {
               rating2 = "Very Good";
-            } else if (rating == 4.0) {
+            } else if (ratings2 == 3.0) {
               rating2 = "Good";
-            } else if (rating == 3.0) {
+            } else if (ratings2 == 2.0) {
               rating2 = "Average";
-            } else if (rating == 2.0) {
+            } else if (ratings2 == 1.0) {
               rating2 = "Below Average";
-            } else if (rating == 1.0) {
+            } else if (ratings2 == 0.0) {
               rating2 = "Poor";
-            } else if (rating == 0.0) {
-              AppConfig().showSnackbar(context, "Please Select Rating",
-                  isError: true, bottomPadding: 10);
             }
-
-            // rating1 = rating.toString();
-            print("rating2 : $rating2");
-          },
-        ),
-      );
-    });
+            print("ratings2 : $ratings2");
+          }),
+    );
   }
 
-  buildRatingButton2() {
-    return StatefulBuilder(builder: (_, setState) {
-      return Padding(
-        padding: EdgeInsets.symmetric(vertical: 2.h),
-        child: RatingBar.builder(
-          initialRating: 0,
-          itemCount: 5,
-          unratedColor: gWhiteColor,
-          itemBuilder: (context, index) {
-            switch (index) {
-              case 0:
-                return Icon(
-                  Icons.star,
-                  color: gsecondaryColor,
-                  size: 3.h,
-                );
-              case 1:
-                return Icon(
-                  Icons.star,
-                  color: gsecondaryColor,
-                  size: 3.h,
-                );
-              case 2:
-                return Icon(
-                  Icons.star,
-                  color: gMainColor,
-                  size: 3.h,
-                );
-              case 3:
-                return Icon(
-                  Icons.star,
-                  color: newDashboardGreenButtonColor,
-                  size: 3.h,
-                );
-              case 4:
-                return Icon(
-                  Icons.star,
-                  color: newDashboardGreenButtonColor,
-                  size: 3.h,
-                );
-            }
-            return Container();
-          },
-          onRatingUpdate: (rating) {
-            if (rating == 5.0) {
+  buildRating3() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 2.h,horizontal: 2.w),
+      child: ReviewSlider(
+          initialValue:ratings3,
+          onChange: (int value) {
+            ratings3 = value;
+            if (ratings3 == 4.0) {
               rating3 = "Very Good";
-            } else if (rating == 4.0) {
+            } else if (ratings3 == 3.0) {
               rating3 = "Good";
-            } else if (rating == 3.0) {
+            } else if (ratings3 == 2.0) {
               rating3 = "Average";
-            } else if (rating == 2.0) {
+            } else if (ratings3 == 1.0) {
               rating3 = "Below Average";
-            } else if (rating == 1.0) {
+            } else if (ratings3 == 0.0) {
               rating3 = "Poor";
-            } else if (rating == 0.0) {
-              AppConfig().showSnackbar(context, "Please Select Rating",
-                  isError: true, bottomPadding: 10);
             }
-
-            // rating1 = rating.toString();
-            print("rating3 : $rating3");
-          },
-        ),
-      );
-    });
+            print("ratings3 : $ratings3");
+          }),
+    );
   }
 
   buildKitItemsListButton(

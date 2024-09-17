@@ -31,22 +31,17 @@ var getUserReportListUrl = "${AppConfig().BASE_URL}/api/getData/user_reports_lis
 
 
  */
-
-import 'dart:developer';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:gwc_customer_web/screens/program_plans/meal_pdf.dart';
-import 'package:gwc_customer_web/widgets/background_widget.dart';
 import 'package:gwc_customer_web/widgets/open_alert_box.dart';
 import 'package:gwc_customer_web/widgets/show_photo_viewer.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io';
 import '../../../model/dashboard_model/report_upload_model/child_report_list_model.dart';
@@ -62,13 +57,12 @@ import '../../../widgets/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:async/async.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:path/path.dart' show basename;
 
 import '../../dashboard_screen.dart';
 
 class UploadFiles extends StatefulWidget {
   final bool isFromSettings;
-  UploadFiles({Key? key, this.isFromSettings = false}) : super(key: key);
+  const UploadFiles({Key? key, this.isFromSettings = false}) : super(key: key);
 
   @override
   State<UploadFiles> createState() => _UploadFilesState();
@@ -76,7 +70,6 @@ class UploadFiles extends StatefulWidget {
 
 class _UploadFilesState extends State<UploadFiles>
     with SingleTickerProviderStateMixin {
-  final _pref = AppConfig().preferences;
   List<PlatformFile> files = [];
   List<File> fileFormatList = [];
 
@@ -106,7 +99,6 @@ class _UploadFilesState extends State<UploadFiles>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _tabController =
         TabController(vsync: this, length: myTabs.length, initialIndex: 0);
@@ -125,7 +117,6 @@ class _UploadFilesState extends State<UploadFiles>
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     super.didChangeDependencies();
   }
 
@@ -260,7 +251,7 @@ class _UploadFilesState extends State<UploadFiles>
                                   child: GestureDetector(
                                     onTap: () async {
                                       uploadReport();
-                                  
+
                                       // getReportList();
                                       // Navigator.of(context).push(
                                       //   MaterialPageRoute(
@@ -269,8 +260,8 @@ class _UploadFilesState extends State<UploadFiles>
                                       // );
                                     },
                                     child: Container(
-                                    
-                                      padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 1.5.h, horizontal: 5.w),
                                       decoration: BoxDecoration(
                                         color: eUser().buttonColor,
                                         borderRadius: BorderRadius.circular(
@@ -286,7 +277,8 @@ class _UploadFilesState extends State<UploadFiles>
                                                 style: TextStyle(
                                                   fontFamily:
                                                       eUser().buttonTextFont,
-                                                  color: eUser().buttonTextColor,
+                                                  color:
+                                                      eUser().buttonTextColor,
                                                   fontSize:
                                                       eUser().buttonTextSize,
                                                 ),
@@ -304,9 +296,11 @@ class _UploadFilesState extends State<UploadFiles>
                               child: IntrinsicWidth(
                                 child: GestureDetector(
                                   onTap: () async {
-                                    List totalReportLengthExceptPrescription = [];
+                                    List totalReportLengthExceptPrescription =
+                                        [];
                                     doctorRequestedReports.forEach((element) {
-                                      if (element.reportType != 'prescription') {
+                                      if (element.reportType !=
+                                          'prescription') {
                                         totalReportLengthExceptPrescription
                                             .add(element);
                                       }
@@ -314,8 +308,8 @@ class _UploadFilesState extends State<UploadFiles>
                                     print(totalReportLengthExceptPrescription
                                         .length);
                                     print(reportsObject.length);
-                                //                                  if(reportsObject.length-1 == totalReportLengthExceptPrescription.length){
-                                
+                                    //                                  if(reportsObject.length-1 == totalReportLengthExceptPrescription.length){
+
                                     if (reportsObject.length ==
                                             totalReportLengthExceptPrescription
                                                 .length ||
@@ -330,7 +324,7 @@ class _UploadFilesState extends State<UploadFiles>
                                           context, "Please add all the files",
                                           isError: true);
                                     }
-                                
+
                                     // for(int i=0;i<reportsObject.length;i++){
                                     //   if(reportsObject[i].path.isNotEmpty){
                                     //     final res = await submitDoctorRequestedReport(reportsObject[i].path, reportsObject[i].id);
@@ -342,7 +336,8 @@ class _UploadFilesState extends State<UploadFiles>
                                   child: Container(
                                     // width: 60.w,
                                     // height: 5.h,
-                                    padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 1.5.h, horizontal: 5.w),
                                     decoration: BoxDecoration(
                                       color: eUser().buttonColor,
                                       borderRadius: BorderRadius.circular(8),
@@ -1021,11 +1016,11 @@ class _UploadFilesState extends State<UploadFiles>
             selectedFilesIds, selectedFilesList);
     print("submitDoctorRequestedReport res: $res");
     if (res.runtimeType == ErrorModel) {
+      final result = res as ErrorModel;
+      AppConfig().showSnackbar(context, result.message ?? '', isError: true);
       setState(() {
         showUploadProgress = false;
       });
-      final result = res as ErrorModel;
-      AppConfig().showSnackbar(context, result.message ?? '', isError: true);
     } else {
       final result = res as ReportUploadModel;
       print(result.errorMsg);
@@ -1037,7 +1032,9 @@ class _UploadFilesState extends State<UploadFiles>
       otherFilesObject.clear();
       Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) => const DashboardScreen(index: 2,),
+          builder: (context) => const DashboardScreen(
+            index: 2,
+          ),
         ),
       );
       setState(() {
@@ -1417,8 +1414,12 @@ class _UploadFilesState extends State<UploadFiles>
                       chooseFileUsingFilePicker();
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 1.h,horizontal: 2.w),
-                      decoration: BoxDecoration(color: gSitBackBgColor,borderRadius: BorderRadius.circular(10),),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 1.h, horizontal: 2.w),
+                      decoration: BoxDecoration(
+                        color: gSitBackBgColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       child: Row(
                         children: [
                           Icon(
@@ -1464,7 +1465,7 @@ class _UploadFilesState extends State<UploadFiles>
                     fontSize: 10.dp),
                 labelPadding: EdgeInsets.only(
                     right: 10.w, left: 2.w, top: 1.h, bottom: 1.h),
-                indicatorPadding: EdgeInsets.only(right: 7.w),
+                // indicatorPadding: EdgeInsets.only(right: 7.w),
                 tabs: myTabs,
                 onTap: (i) {
                   setState(() {
@@ -1476,15 +1477,22 @@ class _UploadFilesState extends State<UploadFiles>
               ),
 
               Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    buildUserUploaded(),
-                    buildPrescription(),
-                    buildMedicalReport(),
-                    buildGMG(),
-                    buildEndReport(),
-                  ],
+                child: Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.shortestSide > 600
+                        ? 40.w
+                        : double.maxFinite,
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        buildUserUploaded(),
+                        buildPrescription(),
+                        buildMedicalReport(),
+                        buildGMG(),
+                        buildEndReport(),
+                      ],
+                    ),
+                  ),
                 ),
               ),
               // Text(
@@ -1628,41 +1636,78 @@ class _UploadFilesState extends State<UploadFiles>
   }
 
   void chooseFileUsingFilePicker() async {
-    try {
-      _paths = (await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowMultiple: true,
-        onFileLoading: (FilePickerStatus status) => print(status),
-        allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
-      ))
-          ?.files;
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowMultiple: true,
+      onFileLoading: (FilePickerStatus status) => print(status),
+      allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
+    );
 
-      var path2 =_paths?.single.bytes;
+    if (result == null) return;
+    // if (result.files.first.extension!.contains("pdf") ||
+    //     result.files.first.extension!.contains("png") ||
+    //     result.files.first.extension!.contains("jpg") ||
+    //     result.files.first.extension!.contains("jpeg")) {
+    //   var path2 = result.files.single.path;
 
-      var path3 = _paths?.single.name;
+    medicalRecords = result.files;
 
-      showUploadFilesList();
+    showUploadFilesList();
 
-      if (!item.contains(path3)) {
-        item.add(path3);
-        File file = File(path3 ?? "");
-        setState(() {
-          objFile = _paths?.single;
-          medicalRecords.add(objFile!);
-          _finalFiles.add(file);
-          print("medical reports : $medicalRecords");
-          print("_finalFiles : $_finalFiles");
-        });
-      } else {
-        // Scaffold.of(globalkey2.currentContext??context)
-        AppConfig().showSnackbar(context, "File Already Exist", isError: true);
-      }
+    print("medical Records : $medicalRecords");
 
-    } on PlatformException catch (e) {
-      log('Unsupported operation' + e.toString());
-    } catch (e) {
-      log(e.toString());
-    }
+    // if (!item.contains(path2)) {
+    //   item.add(path2);
+    //   File file = File(path2 ?? "");
+    //   setState(() {
+    //     medicalRecords.add(result.files.first);
+    //     _finalFiles.add(file);
+    //     print("medical reports : $medicalRecords");
+    //     print("_finalFiles : $_finalFiles");
+    //   });
+    // } else {
+    //   // Scaffold.of(globalkey2.currentContext??context)
+    //   AppConfig().showSnackbar(context, "File Already Exist", isError: true);
+    // }
+    // } else {
+    //   AppConfig().showSnackbar(context, "Please select png/jpg/Pdf files",
+    //       isError: true);
+    // }
+    setState(() {});
+    // try {
+    //   _paths = (await FilePicker.platform.pickFiles(
+    //     type: FileType.custom,
+    //     allowMultiple: true,
+    //     onFileLoading: (FilePickerStatus status) => print(status),
+    //     allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
+    //   ))
+    //       ?.files;
+    //
+    //   var path2 = _paths?.single.bytes;
+    //
+    //   var path3 = _paths?.single.name;
+    //
+    //   showUploadFilesList();
+    //
+    //   if (!item.contains(path3)) {
+    //     item.add(path3);
+    //     File file = File(path3 ?? "");
+    //     setState(() {
+    //       objFile = _paths?.single;
+    //       medicalRecords.add(objFile!);
+    //       _finalFiles.add(file);
+    //       print("medical reports : $medicalRecords");
+    //       print("_finalFiles : $_finalFiles");
+    //     });
+    //   } else {
+    //     // Scaffold.of(globalkey2.currentContext??context)
+    //     AppConfig().showSnackbar(context, "File Already Exist", isError: true);
+    //   }
+    // } on PlatformException catch (e) {
+    //   log('Unsupported operation' + e.toString());
+    // } catch (e) {
+    //   log(e.toString());
+    // }
   }
 
   void pickUploadFile({String? type}) async {
@@ -1681,8 +1726,6 @@ class _UploadFilesState extends State<UploadFiles>
 
     /// if allowMultiple: true
     List<File> _files = _paths!.map((e) => File(e.name)).toList();
-
-
 
     _paths?.forEach((element) {
       // if (getFileSize(element.name) <= 12) {
@@ -1781,56 +1824,62 @@ class _UploadFilesState extends State<UploadFiles>
                 borderRadius: BorderRadius.circular(20.0),
               ),
               child: Container(
-                height: 30.h,
+                height: 40.h,
                 padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 5.w),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (_finalFiles.isNotEmpty)
-                      ListView.builder(
-                        itemCount: _finalFiles.length,
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        physics: ScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          final file = _finalFiles[index];
-                          return buildFile(file, index);
-                        },
-                      ),
-                    Padding(
-                      padding: padding,
-                      child: Center(
-                        child: GestureDetector(
-                          onTap: () async {
-                            submitUserRequestedUploadReport();
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (medicalRecords.isNotEmpty)
+                        ListView.builder(
+                          itemCount: medicalRecords.length,
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          physics: const ScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final file = medicalRecords[index];
+                            return buildPopUpRecordList(file, setState,
+                                index: index);
                           },
-                          child: Container(
-                            width: 60.w,
-                            height: 5.h,
-                            // padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 10.w),
-                            decoration: BoxDecoration(
-                              color: eUser().buttonColor,
-                              borderRadius: BorderRadius.circular(8),
-                              // border:
-                              //     Border.all(color: gMainColor, width: 1),
-                            ),
-                            child: (showSubmitProgress)
-                                ? buildThreeBounceIndicator(color: gWhiteColor)
-                                : Center(
-                                    child: Text(
-                                      'Submit',
-                                      style: TextStyle(
-                                        fontFamily: kFontBold,
-                                        color: gWhiteColor,
-                                        fontSize: 11.dp,
+                        ),
+                      Padding(
+                        padding: padding,
+                        child: Center(
+                          child: IntrinsicWidth(
+                            child: GestureDetector(
+                              onTap: () async {
+                                submitUserRequestedUploadReport();
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(top: 3.h),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 1.5.h, horizontal: 10.w),
+                                decoration: BoxDecoration(
+                                  color: eUser().buttonColor,
+                                  borderRadius: BorderRadius.circular(8),
+                                  // border:
+                                  //     Border.all(color: gMainColor, width: 1),
+                                ),
+                                child: (showSubmitProgress)
+                                    ? buildThreeBounceIndicator(
+                                        color: gWhiteColor)
+                                    : Center(
+                                        child: Text(
+                                          'Submit',
+                                          style: TextStyle(
+                                            fontFamily: kFontBold,
+                                            color: gWhiteColor,
+                                            fontSize: 11.dp,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             );
@@ -1838,10 +1887,82 @@ class _UploadFilesState extends State<UploadFiles>
         });
   }
 
+  buildPopUpRecordList(PlatformFile filename, Function setstate, {int? index}) {
+    return ListTile(
+      shape: Border(bottom: BorderSide()),
+      // leading: SizedBox(
+      //     width: 50, height: 50, child: Image.file(File(filename.path!))),
+      title: Text(
+        filename.name,
+        textAlign: TextAlign.start,
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(
+          fontFamily: kFontBold,
+          fontSize: 11.dp,
+        ),
+      ),
+      trailing: GestureDetector(
+          onTap: () {
+            medicalRecords.removeAt(index!);
+            // item.removeAt(index);
+            // _finalFiles.removeAt(index);
+            setstate(() {});
+          },
+          child: const Icon(
+            Icons.delete_outline_outlined,
+            color: gMainColor,
+          )),
+    );
+    // return Padding(
+    //   padding: EdgeInsets.symmetric(vertical: 1.5.h),
+    //   child: OutlinedButton(
+    //     onPressed: () {},
+    //     style: ButtonStyle(
+    //       overlayColor: getColor(Colors.white, const Color(0xffCBFE86)),
+    //       backgroundColor: getColor(Colors.white, const Color(0xffCBFE86)),
+    //     ),
+    //     child: Row(
+    //       children: [
+    //         Expanded(
+    //           child: Text(
+    //             filename.split("/").last,
+    //             textAlign: TextAlign.start,
+    //             maxLines: 2,
+    //             overflow: TextOverflow.ellipsis,
+    //             style: TextStyle(
+    //               fontFamily: "PoppinsBold",
+    //               fontSize: 11.dp,
+    //             ),
+    //           ),
+    //         ),
+    //         (widget.showData)
+    //             ? SvgPicture.asset(
+    //           'assets/images/attach_icon.svg',
+    //           fit: BoxFit.cover,
+    //         )
+    //             : GestureDetector(
+    //             onTap: () {
+    //               medicalRecords.removeAt(index!);
+    //               setState(() {});
+    //             },
+    //             child: const Icon(
+    //               Icons.delete_outline_outlined,
+    //               color: gMainColor,
+    //             )),
+    //       ],
+    //     ),
+    //   ),
+    // );
+  }
+
   submitUserRequestedUploadReport() async {
     submitProgressState(() {
       showSubmitProgress = true;
     });
+
+    doctorRequestedReports.clear();
+
     final res = await ReportService(repository: repository)
         .submitUserReportUploadService(medicalRecords);
     print("submitDoctorRequestedReport res: $res");
@@ -1856,12 +1977,21 @@ class _UploadFilesState extends State<UploadFiles>
         showSubmitProgress = false;
       });
       final result = res as ReportUploadModel;
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) =>
-           UploadFiles(isFromSettings: true,),
-        ),
-      );
+
+      if (!widget.isFromSettings) {
+        getDoctorRequestedReportList();
+      } else {
+        getUserReportList();
+      }
+
+      Navigator.pop(context);
+
+      // Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (context) =>
+      //         UploadFiles(isFromSettings: true,),
+      //   ),
+      // );
       print(result.errorMsg);
       // AppConfig().showSnackbar(context, result.errorMsg ?? '');
       reportsObject.forEach((element) {
@@ -1872,7 +2002,7 @@ class _UploadFilesState extends State<UploadFiles>
       setState(() {});
     }
     submitProgressState(() {
-      showSubmitProgress = true;
+      showSubmitProgress = false;
     });
   }
 
@@ -1946,33 +2076,23 @@ class _UploadFilesState extends State<UploadFiles>
                                     url.toLowerCase().contains(".png") ||
                                     url.toLowerCase().contains(".jpeg")) {
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (ctx) =>
-                                              CustomPhotoViewer(url: url)));
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (ctx) =>
+                                          CustomPhotoViewer(url: url),
+                                    ),
+                                  );
                                 } else {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (ctx) => MealPdf(
-                                              isVideoWidgetVisible: false,
-                                              pdfLink: url,
-                                              isSheetCloseNeeded: true,
-                                              sheetCloseOnTap: () {
-                                                Navigator.pop(context);
-                                              },
-                                              heading: reportNameList[i])));
+                                  if (await canLaunchUrl(
+                                      Uri.parse(url ?? ''))) {
+                                    launch(url ?? '');
+                                  } else {
+                                    // can't launch url, there is some error
+                                    throw "Could not launch $url";
+                                  }
                                   print("URL : $url");
                                 }
                               }
-                              // if (await canLaunch(url)) {
-                              //   await launch(
-                              //     url,
-                              //     //forceSafariVC: true,
-                              //     // forceWebView: true,
-                              //     // enableJavaScript: true,
-                              //   );
-                              // }
                             },
                             child: Container(
                               margin: EdgeInsets.symmetric(
@@ -2076,7 +2196,6 @@ class _UploadFilesState extends State<UploadFiles>
                                           doctorRequestedReports[index]
                                               .report
                                               .toString()))) {
-// Navigator.pop(context);
                                         throw Exception(
                                             'Could not launch ${doctorRequestedReports[index].report.toString()}');
                                       }
@@ -2196,7 +2315,6 @@ class _UploadFilesState extends State<UploadFiles>
                                         doctorRequestedReports[index]
                                             .report
                                             .toString()))) {
-// Navigator.pop(context);
                                       throw Exception(
                                           'Could not launch ${doctorRequestedReports[index].report.toString()}');
                                     }

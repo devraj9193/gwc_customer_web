@@ -207,8 +207,7 @@ class _PersonalDetailsScreenState2 extends State<PersonalDetailsScreen2> {
                     userName: "${_pref?.getString(AppConfig.User_Name)}",
                     thumbNail:
                     "${_pref?.getString(AppConfig.User_Profile)}",
-                    ticketId:
-                    "${_pref?.getString(AppConfig.User_ticket_id)}",
+                    ticketId: _pref?.getString(AppConfig.User_ticket_id).toString() ?? '',
                     subject: '',
                     email: "${_pref?.getString(AppConfig.User_Email)}",
                     ticketStatus: 1 ?? -1,
@@ -2086,7 +2085,7 @@ class _PersonalDetailsScreenState2 extends State<PersonalDetailsScreen2> {
       setState(() {
         isSubmitPressed = false;
       });
-      _pref!.setString(AppConfig.EVAL_STATUS, "evaluation_done");
+      // _pref!.setString(AppConfig.EVAL_STATUS, "evaluation_done");
       // AppConfig().showSnackbar(context, result.message ?? '');
       Navigator.push(context,
           MaterialPageRoute(builder: (ctx) => EvaluationUploadReport()));

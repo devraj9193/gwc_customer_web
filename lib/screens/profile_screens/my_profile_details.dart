@@ -22,31 +22,33 @@ if its false than in report screen it will show upload file ui
  */
 
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:gwc_customer_web/model/profile_model/user_profile/send_user_model.dart';
-import 'package:gwc_customer_web/screens/profile_screens/user_details_tap.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/dart_extensions.dart';
 import 'package:image_network/image_network.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../model/error_model.dart';
+import '../../model/profile_model/logout_model.dart';
 import '../../model/profile_model/user_profile/child_user_model.dart';
 import '../../model/profile_model/user_profile/update_user_model.dart';
 import '../../model/profile_model/user_profile/user_profile_model.dart';
 import '../../repository/api_service.dart';
+import '../../repository/login_otp_repository.dart';
 import '../../repository/profile_repository/get_user_profile_repo.dart';
+import '../../services/login_otp_service.dart';
 import '../../services/profile_screen_service/user_profile_service.dart';
 import '../../utils/app_config.dart';
 import '../../widgets/widgets.dart';
 import '../appointment_screens/consultation_screens/upload_files.dart';
 import '../evalution_form/evaluation_get_details.dart';
+import '../gut_list_screens/new_stages_data.dart';
+import '../user_registration/existing_user.dart';
 import 'feedback_rating_screen.dart';
 
 class MyProfileDetails extends StatefulWidget {
@@ -57,6 +59,8 @@ class MyProfileDetails extends StatefulWidget {
 }
 
 class _MyProfileDetailsState extends State<MyProfileDetails> {
+  final SharedPreferences _pref = AppConfig().preferences!;
+
   bool photoError = false;
   String profile = '';
   TextEditingController fnameController = TextEditingController();
@@ -139,7 +143,7 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                 fontSize: 6.dp),
                           ),
                           TextSpan(
-                            text: "4.3",
+                            text: "10.2",
                             style: TextStyle(
                                 fontFamily: kFontBook,
                                 color: gBlackColor,
@@ -281,7 +285,10 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                               child: IntrinsicWidth(
                                 child: Container(
                                   margin: EdgeInsets.only(
-                                      top: 2.h, bottom: 3.h, right: 0.w, left: 0.w),
+                                      top: 2.h,
+                                      bottom: 3.h,
+                                      right: 0.w,
+                                      left: 0.w),
                                   padding: EdgeInsets.only(
                                       top: 3.h,
                                       bottom: 3.h,
@@ -312,8 +319,10 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                           fullScreen: false,
                                           fitAndroidIos: BoxFit.cover,
                                           fitWeb: BoxFitWeb.cover,
-                                          borderRadius: BorderRadius.circular(70),
-                                          onLoading: const CircularProgressIndicator(
+                                          borderRadius:
+                                              BorderRadius.circular(70),
+                                          onLoading:
+                                              const CircularProgressIndicator(
                                             color: Colors.indigoAccent,
                                           ),
                                           onError: const Icon(
@@ -321,7 +330,8 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                             color: Colors.red,
                                           ),
                                           onTap: () {
-                                            debugPrint("©gabriel_patrick_souza");
+                                            debugPrint(
+                                                "©gabriel_patrick_souza");
                                           },
                                         ),
                                         // CircleAvatar(
@@ -377,7 +387,8 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                           "${subData?.name}",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              fontFamily: eUser().mainHeadingFont,
+                                              fontFamily:
+                                                  eUser().mainHeadingFont,
                                               color: eUser().mainHeadingColor,
                                               fontSize:
                                                   eUser().mainHeadingFontSize),
@@ -390,8 +401,8 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                               fontFamily:
                                                   eUser().userTextFieldHintFont,
                                               color: gHintTextColor,
-                                              fontSize:
-                                                  eUser().userTextFieldFontSize),
+                                              fontSize: eUser()
+                                                  .userTextFieldFontSize),
                                         ),
                                         SizedBox(height: 1.h),
                                         Text(
@@ -401,8 +412,8 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                               fontFamily:
                                                   eUser().userTextFieldHintFont,
                                               color: gHintTextColor,
-                                              fontSize:
-                                                  eUser().userTextFieldFontSize),
+                                              fontSize: eUser()
+                                                  .userTextFieldFontSize),
                                         ),
                                         Padding(
                                           padding: EdgeInsets.only(top: 2.h),
@@ -464,17 +475,31 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
                                 ),
                               ),
                             ),
-                            profileTile("First Name: ",
-                                subData?.fname ?? "Gut-Wellness Club",
-                                controller: fnameController),
-                            profileTile("Last Name: ",
-                                subData?.lname ?? "Gut-Wellness Club",
-                                controller: lnameController),
-                            profileTile("Age: ", subData?.age ?? '',
-                                controller: ageController, maxLength: 2),
-                            genderTile('Gender', subData?.gender ?? "")
-                            // profileTile("Email: ", subData?.email ?? ''),
-                            // profileTile("Mobile Number: ", subData?.phone ?? ''),
+                            Center(
+                              child: SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.shortestSide >
+                                            600
+                                        ? 40.w
+                                        : double.maxFinite,
+                                child: Column(
+                                  children: [
+                                    profileTile("First Name: ",
+                                        subData?.fname ?? "Gut-Wellness Club",
+                                        controller: fnameController),
+                                    profileTile("Last Name: ",
+                                        subData?.lname ?? "Gut-Wellness Club",
+                                        controller: lnameController),
+                                    profileTile("Age: ", subData?.age ?? '',
+                                        controller: ageController,
+                                        maxLength: 2),
+                                    genderTile('Gender', subData?.gender ?? "")
+                                    // profileTile("Email: ", subData?.email ?? ''),
+                                    // profileTile("Mobile Number: ", subData?.phone ?? ''),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ],
                         );
                       } else {
@@ -975,5 +1000,154 @@ class _MyProfileDetailsState extends State<MyProfileDetails> {
     //   _image = File(image!.path);
     // });
     // print(_image);
+  }
+
+  final LoginOtpRepository logoutRepository = LoginOtpRepository(
+    apiClient: ApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
+  void logOut() async {
+    logoutProgressState(() {
+      showLogoutProgress = true;
+    });
+    final res =
+    await LoginWithOtpService(repository: logoutRepository).logoutService();
+
+    if (res.runtimeType == LogoutModel) {
+      clearAllUserDetails();
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => const ExistingUser(),
+      ));
+    } else {
+      ErrorModel model = res as ErrorModel;
+      Get.snackbar(
+        "",
+        model.message!,
+        colorText: gWhiteColor,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: gsecondaryColor.withOpacity(0.55),
+      );
+    }
+
+    logoutProgressState(() {
+      showLogoutProgress = true;
+    });
+  }
+
+  // clearing some details in local storage
+  clearAllUserDetails() {
+    _pref.setBool(AppConfig.isLogin, false);
+    _pref.remove(AppConfig().BEARER_TOKEN);
+
+    _pref.remove(AppConfig.User_Name);
+    _pref.remove(AppConfig.USER_ID);
+    _pref.remove(AppConfig.QB_USERNAME);
+    _pref.remove(AppConfig.QB_CURRENT_USERID);
+    _pref.remove(AppConfig.KALEYRA_USER_ID);
+    _pref.remove(AppConfig.User_Name);
+    _pref.remove(AppConfig.User_Profile);
+    _pref.remove(AppConfig.User_Number);
+
+    updateStageData();
+  }
+
+  bool showLogoutProgress = false;
+
+  /// we r showing in stateful builder so this parameter will be used
+  /// when we get setstate we will assign to this parameter based on that logout progress is used
+  var logoutProgressState;
+
+  logoutWidget() {
+    return StatefulBuilder(builder: (_, setstate) {
+      logoutProgressState = setstate;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Text(
+              "We will miss you.",
+              style: TextStyle(
+                  fontSize: bottomSheetHeadingFontSize,
+                  fontFamily: bottomSheetHeadingFontFamily,
+                  height: 1.4),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            child: Divider(
+              color: kLineColor,
+              thickness: 1.2,
+            ),
+          ),
+          Center(
+            child: Text(
+              'Do you really want to logout?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: gTextColor,
+                fontSize: bottomSheetSubHeadingXFontSize,
+                fontFamily: bottomSheetSubHeadingMediumFont,
+              ),
+            ),
+          ),
+          SizedBox(height: 3.h),
+          (showLogoutProgress)
+              ? Center(child: buildCircularIndicator())
+              : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IntrinsicWidth(
+                child: GestureDetector(
+                  onTap: () => logOut(),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 1.5.h, horizontal: 5.w),
+                    decoration: BoxDecoration(
+                        color: gsecondaryColor,
+                        border: Border.all(color: kLineColor, width: 0.5),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Text(
+                      "YES",
+                      style: TextStyle(
+                        fontFamily: kFontMedium,
+                        color: gWhiteColor,
+                        fontSize: 11.dp,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 5.w),
+              IntrinsicWidth(
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        vertical: 1.5.h, horizontal: 5.w),
+                    decoration: BoxDecoration(
+                        color: gWhiteColor,
+                        border: Border.all(color: kLineColor, width: 0.5),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Text(
+                      "NO",
+                      style: TextStyle(
+                        fontFamily: kFontMedium,
+                        color: gsecondaryColor,
+                        fontSize: 11.dp,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 1.h)
+        ],
+      );
+    });
   }
 }

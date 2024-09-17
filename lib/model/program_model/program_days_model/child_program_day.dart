@@ -5,15 +5,17 @@ class ChildProgramDayModel {
   String? dayNumber;
   String? image;
   int? isCompleted;
+  int? isTrackerSubmitted;
   Color? color;
 
-  ChildProgramDayModel({this.programId, this.dayNumber, this.image, this.isCompleted});
+  ChildProgramDayModel({this.programId, this.dayNumber, this.image, this.isCompleted,this.isTrackerSubmitted});
 
   ChildProgramDayModel.fromJson(Map<String, dynamic> json) {
     programId = json['program_id'].toString();
     dayNumber = json['day_number'].toString();
     image = json['image'];
     isCompleted = json['is_completed'];
+    isTrackerSubmitted = json['isTrackerSubmitted'];
     if(dayNumber == '1' || (int.tryParse(dayNumber!)! % 3) == 1){
       color = const Color(0xffC7F087);
     }
@@ -31,6 +33,7 @@ class ChildProgramDayModel {
     data['day_number'] = this.dayNumber;
     data['image'] = this.image;
     data['is_completed'] = this.isCompleted;
+    data['isTrackerSubmitted'] = this.isTrackerSubmitted;
     return data;
   }
 }

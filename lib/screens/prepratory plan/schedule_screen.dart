@@ -19,14 +19,18 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:intl/intl.dart';
 import '../../model/consultation_model/appointment_slot_model.dart';
 import '../../model/consultation_model/child_slots_model.dart';
+import '../../model/consultation_model/follow_up_slot_model.dart';
 import '../../model/error_model.dart';
+import '../../model/shift_slots_model/shift_slots_model.dart';
 import '../../model/success_message_model.dart';
 import '../../model/user_slot_for_schedule_model/user_slot_days_schedule_model.dart';
 import '../../repository/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../../repository/shift_slots_repo/shift_slots_repo.dart';
 import '../../repository/user_slot_for_schedule_repository/schedule_slot_repository.dart';
+import '../../services/shift_slots_service/shift_slots_service.dart';
 import '../../services/user_slot_for_schedule_service/user_slot_for_schedule_service.dart';
 import '../../utils/app_config.dart';
 import '../../widgets/constants.dart';
@@ -41,9 +45,19 @@ class NewScheduleScreen extends StatefulWidget {
 
 class _NewScheduleScreenState extends State<NewScheduleScreen> {
   Future? getSlotDaysListFuture, slotFuture;
+  final _pref = AppConfig().preferences;
 
-  Map<String, ChildSlotModel>? followUpSlots;
+  bool isLoading = false;
+
+  List<ChildSlotModel> followUpSlots = [];
   final ScheduleSlotsRepository repository = ScheduleSlotsRepository(
+    apiClient: ApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
+  List<Slot> followUpShiftSlots = [];
+  final ShiftSlotsRepository repo = ShiftSlotsRepository(
     apiClient: ApiClient(
       httpClient: http.Client(),
     ),
@@ -62,10 +76,83 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
             .getSlotsDaysForScheduleService();
   }
 
-  getSlotFuture(String date) {
-    return GetUserScheduleSlotsForService(repository: repository)
-        .getFollowUpSlotsScheduleService(date);
+  late final ShiftSlotsService shiftSlotsService =
+      ShiftSlotsService(repository: repo);
+
+  List<Slot> shiftSlots = [];
+  // List<SlotElement> slots = [];
+
+  getSlotFuture(String date) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    print("date : $date");
+
+    DateTime d = DateFormat("dd-MM-yyyy").parse(date);
+
+    print("DateTime : $d");
+
+    String dat = DateFormat('yyyy-MM-dd').format(d);
+
+    print("Selected DateTime : $dat");
+
+    final result = await shiftSlotsService
+        .getShiftSlotsService(
+      dat,
+      "followup_slots",
+      _pref?.getString(AppConfig.userDoctorId).toString() ?? '',
+    )
+        .then((value) {
+      print("result: $value");
+
+      if (value.runtimeType == ShiftSlotsModel) {
+        setState(() {
+          isLoading = false;
+        });
+
+        print("Shift Slots List");
+        ShiftSlotsModel model = value as ShiftSlotsModel;
+
+        // for (var e in model.getAllDoctors.followupSlots.slots) {
+        //   print("doctor user id : ${e}");
+        //   print(
+        //       "dashboard doctor user id : ${_pref?.getString(AppConfig.userDoctorId)}");
+        //
+        //   if (e.userId.toString() == _pref?.getString(AppConfig.userDoctorId).toString()) {
+        //     shiftSlots.add(e);
+        //     print("shiftSlots : $shiftSlots");
+        //   }
+        // }
+        //
+        // for (var ele in shiftSlots) {
+        //   for (var e in ele.slots) {
+        //
+        //     slots.add(e);
+        //     print("slotss : ${slots[0].slot}");
+        //   }
+        // }
+        // setState(() {
+        //   isLoading = false;
+        // });
+      } else {
+        ErrorModel model = value as ErrorModel;
+        setState(() {
+          isLoading = false;
+        });
+        print("error: ${model.message}");
+      }
+
+      print(value);
+    });
   }
+
+  // getSlotFuture(String date) {
+  //   return ShiftSlotsService(repository: repo).getShiftSlotsService(date);
+  //
+  //   // return GetUserScheduleSlotsForService(repository: repository)
+  //   //     .getFollowUpSlotsScheduleService(date);
+  // }
 
   String errorMsg = "";
 
@@ -197,6 +284,7 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
                                         isError: true);
                                   } else {
                                     showScheduleDialog(date);
+                                    getSlotFuture(date);
                                   }
                                 } else {
                                   AppConfig().showSnackbar(
@@ -386,102 +474,81 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
       // contentPadding: EdgeInsets.only(top: 10.0, bottom: 8),
       child: SingleChildScrollView(
         child: Container(
-            padding: EdgeInsets.symmetric(vertical: 1.h),
-            // height: 50.h,
-            child: FutureBuilder(
-              future: getSlotFuture(date2),
-              builder: (_, snap) {
-                print("snap: $snap");
-                if (snap.hasData) {
-                  if (snap.data.runtimeType == ErrorModel) {
-                    final model = snap.data as ErrorModel;
-                    return Center(
-                      child: Text(model.message ?? ''),
-                    );
-                  } else if (snap.data.runtimeType == SlotModel) {
-                    final model = snap.data as SlotModel;
-                    followUpSlots = model.data;
-                    blockedSlot = "";
-                    followUpSlots!.values.forEach((e) {
-                      if (e.isBooked == "1") {
-                        blockedSlot = e.slot!;
-                      }
-                    });
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 6,
-                        ),
-                        Text(
-                          'Please Select Slot',
-                          style: TextStyle(
-                              fontFamily: kFontMedium, fontSize: 15.dp),
-                        ),
-                        Divider(),
-                        Center(
-                          child: Wrap(
-                            alignment: WrapAlignment.start,
-                            runAlignment: WrapAlignment.start,
-                            children: [
-                              ...followUpSlots!.values.map((e) => slotChip(
-                                  e.slot!, '',
-                                  isSelected: selectedSlot.contains(e.slot!),
-                                  setstate: setState,
-                                  isBlocked: blockedSlot.contains(e.slot!)))
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        // Spacer(),
-                        (showSubmitProgress)
-                            ? Center(child: buildCircularIndicator())
-                            : Center(
-                                child: IntrinsicWidth(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      submitFollowupSlots(date2, selectedSlot);
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 1.5.h, horizontal: 5.w),
-                                      decoration: BoxDecoration(
-                                        color: eUser().buttonColor,
-                                        borderRadius: BorderRadius.circular(
-                                            eUser().buttonBorderRadius),
-                                        // border: Border.all(color: eUser().buttonBorderColor,
-                                        //     width: eUser().buttonBorderWidth),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'Submit',
-                                          style: TextStyle(
-                                            fontFamily: kFontBold,
-                                            color: gWhiteColor,
-                                            fontSize: 13.dp,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+          padding: EdgeInsets.symmetric(vertical: 1.h),
+          // height: 50.h,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 6,
+              ),
+              Text(
+                'Please Select Slot',
+                style: TextStyle(fontFamily: kFontMedium, fontSize: 15.dp),
+              ),
+              Divider(),
+              isLoading
+                  ? buildCircularIndicator()
+                  : Center(
+                      child: Wrap(
+                        alignment: WrapAlignment.start,
+                        runAlignment: WrapAlignment.start,
+                        children: [
+                          // ...followUpSlots.map(
+                          //   (e) => e.isBooked == 1 ? const SizedBox() : slotChip(
+                          //     e.slot,
+                          //     '',
+                          //     isSelected: selectedSlot.contains(e.slot),
+                          //     setstate: setState,
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
+              SizedBox(
+                height: 10,
+              ),
+              // Spacer(),
+              (showSubmitProgress)
+                  ? Center(child: buildCircularIndicator())
+                  : Center(
+                      child: IntrinsicWidth(
+                        child: GestureDetector(
+                          onTap: () {
+                            submitFollowupSlots(date2, selectedSlot);
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 1.5.h, horizontal: 5.w),
+                            decoration: BoxDecoration(
+                              color: eUser().buttonColor,
+                              borderRadius: BorderRadius.circular(
+                                  eUser().buttonBorderRadius),
+                              // border: Border.all(color: eUser().buttonBorderColor,
+                              //     width: eUser().buttonBorderWidth),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Submit',
+                                style: TextStyle(
+                                  fontFamily: kFontBold,
+                                  color: gWhiteColor,
+                                  fontSize: 13.dp,
                                 ),
                               ),
-                        SizedBox(
-                          height: 10,
-                        )
-                      ],
-                    );
-                  }
-                }
-                return Center(
-                  child: buildCircularIndicator(),
-                );
-              },
-            )),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+              SizedBox(
+                height: 10,
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -497,52 +564,45 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
   }
 
   slotChip(String time, String slotName,
-      {bool isSelected = false, Function? setstate, bool isBlocked = false}) {
-    print("isBlocked:= $isBlocked");
+      {bool isSelected = false, Function? setstate}) {
     return GestureDetector(
       onTap: () {
-        if (!isBlocked) {
-          setstate!(() {
-            selectedSlot = time;
-            // start = selectedSlot.split("-").first;
-            // end = selectedSlot.split("-").last;
-            //
-            // print(start);
-            // print(end);
-            // if(slotName == "Evening"){
-            //   selectedEveningSlot = time;
-            // }
-            // else{
-            //   selectedMorningSlot = time;
-            // }
-          });
-        }
+        setstate!(() {
+          selectedSlot = time;
+          // start = selectedSlot.split("-").first;
+          // end = selectedSlot.split("-").last;
+          //
+          // print(start);
+          // print(end);
+          // if(slotName == "Evening"){
+          //   selectedEveningSlot = time;
+          // }
+          // else{
+          //   selectedMorningSlot = time;
+          // }
+        });
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
         margin: EdgeInsets.symmetric(horizontal: 2.w, vertical: 3),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(6),
-            color: (isBlocked)
-                ? kLineColor
-                : isSelected
-                    ? gsecondaryColor
-                    : gTapColor),
+            color: isSelected ? gsecondaryColor : gTapColor),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               Icons.timelapse_rounded,
               size: 2.5.h,
-              color: (isSelected || isBlocked) ? gWhiteColor : gBlackColor,
+              color: (isSelected) ? gWhiteColor : gBlackColor,
             ),
             SizedBox(width: 0.5.w),
             Text(
               time,
               style: TextStyle(
-                color: (isSelected || isBlocked) ? gWhiteColor : gBlackColor,
-                fontSize: (isSelected || isBlocked) ? 14.dp : 12.dp,
-                fontFamily: (isSelected || isBlocked) ? kFontMedium : kFontBook,
+                color: (isSelected) ? gWhiteColor : gBlackColor,
+                fontSize: (isSelected) ? 14.dp : 12.dp,
+                fontFamily: (isSelected) ? kFontMedium : kFontBook,
               ),
             )
           ],
@@ -559,8 +619,10 @@ class _NewScheduleScreenState extends State<NewScheduleScreen> {
       showSubmitProgress = true;
     });
     print(start);
+
+    Map m = {};
     final res = await GetUserScheduleSlotsForService(repository: repository)
-        .submitSlotSelectedService(selectedDate, start, end);
+        .submitSlotSelectedService(m);
     Navigator.pop(context);
     if (res.runtimeType == ErrorModel) {
       submitProgressState(() {

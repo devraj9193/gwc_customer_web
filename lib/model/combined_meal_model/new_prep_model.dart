@@ -3,13 +3,15 @@ import 'meal_slot_model.dart';
 class NewPrepModel {
   String? data;
   int? totalDays;
+  String? mealNote;
   ChildPrepModel? childPrepModel;
 
-  NewPrepModel({this.data, this.totalDays, this.childPrepModel});
+  NewPrepModel({this.data, this.mealNote, this.totalDays, this.childPrepModel});
 
   NewPrepModel.fromJson(Map<String, dynamic> json) {
     data = json['data'];
     totalDays = json['total_days'];
+    mealNote = json['meal_note'].toString();
     childPrepModel = json['value'] != null ? new ChildPrepModel.fromJson(json['value']) : null;
   }
 
@@ -17,6 +19,7 @@ class NewPrepModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['data'] = this.data;
     data['total_days'] = this.totalDays;
+    data['meal_note'] = this.mealNote;
     if (this.childPrepModel != null) {
       data['value'] = this.childPrepModel!.toJson();
     }

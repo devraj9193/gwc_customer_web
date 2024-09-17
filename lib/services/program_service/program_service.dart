@@ -1,8 +1,8 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/repository/program_repository/program_repository.dart';
-import 'package:http/http.dart';
 
+import '../../model/combined_meal_model/meal_plan_tracker_modl/send_meal_plan_tracker_model.dart';
 import '../../model/program_model/proceed_model/send_proceed_program_model.dart';
 
 class ProgramService extends ChangeNotifier{
@@ -30,5 +30,17 @@ class ProgramService extends ChangeNotifier{
 
   Future getCombinedMealService() async{
     return await repository.getCombinedMealRepo();
+  }
+
+  Future getUserYogaListService(String userId) async{
+    return await repository.getUserYogaListRepo(userId);
+  }
+
+  Future submitMealPlanService(SubmitMealPlanTrackerModel day) async{
+    return await repository.submitMealPlanRepo(day);
+  }
+
+  Future submitMealPlanTrackerService(SubmitMealPlanTrackerModel day, List<PlatformFile> files)async {
+    return await repository.submitMealPlanTrackerRepo(day,files);
   }
 }

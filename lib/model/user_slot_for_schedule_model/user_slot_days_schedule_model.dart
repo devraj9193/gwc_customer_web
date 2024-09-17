@@ -41,6 +41,7 @@ class ChildUserSlotDaysForScheduleModel {
   String? callStatus;
   bool? booked;
   int? day;
+  String? eventId;
 
   ChildUserSlotDaysForScheduleModel({this.slot, this.date, this.status, this.booked, this.day});
 
@@ -51,6 +52,7 @@ class ChildUserSlotDaysForScheduleModel {
     callStatus = json['call_status'].toString();
     booked = (json['booked'] == null || json['booked'] != "1") ? false : true;
     day = json['day'];
+    eventId =json['event_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -61,6 +63,7 @@ class ChildUserSlotDaysForScheduleModel {
     data['booked'] = this.booked;
     data['call_status'] = this.callStatus;
     data['day'] = this.day;
+    data['event_id'] = this.eventId;
     return data;
   }
 }

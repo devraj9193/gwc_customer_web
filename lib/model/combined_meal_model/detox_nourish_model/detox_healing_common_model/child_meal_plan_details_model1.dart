@@ -9,9 +9,11 @@ class ChildMealPlanDetailsModel1 {
   String? mealTime;
   int? itemId;
   String? name;
+  String? mealTypeName;
   String? mealWeight;
   String? weightType;
   String? url;
+  String? recipeVideoUrl;
   String? status;
   String? itemImage;
   String? subTitle;
@@ -28,9 +30,11 @@ class ChildMealPlanDetailsModel1 {
         this.mealTime,
         this.itemId,
         this.name,
+        this.mealTypeName,
         this.mealWeight,
         this.weightType,
         this.url,
+        this.recipeVideoUrl,
         this.status,
         this.subTitle,
         this.itemImage,
@@ -49,9 +53,11 @@ class ChildMealPlanDetailsModel1 {
     mealTime = json['meal_time'].toString() ?? '';
     itemId = json['item_id'] ?? '';
     name = json['name'].toString() ?? '';
+    mealTypeName = json['meal_type_name'].toString() ?? '';
     mealWeight = json['meal_weight'].toString() ?? '';
     weightType = json['weight_type'].toString() ?? '';
     url = json['url'].toString() ?? '';
+    recipeVideoUrl = json['recipe_video_url'].toString() ?? '';
     status = json['status'].toString() ?? '';
     subTitle = json['subtitle'] ?? '';
     itemImage = json['item_photo'].toString() ?? '';
@@ -86,9 +92,11 @@ class ChildMealPlanDetailsModel1 {
     data['meal_time'] = this.mealTime;
     data['item_id'] = this.itemId;
     data['name'] = this.name;
+    data['meal_type_name'] = this.mealTypeName;
     data['meal_weight'] = this.mealWeight;
     data['weight_type'] = this.weightType;
     data['url'] = this.url;
+    data['recipe_video_url'] = this.recipeVideoUrl;
     data['status'] = this.status;
     data['subtitle'] = this.subTitle;
     data['item_photo'] = this.itemImage;

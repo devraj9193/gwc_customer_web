@@ -12,7 +12,8 @@ var registerUserUrl = "${AppConfig().BASE_URL}/api/register";
 /// shiprocket Api
 var shippingApiLoginUrl = "${AppConfig().shipRocket_AWB_URL}/auth/login";
 
-var shipRocketTrackingApiUrl = "${AppConfig().BASE_URL}/api/getData/shiprocket_tracking";
+var shipRocketTrackingApiUrl =
+    "${AppConfig().BASE_URL}/api/getData/shiprocket_tracking";
 
 var shippingApiUrl = "${AppConfig().shipRocket_AWB_URL}/courier/track/awb";
 
@@ -30,15 +31,16 @@ var getOtpUrl = "${AppConfig().BASE_URL}/api/sendOTP";
 
 var getAppointmentSlotsListUrl = "${AppConfig().BASE_URL}/api/getData/slots/";
 
-var bookAppointmentUrl = "${AppConfig().BASE_URL}/api/getData/book";
+var bookAppointmentUrl =
+    "${AppConfig().BASE_URL}/api/getData/bookOnlineAppointment";
+// "getData/book";
 
 var enquiryStatusUrl = "${AppConfig().BASE_URL}/api/form/check_enquiry_status";
 
 var submitEvaluationFormUrl =
     "${AppConfig().BASE_URL}/api/submitForm/evaluation_form";
 
-var getPinCodeFormApiUrl =
-    "${AppConfig().BASE_URL}/api/getData/pincode";
+var getPinCodeFormApiUrl = "${AppConfig().BASE_URL}/api/getData/pincode";
 
 var getEvaluationDataUrl =
     "${AppConfig().BASE_URL}/api/getData/get_evaluation_data";
@@ -66,6 +68,9 @@ var getMealPlanDataUrl =
 
 var submitDayPlanDetailsUrl =
     "${AppConfig().BASE_URL}/api/submitData/patient_meal_tracking";
+
+var submitMealPlanTrackerUrl =
+    "${AppConfig().BASE_URL}/api/submitData/online_patient_meal_tracking";
 
 /// feedback Url
 var submitFeedbackUrl = "${AppConfig().BASE_URL}/api/submitForm/feedback";
@@ -162,6 +167,10 @@ var getUserSlotDaysForScheduleUrl =
 
 var getFollowUpSlotUrl = "${AppConfig().BASE_URL}/api/getData/followup_slots/";
 
+var getPpcAppointmentSlotUrl =
+    "${AppConfig().BASE_URL}/api/postCETData/getPPCDoctorSlots";
+// "/api/getData/ppc_followup_slots/";
+
 var submitSlotSelectedUrl =
     "${AppConfig().BASE_URL}/api/submitForm/follow_up_book";
 
@@ -184,8 +193,20 @@ var submitGutDiagnosisFormUrl =
 var getGutDiagnosisUrl =
     "${AppConfig().BASE_URL}/api/getData/get_gut_type_diagnosis";
 
+var getConsultationSlotsUrl =
+    "${AppConfig().BASE_URL}/api/getDataValue/get_unique_slots";
+
+var getShiftSlotsUrl = "${AppConfig().BASE_URL}/api/get_shift_slots";
+
 // Neutri Delight
-var getCombinedMealUrl = "${AppConfig().BASE_URL}/api/getData/NutriDelight";
+var getCombinedMealUrl =
+    "${AppConfig().BASE_URL}/api/getData/getMasterMealPlans";
+// "${AppConfig().BASE_URL}/api/getData/getMealPlans1";
+// "${AppConfig().BASE_URL}/api/getData/getMealPlans";
+// "${AppConfig().BASE_URL}/api/getData/NutriDelight";
+
+var getUserYogaListUrl =
+    "${AppConfig().BASE_URL}/api/getData/getYogaList/";
 
 /// home screen meal progress graph api
 var getGraphUrl = "${AppConfig().BASE_URL}/api/listData/progress";
@@ -202,8 +223,7 @@ var getRemainderUrl = '${AppConfig().BASE_URL}/api/getData/get_water_reminder';
 var submitRemainderUrl =
     '${AppConfig().BASE_URL}/api/submitForm/water_reminder';
 
-var ticketChatApiUrl =
-    '${AppConfig().BASE_URL}/api/getData/track_ticket';
+var ticketChatApiUrl = '${AppConfig().BASE_URL}/api/getData/track_ticket';
 
 var ticketChatSendApiUrl =
     '${AppConfig().BASE_URL}/api/submitForm/reply_message';

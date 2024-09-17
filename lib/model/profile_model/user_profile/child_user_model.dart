@@ -9,6 +9,7 @@ class ChildUserModel {
   String? countryCode;
   String? phone;
   String? gender;
+  String? profession;
   String? profile;
   String? address;
   String? otp;
@@ -38,6 +39,7 @@ class ChildUserModel {
         this.countryCode,
         this.phone,
         this.gender,
+        this.profession,
         this.profile,
         this.address,
         this.otp,
@@ -65,6 +67,7 @@ class ChildUserModel {
     countryCode = json['country_code'];
     phone = json['phone'];
     gender = json['gender'];
+    profession = json['profession'];
     profile = json['profile'];
     address = json['address'];
     otp = json['otp'].toString();
@@ -97,6 +100,7 @@ class ChildUserModel {
     data['country_code'] = this.countryCode;
     data['phone'] = this.phone;
     data['gender'] = this.gender;
+    data['profession'] = this.profession;
     data['profile'] = this.profile;
     data['address'] = this.address;
     data['otp'] = this.otp;

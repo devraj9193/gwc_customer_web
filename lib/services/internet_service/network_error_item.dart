@@ -28,7 +28,7 @@ class _NetworkErrorItemState extends State<NetworkErrorItem> {
           Get.to(() => const NetworkErrorItem());
           setState(() => isAlertSet = true);
         }
-      },
+      } as void Function(List<ConnectivityResult> event)?,
     );
   }
 

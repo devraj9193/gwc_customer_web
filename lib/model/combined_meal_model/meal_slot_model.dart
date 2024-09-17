@@ -2,9 +2,12 @@ class MealSlot {
   int? id;
   int? itemId;
   String? name;
+  String? mealTypeName;
   String? benefits;
   String? subtitle;
   String? itemPhoto;
+  String? recipeVideoUrl;
+  String? yogaVideoUrl;
   String? recipeUrl;
   String? howToStore;
   String? howToPrepare;
@@ -17,9 +20,12 @@ class MealSlot {
       {this.id,
         this.itemId,
         this.name,
+        this.mealTypeName,
         this.benefits,
         this.subtitle,
         this.itemPhoto,
+        this.recipeVideoUrl,
+        this.yogaVideoUrl,
         this.recipeUrl,
         this.howToStore,
         this.howToPrepare,
@@ -33,10 +39,13 @@ class MealSlot {
     id = json['id'];
     itemId = json['item_id'];
     name = json['name'];
+    mealTypeName = json['meal_type_name'].toString();
     benefits = json['benefits'];
     subtitle = json['subtitle'];
     itemPhoto = json['item_photo'];
     recipeUrl = json['recipe_url'];
+    recipeVideoUrl = json['recipe_video_url'];
+    yogaVideoUrl = json['yoga_video_url'];
     howToStore = json['how_to_store'];
     howToPrepare = json['how_to_prepare'];
     if (json['ingredient'] != null) {
@@ -57,7 +66,7 @@ class MealSlot {
         faq!.add(new Faq.fromJson(v));
       });
     }
-    cookingTime = json['cooking_time'];
+    cookingTime = json['cooking_time'].toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -65,8 +74,11 @@ class MealSlot {
     data['id'] = this.id;
     data['item_id'] = this.itemId;
     data['name'] = this.name;
+    data['meal_type_name'] = this.mealTypeName;
     data['benefits'] = this.benefits;
     data['subtitle'] = this.subtitle;
+    data['recipe_video_url'] = this.recipeVideoUrl;
+    data['yoga_video_url'] = this.yogaVideoUrl;
     data['item_photo'] = this.itemPhoto;
     data['recipe_url'] = this.recipeUrl;
     data['how_to_store'] = this.howToStore;

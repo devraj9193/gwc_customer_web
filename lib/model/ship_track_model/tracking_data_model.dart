@@ -1,5 +1,5 @@
 import 'child_shipping_track_model.dart';
-import 'qc_response.dart';
+// import 'qc_response.dart';
 import 'ship_track_activity_model.dart';
 
 class TrackingData {
@@ -9,7 +9,7 @@ class TrackingData {
   List<ShipmentTrackActivities>? shipmentTrackActivities;
   String? trackUrl;
   String? etd;
-  QcResponse? qcResponse;
+  // QcResponse? qcResponse;
   String? error;
 
   TrackingData(
@@ -19,7 +19,7 @@ class TrackingData {
         this.shipmentTrackActivities,
         this.trackUrl,
         this.etd,
-        this.qcResponse,
+        // this.qcResponse,
         this.error
       });
 
@@ -40,9 +40,9 @@ class TrackingData {
     }
     trackUrl = json['track_url'];
     etd = json['etd'];
-    qcResponse = json['qc_response'] != null
-        ? new QcResponse.fromJson(json['qc_response'])
-        : null;
+    // qcResponse = json['qc_response'] != null
+    //     ? new QcResponse.fromJson(json['qc_response'])
+    //     : null;
     error = json['error'];
   }
 
@@ -60,9 +60,9 @@ class TrackingData {
     }
     data['track_url'] = this.trackUrl;
     data['etd'] = this.etd;
-    if (this.qcResponse != null) {
-      data['qc_response'] = this.qcResponse!.toJson();
-    }
+    // if (this.qcResponse != null) {
+    //   data['qc_response'] = this.qcResponse!.toJson();
+    // }
     data['error'] = this.error;
     return data;
   }

@@ -11,8 +11,12 @@ class ConsultationRepository{
     return await apiClient.getAppointmentSlotListApi(selectedDate, appointmentId: appointmentId);
   }
 
-  Future bookAppointmentSlotListRepo(String date, String slotTime, {String? appointmentId, bool isPostprogram = false}) async{
-    return await apiClient.bookAppointmentApi(date, slotTime, appointmentId: appointmentId, isPostprogram: isPostprogram);
+  Future getPpcAppointmentSlotListRepo(String selectedDate,String doctorId) async{
+    return await apiClient.getPpcAppointmentSlotListApi(selectedDate,doctorId);
+  }
+
+  Future bookAppointmentSlotListRepo(String date, String slotTime, String doctorId,{String? appointmentId, bool isPostprogram = false}) async{
+    return await apiClient.bookAppointmentApi(date, slotTime, doctorId,appointmentId: appointmentId, isPostprogram: isPostprogram);
   }
 
   Future getAccessTokenRepo(String kaleyraUID) async{

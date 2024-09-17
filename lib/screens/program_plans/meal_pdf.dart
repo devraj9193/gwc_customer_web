@@ -9,7 +9,8 @@ for video we r using chewie package
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/widgets/video/normal_video.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../../widgets/constants.dart';
 import '../../../widgets/widgets.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -31,16 +32,23 @@ class MealPdf extends StatefulWidget {
   /// By default headCircleIcon is [bsHeadBellIcon]
   final String? headCircleIcon;
 
-
   /// if this is true than pass sheetCloseOnTap parameter
   final bool isSheetCloseNeeded;
 
   /// its null is isSheetCloseNeeded is false
   VoidCallback? sheetCloseOnTap;
-  MealPdf({Key? key, required this.pdfLink, this.heading, this.mealVideoLink,
-    this.topHeadColor, this.headCircleIcon, this.isVideoWidgetVisible = true,
-    this.videoName, this.isSheetCloseNeeded = false, this.sheetCloseOnTap
-  }) : super(key: key);
+  MealPdf(
+      {Key? key,
+      required this.pdfLink,
+      this.heading,
+      this.mealVideoLink,
+      this.topHeadColor,
+      this.headCircleIcon,
+      this.isVideoWidgetVisible = true,
+      this.videoName,
+      this.isSheetCloseNeeded = false,
+      this.sheetCloseOnTap})
+      : super(key: key);
 
   @override
   State<MealPdf> createState() => _MealPdfState();
@@ -49,6 +57,8 @@ class MealPdf extends StatefulWidget {
 class _MealPdfState extends State<MealPdf> {
   @override
   Widget build(BuildContext context) {
+    print("pdf file : ${widget.pdfLink}");
+
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -61,7 +71,7 @@ class _MealPdfState extends State<MealPdf> {
                 child: SafeArea(
                   child: Padding(
                     padding:
-                    EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+                        EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
                     child: buildAppBar(() {}, isBackEnable: false),
                   ),
                 ),
@@ -82,8 +92,7 @@ class _MealPdfState extends State<MealPdf> {
                           color: gBackgroundColor,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(22),
-                              topRight: Radius.circular(22)
-                          ),
+                              topRight: Radius.circular(22)),
                         ),
                         child: Stack(
                           children: [
@@ -94,10 +103,12 @@ class _MealPdfState extends State<MealPdf> {
                                   height: 15.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(22),
-                                    color: this.widget.topHeadColor ?? kBottomSheetHeadYellow,
+                                    color: this.widget.topHeadColor ??
+                                        kBottomSheetHeadYellow,
                                   ),
                                   child: Center(
-                                    child: Image.asset(bsHeadStarsIcon,
+                                    child: Image.asset(
+                                      bsHeadStarsIcon,
                                       alignment: Alignment.topRight,
                                       fit: BoxFit.scaleDown,
                                       width: 30.w,
@@ -112,7 +123,7 @@ class _MealPdfState extends State<MealPdf> {
                                   child: SizedBox(
                                     height: 70.h,
                                     child: SingleChildScrollView(
-                                      child:  Column(
+                                      child: Column(
                                         // shrinkWrap: true,
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
@@ -162,46 +173,54 @@ class _MealPdfState extends State<MealPdf> {
                                           // ),
                                           // SizedBox(height: 1.h),
                                           Visibility(
-                                              visible: widget.isVideoWidgetVisible,
-                                              child: videoMp4Widget(
-                                              onTap: (){
-                                                if(widget.mealVideoLink != null && widget.mealVideoLink!.isNotEmpty){
-                                                  addChewieVideoPlayer(widget.mealVideoLink ?? '');
+                                              visible:
+                                                  widget.isVideoWidgetVisible,
+                                              child: videoMp4Widget(onTap: () {
+                                                if (widget.mealVideoLink !=
+                                                        null &&
+                                                    widget.mealVideoLink!
+                                                        .isNotEmpty) {
+                                                  addChewieVideoPlayer(
+                                                      widget.mealVideoLink ??
+                                                          '');
                                                   setState(() {
                                                     showMealVideo = true;
                                                   });
                                                 }
-
                                               })),
                                           Flexible(
                                             child: Stack(
                                               children: [
                                                 IntrinsicHeight(
                                                   child: SfPdfViewer.network(
-                                                      widget.pdfLink
-                                                  ),
+                                                      widget.pdfLink),
                                                 ),
                                                 Visibility(
                                                   visible: showMealVideo,
-                                                  child: Positioned(
-                                                      child: Center(
-                                                          child: buildMealVideo(
-                                                              onTap: () async{
-                                                                setState(() {
-                                                                  showMealVideo = false;
-                                                                });
-                                                                if(await WakelockPlus.enabled == true){
-                                                                  WakelockPlus.disable();
-                                                                }
-                                                                if(_mealVideoController != null)_mealVideoController!.dispose();
-                                                                if(_chewieController != null)_chewieController!.dispose();
+                                                  child: Positioned(child:
+                                                      Center(child:
+                                                          buildMealVideo(
+                                                              onTap: () async {
+                                                    setState(() {
+                                                      showMealVideo = false;
+                                                    });
+                                                    if (await WakelockPlus
+                                                            .enabled ==
+                                                        true) {
+                                                      WakelockPlus.disable();
+                                                    }
+                                                    if (_mealVideoController !=
+                                                        null)
+                                                      _mealVideoController!
+                                                          .dispose();
+                                                    if (_chewieController !=
+                                                        null)
+                                                      _chewieController!
+                                                          .dispose();
 
-                                                                // await _mealPlayerController!.stopRendererScanning();
-                                                                // await _mealPlayerController!.dispose();
-                                                              }
-                                                          )
-                                                      )
-                                                  ),
+                                                    // await _mealPlayerController!.stopRendererScanning();
+                                                    // await _mealPlayerController!.dispose();
+                                                  }))),
                                                 )
                                               ],
                                             ),
@@ -211,7 +230,6 @@ class _MealPdfState extends State<MealPdf> {
                                     ),
                                   ),
                                 )
-
                               ],
                             ),
                             Positioned(
@@ -223,32 +241,39 @@ class _MealPdfState extends State<MealPdf> {
                                       // color: Colors.white,
                                       shape: BoxShape.circle,
                                       boxShadow: [
-                                        BoxShadow(blurRadius: 5, color: gHintTextColor.withOpacity(0.8))
+                                        BoxShadow(
+                                            blurRadius: 5,
+                                            color:
+                                                gHintTextColor.withOpacity(0.8))
                                       ],
                                     ),
                                     child: CircleAvatar(
                                       maxRadius: 40.sp,
-                                      backgroundColor: kBottomSheetHeadCircleColor,
-                                      child: Image.asset(this.widget.headCircleIcon ?? bsHeadBellIcon,
+                                      backgroundColor:
+                                          kBottomSheetHeadCircleColor,
+                                      child: Image.asset(
+                                        this.widget.headCircleIcon ??
+                                            bsHeadBellIcon,
                                         fit: BoxFit.scaleDown,
                                         width: 45,
                                         height: 45,
                                       ),
-                                    )
-                                )
-                            ),
+                                    ))),
                             Visibility(
                               visible: widget.isSheetCloseNeeded,
                               child: Positioned(
                                   top: 10,
                                   right: 10,
                                   child: GestureDetector(
-                                      onTap: widget.sheetCloseOnTap ?? (){},
-                                      child: Icon(Icons.cancel_outlined, color: gsecondaryColor,size: 28,))),
+                                      onTap: widget.sheetCloseOnTap ?? () {},
+                                      child: Icon(
+                                        Icons.cancel_outlined,
+                                        color: gsecondaryColor,
+                                        size: 28,
+                                      ))),
                             )
                           ],
                         ),
-
                       ),
                       // child: Container(
                       //   width: double.maxFinite,
@@ -342,67 +367,67 @@ class _MealPdfState extends State<MealPdf> {
     );
   }
 
-  videoMp4Widget({required VoidCallback onTap}){
+  videoMp4Widget({required VoidCallback onTap}) {
     print("widget.mealVideoLink?.split('/').last: ${widget.mealVideoLink}");
     return InkWell(
       onTap: onTap,
       child: Card(
-          child: Row(
-              children:[
-                Image.asset("assets/images/meal_placeholder.png",
-                  height: 35,
-                  width: 40,
-                ),
-                Expanded(child: Text(widget.videoName ?? "Symptom Tracker.mp4",
-                  style: TextStyle(
-                      fontFamily: kFontBook
-                  ),
-                )),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset("assets/images/arrow_for_video.png",
-                    height: 35,
-                  ),
-                )
-              ]
-          )
-      ),
+          child: Row(children: [
+        Image.asset(
+          "assets/images/meal_placeholder.png",
+          height: 35,
+          width: 40,
+        ),
+        Expanded(
+            child: Text(
+          widget.videoName ?? "Symptom Tracker.mp4",
+          style: TextStyle(fontFamily: kFontBook),
+        )),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset(
+            "assets/images/arrow_for_video.png",
+            height: 35,
+          ),
+        )
+      ])),
     );
   }
+
   VideoPlayerController? _mealVideoController;
   ChewieController? _chewieController;
 
   bool showMealVideo = false;
 
-  addChewieVideoPlayer(String url) async{
-    _mealVideoController = VideoPlayerController.network(Uri.parse(url).toString());
+  addChewieVideoPlayer(String url) async {
+    _mealVideoController =
+        VideoPlayerController.network(Uri.parse(url).toString());
     _chewieController = ChewieController(
         videoPlayerController: _mealVideoController!,
-        aspectRatio: 16/9,
+        aspectRatio: 16 / 9,
         autoInitialize: true,
         showOptions: false,
         autoPlay: true,
         hideControlsTimer: Duration(seconds: 3),
-        showControls: false
-
-    );
-    if(await WakelockPlus.enabled == false){
+        showControls: false);
+    if (await WakelockPlus.enabled == false) {
       WakelockPlus.enable();
     }
   }
 
   @override
-  dispose(){
-    if(_mealVideoController != null) _mealVideoController!.dispose();
-    if(_chewieController != null) _chewieController!.dispose();
+  dispose() {
+    if (_mealVideoController != null) _mealVideoController!.dispose();
+    if (_chewieController != null) _chewieController!.dispose();
     super.dispose();
   }
+
   buildMealVideo({required VoidCallback onTap}) {
-    if(_chewieController != null){
+    if (_chewieController != null) {
       return Column(
         children: [
           AspectRatio(
-            aspectRatio: 16/9,
+            aspectRatio: 16 / 9,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
@@ -419,33 +444,32 @@ class _MealPdfState extends State<MealPdf> {
                 borderRadius: BorderRadius.circular(5),
                 child: Center(
                     child: OverlayVideo(
-                      controller: _chewieController!,
-                    )
-                  // child: VlcPlayerWithControls(
-                  //   key: _mealKey,
-                  //   controller: _mealPlayerController!,
-                  //   showVolume: false,
-                  //   showVideoProgress: false,
-                  //   seekButtonIconSize: 10.sp,
-                  //   playButtonIconSize: 14.sp,
-                  //   replayButtonSize: 10.sp,
-                  // ),
-                ),
+                  controller: _chewieController!,
+                )
+                    // child: VlcPlayerWithControls(
+                    //   key: _mealKey,
+                    //   controller: _mealPlayerController!,
+                    //   showVolume: false,
+                    //   showVideoProgress: false,
+                    //   seekButtonIconSize: 10.sp,
+                    //   playButtonIconSize: 14.sp,
+                    //   replayButtonSize: 10.sp,
+                    // ),
+                    ),
               ),
             ),
           ),
           Center(
               child: IconButton(
-                icon: Icon(Icons.cancel_outlined,
-                  color: gsecondaryColor,
-                ),
-                onPressed: onTap,
-              )
-          )
+            icon: Icon(
+              Icons.cancel_outlined,
+              color: gsecondaryColor,
+            ),
+            onPressed: onTap,
+          ))
         ],
       );
-    }
-    else {
+    } else {
       return SizedBox.shrink();
     }
   }

@@ -1,39 +1,28 @@
-/*
-This screen will be base class which will holds bottom sheet
- */
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:gwc_customer_web/screens/medical_program_feedback_screen/card_selection.dart';
 import 'package:gwc_customer_web/screens/profile_screens/settings_screen.dart';
-import 'package:gwc_customer_web/screens/program_plans/day_tracker_ui/day_tracker.dart';
-import 'package:gwc_customer_web/screens/program_plans/program_start_screen.dart';
 import 'package:gwc_customer_web/screens/testimonial_list_screen/testimonial_new_screen.dart';
 import 'package:gwc_customer_web/screens/uvdesk/ticket_details_screen.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import '../model/error_model.dart';
-import '../model/evaluation_from_models/evaluation_model_format1.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
+import '../model/error_model.dart';
 import '../model/uvdesk_model/new_ticket_details_model.dart';
 import '../repository/api_service.dart';
 import '../repository/uvdesk_repository/uvdesk_repo.dart';
 import '../services/uvdesk_service/uv_desk_service.dart';
 import '../utils/app_config.dart';
 import '../widgets/constants.dart';
-import '../widgets/exit_widget.dart';
-import '../widgets/widgets.dart';
-import 'appointment_screens/consultation_screens/upload_files.dart';
-import 'appointment_screens/doctor_calender_time_screen.dart';
-import 'cook_kit_shipping_screens/tracking_pop_up.dart';
-import 'evalution_form/evaluation_upload_report.dart';
+import 'combined_meal_plan/combined_meal_screen.dart';
 import 'feed_screens/feeds_list.dart';
+import 'follow_up_Call_screens/follow_up_call_date_screen.dart';
+import 'follow_up_Call_screens/sample.dart';
 import 'gut_list_screens/new_list_stages_screen.dart';
-import 'home_screens/home_screen.dart';
 import 'home_screens/level_status.dart';
-import 'home_screens/water_intake/water_level_screen.dart';
-import 'medical_program_feedback_screen/card_selection.dart';
-import 'medical_program_feedback_screen/final_feedback_form.dart';
-import 'medical_program_feedback_screen/post_gut_type_diagnosis.dart';
-import 'profile_screens/call_support_method.dart';
 import 'package:http/http.dart' as http;
 import 'package:badges/badges.dart' as badges;
+import 'new_profile_screens/feedback_screen/feedback_screen.dart';
+import 'new_profile_screens/new_profile_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final int index;
@@ -49,7 +38,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   int _bottomNavIndex = 2;
 
-  final int save_prev_index = 2;
+  final int savePrevIndex = 2;
 
   /// this param is used to show FAB
   /// when this false than we r not showing FAB
@@ -58,9 +47,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-          getThreadsList();
+    // getThreadsList();
     setState(() {
       _bottomNavIndex = widget.index;
     });
@@ -73,7 +61,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   getThreadsList() async {
     final result = await _uvDeskService.getTicketDetailsByIdService(
-        "${_pref.getString(AppConfig.User_ticket_id)}");
+        _pref.getString(AppConfig.User_ticket_id) ?? '');
     print("result: $result");
 
     if (result.runtimeType == NewTicketDetailsModel) {
@@ -81,11 +69,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       NewTicketDetailsModel model = result as NewTicketDetailsModel;
       threadsListModel = model;
       setState(() {
-          _pref.setBool("isReplied",model.response.ticket!.isReplied!);
-          // isReplied = model.ticket!.isReplied!;
-          print("isReplied api : ${model.response.ticket!.isReplied!}");
-          print("isReplied : ${_pref.getBool("isReplied")!}");
-          isReplied = _pref.getBool("isReplied") ?? false;
+        _pref.setBool("isReplied", model.response.ticket!.isReplied!);
+        // isReplied = model.ticket!.isReplied!;
+        print("isReplied api : ${model.response.ticket!.isReplied!}");
+        print("isReplied : ${_pref.getBool("isReplied")!}");
+        isReplied = _pref.getBool("isReplied") ?? false;
       });
     } else {
       ErrorModel model = result as ErrorModel;
@@ -128,43 +116,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
     switch (index) {
       case 0:
         {
-          // return NewTransitionDesign(
-          //     postProgramStage: "",
-          //     totalDays: '1',
-          //     dayNumber: '0',
-          // );
-
-            // return const ProgramPlanScreen(from: 'healing',videoLink: 'https://gutandhealth.com/storage/uploads/Begin Gut Preparation.mp4',);
-          // return UploadFiles();
-          // this one
-          //    return const TrackerUI(from: '');
-                // return EvaluationUploadReport();
-            return const LevelStatus();
-
-          // return const HomeScreens();
+          return kDebugMode ? const CombinedPrepMealTransScreen(stage: 3,) : const LevelStatus();
         }
       case 1:
         {
-          // return RadialSliderExample();
-          //  return FinalFeedbackForm();
-          return const FeedsList();
+          return kDebugMode ? const TCardPage(programContinuesdStatus: 1) : const FeedsList();
         }
       case 2:
         {
-          // this one
           return const NewDsPage();
-          // butterfly design
-          // return GutList();
-          // return const NewDashboardLevelsScreen();
         }
       case 3:
         {
           return const TestimonialNewScreen();
-          // return const TestimonialListScreen();
         }
       case 4:
         {
-          return SettingsScreen(showBadge: isReplied,);
+          return NewProfileScreen(
+            showBadge: isReplied,
+          );
         }
     }
   }
@@ -181,7 +151,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         floatingActionButton: showFab
             ? isReplied
                 ? badges.Badge(
-                    badgeAnimation: badges.BadgeAnimation.rotation(
+                    badgeAnimation: const badges.BadgeAnimation.rotation(
                       animationDuration: Duration(seconds: 1),
                       colorChangeAnimationDuration: Duration(seconds: 1),
                       loopAnimation: false,
@@ -222,10 +192,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               thumbNail:
                                   "${_pref.getString(AppConfig.User_Profile)}",
                               ticketId:
-                                  "${_pref.getString(AppConfig.User_ticket_id)}",
+                                  _pref?.getString(AppConfig.User_ticket_id) ??
+                                      '',
                               subject: '',
                               email: "${_pref.getString(AppConfig.User_Email)}",
-                              ticketStatus: 1 ?? -1,
+                              ticketStatus: 1,
                             ),
                           ),
                         );
@@ -246,10 +217,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             thumbNail:
                                 "${_pref.getString(AppConfig.User_Profile)}",
                             ticketId:
-                                "${_pref.getString(AppConfig.User_ticket_id)}",
+                                _pref.getString(AppConfig.User_ticket_id) ?? '',
                             subject: '',
                             email: "${_pref.getString(AppConfig.User_Email)}",
-                            ticketStatus: 1 ?? -1,
+                            ticketStatus: 1,
                           ),
                         ),
                       );
@@ -449,9 +420,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     print("_bottomNavIndex: $_bottomNavIndex");
     setState(() {
       if (_bottomNavIndex != 2) {
-        if (_bottomNavIndex > save_prev_index ||
-            _bottomNavIndex < save_prev_index) {
-          _bottomNavIndex = save_prev_index;
+        if (_bottomNavIndex > savePrevIndex ||
+            _bottomNavIndex < savePrevIndex) {
+          _bottomNavIndex = savePrevIndex;
           _appBarKey.currentState!.animateTo(_bottomNavIndex);
           setState(() {});
         } else {

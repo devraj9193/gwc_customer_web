@@ -29,20 +29,28 @@ presentDay == totalDays && _childPrepModel!.currentDayStatus == "1"
 if all 3 conditions satisfy than postprogram start clap will be showing
  */
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:gwc_customer_web/model/combined_meal_model/detox_nourish_model/child_nourish_model.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import '../../model/combined_meal_model/combined_meal_model.dart';
+import '../../model/combined_meal_model/detox_nourish_model/child_detox_model.dart';
+import '../../model/combined_meal_model/detox_nourish_model/detox_healing_common_model/detox_healing_model.dart';
+import '../../model/combined_meal_model/meal_plan_tracker_modl/send_meal_plan_tracker_model.dart';
 import '../../model/combined_meal_model/meal_slot_model.dart';
+import '../../model/combined_meal_model/new_healing_model.dart';
 import '../../model/error_model.dart';
 import '../../model/prepratory_meal_model/prep_meal_model.dart';
 import '../../model/program_model/proceed_model/send_proceed_program_model.dart';
+import '../../model/program_model/program_days_model/child_program_day.dart';
 import '../../model/program_model/start_post_program_model.dart';
 import '../../repository/api_service.dart';
 import '../../repository/post_program_repo/post_program_repository.dart';
+import '../../repository/program_repository/program_repository.dart';
 import '../../services/post_program_service/post_program_service.dart';
+import '../../services/program_service/program_service.dart';
 import '../../utils/app_config.dart';
 import '../../widgets/constants.dart';
 import 'package:http/http.dart' as http;
@@ -51,12 +59,18 @@ import '../prepratory plan/new/meal_plan_recipe_details.dart';
 import '../program_plans/day_tracker_ui/day_tracker.dart';
 import '../program_plans/meal_pdf.dart';
 import '../program_plans/program_start_screen.dart';
+import 'combined_meal_screen.dart';
+import 'meal_plan_portrait_video.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import 'tracker_widgets/new-day_tracker.dart';
 
 class NourishPlanScreen extends StatefulWidget {
   /// getting this details from combinedmealplanscreen
   final ChildNourishModel prepPlanDetails;
   final String? totalDays;
   final int selectedDay;
+  final String mealNote;
 
   /// this value if false by default
   /// if we come from start screen and clicked on view button
@@ -67,6 +81,7 @@ class NourishPlanScreen extends StatefulWidget {
   /// we r using this parameter to check whether post program started or not
   /// if there is a value than clap sheet not showing
   final String? postProgramStage;
+  final NewHealingModel? healingModel;
 
   const NourishPlanScreen({
     Key? key,
@@ -76,6 +91,8 @@ class NourishPlanScreen extends StatefulWidget {
     this.trackerVideoLink,
     this.postProgramStage,
     this.viewDay1Details = false,
+    this.healingModel,
+    required this.mealNote,
   }) : super(key: key);
 
   @override
@@ -116,16 +133,202 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
   void initState() {
     // TODO: implement initState
     super.initState();
-    getPrepItemsAndStore(widget.prepPlanDetails);
+    // chkHealingPlans();
+    getPrepItemsAndStore(
+        widget.prepPlanDetails, widget.healingModel, widget.mealNote);
     getInitialIndex();
   }
 
+  ChildDetoxModel? _chkDetoxPlan;
+  List<ChildProgramDayModel> listDetoxDay = [];
+  bool? isDayCompleted;
+
+  chkHealingPlans() async {
+    final result =
+        await ProgramService(repository: repository).getCombinedMealService();
+    print("result: $result");
+
+    if (result.runtimeType == CombinedMealModel) {
+      print("Detox Plan Checking");
+      CombinedMealModel model = result as CombinedMealModel;
+
+      if (model.healing != null) {
+        _chkDetoxPlan = model.healing!.value!;
+      }
+
+      var healingPresentDay = int.tryParse(_chkDetoxPlan!.currentDay!) ?? 1;
+      var healingNextDay = healingPresentDay + 1;
+      var healingSelectedDay = healingPresentDay;
+
+      print("healingPresentDay: $healingPresentDay");
+      print("healingNextDay: $healingNextDay");
+
+      _chkDetoxPlan!.details!.forEach((key, value) {
+        DetoxHealingModel _model = value as DetoxHealingModel;
+        print(_model.isDayCompleted);
+        listDetoxDay.add(ChildProgramDayModel(
+            dayNumber: _model.programDay,
+            isCompleted: (_model.isDayCompleted != "")
+                ? int.parse(_model.isDayCompleted!)
+                : 0));
+      });
+
+      for (var element in listDetoxDay) {
+        if (int.parse(element.dayNumber!) == healingPresentDay) {
+          isDayCompleted = element.isCompleted == 1 ? true : false;
+        }
+      }
+
+      if (_chkDetoxPlan?.isHealingCompleted == "1") {
+        for (int i = 0; i < healingPresentDay; i++) {
+          print("healing present days : ${listDetoxDay[i].isCompleted}");
+          if (listDetoxDay[i].isCompleted == 0 && i + 1 == healingSelectedDay) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              print("Healing Pop Up");
+              showPendingHealingPlan(listDetoxDay[i].dayNumber);
+            });
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  showPendingHealingPlan(String? dayNumber, {bool? previousDay = false}) {
+    return AppConfig().showSheet(
+      context,
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: Column(
+                children: [
+                  Text(
+                    "It is key to complete your Healing day tracker before moving on to the Nourish.",
+                    style: TextStyle(
+                        fontSize: subHeadingFont,
+                        fontFamily: kFontBook,
+                        height: 1.4),
+                    textAlign: TextAlign.justify,
+                  ),
+                  SizedBox(
+                    height: 1.h,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => CombinedPrepMealTransScreen(
+                              stage: 2,
+                            ),
+                          ),
+                        );
+                      });
+                      // Get.to(() => CombinedPrepMealTransScreen(
+                      //       stage: 2,
+                      //     ));
+                    },
+                    child: Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 1.h, horizontal: 10.w),
+                        decoration: BoxDecoration(
+                          color: gsecondaryColor,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: gMainColor, width: 1),
+                        ),
+                        child: Text(
+                          'Fill Healing Day $dayNumber',
+                          style: TextStyle(
+                            fontFamily: kFontMedium,
+                            color: gWhiteColor,
+                            fontSize: 13.dp,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 1.h)
+        ],
+      ),
+      bottomSheetHeight: 40.h,
+      circleIcon: bsHeadPinIcon,
+    );
+  }
+
+  final ProgramRepository repository = ProgramRepository(
+    apiClient: ApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
   bool symptomTrackerSheet = false;
 
-  void getPrepItemsAndStore(ChildNourishModel childPrepModel) {
+  void getPrepItemsAndStore(ChildNourishModel childPrepModel,
+      NewHealingModel? healingModel, String mealNote) {
     _childPrepModel = childPrepModel;
     print("Nourish--");
     print(_childPrepModel!.toJson());
+
+    ChildDetoxModel? _chkDetoxPlan;
+    List<ChildProgramDayModel> listDetoxDay = [];
+    bool? isDayCompleted;
+
+    if (healingModel != null) {
+      _chkDetoxPlan = healingModel.value!;
+    }
+
+    var healingPresentDay = int.tryParse(_chkDetoxPlan!.currentDay!) ?? 1;
+    var healingNextDay = healingPresentDay + 1;
+    var healingSelectedDay = healingPresentDay;
+
+    print("healingPresentDay: $healingPresentDay");
+    print("healingNextDay: $healingNextDay");
+
+    _chkDetoxPlan.details!.forEach((key, value) {
+      DetoxHealingModel _model = value;
+      print(_model.isDayCompleted);
+      listDetoxDay.add(ChildProgramDayModel(
+        dayNumber: _model.programDay,
+        isCompleted: (_model.isDayCompleted != "")
+            ? int.parse(_model.isDayCompleted!)
+            : 0,
+        isTrackerSubmitted: (_model.isTrackerSubmitted != "")
+            ? int.parse(_model.isTrackerSubmitted!)
+            : 0,
+      ));
+    });
+
+    for (var element in listDetoxDay) {
+      if (int.parse(element.dayNumber!) == healingPresentDay) {
+        isDayCompleted = element.isTrackerSubmitted == 1 ? true : false;
+      }
+    }
+
+    if (_chkDetoxPlan.isHealingCompleted == "1") {
+      for (int i = 0; i < healingPresentDay; i++) {
+        print("healing present days : ${listDetoxDay[i].isTrackerSubmitted}");
+        if (listDetoxDay[i].isTrackerSubmitted == 0 &&
+            i + 1 == healingSelectedDay) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            print("Healing Pop Up");
+            setState(() {
+              showPendingHealingPlan(listDetoxDay[i].dayNumber);
+            });
+          });
+          break;
+        }
+      }
+    }
+
     if (_childPrepModel != null) {
       final dataList = _childPrepModel?.data ?? {};
 
@@ -141,6 +344,15 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
 
       print("previousDayStatus: $previousDayStatus");
       print("currentDayStatus: $currentDayStatus");
+
+      print("meal note : $mealNote");
+
+      if (mealNote == "null" || mealNote == "") {
+      } else {
+        Future.delayed(const Duration(seconds: 0)).then((value) {
+          return showMoreBenefitsTextSheet(mealNote, isMealNote: true);
+        });
+      }
 
       if (_childPrepModel!.currentDay != null) {
         presentDay = int.tryParse(_childPrepModel!.currentDay!) ?? 1;
@@ -171,37 +383,120 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
     if (!widget.viewDay1Details) {
       if (!isPostProgramStarted) {
         // this is previousDayStatus change from cron
-        // if (previousDayStatus == "0") {
-        // this is when we change from db
         if (previousDayStatus == "0") {
-          Future.delayed(Duration(seconds: 0)).then((value) {
-            if (!symptomTrackerSheet) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (ctx) => TrackerUI(
-                      from: ProgramMealType.transition.name,
-                      isPreviousDaySheet: true,
-                      proceedProgramDayModel: ProceedProgramDayModel(
-                          day: (presentDay! - 1).toString()),
-                      trackerVideoLink: widget.trackerVideoLink),
-                ),
-              );
-            }
-          });
+          // this is when we change from db
+          if (previousDayStatus == "0") {
+            Future.delayed(const Duration(seconds: 0)).then((value) {
+              if (!symptomTrackerSheet) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (ctx) => NewDayTracker(
+                      phases: "4",
+                      proceedProgramDayModel: SubmitMealPlanTrackerModel(
+                        day: (presentDay! - 1).toString(),
+                      ),
+                      trackerVideoLink: widget.trackerVideoLink,
+                    ),
+                  ),
+                );
+              }
+            });
+          }
         }
-        if ((presentDay == totalDays &&
-                    _childPrepModel!.currentDayStatus == "1" ||
-                _childPrepModel!.isNourishCompleted == "1") &&
-            (widget.postProgramStage == null ||
-                widget.postProgramStage!.isEmpty)) {
-          Future.delayed(Duration(seconds: 0)).then((value) {
-            return buildDayCompletedClap();
-          });
-        }
+        // if ((presentDay == totalDays &&
+        //             _childPrepModel!.currentDayStatus == "1" ||
+        //         _childPrepModel!.isNourishCompleted == "1") &&
+        //     (widget.postProgramStage == null ||
+        //         widget.postProgramStage!.isEmpty)) {
+        //   Future.delayed(Duration(seconds: 0)).then((value) {
+        //     return buildDayCompletedClap();
+        //   });
+        // }
       }
     }
   }
+
+  // void getPrepItemsAndStore(ChildNourishModel childPrepModel) {
+  //   _childPrepModel = childPrepModel;
+  //   print("Nourish--");
+  //   print(_childPrepModel!.toJson());
+  //   if (_childPrepModel != null) {
+  //     final dataList = _childPrepModel?.data ?? {};
+  //
+  //     totalDays = int.tryParse(widget.totalDays ?? "0") ?? -1;
+  //
+  //     currentDayStatus = _childPrepModel?.currentDayStatus ?? '0';
+  //     previousDayStatus = _childPrepModel?.previousDayStatus;
+  //
+  //     isPostProgramStarted = _childPrepModel?.isPostProgramStarted == '0' ||
+  //             _childPrepModel?.isPostProgramStarted == 'null'
+  //         ? false
+  //         : true;
+  //
+  //     print("previousDayStatus: $previousDayStatus");
+  //     print("currentDayStatus: $currentDayStatus");
+  //
+  //     if (_childPrepModel!.currentDay != null) {
+  //       presentDay = int.tryParse(_childPrepModel!.currentDay!) ?? 1;
+  //     }
+  //
+  //     print("presentDay: $presentDay");
+  //
+  //     if (_childPrepModel!.currentDay != null) {
+  //       presentDay = int.tryParse(_childPrepModel!.currentDay!) ?? 1;
+  //     }
+  //
+  //     print("presentDay: $presentDay");
+  //
+  //     slotNamesForTabs.addAll(dataList);
+  //
+  //     print(slotNamesForTabs);
+  //
+  //     if (slotNamesForTabs.isNotEmpty) {
+  //       selectedIndex = 0;
+  //       // selectedSlot = slotNamesForTabs.keys.first;
+  //       // selectedItemName = slotNamesForTabs.values.first.subItems!.keys.first;
+  //     }
+  //     tabSize = slotNamesForTabs.length;
+  //   }
+  //   // updateTabSize();
+  //   _tabController = TabController(vsync: this, length: tabSize);
+  //
+  //   if (!widget.viewDay1Details) {
+  //     if (!isPostProgramStarted) {
+  //       // this is previousDayStatus change from cron
+  //       // if (previousDayStatus == "0") {
+  //       // this is when we change from db
+  //       if (previousDayStatus == "0") {
+  //         Future.delayed(Duration(seconds: 0)).then((value) {
+  //           if (!symptomTrackerSheet) {
+  //             Navigator.push(
+  //               context,
+  //               MaterialPageRoute(
+  //                 builder: (ctx) => TrackerUI(
+  //                     from: ProgramMealType.transition.name,
+  //                     isPreviousDaySheet: true,
+  //                     proceedProgramDayModel: ProceedProgramDayModel(
+  //                         day: (presentDay! - 1).toString()),
+  //                     trackerVideoLink: widget.trackerVideoLink),
+  //               ),
+  //             );
+  //           }
+  //         });
+  //       }
+  //       if ((presentDay == totalDays &&
+  //                   _childPrepModel!.currentDayStatus == "1" ||
+  //               _childPrepModel!.isNourishCompleted == "1") &&
+  //           (widget.postProgramStage == null ||
+  //               widget.postProgramStage!.isEmpty)) {
+  //         Future.delayed(Duration(seconds: 0)).then((value) {
+  //           return buildDayCompletedClap();
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
 
   /// not using this function
   // void getPrepItemsAndStore1(ChildNourishModel childPrepModel) {
@@ -321,17 +616,145 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
     return DefaultTabController(
       length: tabSize,
       child: Scaffold(
+        backgroundColor: gWhiteColor,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.only(left: 3.w, top: 2.h, bottom: 0.h),
-              child: Text(
-                'Nourish Phase',
-                style: TextStyle(
-                    fontFamily: eUser().mainHeadingFont,
-                    color: eUser().mainHeadingColor,
-                    fontSize: eUser().mainHeadingFontSize),
+              padding:
+                  EdgeInsets.only(left: 3.w, top: 2.h, bottom: 0.h, right: 3.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Nourish Phase',
+                    style: TextStyle(
+                        fontFamily: eUser().mainHeadingFont,
+                        color: eUser().mainHeadingColor,
+                        fontSize: eUser().mainHeadingFontSize),
+                  ),
+                  Row(
+                    children: [
+                      (widget.mealNote == "null" || widget.mealNote == "")
+                          ? const SizedBox()
+                          : GestureDetector(
+                              onTap: () {
+                                print("meal note : ${widget.mealNote}");
+                                Future.delayed(const Duration(seconds: 0))
+                                    .then((value) {
+                                  return showMoreBenefitsTextSheet(
+                                      widget.mealNote,
+                                      isMealNote: true);
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 1.h, horizontal: 3.w),
+                                decoration: BoxDecoration(
+                                  color: gsecondaryColor,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border:
+                                      Border.all(color: gMainColor, width: 1),
+                                ),
+                                child: Text(
+                                  'Important Note',
+                                  style: TextStyle(
+                                    fontFamily: kFontMedium,
+                                    color: gWhiteColor,
+                                    fontSize: 13.dp,
+                                  ),
+                                ),
+                              ),
+                            ),
+                      SizedBox(width: 2.w),
+                      (currentDayStatus == "0" && !widget.viewDay1Details)
+                          ? GestureDetector(
+                              onTap: () {
+                                print(
+                                    "(presentDay).toString(): ${(presentDay).toString()}");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (ctx) => NewDayTracker(
+                                      phases: "4",
+                                      proceedProgramDayModel:
+                                          SubmitMealPlanTrackerModel(
+                                        day: (presentDay == 0 ? 1 : presentDay)
+                                            .toString(),
+                                      ),
+                                      trackerVideoLink: widget.trackerVideoLink,
+                                    ),
+                                    // TrackerUI(
+                                    //   from: ProgramMealType.transition.name,
+                                    //   proceedProgramDayModel: ProceedProgramDayModel(
+                                    //       day: (presentDay == 0 ? 1 : presentDay).toString()),
+                                    //   trackerVideoLink: widget.trackerVideoLink,
+                                    // ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 1.h, horizontal: 3.w),
+                                decoration: BoxDecoration(
+                                  color: gsecondaryColor,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border:
+                                      Border.all(color: gMainColor, width: 1),
+                                ),
+                                child: Text(
+                                  'Tracker',
+                                  style: TextStyle(
+                                    fontFamily: kFontMedium,
+                                    color: gWhiteColor,
+                                    fontSize: 13.dp,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : (currentDayStatus == "1")
+                              ? IntrinsicWidth(
+                                  child: Container(
+                                    padding: EdgeInsets.all(8),
+                                    margin: EdgeInsets.symmetric(vertical: 5),
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.all(5),
+                                            decoration: BoxDecoration(
+                                                color: gPrimaryColor,
+                                                shape: BoxShape.circle),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.done_outlined,
+                                                color: gWhiteColor,
+                                                size: 2.h,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 8,
+                                          ),
+                                          Text(
+                                            // "Day ${widget.day} Meal Plan",
+                                            "Day $presentDay Submitted",
+                                            style: TextStyle(
+                                                fontFamily:
+                                                    eUser().mainHeadingFont,
+                                                color: gTextColor,
+                                                fontSize: 12.dp),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox(),
+                    ],
+                  ),
+                ],
               ),
             ),
             Padding(
@@ -361,65 +784,47 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
               padding: EdgeInsets.only(top: 2.h),
               child: SizedBox(
                 height: 30,
-                child: Row(
-                  children: [
-                    Container(
-                      width: 50,
-                      decoration: BoxDecoration(
-                        color: Color(0xffC8DE95).withOpacity(0.6),
-                        borderRadius: const BorderRadius.only(
-                          topRight: Radius.circular(30),
-                        ),
-                      ),
+                child: TabBar(
+                  isScrollable: true,
+                  unselectedLabelColor: Colors.black,
+                  labelColor: gWhiteColor,
+                  dividerColor: Colors.transparent,
+                  controller: _tabController,
+                  unselectedLabelStyle: TextStyle(
+                      fontFamily: kFontBook,
+                      color: gHintTextColor,
+                      fontSize: 12.dp),
+                  labelStyle: TextStyle(
+                      fontFamily: kFontMedium,
+                      color: gBlackColor,
+                      fontSize: 15.dp),
+                  indicatorColor: newDashboardGreenButtonColor,
+                  labelPadding: EdgeInsets.symmetric(horizontal: 5.w),
+                  indicatorPadding: EdgeInsets.symmetric(horizontal: -2.w),
+                  indicator: BoxDecoration(
+                    color: newDashboardGreenButtonColor,
+                    borderRadius: const BorderRadius.only(
+                      topRight: Radius.circular(20),
+                      bottomLeft: Radius.circular(20),
                     ),
-                    SizedBox(width: 2.w),
-                    Expanded(
-                      child: TabBar(
-                        isScrollable: true,
-                        unselectedLabelColor: Colors.black,
-                        labelColor: gWhiteColor,
-                        controller: _tabController,
-                        unselectedLabelStyle: TextStyle(
-                            fontFamily: kFontBook,
-                            color: gHintTextColor,
-                            fontSize: 12.dp),
-                        labelStyle: TextStyle(
-                            fontFamily: kFontMedium,
-                            color: gBlackColor,
-                            fontSize: 15.dp),
-                        indicatorColor: newDashboardGreenButtonColor,
-                        labelPadding: EdgeInsets.symmetric(horizontal: 5.w),
-                        indicatorPadding:
-                            EdgeInsets.symmetric(horizontal: -2.w),
-                        indicator: BoxDecoration(
-                          color: newDashboardGreenButtonColor,
-                          borderRadius: const BorderRadius.only(
-                            topRight: Radius.circular(20),
-                            bottomLeft: Radius.circular(20),
-                          ),
-                        ),
-                        onTap: (index) {
-                          print("ontap: $index");
-                          // print(slotNamesForTabs.keys.elementAt(index));
-                          selectedSlot = slotNamesForTabs.keys.elementAt(index);
-                          selectedIndex = index;
-                          setState(() {
-                            selectedItemName = slotNamesForTabs[selectedSlot]!
-                                .subItems!
-                                .keys
-                                .first;
-                            print(selectedItemName);
-                          });
-                          // _buildList(index);
-                        },
-                        tabs: slotNamesForTabs.keys
-                            .map((e) => Tab(
-                                  text: e,
-                                ))
-                            .toList(),
-                      ),
-                    ),
-                  ],
+                  ),
+                  onTap: (index) {
+                    print("ontap: $index");
+                    // print(slotNamesForTabs.keys.elementAt(index));
+                    selectedSlot = slotNamesForTabs.keys.elementAt(index);
+                    selectedIndex = index;
+                    setState(() {
+                      selectedItemName =
+                          slotNamesForTabs[selectedSlot]!.subItems!.keys.first;
+                      print(selectedItemName);
+                    });
+                    // _buildList(index);
+                  },
+                  tabs: slotNamesForTabs.keys
+                      .map((e) => Tab(
+                            text: e,
+                          ))
+                      .toList(),
                 ),
               ),
             ),
@@ -490,39 +895,64 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
       }
     }).toList();
     // print("meals.length: ${meals.length}");
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Stack(
-          children: <Widget>[
-            Container(
-              width: 50,
-              decoration: BoxDecoration(
-                color: Color(0xffC8DE95).withOpacity(0.6),
-                borderRadius: const BorderRadius.only(
-                  bottomRight: Radius.circular(30),
-                  // topRight: Radius.circular(30),
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: _buildList(subItems),
-              ),
+        Container(
+          margin: EdgeInsets.only(top: 1.5.h, left: 0.w, right: 3.w),
+          padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 0.w),
+          height: 6.h,
+          decoration: BoxDecoration(
+            color: const Color(0xffC8DE95).withOpacity(0.6),
+            borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(30),
+              // bottomRight: Radius.circular(30),
             ),
-            // Positioned(
-            //   top: animationOffset.dy,
-            //   left: animationOffset.dx,
-            //   child: CustomPaint(
-            //     painter: CheckPointPainter(Offset(10, 0)),
-            //   ),
-            // )
-          ],
+          ),
+          child: ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              physics: const ScrollPhysics(),
+              itemCount: subItems.length,
+              itemBuilder: (context, index) {
+                String key = subItems[index];
+                return GestureDetector(
+                    onTap: () {
+                      print(key);
+                      rotatedBoxOnclick(key);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 0.5.h, horizontal: 3.w),
+                      margin: EdgeInsets.symmetric(horizontal: 5.w),
+                      decoration: selectedItemName == key
+                          ? const BoxDecoration(
+                              color: gWhiteColor,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomLeft: Radius.circular(10),
+                              ),
+                            )
+                          : const BoxDecoration(),
+                      child: Text(
+                        key.capitalize ?? '',
+                        style: TextStyle(
+                          color: selectedItemName == key
+                              ? gBlackColor
+                              : gHintTextColor,
+                          fontSize: 13.dp,
+                        ),
+                      ),
+                    ));
+              }),
         ),
         Expanded(
             child: SingleChildScrollView(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                height: 65.h,
+                height: 60.h,
                 child: ListView.builder(
                     shrinkWrap: true,
                     scrollDirection: Axis.horizontal,
@@ -550,59 +980,62 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                             ),
                             child: buildReceipeDetails(meals[index]),
                           ),
-                          if (meals.length > 1) orFiled(index),
+                          meals[index].mealTypeName == "yoga"
+                              ? const SizedBox()
+                              : (meals.length > 1 && index != meals.length - 1)
+                                  ? orFiled(index)
+                                  : const SizedBox(),
                         ],
                       );
                     }),
               ),
               // btn(),
               //&& showTrackerBtn
-              if (currentDayStatus == "0" &&
-                  !widget.viewDay1Details
-                  // && showTrackerBtn
-              )
-                btn(),
-              Visibility(
-                visible: currentDayStatus == "1",
-                child: Center(
-                  child: IntrinsicWidth(
-                    child: Container(
-                      padding: EdgeInsets.all(8),
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      child: Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: gPrimaryColor, shape: BoxShape.circle),
-                              child: Center(
-                                child: Icon(
-                                  Icons.done_outlined,
-                                  color: gWhiteColor,
-                                  size: 3.h,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            Text(
-                              // "Day ${widget.day} Meal Plan",
-                              "Day ${presentDay} Submitted",
-                              style: TextStyle(
-                                  fontFamily: eUser().mainHeadingFont,
-                                  color: gTextColor,
-                                  fontSize: eUser().mainHeadingFontSize),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              )
+              // if (currentDayStatus == "0" && !widget.viewDay1Details
+              //     // && showTrackerBtn
+              //     )
+              //   btn(),
+              // Visibility(
+              //   visible: currentDayStatus == "1",
+              //   child: Center(
+              //     child: IntrinsicWidth(
+              //       child: Container(
+              //         padding: EdgeInsets.all(8),
+              //         margin: EdgeInsets.symmetric(vertical: 5),
+              //         child: Center(
+              //           child: Row(
+              //             mainAxisSize: MainAxisSize.min,
+              //             children: [
+              //               Container(
+              //                 padding: EdgeInsets.all(5),
+              //                 decoration: BoxDecoration(
+              //                     color: gPrimaryColor, shape: BoxShape.circle),
+              //                 child: Center(
+              //                   child: Icon(
+              //                     Icons.done_outlined,
+              //                     color: gWhiteColor,
+              //                     size: 3.h,
+              //                   ),
+              //                 ),
+              //               ),
+              //               SizedBox(
+              //                 width: 8,
+              //               ),
+              //               Text(
+              //                 // "Day ${widget.day} Meal Plan",
+              //                 "Day ${presentDay} Submitted",
+              //                 style: TextStyle(
+              //                     fontFamily: eUser().mainHeadingFont,
+              //                     color: gTextColor,
+              //                     fontSize: eUser().mainHeadingFontSize),
+              //               )
+              //             ],
+              //           ),
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // )
             ],
           ),
         )),
@@ -743,6 +1176,28 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
   // }
 
   buildReceipeDetails(MealSlot? meal) {
+    print("mealPlanRecipes Image : ${meal!.recipeVideoUrl}");
+
+    final a = meal.recipeVideoUrl;
+
+    final file = a?.split(".").last;
+
+    String format = file.toString();
+
+    print("video : $a");
+
+    String? ben = (meal.benefits != null || meal.benefits != "")
+        ? meal.benefits!.replaceAll(RegExp(r'[^\w\s]+'), '')
+        : '';
+
+    print("benefits : ${meal.name} ${ben.length}");
+
+    print("prep yoga video : ${meal.yogaVideoUrl}");
+
+    final yogaVideo = meal.yogaVideoUrl?.split(".").last;
+
+    String yogaVideoFormat = yogaVideo.toString();
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -752,10 +1207,10 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
           right: 0,
           top: 6.h,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 1.w),
+            padding: EdgeInsets.only(left: 3.w, right: 1.w),
             margin: EdgeInsets.symmetric(horizontal: 0.w),
             decoration: BoxDecoration(
-              color: gWhiteColor,
+              color: gBackgroundColor,
               borderRadius: BorderRadius.circular(40),
               border:
                   Border.all(color: kLineColor.withOpacity(0.2), width: 0.9),
@@ -767,112 +1222,239 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
               //   )
               // ],
             ),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 13.h,
-                  ),
-                  Text(
-                    meal?.name ?? '',
-                    style: TextStyle(
-                        fontFamily: eUser().mainHeadingFont,
-                        color: eUser().mainHeadingColor,
-                        fontSize: eUser().mainHeadingFontSize),
-                  ),
-                  SizedBox(height: 2.h),
-                  (meal?.benefits != null)
-                      ? Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ...meal!.benefits!.split('* ').map((element) {
-                              if (element.isNotEmpty) {
-                                return Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.only(top: 0.3.h),
-                                      child: Icon(
-                                        Icons.circle_sharp,
-                                        color: gGreyColor,
-                                        size: 1.5.h,
-                                      ),
-                                    ),
-                                    SizedBox(width: 1.w),
-                                    Expanded(
-                                      child: Text(
-                                        element ?? '',
-                                        style: TextStyle(
-                                            fontFamily:
-                                                eUser().userTextFieldFont,
-                                            height: 1.2,
-                                            color: eUser().userTextFieldColor,
-                                            fontSize: eUser()
-                                                .userTextFieldHintFontSize),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              } else
-                                return SizedBox();
-                            })
-                          ],
-                        )
-                      : SizedBox(),
-                  (widget.viewDay1Details) ? const SizedBox() :  (meal?.howToPrepare != null)
-                      ? Center(
-                          child: GestureDetector(
-                            onTap: () {
-                                    Get.to(
-                                      () => MealPlanRecipeDetails(
-                                        meal: meal,
-                                      ),
-                                    );
-                                  },
-                            child: Container(
-                              margin: EdgeInsets.symmetric(vertical: 5.h),
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 1.5.h, horizontal: 3.w),
-                              decoration: BoxDecoration(
-                                color: newDashboardGreenButtonColor,
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(15),
-                                  bottomLeft: Radius.circular(15),
-                                ),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: kLineColor,
-                                    offset: Offset(2, 3),
-                                    blurRadius: 5,
-                                  )
-                                ],
-                                // border: Border.all(
-                                //   width: 1,
-                                //   color: kLineColor,
-                                // ),
-                              ),
-                              child: Text(
-                                "Recipe",
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 13.h,
+                ),
+                meal.mealTypeName == "null" ||
+                        meal.mealTypeName == "" ||
+                        meal.mealTypeName == "yoga"
+                    ? Text(
+                        meal.name ?? '',
+                        style: TextStyle(
+                            fontSize: MealPlanConstants().mealNameFontSize,
+                            fontFamily: MealPlanConstants().mealNameFont,
+                            color: gHintTextColor),
+                      )
+                    : Text(
+                        meal.mealTypeName ?? '',
+                        style: TextStyle(
+                            fontSize: MealPlanConstants().mealNameFontSize,
+                            fontFamily: MealPlanConstants().mealNameFont,
+                            color: gHintTextColor),
+                      ),
+                // Text(
+                //   meal?.name ?? '',
+                //   style: TextStyle(
+                //       fontFamily: eUser().mainHeadingFont,
+                //       color: eUser().mainHeadingColor,
+                //       fontSize: eUser().mainHeadingFontSize),
+                // ),
+                SizedBox(height: 2.h),
+
+                Expanded(
+                  child: (meal?.benefits == null || meal?.benefits == "")
+                      ? const SizedBox()
+                      : RichText(
+                          textAlign: TextAlign.start,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: ben.substring(
+                                        0,
+                                        int.parse(
+                                            "${(ben.length * 0.258).toInt()}")) +
+                                    "...",
                                 style: TextStyle(
-                                  color: gWhiteColor,
-                                  fontFamily: kFontBook,
-                                  fontSize: 14.dp,
+                                    height: 1.6,
+                                    fontFamily: kFontBook,
+                                    color: eUser().mainHeadingColor,
+                                    fontSize: bottomSheetSubHeadingSFontSize),
+                              ),
+                              WidgetSpan(
+                                child: InkWell(
+                                  mouseCursor: SystemMouseCursors.click,
+                                  onTap: () {
+                                    showMoreBenefitsTextSheet(
+                                        meal?.benefits ?? '');
+                                  },
+                                  child: Text(
+                                    "read more",
+                                    style: TextStyle(
+                                        height: 1.6,
+                                        fontFamily: kFontBook,
+                                        color: gsecondaryColor,
+                                        fontSize:
+                                            bottomSheetSubHeadingSFontSize),
+                                  ),
                                 ),
+                              )
+                            ],
+                          ),
+                          textScaler: TextScaler.linear(0.85),
+                        ),
+                ),
+                // (meal.benefits != null)
+                //     ? Column(
+                //         mainAxisSize: MainAxisSize.min,
+                //         children: [
+                //           ...meal.benefits!.split('* ').map((element) {
+                //             if (element.isNotEmpty) {
+                //               return Row(
+                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                //                 children: [
+                //                   Padding(
+                //                     padding: EdgeInsets.only(top: 0.3.h),
+                //                     child: Icon(
+                //                       Icons.circle_sharp,
+                //                       color: gGreyColor,
+                //                       size: 1.5.h,
+                //                     ),
+                //                   ),
+                //                   SizedBox(width: 1.w),
+                //                   Expanded(
+                //                     child: Text(
+                //                       element ?? '',
+                //                       style: TextStyle(
+                //                           fontFamily:
+                //                               eUser().userTextFieldFont,
+                //                           height: 1.2,
+                //                           color: eUser().userTextFieldColor,
+                //                           fontSize: eUser()
+                //                               .userTextFieldHintFontSize),
+                //                     ),
+                //                   ),
+                //                 ],
+                //               );
+                //             } else
+                //               return SizedBox();
+                //           })
+                //         ],
+                //       )
+                //     : SizedBox(),
+                // (widget.viewDay1Details)
+                //     ? const SizedBox()
+                //     :
+                (meal.mealTypeName == "yoga")
+                    ? GestureDetector(
+                        onTap: yogaVideoFormat == "mp4"
+                            ? () {
+                                print("/// Recipe Details ///");
+
+                                Get.to(
+                                  () => MealPlanPortraitVideo(
+                                    videoUrl: meal.yogaVideoUrl ?? '',
+                                    heading: meal.mealTypeName == "null" ||
+                                            meal.mealTypeName == ""
+                                        ? meal.name ?? ''
+                                        : meal.mealTypeName ?? '',
+                                  ),
+                                );
+                              }
+                            : () async {
+                                if (await canLaunchUrl(
+                                    Uri.parse(meal.yogaVideoUrl ?? ''))) {
+                                  launch(meal.yogaVideoUrl ?? '');
+                                } else {
+                                  // can't launch url, there is some error
+                                  throw "Could not launch ${meal.yogaVideoUrl}";
+                                }
+                              },
+                        child: Center(
+                          child: Container(
+                            margin: EdgeInsets.symmetric(vertical: 5.h),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 1.5.h, horizontal: 3.w),
+                            decoration: const BoxDecoration(
+                              color: newDashboardGreenButtonColor,
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(15),
+                                bottomLeft: Radius.circular(15),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: kLineColor,
+                                  offset: Offset(2, 3),
+                                  blurRadius: 5,
+                                )
+                              ],
+                            ),
+                            child: Text(
+                              "Play Yoga",
+                              style: TextStyle(
+                                color: gWhiteColor,
+                                fontFamily: kFontBook,
+                                fontSize: 14.dp,
                               ),
                             ),
                           ),
-                        )
-                      : const SizedBox(),
-                ],
-              ),
+                        ),
+                      )
+                    : (meal.howToPrepare != null || format == "mp4")
+                        ? Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                format == "mp4"
+                                    ? Get.to(
+                                        () => MealPlanPortraitVideo(
+                                          videoUrl: meal.recipeVideoUrl ?? '',
+                                          heading:
+                                              meal.mealTypeName == "null" ||
+                                                      meal.mealTypeName == ""
+                                                  ? meal.name ?? ''
+                                                  : meal.mealTypeName ?? '',
+                                        ),
+                                      )
+                                    : Get.to(
+                                        () => MealPlanRecipeDetails(
+                                          meal: meal,
+                                        ),
+                                      );
+                              },
+                              child: Container(
+                                margin: EdgeInsets.symmetric(vertical: 5.h),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 1.5.h, horizontal: 3.w),
+                                decoration: BoxDecoration(
+                                  color: newDashboardGreenButtonColor,
+                                  borderRadius: const BorderRadius.only(
+                                    topRight: Radius.circular(15),
+                                    bottomLeft: Radius.circular(15),
+                                  ),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: kLineColor,
+                                      offset: Offset(2, 3),
+                                      blurRadius: 5,
+                                    )
+                                  ],
+                                  // border: Border.all(
+                                  //   width: 1,
+                                  //   color: kLineColor,
+                                  // ),
+                                ),
+                                child: Text(
+                                  "Recipe",
+                                  style: TextStyle(
+                                    color: gWhiteColor,
+                                    fontFamily: kFontBook,
+                                    fontSize: 14.dp,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : const SizedBox(),
+              ],
             ),
           ),
         ),
         Positioned(
           top: 0.h,
           left: 0,
-          right: 0,
+          // right: 0,
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -887,7 +1469,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
               ],
             ),
             child: Center(
-              child: (meal?.itemPhoto != null && meal!.itemPhoto!.isNotEmpty)
+              child: (meal.itemPhoto != null && meal!.itemPhoto!.isNotEmpty)
                   ? CircleAvatar(
                       radius: 7.h,
                       backgroundImage: NetworkImage("${meal.itemPhoto}"),
@@ -901,8 +1483,117 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
             ),
           ),
         ),
+        Positioned(
+          top: 4.7.h,
+          right: MediaQuery.of(context).size.shortestSide < 600 ? 8.w : 3.w,
+          child: meal.mealTypeName == "null" ||
+                  meal.mealTypeName == "" ||
+                  meal.mealTypeName == "yoga"
+              ? const SizedBox()
+              : Container(
+                  height: 10.h,
+                  width: MediaQuery.of(context).size.shortestSide < 600
+                      ? 12.w
+                      : 6.w,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image:
+                          // AssetImage("assets/images/Lable Green .png"),
+                          AssetImage("assets/images/Lable.png"),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "Product",
+                      style: TextStyle(
+                        fontFamily: eUser().userFieldLabelFont,
+                        color: eUser().threeBounceIndicatorColor,
+                        fontSize: 10.dp,
+                      ),
+                    ),
+                  ),
+                ),
+        ),
       ],
     );
+  }
+
+  showMoreBenefitsTextSheet(String text, {bool isMealNote = false}) {
+    return AppConfig().showSheet(
+        context,
+        Padding(
+          padding: EdgeInsets.only(left: 5.w),
+          child: isMealNote
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(
+                        'Important Note : ',
+                        style: TextStyle(
+                            fontFamily: eUser().mainHeadingFont,
+                            color: eUser().mainHeadingColor,
+                            fontSize: eUser().mainHeadingFontSize),
+                      ),
+                    ),
+                    SizedBox(height: 1.5.h),
+                    Align(
+                      alignment: Alignment.center,
+                      child: HtmlWidget(
+                        text,
+                        // style: AllListText().subHeadingText(),
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ...text.split('* ').map((element) {
+                      if (element.isNotEmpty) {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(top: 0.3.h),
+                              child: Icon(
+                                Icons.circle_sharp,
+                                color: gGreyColor,
+                                size: 1.h,
+                              ),
+                            ),
+                            SizedBox(width: 0.5.w),
+                            Expanded(
+                              child: Text(
+                                element ?? '',
+                                style: TextStyle(
+                                    fontFamily: eUser().userTextFieldFont,
+                                    height: 1.2,
+                                    color: eUser().userTextFieldColor,
+                                    fontSize:
+                                        eUser().userTextFieldHintFontSize),
+                              ),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return const SizedBox();
+                      }
+                    }),
+                    SizedBox(height: 1.h)
+                  ],
+                ),
+        ),
+        bottomSheetHeight: 50.h,
+        circleIcon: bsHeadBulbIcon,
+        isDismissible: true,
+        isSheetCloseNeeded: true, sheetCloseOnTap: () {
+      Navigator.pop(context);
+    });
   }
 
   showPdf(String itemUrl) {
@@ -929,16 +1620,16 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
   }
 
   orFiled(int index) {
-    if (index.isEven) {
-      return const Center(
-        child: Text(
-          'OR',
-          style: TextStyle(fontFamily: kFontBold, color: gBlackColor),
-        ),
-      );
-    } else {
-      return const SizedBox();
-    }
+    // if (index.isEven) {
+    return const Center(
+      child: Text(
+        'OR',
+        style: TextStyle(fontFamily: kFontBold, color: gBlackColor),
+      ),
+    );
+    // } else {
+    //   return const SizedBox();
+    // }
   }
 
   btn() {
@@ -950,17 +1641,26 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (ctx) => TrackerUI(
-                    from: ProgramMealType.transition.name,
-                    proceedProgramDayModel: ProceedProgramDayModel(
-                        day: (presentDay == 0 ? 1 : presentDay).toString()),
-                    trackerVideoLink: widget.trackerVideoLink),
+                builder: (ctx) =>
+                    //     NewDayTracker(
+                    //   phases: "4",
+                    //   proceedProgramDayModel: SubmitMealPlanTrackerModel(
+                    //     day: (presentDay == 0 ? 1 : presentDay).toString(),
+                    //   ),
+                    //   trackerVideoLink: widget.trackerVideoLink,
+                    // ),
+                    TrackerUI(
+                  from: ProgramMealType.transition.name,
+                  proceedProgramDayModel: ProceedProgramDayModel(
+                      day: (presentDay == 0 ? 1 : presentDay).toString()),
+                  trackerVideoLink: widget.trackerVideoLink,
+                ),
               ),
             );
           },
           child: Container(
             margin: EdgeInsets.symmetric(vertical: 2.h),
-            padding: EdgeInsets.symmetric(vertical: 1.5.h,horizontal: 5.w),
+            padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
             decoration: BoxDecoration(
               color: eUser().buttonColor,
               borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
@@ -1118,7 +1818,7 @@ old ui
 // import 'package:lottie/lottie.dart';
 // import 'package:flutter_sizer/flutter_sizer.dart';// import '../../model/combined_meal_model/new_prep_model.dart';
 // import '../../model/error_model.dart';
-// import '../../model/program_model/proceed_model/send_proceed_program_model.dart';
+// import '../../model/program_model/proceed_model/send_meal_plan_tracker_model.dart';
 // import '../../model/program_model/start_post_program_model.dart';
 // import '../../repository/api_service.dart';
 // import '../../repository/post_program_repo/post_program_repository.dart';
@@ -1978,7 +2678,7 @@ old ui
 // // import 'package:get/get.dart';
 // // import 'package:gwc_customer/model/error_model.dart';
 // // import 'package:gwc_customer/model/prepratory_meal_model/prep_meal_model.dart';
-// // import 'package:gwc_customer/model/program_model/proceed_model/send_proceed_program_model.dart';
+// // import 'package:gwc_customer/model/program_model/proceed_model/send_meal_plan_tracker_model.dart';
 // // import 'package:gwc_customer/model/program_model/start_post_program_model.dart';
 // // import 'package:gwc_customer/repository/api_service.dart';
 // // import 'package:gwc_customer/repository/prepratory_repository/prep_repository.dart';

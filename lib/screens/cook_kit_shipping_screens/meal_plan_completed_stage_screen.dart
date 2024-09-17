@@ -45,7 +45,7 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 12.sp,
+                    fontSize: 12.dp,
                     height: 1.5,
                     fontFamily: kFontMedium,
                     color: gWhiteColor,
@@ -190,7 +190,7 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 3.5.w, vertical: 2.h),
       child: HorizontalDatePicker(
-        begin: DateTime.now().add(Duration(days: 4)),
+        begin: DateTime.now().add(Duration(days: 6)),
         end: DateTime.now().add(Duration(days: 30)),
         itemCount: 26,
         itemSpacing: 20,
@@ -237,7 +237,7 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
                     style: TextStyle(
                       height: 1.5,
                       fontFamily: kFontMedium,
-                      fontSize: 08.sp,
+                      fontSize: 08.dp,
                       color: gWhiteColor,
                     ),
                   ),

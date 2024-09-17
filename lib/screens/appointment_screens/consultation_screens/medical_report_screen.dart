@@ -49,8 +49,8 @@ class _MedicalReportScreenState extends State<MedicalReportScreen> {
   }
 
   viewPdf() async {
+    Navigator.pop(context);
     if (!await launchUrl(Uri.parse(widget.pdfLink.toString()))) {
-      Navigator.pop(context);
       throw Exception('Could not launch ${widget.pdfLink.toString()}');
 
     } else {

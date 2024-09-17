@@ -222,6 +222,8 @@ class _ChooseYourProblemScreenState extends State<ChooseYourProblemScreen> {
                                             color: Colors.red,
                                           ),
                                           onTap: () {
+                                            print("Problem: ${problemList?[index].name}");
+                                            buildChooseProblemOnClick(problemList![index]);
                                             debugPrint("©gabriel_patrick_souza");
                                           },
                                         ),

@@ -3,17 +3,19 @@ import 'detox_nourish_model/child_detox_model.dart';
 class NewHealingModel {
   String? data;
   int? totalDays;
+  String? mealNote;
   ChildDetoxModel? value;
   /// isHealingStarted this is for showing clap sheet in detox screen
   // bool? isHealingStarted;
   /// isNourishStarted this is for showing clap sheet in healing screen
   bool? isNourishStarted;
 
-  NewHealingModel({this.data, this.totalDays, this.value});
+  NewHealingModel({this.data, this.mealNote, this.totalDays, this.value});
 
   NewHealingModel.fromJson(Map<String, dynamic> json) {
     data = json['data'];
     totalDays = json['total_days'];
+    mealNote = json['meal_note'].toString();
     value = json['value'] != null ? new ChildDetoxModel.fromJson(json['value']) : null;
     // isHealingStarted = json['is_healing_started'] != null  ? json['is_healing_started'].toString() == "1" ? true : false : false;
     isNourishStarted = json['is_nourish_started'] != null  ? json['is_nourish_started'].toString() == "1" ? true : false : false;
@@ -23,6 +25,7 @@ class NewHealingModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['data'] = this.data;
+    data['meal_note'] - this.mealNote;
     data['total_days'] = this.totalDays;
     // data['is_healing_started'] = this.isHealingStarted;
     data['is_nourish_started'] = this.isNourishStarted;

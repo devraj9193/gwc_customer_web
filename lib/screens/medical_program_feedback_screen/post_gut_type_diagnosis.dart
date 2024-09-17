@@ -29,9 +29,9 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   int submittedIndex = -1;
 
   TextEditingController selectedSymptomsAfterMealController =
-      TextEditingController();
+  TextEditingController();
   TextEditingController selectedSymptomsAfterStomachUpsetController =
-      TextEditingController();
+  TextEditingController();
 
   List<Color> colors = [
     kNumberCircleRed,
@@ -59,26 +59,26 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   buildCards() {
     return cards = List.generate(
       colors.length,
-      (int index) {
+          (int index) {
         return index == 0
             ? slider1(index)
             : index == 1
-                ? slider2(index)
-                : index == 2
-                    ? slider3(index)
-                    : index == 3
-                        ? slider4(index)
-                        : index == 4
-                            ? slider5(index)
-                            : index == 5
-                                ? slider6(index)
-                                : index == 6
-                                    ? slider7(index)
-                                    : index == 7
-                                        ? slider8(index)
-                                        : index == 8
-                                            ? slider9(index)
-                                            : Container();
+            ? slider2(index)
+            : index == 2
+            ? slider3(index)
+            : index == 3
+            ? slider4(index)
+            : index == 4
+            ? slider5(index)
+            : index == 5
+            ? slider6(index)
+            : index == 6
+            ? slider7(index)
+            : index == 7
+            ? slider8(index)
+            : index == 8
+            ? slider9(index)
+            : Container();
       },
     );
   }
@@ -114,7 +114,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   final effort = [
     CheckBoxSettings(
         title:
-            "Requires straining to evacuate like holding breath to initiate"),
+        "Requires straining to evacuate like holding breath to initiate"),
     CheckBoxSettings(title: "Moderate effort like deep breathing"),
     CheckBoxSettings(title: "Minimal strain"),
     CheckBoxSettings(title: "Effortless and immediate"),
@@ -132,7 +132,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   final frequency = [
     CheckBoxSettings(
         title:
-            "Not passing everyday/Unspecific time/Irregular (Within 24 - 48 hours)"),
+        "Not passing everyday/Unspecific time/Irregular (Within 24 - 48 hours)"),
     CheckBoxSettings(title: "Once in 24hrs"),
     CheckBoxSettings(title: "Two times in 24hrs"),
     CheckBoxSettings(title: "Multiple times"),
@@ -144,7 +144,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
     CheckBoxSettings(title: "No need for stimulants"),
     CheckBoxSettings(
         title:
-            "Loose stools/Urge to evacuate with spicy or after meals/milk inducing easy stools"),
+        "Loose stools/Urge to evacuate with spicy or after meals/milk inducing easy stools"),
     CheckBoxSettings(
         title: "Easy urge in the morning without any external aid"),
   ];
@@ -181,7 +181,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 buildAppBar(
-                  () {
+                      () {
                     Navigator.pop(context);
                   },
                   isBackEnable: true,
@@ -234,7 +234,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                     onForward: (index, info) {
                       print("onForward");
                       print("${submittedIndex + 1}  $index");
-                  
+
                       if (submittedIndex + 1 != index &&
                           (submittedIndex + 1 < index)) {
                         _controller.back();
@@ -291,7 +291,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                       child: Icon(
                         Icons.arrow_forward_ios,
                         color: (submittedIndex == _index &&
-                                _index != colors.length - 1)
+                            _index != colors.length - 1)
                             ? gBlackColor
                             : gGreyColor,
                       ),
@@ -347,10 +347,10 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             disabledColor: gsecondaryColor),
                         child: RadioListTile(
                           visualDensity:
-                              VisualDensity(horizontal: -4, vertical: -4), //
+                          VisualDensity(horizontal: -4, vertical: -4), //
 
                           materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
 
                           activeColor: gsecondaryColor,
@@ -440,8 +440,8 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                   'Stool consistency', 'Refer below given Bristol Stool chart',
                   fontSize: headingFont),
               SizedBox(height: 1.h),
-             Expanded(child:  SingleChildScrollView(
-               child: ListView.separated(
+              Expanded(child:  SingleChildScrollView(
+                child: ListView.separated(
                     itemCount: stoolConsistency.length,
                     controller: ScrollController(),
                     scrollDirection: Axis.vertical,
@@ -457,9 +457,9 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                               disabledColor: gsecondaryColor),
                           child: RadioListTile(
                             visualDensity:
-                                VisualDensity(horizontal: -4, vertical: -4), //
+                            VisualDensity(horizontal: -4, vertical: -4), //
                             materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
+                            MaterialTapTargetSize.shrinkWrap,
                             value: success.title.toString(),
                             activeColor: gsecondaryColor,
                             splashRadius: 0,
@@ -489,7 +489,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                         ),
                       );
                     }),
-             ),),
+              ),),
               GestureDetector(
                 onTap: () {
                   if (selectedStoolConsistency.isEmpty) {
@@ -622,9 +622,9 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             disabledColor: gsecondaryColor),
                         child: RadioListTile(
                           visualDensity:
-                              VisualDensity(horizontal: -4, vertical: -4), //
+                          VisualDensity(horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
                           activeColor: gsecondaryColor,
                           splashRadius: 0,
@@ -726,9 +726,9 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             disabledColor: gsecondaryColor),
                         child: RadioListTile(
                           visualDensity:
-                              VisualDensity(horizontal: -4, vertical: -4), //
+                          VisualDensity(horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
                           activeColor: gsecondaryColor,
                           splashRadius: 0,
@@ -830,9 +830,9 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             disabledColor: gsecondaryColor),
                         child: RadioListTile(
                           visualDensity:
-                              VisualDensity(horizontal: -4, vertical: -4), //
+                          VisualDensity(horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
                           activeColor: gsecondaryColor,
                           splashRadius: 0,
@@ -934,9 +934,9 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             disabledColor: gsecondaryColor),
                         child: RadioListTile(
                           visualDensity:
-                              VisualDensity(horizontal: -4, vertical: -4), //
+                          VisualDensity(horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
                           activeColor: gsecondaryColor,
                           splashRadius: 0,
@@ -1039,9 +1039,9 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             disabledColor: gsecondaryColor),
                         child: RadioListTile(
                           visualDensity:
-                              VisualDensity(horizontal: -4, vertical: -4), //
+                          VisualDensity(horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
                           activeColor: gsecondaryColor,
                           splashRadius: 0,
@@ -1146,9 +1146,9 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             disabledColor: gsecondaryColor),
                         child: RadioListTile(
                           visualDensity:
-                              VisualDensity(horizontal: -4, vertical: -4), //
+                          VisualDensity(horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
                           activeColor: gsecondaryColor,
                           splashRadius: 0,
@@ -1293,9 +1293,9 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             disabledColor: gsecondaryColor),
                         child: RadioListTile(
                           visualDensity:
-                              VisualDensity(horizontal: -4, vertical: -4), //
+                          VisualDensity(horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
                           activeColor: gsecondaryColor,
                           splashRadius: 0,
@@ -1387,7 +1387,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                       decoration: BoxDecoration(
                         color: eUser().buttonColor,
                         borderRadius:
-                            BorderRadius.circular(eUser().buttonBorderRadius),
+                        BorderRadius.circular(eUser().buttonBorderRadius),
                         // border: Border.all(
                         //     color: eUser().buttonBorderColor,
                         //     width: eUser().buttonBorderWidth
@@ -1395,16 +1395,16 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                       ),
                       child: (isLoading)
                           ? buildThreeBounceIndicator(
-                              color: eUser().threeBounceIndicatorColor)
+                          color: eUser().threeBounceIndicatorColor)
                           : Center(
-                              child: Text(
-                              'Submit',
-                              style: TextStyle(
-                                fontFamily: eUser().buttonTextFont,
-                                color: eUser().buttonTextColor,
-                                fontSize: eUser().buttonTextSize,
-                              ),
-                            )),
+                          child: Text(
+                            'Submit',
+                            style: TextStyle(
+                              fontFamily: eUser().buttonTextFont,
+                              color: eUser().buttonTextColor,
+                              fontSize: eUser().buttonTextSize,
+                            ),
+                          )),
                     ),
                   ),
                 ),
@@ -1435,13 +1435,12 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                 TextSpan(
                   text: ' *',
                   style: TextStyle(
-                    fontSize: 9.sp,
+                    fontSize: 9.dp,
                     color: kPrimaryColor,
                     fontFamily: "PoppinsSemiBold",
                   ),
                 )
               ]),
-          textScaler: TextScaler.linear(textScleFactor),
         ),
         Text(
           "Note: $notes",
@@ -1463,8 +1462,8 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   );
 
   void submitGutDiagnosisForm(
-    Function setstate,
-  ) async {
+      Function setstate,
+      ) async {
     Map formDetails = {
       'hunger_pattern': selectedHungerPattern,
       'stool_consistency': selectedStoolConsistency,
@@ -1481,7 +1480,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
       isLoading = true;
     });
     final res =
-        await medicalFeedbackService?.submitGutDiagnosisService(formDetails);
+    await medicalFeedbackService?.submitGutDiagnosisService(formDetails);
 
     print("submitGutDiagnosisForm:$res");
     print("res.runtimeType: ${res.runtimeType}");
@@ -1499,7 +1498,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
       //     (route) => false);
     } else {
       String result = (res as ErrorModel).message ?? '';
-      AppConfig().showSnackbar(context, result, isError: true, duration: 4);
+      // AppConfig().showSnackbar(context, result, isError: true, duration: 4);
 
       // Navigator.of(context).pushAndRemoveUntil(
       //     MaterialPageRoute(
@@ -1513,7 +1512,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
               index: 2,
             ),
           ),
-          (route) => route.isFirst);
+              (route) => route.isFirst);
     }
     setstate(() {
       isLoading = false;

@@ -85,7 +85,7 @@ List<DashboardStagesData> stageData = [
   "Congrats on completing your gut reset program. We now have to reflect on your improvements, please do fill up your feedback form to initiate your post program consultation.",
     rightImage: "assets/images/dashboard_stages/Mask Group 43506.png",
     step: "8",
-    btn1Name: "Feedback",
+    // btn1Name: "Feedback",
     btn2Name: "Schedule",
       type: StageType.post_consultation
   ),
@@ -94,9 +94,9 @@ List<DashboardStagesData> stageData = [
   "Gut maintenance guide is your hand book to ensure a healthy gut for the years to come. We hope you are able to make the most of your learnings with us.",
     rightImage: "assets/images/dashboard_stages/Mask Group 43511.png",
     step: "9",
-    btn1Name: "View GMG",
-    btn2Name: "View End report",
-    // btn3Name: "Track & Earn",
+    btn1Name: "Feedback",
+    btn2Name: "View GMG",
+    // btn3Name: "View End report",
       type: StageType.gmg
   ),
 
@@ -167,8 +167,8 @@ List<DashboardStagesData> defaultStageData = [
       "Gut maintenance guide is your hand book to ensure a healthy gut for the years to come. We hope you are able to make the most of your learnings with us.",
       rightImage: "assets/images/dashboard_stages/Mask Group 43511.png",
       step: "9",
-      btn1Name: "View GMG",
-      btn2Name: "View End report",
+      // btn1Name: "View GMG",
+      // // btn2Name: "View End report",
       // btn3Name: "Track & Earn",
       type: StageType.gmg
   ),

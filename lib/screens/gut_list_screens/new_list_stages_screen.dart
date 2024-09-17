@@ -227,6 +227,7 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import '../../model/combined_meal_model/meal_plan_tracker_modl/send_meal_plan_tracker_model.dart';
 import '../../model/dashboard_model/get_appointment/get_appointment_after_appointed.dart';
 import '../../model/dashboard_model/get_dashboard_data_model.dart';
 import '../../model/dashboard_model/get_program_model.dart';
@@ -235,56 +236,55 @@ import '../../model/dashboard_model/shipping_approved/ship_approved_model.dart';
 import '../../model/error_model.dart';
 import '../../model/local_storage_dashboard_model.dart';
 import '../../model/profile_model/user_profile/user_profile_model.dart';
-import '../../model/program_model/proceed_model/send_proceed_program_model.dart';
+import '../../model/program_model/start_post_program_model.dart';
 import '../../model/ship_track_model/sipping_approve_model.dart';
 import '../../model/user_slot_for_schedule_model/user_slot_days_schedule_model.dart';
 import '../../model/uvdesk_model/new_ticket_details_model.dart';
 import '../../repository/api_service.dart';
 import '../../repository/dashboard_repo/gut_repository/dashboard_repository.dart';
 import '../../repository/login_otp_repository.dart';
+import '../../repository/post_program_repo/post_program_repository.dart';
 import '../../repository/profile_repository/get_user_profile_repo.dart';
 import '../../repository/shipping_repository/ship_track_repo.dart';
 import '../../repository/user_slot_for_schedule_repository/schedule_slot_repository.dart';
 import '../../repository/uvdesk_repository/uvdesk_repo.dart';
 import '../../services/dashboard_service/gut_service/dashboard_data_service.dart';
 import '../../services/login_otp_service.dart';
+import '../../services/post_program_service/post_program_service.dart';
 import '../../services/profile_screen_service/user_profile_service.dart';
 import '../../services/shipping_service/ship_track_service.dart';
 import '../../services/user_slot_for_schedule_service/user_slot_for_schedule_service.dart';
 import '../../services/uvdesk_service/uv_desk_service.dart';
 import '../../utils/app_config.dart';
 import '../../widgets/constants.dart';
+import '../../widgets/scrolling_text.dart';
 import '../../widgets/video/normal_video.dart';
 import '../../widgets/widgets.dart';
 import '../appointment_screens/consultation_screens/check_user_report_screen.dart';
 import '../appointment_screens/consultation_screens/consultation_history.dart';
-import '../appointment_screens/consultation_screens/consultation_rejected.dart';
-import '../appointment_screens/consultation_screens/consultation_success.dart';
 import '../appointment_screens/consultation_screens/medical_report_screen.dart';
 import '../appointment_screens/consultation_screens/upload_files.dart';
 import '../appointment_screens/doctor_calender_time_screen.dart';
 import '../appointment_screens/doctor_slots_details_screen.dart';
+import '../appointment_screens/ppc_cons_booking_screen.dart';
 import '../combined_meal_plan/combined_meal_screen.dart';
+import '../combined_meal_plan/tracker_widgets/new-day_tracker.dart';
 import '../cook_kit_shipping_screens/cook_kit_tracking.dart';
+import '../cook_kit_shipping_screens/shopping_list_screen.dart';
 import '../cook_kit_shipping_screens/tracking_pop_up.dart';
 import '../evalution_form/evaluation_get_details.dart';
-import '../evalution_form/personal_details_screen.dart';
+import '../follow_up_Call_screens/follow_up_call_date_screen.dart';
+import '../follow_up_Call_screens/follow_up_call_screen.dart';
 import '../help_screens/help_screen.dart';
 import 'package:intl/intl.dart';
 import '../home_remedies/home_remedies_screen.dart';
-import '../medical_program_feedback_screen/final_feedback_form.dart';
+import '../medical_program_feedback_screen/card_selection.dart';
 import '../medical_program_feedback_screen/medical_feedback_form.dart';
+import '../medical_program_feedback_screen/post_gut_type_diagnosis.dart';
 import '../notification_screen.dart';
 import '../post_program_screens/new_post_program/pp_levels_demo.dart';
 import '../post_program_screens/protcol_guide_details.dart';
-import '../prepratory plan/new/new_transition_design.dart';
-import '../prepratory plan/new/preparatory_new_screen.dart';
-import '../prepratory plan/prepratory_meal_completed_screen.dart';
-import '../prepratory plan/schedule_screen.dart';
 import '../profile_screens/call_support_method.dart';
-import '../program_plans/day_tracker_ui/day_tracker.dart';
-import '../program_plans/meal_plan_screen.dart';
-import '../program_plans/program_start_screen.dart';
 import '../program_plans/program_start_screen.dart';
 import 'new_stages_data.dart';
 import 'package:http/http.dart' as http;
@@ -379,7 +379,8 @@ class _NewDsPageState extends State<NewDsPage> {
     WakelockPlus.disable();
     getIsTimePassedOrNot("09:00");
     getFollowUpCallDetails();
-    getThreadsList();
+    chkPpcBookPopUp();
+    // getThreadsList();
     getShippingDetails();
     if (_pref!.getString(AppConfig().shipRocketBearer) == null ||
         _pref!.getString(AppConfig().shipRocketBearer)!.isEmpty) {
@@ -387,7 +388,7 @@ class _NewDsPageState extends State<NewDsPage> {
     } else {
       String token = _pref!.getString(AppConfig().shipRocketBearer)!;
       Map<String, dynamic> payload = Jwt.parseJwt(token);
-      print('shiprocketToken : $payload');
+      print('shipRocketToken : $payload');
       var date = DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
       if (!DateTime.now().difference(date).isNegative) {
         getShipRocketToken();
@@ -403,7 +404,7 @@ class _NewDsPageState extends State<NewDsPage> {
 
   getThreadsList() async {
     final result = await _uvDeskService.getTicketDetailsByIdService(
-        "${_pref?.getString(AppConfig.User_ticket_id)}");
+        _pref?.getString(AppConfig.User_ticket_id) ?? '');
     print("result: $result");
 
     if (result.runtimeType == NewTicketDetailsModel) {
@@ -429,6 +430,10 @@ class _NewDsPageState extends State<NewDsPage> {
     ),
   );
 
+  bool isFollowUpBook = false;
+
+  String followUpSlot = "";
+
   /// once we got data from api
   /// if any date is today than we r showing showFollowUpDetailsInPopup
   /// showFollowUpDetailsInPopup has isBook-> if already booked than true and we need to pass element in details param
@@ -450,33 +455,36 @@ class _NewDsPageState extends State<NewDsPage> {
 
               final today = DateTime.now();
 
+              String formattedDate = DateFormat('dd-MM-yyyy').format(today);
+
               var date = DateFormat('dd-MM-yyyy').parse(element.date ?? '');
 
               print(DateFormat('dd-MM-yyyy').parse(element.date ?? ''));
 
-              print("${date.day} == ${today.day + 1}");
+              print("follow up call check : $formattedDate == ${element.date}");
 
-              print((date.day == today.day + 1));
-              if (date.day == today.day + 1) {
-                if (element.slot == null || element.slot == '') {
-                  setState(() {
-                    print("slot time :  ${element.slot.toString()}");
-                  });
-
-                  showFollowUpDetailsInPopup(isBook: false, details: element);
-                } else {
-                  // showFollowUpDetailsInPopup(isBook: true, details: element);
-                }
-              } else if (date.day == today.day) {
+              if (formattedDate == element.date) {
                 print("${date.day} == ${today.day}");
                 print("call status : ${element.callStatus}");
                 if (element.callStatus == "null") {
                   print("${element.callStatus} == null");
-                  showFollowUpDetailsInPopup(isBook: true, details: element);
+                  isFollowUpBook = true;
+                  followUpSlot = element.slot?.split('-').first ?? '';
+                  // showFollowUpDetailsInPopup(isBook: true, details: element);
                 }
                 if (element.slot == null || element.slot == '') {
+                  isFollowUpBook = false;
                   showFollowUpDetailsInPopup(isBook: false, details: element);
                 } else {}
+              } else if (date == today.add(const Duration(days: 1))) {
+                if (element.slot == null || element.slot == '') {
+                  setState(() {
+                    print("slot time :  ${element.slot.toString()}");
+                  });
+                  showFollowUpDetailsInPopup(isBook: false, details: element);
+                } else {
+                  // showFollowUpDetailsInPopup(isBook: true, details: element);
+                }
               }
 
               // if (DateFormat('dd-MM-yyyy')
@@ -571,7 +579,10 @@ class _NewDsPageState extends State<NewDsPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const NewScheduleScreen()));
+                              builder: (_) => const FollowUpCallDateScreen(),
+                              // const FollowUpCallScreen(),
+                          ),
+                      );
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 2.h),
@@ -597,8 +608,8 @@ class _NewDsPageState extends State<NewDsPage> {
           );
         }),
         bottomSheetHeight: 50.h,
-        isDismissible: true,
-        isSheetCloseNeeded: true,
+        isDismissible: false,
+        isSheetCloseNeeded: false,
         sheetCloseOnTap: () {
           Navigator.pop(context);
         });
@@ -612,18 +623,212 @@ class _NewDsPageState extends State<NewDsPage> {
       if (value.runtimeType == GetDashboardDataModel) {
         final getData = value as GetDashboardDataModel;
 
+        print("ppc : ${getData.data_program?.value?.isNourishCompleted}");
+
+        if (getData.data_program?.value?.nourishPresentDay ==
+                getData.data_program?.value?.nourishTotalDays &&
+            getData.data_program?.value?.isNourishCompleted == "1" &&
+            // getData.normal_postprogram!.stringValue!.isNotEmpty
+            (
+                // getData.normal_postprogram?.data == null ||
+                getData.postprogram_consultation?.value == null ||
+                    getData.postprogram_consultation?.value == '')) {
+          print("POST PROGRAM STARTED");
+          print(
+              "POST PROGRAM STARTED : ${getData.postprogram_consultation?.data}");
+          print(
+              "POST PROGRAM STARTED : ${getData.postprogram_consultation?.value}");
+          startPostProgram();
+        }
+
+        print(
+            "history : ${getData.normal_consultation!.historyWithMrValue!.consultationHistory}");
+
+        final _consultationHistory = getData
+            .normal_consultation!.historyWithMrValue!.consultationHistory;
+
+        var ppcStage = getData.postprogram_consultation!.data;
+
+        print("history : $_consultationHistory");
+
         if (getData.approved_shipping?.data == "shipping_delivered" &&
             getData.data_program?.data != "start_program") {
           showDeliveredPopUp();
         }
 
-        // if (getData.normal_postprogram?.data == "post_program" && getData.normal_postprogram!.stringValue!.isEmpty
-        // ) {
-        //   showPpcPopUp();
-        // }
+        print(
+            "ppc : ${getData.postprogram_consultation?.data} ${getData.postprogram_consultation!.value!.status}");
+
+        if (getData.postprogram_consultation?.data ==
+            "post_appointment_booked") {
+          showPpcPopUp(_consultationHistory, ppcStage);
+        }
       }
     });
   }
+
+  chkPpcBookPopUp() {
+    GutDataService(repository: repository).getGutDataService().then((value) {
+      if (value.runtimeType == GetDashboardDataModel) {
+        final getData = value as GetDashboardDataModel;
+
+        print("ppc book chk : ${getData.normal_postprogram?.data}");
+        print("ppc book chk : ${getData.postprogram_consultation?.data}");
+
+        if (getData.trans_program?.value?.isTransMealStarted == true &&
+            (getData.postprogram_consultation?.data == null ||
+                getData.postprogram_consultation!.data!.isEmpty) &&
+            (getData.normal_postprogram?.data == null ||
+                getData.normal_postprogram!.data!.isEmpty)) {
+          showPpcBookInPopup(
+              getData.data_program?.value?.nourishStartedDate ?? '',
+              getData.data_program?.value?.nourishTotalDays ?? '');
+        }
+      }
+    });
+  }
+
+  // show ppc book popup in nourish stage
+  showPpcBookInPopup(String nourishStartedDate, String nourishTotalDays) {
+    return AppConfig().showSheet(
+        context,
+        StatefulBuilder(builder: (_, setstate) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 2.h),
+              Center(
+                child: Text(
+                  "Book your Post Program Consultation",
+                  style: TextStyle(
+                      fontSize: bottomSheetHeadingFontSize,
+                      fontFamily: bottomSheetHeadingFontFamily,
+                      height: 1.4),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Divider(
+                  color: kLineColor,
+                  thickness: 1.2,
+                ),
+              ),
+              SizedBox(height: 1.5.h),
+              Center(
+                child: Text(
+                  "Your Doctor has requested for Post Program Consultation.",
+                  style: TextStyle(
+                      fontSize: bottomSheetSubHeadingXFontSize,
+                      fontFamily: bottomSheetSubHeadingMediumFont,
+                      height: 1.4),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: 1.h),
+              // Center(
+              //   child: Text(
+              //     "Do fill the Current health state Form  in order to book your PPC.",
+              //     style: TextStyle(
+              //         fontSize: bottomSheetSubHeadingXFontSize,
+              //         fontFamily: bottomSheetSubHeadingMediumFont,
+              //         height: 1.4),
+              //     textAlign: TextAlign.center,
+              //   ),
+              // ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                child: Center(
+                  child: Image(
+                    image: const AssetImage(
+                        "assets/images/consultation_completed.png"),
+                    height: 30.h,
+                  ),
+                ),
+              ),
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context)
+                        .push(
+                          MaterialPageRoute(
+                            builder: (context) => PpcConsBookingScreen(
+                              isPostProgram: true,
+                              nourishStartedDate: nourishStartedDate,
+                              nourishTotalDays: nourishTotalDays,
+                            ),
+                          ),
+                        )
+                        .then(
+                          (value) => reloadUI(),
+                        );
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 2.h),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                    decoration: BoxDecoration(
+                        color: gsecondaryColor,
+                        border: Border.all(color: kLineColor, width: 0.5),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: Text(
+                      "Book",
+                      style: TextStyle(
+                        fontFamily: kFontMedium,
+                        color: gWhiteColor,
+                        fontSize: 13.dp,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 1.h),
+            ],
+          );
+        }),
+        bottomSheetHeight: 80.h,
+        isDismissible: false,
+        isSheetCloseNeeded: false,
+        sheetCloseOnTap: () {
+          Navigator.pop(context);
+        });
+  }
+
+  startPostProgram() async {
+    final res = await PostProgramService(repository: _postProgramRepository)
+        .startPostProgramService();
+
+    if (res.runtimeType == ErrorModel) {
+      ErrorModel model = res as ErrorModel;
+      Navigator.pop(context);
+      AppConfig().showSnackbar(context, model.message ?? '', isError: true);
+    } else {
+      // Navigator.pop(context);
+      if (res.runtimeType == StartPostProgramModel) {
+        StartPostProgramModel model = res as StartPostProgramModel;
+        print("start program: ${model.response}");
+        // AppConfig().showSnackbar(context, "Post Program started" ?? '');
+        getData();
+        // Future.delayed(Duration(seconds: 2)).then((value) {
+        //   Navigator.pushAndRemoveUntil(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (_) => const DashboardScreen(
+        //             index: 2,
+        //           )),
+        //           (route) => true);
+        // });
+      }
+    }
+  }
+
+  final PostProgramRepository _postProgramRepository = PostProgramRepository(
+    apiClient: ApiClient(
+      httpClient: http.Client(),
+    ),
+  );
 
   showDeliveredPopUp() {
     return showModalBottomSheet(
@@ -637,7 +842,7 @@ class _NewDsPageState extends State<NewDsPage> {
         });
   }
 
-  showPpcPopUp() {
+  showPpcPopUp(ConsultationHistory? consultationHistory, String? ppcStage) {
     return showModalBottomSheet(
         isScrollControlled: true,
         isDismissible: true,
@@ -645,7 +850,12 @@ class _NewDsPageState extends State<NewDsPage> {
         context: context,
         backgroundColor: Colors.transparent,
         builder: (ctx) {
-          return const PpcPopUpScreen();
+          return StatefulBuilder(builder: (_, setstate) {
+            return PpcPopUpScreen(
+              consultationHistory: consultationHistory,
+              postProgramStage: ppcStage,
+            );
+          });
         });
   }
 
@@ -721,10 +931,20 @@ class _NewDsPageState extends State<NewDsPage> {
         if (_getDashboardDataModel.app_consulation != null) {
           _getAppointmentDetailsModel = _getDashboardDataModel.app_consulation;
           consultationStage = _getAppointmentDetailsModel?.data ?? '';
+          _pref!.setString(
+              AppConfig.userDoctorId,
+              _getAppointmentDetailsModel?.value?.doctor?.doctorId.toString() ??
+                  '');
         } else {
           print("consultation else");
           _gutDataModel = _getDashboardDataModel.normal_consultation;
           consultationStage = _gutDataModel?.data ?? '';
+          _pref!.setString(
+              AppConfig.userDoctorId,
+              _gutDataModel?.historyWithMrValue?.consultationHistory
+                      ?.appointDoctor?.id
+                      .toString() ??
+                  '');
           print(consultationStage);
         }
         updateNewStage(consultationStage);
@@ -879,11 +1099,13 @@ class _NewDsPageState extends State<NewDsPage> {
       httpClient: http.Client(),
     ),
   );
+
   final LoginOtpRepository loginOtpRepository = LoginOtpRepository(
     apiClient: ApiClient(
       httpClient: http.Client(),
     ),
   );
+
   final ShipTrackRepository shipTrackRepository = ShipTrackRepository(
     apiClient: ApiClient(
       httpClient: http.Client(),
@@ -988,6 +1210,19 @@ class _NewDsPageState extends State<NewDsPage> {
                     ),
                     child: Column(
                       children: [
+                        isFollowUpBook
+                            ? SizedBox(
+                                height: 5.h,
+                                child: ScrollingText(
+                                  text:
+                                      "You have a call booked at @$followUpSlot with your doctor",
+                                  textStyle: TextStyle(
+                                      color: gsecondaryColor,
+                                      fontSize: questionFont,
+                                      fontFamily: kFontMedium),
+                                ),
+                              )
+                            : const SizedBox(),
                         GestureDetector(
                           onTap: handleTrackerRemedyOnTap,
                           child: IntrinsicWidth(
@@ -1043,10 +1278,13 @@ class _NewDsPageState extends State<NewDsPage> {
                             child: InkWell(
                               onTap: () {
                                 Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) =>
-                                            const NewScheduleScreen()));
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const FollowUpCallDateScreen(),
+                                    // const FollowUpCallScreen(),
+                                    // const NewScheduleScreen(),
+                                  ),
+                                );
                               },
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -1439,46 +1677,47 @@ class _NewDsPageState extends State<NewDsPage> {
                 ),
                 width: MediaQuery.of(context).size.shortestSide < 600
                     ? double.maxFinite
-                    : 60.w,
+                    : 50.w,
                 // height: MediaQuery.of(context).size.width <= 400 ? 180 : 220,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: (bgColor != null)
-                        ? bgColor
-                        : index == current - 1
-                            ? newCurrentStageColor
-                            : newCompletedStageColor,
-                    boxShadow: [
-                      BoxShadow(
-                          color: Colors.black.withAlpha(100), blurRadius: 10)
-                    ]),
+                  borderRadius: BorderRadius.circular(20),
+                  color: (bgColor != null)
+                      ? bgColor
+                      : index == current - 1
+                          ? newCurrentStageColor
+                          : newCompletedStageColor,
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.black.withAlpha(100), blurRadius: 10)
+                  ],
+                ),
                 margin: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
                 padding: EdgeInsets.only(left: 3.w, right: 3.w, top: 1.5.h),
-                child: Row(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: Column(
-                        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 3.5.h),
-                                Text(
-                                  title,
-                                  style: TextStyle(
-                                      height: 1.2,
-                                      fontFamily: eUser().mainHeadingFont,
-                                      color: eUser().mainHeadingColor,
-                                      fontSize: 16.dp),
-                                ),
-                                SizedBox(height: 0.5.h),
-                                Flexible(
-                                  child: Text(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 3.5.h),
+                                  Text(
+                                    title,
+                                    style: TextStyle(
+                                        height: 1.2,
+                                        fontFamily: eUser().mainHeadingFont,
+                                        color: eUser().mainHeadingColor,
+                                        fontSize: 16.dp),
+                                  ),
+                                  SizedBox(height: 0.5.h),
+                                  Text(
                                     subText,
                                     style: TextStyle(
                                         height: 1.3,
@@ -1486,69 +1725,61 @@ class _NewDsPageState extends State<NewDsPage> {
                                         color: eUser().mainHeadingColor,
                                         fontSize: 13.dp),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              if (btn1Name != null)
-                                buildButton(
-                                    btn1Name ?? '',
-                                    (btn1Color != null)
-                                        ? btn1Color
-                                        : index == current - 1
-                                            ? newCurrentStageButtonColor
-                                            : newCompletedStageBtnColor,
-                                    1,
-                                    type),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              if (btn2Name != null)
-                                buildButton(
-                                    btn2Name,
-                                    (btn2Color != null)
-                                        ? btn2Color
-                                        : index == current - 1
-                                            ? newCurrentStageButtonColor
-                                            : newCompletedStageBtnColor,
-                                    2,
-                                    type),
-                              SizedBox(
-                                width: 8,
-                              ),
-                              if (btn3Name != null)
-                                buildButton(
-                                    btn3Name,
-                                    (btn3Color != null)
-                                        ? btn3Color
-                                        : index == current - 1
-                                            ? newCurrentStageButtonColor
-                                            : newCompletedStageBtnColor,
-                                    3,
-                                    type)
-                            ],
+                          SizedBox(width: 3.w),
+                          Padding(
+                            padding: EdgeInsets.only(top: 3.h),
+                            child: Image.asset(
+                              image,
+                              height: 9.h,
+                            ),
                           ),
-                          if (btn1Name == null &&
-                              btn2Name == null &&
-                              btn3Name == null)
-                            SizedBox(
-                              height: 20,
-                            )
                         ],
                       ),
                     ),
-                    SizedBox(width: 3.w),
-                    Padding(
-                      padding: EdgeInsets.only(top: 3.h),
-                      child: Image.asset(
-                        image,
-                        height: 9.h,
-                      ),
+                    Row(
+                      children: [
+                        if (btn1Name != null)
+                          buildButton(
+                              btn1Name ?? '',
+                              (btn1Color != null)
+                                  ? btn1Color
+                                  : index == current - 1
+                                      ? newCurrentStageButtonColor
+                                      : newCompletedStageBtnColor,
+                              1,
+                              type),
+                        SizedBox(width: 1.5.w),
+                        if (btn2Name != null)
+                          buildButton(
+                              btn2Name,
+                              (btn2Color != null)
+                                  ? btn2Color
+                                  : index == current - 1
+                                      ? newCurrentStageButtonColor
+                                      : newCompletedStageBtnColor,
+                              2,
+                              type),
+                        SizedBox(width: 1.5.w),
+                        if (btn3Name != null)
+                          buildButton(
+                              btn3Name,
+                              (btn3Color != null)
+                                  ? btn3Color
+                                  : index == current - 1
+                                      ? newCurrentStageButtonColor
+                                      : newCompletedStageBtnColor,
+                              3,
+                              type)
+                      ],
                     ),
+                    // if (btn1Name == null &&
+                    //     btn2Name == null &&
+                    //     btn3Name == null)
+                    SizedBox(height: 2.h),
                   ],
                 ),
               ),
@@ -1770,36 +2001,30 @@ class _NewDsPageState extends State<NewDsPage> {
 
   /// button widget
   buildButton(String title, Color color, int buttonId, StageType stageType) {
-    return Flexible(
-      child: IntrinsicWidth(
-        child: GestureDetector(
-          behavior: HitTestBehavior.deferToChild,
-          onTap: () {
-            handleButtonOnTapByType(stageType, buttonId);
-          },
-          child: Container(
-            // constraints: BoxConstraints(maxWidth: 40.w, minWidth: 28.w),
-            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.h),
-            margin: EdgeInsets.symmetric(
-              vertical: 4.h,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-              color: color,
-              boxShadow: [
-                BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 10.0),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontFamily: kFontMedium,
-                  color: gWhiteColor,
-                  fontSize: 12.dp,
-                ),
-              ),
-            ),
+    return GestureDetector(
+      // behavior: HitTestBehavior.deferToChild,
+      onTap: () {
+        handleButtonOnTapByType(stageType, buttonId);
+      },
+      child: Container(
+        // constraints: BoxConstraints(maxWidth: 40.w, minWidth: 28.w),
+        padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
+        margin: EdgeInsets.symmetric(
+          vertical: 0.h,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+          color: color,
+          boxShadow: [
+            BoxShadow(color: Colors.black.withAlpha(100), blurRadius: 10.0),
+          ],
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            fontFamily: kFontMedium,
+            color: gWhiteColor,
+            fontSize: 12.dp,
           ),
         ),
       ),
@@ -2195,7 +2420,25 @@ class _NewDsPageState extends State<NewDsPage> {
             "You missed your scheduled slot at $prevBookingDate:$prevBookingTime  \n$consultationRescheduleStageSubText";
         stageData[1].btn1Name = "Join";
         stageData[1].btn1Color = newCurrentStageButtonColor.withOpacity(0.6);
-        stageData[1].btn2Name = "Reschedule";
+        if (model.value!.date != null &&
+            model.value!.slotStartTime != null &&
+            model.value!.slotEndTime != null) {
+          final curTime = DateTime.now();
+          final consulStartDateTime = DateFormat("yyyy-MM-dd HH:mm:ss")
+              .parse("${model.value!.date} ${model.value!.slotStartTime!}");
+          // final consulEndDateTime = DateFormat("yyyy-MM-dd HH:mm:ss")
+          //     .parse("${model.value!.date} ${model.value!.slotEndTime!}");
+
+          print(
+              "consulStartDateTimeee : ${consulStartDateTime.difference(curTime).inMinutes}");
+
+          if (consulStartDateTime.difference(curTime).inMinutes < 15 &&
+              consulStartDateTime.difference(curTime).inMinutes > -15) {
+            stageData[1].btn2Name = null;
+          } else {
+            stageData[1].btn2Name = "Reschedule";
+          }
+        }
 
         stageData[0].subTitle = stageCompletedSubText;
 
@@ -2203,14 +2446,32 @@ class _NewDsPageState extends State<NewDsPage> {
       case 'appointment_booked':
         current = 2;
 
+        final model = _getAppointmentDetailsModel;
+
         stageData[0].subTitle = stageCompletedSubText;
 
         stageData[1].btn1Name = "Join";
-        stageData[1].btn2Name = "Reschedule";
-        final model = _getAppointmentDetailsModel;
+        if (model!.value!.date != null &&
+            model.value!.slotStartTime != null &&
+            model.value!.slotEndTime != null) {
+          final curTime = DateTime.now();
+          final consulStartDateTime = DateFormat("yyyy-MM-dd HH:mm:ss")
+              .parse("${model.value!.date} ${model.value!.slotStartTime!}");
+          // final consulEndDateTime = DateFormat("yyyy-MM-dd HH:mm:ss")
+          //     .parse("${model.value!.date} ${model.value!.slotEndTime!}");
 
-        if (model!.value!.date != null && model.value!.slotStartTime != null) {
-          final bookingDate = model!.value!.date;
+          print(
+              "consulStartDateTime : ${consulStartDateTime.difference(curTime).inMinutes}");
+
+          if (consulStartDateTime.difference(curTime).inMinutes < 15 &&
+              consulStartDateTime.difference(curTime).inMinutes > -15) {
+            stageData[1].btn2Name = null;
+          } else {
+            stageData[1].btn2Name = "Reschedule";
+          }
+        }
+        if (model.value!.date != null && model.value!.slotStartTime != null) {
+          final bookingDate = model.value!.date;
           final bookingTime = model.value!.slotStartTime!;
 
           final curTime = DateTime.now();
@@ -2417,6 +2678,7 @@ class _NewDsPageState extends State<NewDsPage> {
         // stageData[5].subTitle = prepStage3SubText;
         stageData[5].btn2Color = newCurrentStageButtonColor;
         stageData[5].btn2Name = "Track Kit";
+        stageData[5].btn3Name = "Shopping";
 
         break;
       case 'shipping_paused':
@@ -2443,6 +2705,7 @@ class _NewDsPageState extends State<NewDsPage> {
         // stageData[5].subTitle = prepStage3SubText;
         stageData[5].btn2Color = newCurrentStageButtonColor;
         stageData[5].btn2Name = "Track Kit";
+        stageData[5].btn3Name = "Shopping";
 
         break;
       case 'shipping_approved':
@@ -2469,6 +2732,7 @@ class _NewDsPageState extends State<NewDsPage> {
         // stageData[5].subTitle = prepStage3SubText;
         stageData[5].btn2Color = newCurrentStageButtonColor;
         stageData[5].btn2Name = "Track Kit";
+        stageData[5].btn3Name = "Shopping";
 
         break;
       case 'shipping_delivered':
@@ -2493,6 +2757,7 @@ class _NewDsPageState extends State<NewDsPage> {
         // stageData[5].subTitle = prepStage3SubText;
         stageData[5].btn2Color = newCurrentStageButtonColor;
         stageData[5].btn2Name = "Track Kit";
+        stageData[5].btn3Name = "Shopping";
 
         if (_prepratoryModel!.value!.isPrepratoryStarted == false) {
           stageData[6].btn1Name = "Start Prep";
@@ -2527,6 +2792,7 @@ class _NewDsPageState extends State<NewDsPage> {
         if (_prepratoryModel!.value!.isPrepCompleted == true) {
           stageData[6].btn1Name = null;
           stageData[6].btn2Name = "Prep Tracker";
+          stageData[6].btn3Name = "Shopping";
           stageData[6].btn2Color = newCurrentStageButtonColor;
           stageData[6].subTitle = prepTrackerText;
         }
@@ -2537,6 +2803,7 @@ class _NewDsPageState extends State<NewDsPage> {
         if (_prepratoryModel!.value!.isPrepTrackerCompleted == true) {
           stageData[6].btn1Name = null;
           stageData[6].btn2Name = "Start Program";
+          stageData[6].btn3Name = "Shopping";
           stageData[6].btn2Color = newCurrentStageButtonColor;
           stageData[6].subTitle = mealStartText;
         }
@@ -2559,6 +2826,7 @@ class _NewDsPageState extends State<NewDsPage> {
               ? "Detox Plan"
               : "Day $currentday of Detox";
           stageData[6].btn2Name = null;
+          stageData[6].btn3Name = "Shopping";
           stageData[6].subTitle = afterStartProgramText;
         }
 
@@ -2569,6 +2837,7 @@ class _NewDsPageState extends State<NewDsPage> {
           // stageData[6].btn1Name = "Day 1 of Healing";
           stageData[6].btn1Name = "Healing Plan";
           stageData[6].btn2Name = null;
+          stageData[6].btn3Name = "Shopping";
           stageData[6].subTitle = afterStartProgramText;
         }
 
@@ -2580,6 +2849,7 @@ class _NewDsPageState extends State<NewDsPage> {
               ? "Healing Plan"
               : "Day $currentday of Healing";
           stageData[6].btn2Name = null;
+          stageData[6].btn3Name = "Shopping";
           stageData[6].subTitle = afterStartProgramText;
         }
 
@@ -2606,14 +2876,15 @@ class _NewDsPageState extends State<NewDsPage> {
 
           if (_transModel!.value!.isTransMealStarted == false) {
             stageData[6].btn1Name = "Start Nourish";
+            stageData[6].btn3Name = "Shopping";
             stageData[6].subTitle = mealTransText;
           } else {
             stageData[6].btn1Name = (dayNumber == "0" || dayNumber == "")
                 ? "Nourish Plan"
                 : "Day $dayNumber of Nourish";
+            stageData[6].btn3Name = "Shopping";
             stageData[6].subTitle = afterStartProgramText;
           }
-          stageData[6].btn2Name = null;
         }
         // else {
         //   current = 6;
@@ -2652,13 +2923,13 @@ class _NewDsPageState extends State<NewDsPage> {
 
         print(
             "_gutPostProgramModel!.isProgramFeedbackSubmitted: ${_gutPostProgramModel!.isProgramFeedbackSubmitted}");
-        if (_gutPostProgramModel!.isProgramFeedbackSubmitted != "1") {
-          stageData[7].btn2Color = newCurrentStageButtonColor.withOpacity(0.6);
-        } else {
+        // if (_gutPostProgramModel!.isProgramFeedbackSubmitted != "1") {
+        //   stageData[7].btn2Color = newCurrentStageButtonColor.withOpacity(0.6);
+        // } else {
           stageData[7].btn1Name = null;
           stageData[7].btn2Color = newCurrentStageButtonColor;
           stageData[7].subTitle = PpcScheduleText;
-        }
+        // }
 
         stageData[5].btn2Color = null;
         stageData[5].btn1Name = null;
@@ -2686,7 +2957,27 @@ class _NewDsPageState extends State<NewDsPage> {
         stageData[6].btn1Color = newCompletedStageBtnColor;
 
         stageData[7].btn1Name = "Join";
-        stageData[7].btn2Name = "Reschedule";
+
+        if (_postConsultationAppointment?.value?.date != null &&
+            _postConsultationAppointment?.value?.slotStartTime != null &&
+            _postConsultationAppointment?.value?.slotEndTime != null) {
+          final curTime = DateTime.now();
+          final consulStartDateTime = DateFormat("yyyy-MM-dd HH:mm:ss").parse(
+              "${_postConsultationAppointment?.value?.date} ${_postConsultationAppointment?.value?.slotStartTime!}");
+          // final consulEndDateTime = DateFormat("yyyy-MM-dd HH:mm:ss")
+          //     .parse("${_postConsultationAppointment?.value?.date} ${_postConsultationAppointment?.value?.slotEndTime!}");
+
+          print(
+              "consulStartDateTime : ${consulStartDateTime.difference(curTime).inMinutes}");
+
+          if (consulStartDateTime.difference(curTime).inMinutes < 15 &&
+              consulStartDateTime.difference(curTime).inMinutes > -15) {
+            stageData[7].btn2Name = null;
+          } else {
+            stageData[7].btn2Name = "Reschedule";
+          }
+        }
+        stageData[7].btn3Name = "View Plan";
 
         stageData[5].btn2Color = null;
         stageData[5].btn1Name = null;
@@ -2740,8 +3031,25 @@ class _NewDsPageState extends State<NewDsPage> {
         stageData[6].btn1Color = newCompletedStageBtnColor;
 
         stageData[7].btn1Name = null;
-        stageData[7].btn2Name = "Reschedule";
+        if (_postConsultationAppointment?.value?.date != null &&
+            _postConsultationAppointment?.value?.slotStartTime != null &&
+            _postConsultationAppointment?.value?.slotEndTime != null) {
+          final curTime = DateTime.now();
+          final consulStartDateTime = DateFormat("yyyy-MM-dd HH:mm:ss").parse(
+              "${_postConsultationAppointment?.value?.date} ${_postConsultationAppointment?.value?.slotStartTime!}");
+          // final consulEndDateTime = DateFormat("yyyy-MM-dd HH:mm:ss")
+          //     .parse("${_postConsultationAppointment?.value?.date} ${_postConsultationAppointment?.value?.slotEndTime!}");
 
+          print(
+              "consulStartDateTime : ${consulStartDateTime.difference(curTime).inMinutes}");
+
+          if (consulStartDateTime.difference(curTime).inMinutes < 15 &&
+              consulStartDateTime.difference(curTime).inMinutes > -15) {
+            stageData[7].btn2Name = null;
+          } else {
+            stageData[7].btn2Name = "Reschedule";
+          }
+        }
         break;
       case 'post_appointment_done':
         stageData[0].subTitle = stageCompletedSubText;
@@ -2761,8 +3069,11 @@ class _NewDsPageState extends State<NewDsPage> {
 
         stageData[6].btn1Name = "Completed";
         stageData[6].btn1Color = newCompletedStageBtnColor;
-
-        stageData[7].btn1Name = null;
+        if (_transModel!.value!.isGutDiagnosisSubmitted == false) {
+          stageData[8].btn1Name = "Feedback";
+        }else{
+          stageData[8].btn1Name = null;
+        }
         stageData[7].btn2Name = null;
         stageData[7].subTitle = ppcAfterConsultationText;
 
@@ -2796,6 +3107,19 @@ class _NewDsPageState extends State<NewDsPage> {
 
         stageData[7].btn1Name = null;
         stageData[7].btn2Name = null;
+
+        print(
+            "Feedback submit chk : ${_transModel!.value!.isProgramFeedbackSubmitted}");
+
+        if (_transModel!.value!.isGutDiagnosisSubmitted == false) {
+          stageData[8].btn1Name = "Feedback";
+          stageData[8].btn2Name = null;
+          stageData[8].btn3Name = null;
+        } else {
+          stageData[8].btn1Name = null;
+          stageData[8].btn2Name = "View GMG";
+          // stageData[8].btn3Name = "View End report";
+        }
 
         break;
       case 'protocol_guide':
@@ -2857,6 +3181,10 @@ class _NewDsPageState extends State<NewDsPage> {
               final model = _getAppointmentDetailsModel;
               _pref!.setString(
                   AppConfig.appointmentId, model?.value?.id.toString() ?? '');
+
+              _pref!.setString(AppConfig.userDoctorId,
+                  model?.value?.doctor?.doctorId.toString() ?? '');
+
               final curTime = DateTime.now();
               var res = DateFormat("yyyy-MM-dd HH:mm:ss").parse(
                   "${model!.value!.date!} ${model.value!.slotStartTime!}:00");
@@ -2883,6 +3211,14 @@ class _NewDsPageState extends State<NewDsPage> {
             case 'consultation_done':
               final _consultationHistory =
                   _gutDataModel!.historyWithMrValue!.consultationHistory;
+
+              _pref!.setString(
+                  AppConfig.userDoctorId,
+                  _gutDataModel!.historyWithMrValue!.consultationHistory
+                          ?.appointDoctor?.id
+                          .toString() ??
+                      '');
+
               goToScreen(ConsultationHistoryScreen(
                 consultationHistory: _consultationHistory,
               ));
@@ -2892,6 +3228,14 @@ class _NewDsPageState extends State<NewDsPage> {
             case 'consultation_accepted':
               final _consultationHistory =
                   _gutDataModel!.historyWithMrValue!.consultationHistory;
+
+              _pref!.setString(
+                  AppConfig.userDoctorId,
+                  _gutDataModel!.historyWithMrValue!.consultationHistory
+                          ?.appointDoctor?.id
+                          .toString() ??
+                      '');
+
               goToScreen(ConsultationHistoryScreen(
                 consultationHistory: _consultationHistory,
               ));
@@ -2908,6 +3252,14 @@ class _NewDsPageState extends State<NewDsPage> {
             case 'consultation_rejected':
               final _consultationHistory =
                   _gutDataModel!.historyWithMrValue!.consultationHistory;
+
+              _pref!.setString(
+                  AppConfig.userDoctorId,
+                  _gutDataModel!.historyWithMrValue!.consultationHistory
+                          ?.appointDoctor?.id
+                          .toString() ??
+                      '');
+
               goToScreen(ConsultationHistoryScreen(
                 consultationHistory: _consultationHistory,
               ));
@@ -2920,6 +3272,14 @@ class _NewDsPageState extends State<NewDsPage> {
               //   goToScreen(const ConsultationSuccess());
               final _consultationHistory =
                   _gutDataModel!.historyWithMrValue!.consultationHistory;
+
+              _pref!.setString(
+                  AppConfig.userDoctorId,
+                  _gutDataModel!.historyWithMrValue!.consultationHistory
+                          ?.appointDoctor?.id
+                          .toString() ??
+                      '');
+
               goToScreen(ConsultationHistoryScreen(
                 consultationHistory: _consultationHistory,
               ));
@@ -2928,6 +3288,14 @@ class _NewDsPageState extends State<NewDsPage> {
               // show history screen
               final _consultationHistory =
                   _gutDataModel!.historyWithMrValue!.consultationHistory;
+
+              _pref!.setString(
+                  AppConfig.userDoctorId,
+                  _gutDataModel!.historyWithMrValue!.consultationHistory
+                          ?.appointDoctor?.id
+                          .toString() ??
+                      '');
+
               goToScreen(ConsultationHistoryScreen(
                 consultationHistory: _consultationHistory,
               ));
@@ -2938,6 +3306,9 @@ class _NewDsPageState extends State<NewDsPage> {
           switch (consultationStage) {
             case 'consultation_reschedule':
               final model = _getAppointmentDetailsModel;
+
+              _pref!.setString(AppConfig.userDoctorId,
+                  model?.value?.doctor?.doctorId.toString() ?? '');
 
               print(model!.value!.date);
               List<String> doctorNames = [];
@@ -2968,6 +3339,9 @@ class _NewDsPageState extends State<NewDsPage> {
             case 'appointment_booked':
               final model = _getAppointmentDetailsModel;
 
+              _pref!.setString(AppConfig.userDoctorId,
+                  model?.value?.doctor?.doctorId.toString() ?? '');
+
               print(model!.value!.date);
               List<String> doctorNames = [];
               String? doctorName;
@@ -2984,7 +3358,7 @@ class _NewDsPageState extends State<NewDsPage> {
               });
 
               // add this before calling calendertimescreen for reschedule
-              _pref!.setString(AppConfig.appointmentId, '');
+              // _pref!.setString(AppConfig.appointmentId, '');
               goToScreen(
                 DoctorCalenderTimeScreen(
                   isReschedule: true,
@@ -3046,6 +3420,7 @@ class _NewDsPageState extends State<NewDsPage> {
             goToScreen(MedicalReportScreen(
               pdfLink:
                   _gutDataModel?.rejectedCase?.historyWithMrValue?.mr ?? '',
+              // isMrReport: true,
             ));
             break;
           case 'report_upload':
@@ -3055,6 +3430,7 @@ class _NewDsPageState extends State<NewDsPage> {
             goToScreen(MedicalReportScreen(
               isMrRead: isMrRead ?? '1',
               pdfLink: _gutDataModel!.historyWithMrValue!.mr!,
+              // isMrReport: true,
             ));
             break;
         }
@@ -3066,7 +3442,7 @@ class _NewDsPageState extends State<NewDsPage> {
       case StageType.prep_meal:
         if (buttonId == 1) {
           showPrepratoryMealScreen(isFromPrepCard: true);
-        } else {
+        } else if (buttonId == 2) {
           if (shippingStage != null && shippingStage!.isNotEmpty) {
             if (shippingStage == 'meal_plan_completed') {
               Navigator.of(context)
@@ -3082,7 +3458,11 @@ class _NewDsPageState extends State<NewDsPage> {
               Navigator.of(context)
                   .push(
                     MaterialPageRoute(
-                      builder: (context) => CookKitTracking(
+                      builder: (context) =>
+                          // PdfView(
+                          // pdfUrl:
+                          //     "https://shiprocket.co/tracking/${_shippingApprovedModel?.value?.awbCode ?? ''}")
+                          CookKitTracking(
                         awb_number:
                             _shippingApprovedModel?.value?.awbCode ?? '',
                         currentStage: shippingStage!,
@@ -3104,6 +3484,14 @@ class _NewDsPageState extends State<NewDsPage> {
             AppConfig().showSnackbar(context, "Can't access Locked Stage",
                 isError: true);
           }
+        } else if (buttonId == 3) {
+          Navigator.of(context)
+              .push(
+                MaterialPageRoute(
+                  builder: (context) => const ShoppingListScreen(),
+                ),
+              )
+              .then((value) => reloadUI());
         }
         break;
 
@@ -3119,7 +3507,8 @@ class _NewDsPageState extends State<NewDsPage> {
           }
           if (transStage != null && transStage!.isNotEmpty) {
             // showProgramScreen();
-            return showTransitionMealScreen();
+
+            return showTransitionMealScreen(buttonId);
           } else if (programOptionStage != null &&
               programOptionStage!.isNotEmpty &&
               (_prepratoryModel!.value!.isPrepTrackerCompleted != null &&
@@ -3130,6 +3519,14 @@ class _NewDsPageState extends State<NewDsPage> {
             AppConfig().showSnackbar(context, "Can't access Locked Stage",
                 isError: true);
           }
+        } else if (buttonId == 3) {
+          Navigator.of(context)
+              .push(
+                MaterialPageRoute(
+                  builder: (context) => const ShoppingListScreen(),
+                ),
+              )
+              .then((value) => reloadUI());
         } else {
           if (shippingStage == "shipping_delivered" &&
               _prepratoryModel!.value!.isPrepTrackerCompleted == false) {
@@ -3150,42 +3547,46 @@ class _NewDsPageState extends State<NewDsPage> {
       case StageType.post_consultation:
         switch (postProgramStage) {
           case 'post_program':
-            if (buttonId == 1) {
-              if (postProgramStage == "post_program") {
-                if (_gutPostProgramModel!.isProgramFeedbackSubmitted == "1") {
-                  AppConfig()
-                      .showSnackbar(context, "Feedback Already Submitted");
-                } else {
-                  goToScreen(MedicalFeedbackForm());
-                }
-              } else {
-                // goToScreen(FinalFeedbackForm());
-
-                AppConfig().showSnackbar(context, "Can't access Locked Stage",
-                    isError: true);
-              }
-            } else {
-              if (_gutPostProgramModel!.isProgramFeedbackSubmitted == "1") {
+            // if (buttonId == 1) {
+            //   if (postProgramStage == "post_program") {
+            //     if (_gutPostProgramModel!.isProgramFeedbackSubmitted == "1") {
+            //       AppConfig()
+            //           .showSnackbar(context, "Feedback Already Submitted");
+            //     } else {
+            //       // goToScreen(MedicalFeedbackForm());
+            //     }
+            //   } else {
+            //     // goToScreen(FinalFeedbackForm());
+            //
+            //     AppConfig().showSnackbar(context, "Can't access Locked Stage",
+            //         isError: true);
+            //   }
+            // } else {
+            //   if (_gutPostProgramModel!.isProgramFeedbackSubmitted == "1") {
                 Navigator.of(context)
                     .push(
                       MaterialPageRoute(
-                          builder: (context) => DoctorCalenderTimeScreen(
+                          builder: (context) => PpcConsBookingScreen(
                                 isPostProgram: true,
+                                nourishTotalDays:
+                                    _gutProgramModel!.value!.nourishTotalDays,
+                                nourishStartedDate:
+                                    _gutProgramModel!.value!.nourishStartedDate,
                               )
                           // PostProgramScreen(postProgramStage: postProgramStage,),
                           ),
                     )
                     .then((value) => reloadUI());
-              } else {
-                AppConfig().showSnackbar(
-                    context, "Please complete the Feedback",
-                    isError: true);
-              }
-            }
+            //   } else {
+            //     AppConfig().showSnackbar(
+            //         context, "Please complete the Feedback",
+            //         isError: true);
+            //   }
+            // }
 
             break;
           case 'check_user_reports':
-            goToScreen(CheckUserReportsScreen());
+            goToScreen(const CheckUserReportsScreen());
             break;
           case 'post_appointment_booked':
             if (buttonId == 1) {
@@ -3194,7 +3595,7 @@ class _NewDsPageState extends State<NewDsPage> {
               final bookingTime =
                   _postConsultationAppointment!.value!.slotStartTime!;
               var res = DateFormat("yyyy-MM-dd HH:mm:ss")
-                  .parse("${bookingDate} ${bookingTime!}:00");
+                  .parse("${bookingDate} ${bookingTime}:00");
 
               if (res.difference(curTime).inMinutes > 5 ||
                   res.difference(curTime).inMinutes < -15) {
@@ -3220,7 +3621,7 @@ class _NewDsPageState extends State<NewDsPage> {
                     )
                     .then((value) => reloadUI());
               }
-            } else {
+            } else if (buttonId == 2) {
               final model = _postConsultationAppointment;
               print(model!.value!.date);
               List<String> doctorNames = [];
@@ -3239,18 +3640,58 @@ class _NewDsPageState extends State<NewDsPage> {
 
               // add this before calling calendertimescreen for reschedule
               // _pref!.setString(AppConfig.appointmentId , '');
-              goToScreen(DoctorCalenderTimeScreen(
+              goToScreen(PpcConsBookingScreen(
                 isReschedule: true,
                 isPostProgram: true,
+                nourishTotalDays: _gutProgramModel!.value!.nourishTotalDays,
+                nourishStartedDate: _gutProgramModel!.value!.nourishStartedDate,
                 prevBookingDate: model.value!.date,
                 prevBookingTime: model.value!.appointmentStartTime,
                 doctorDetails: model.value!.doctor,
                 doctorName: doctorName,
                 doctorPic: doctorImage,
               ));
+            } else {
+              final model = _postConsultationAppointment;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      //     MealPlanScreens(
+                      //   stage: 3,
+                      //   postProgramStage: model!.value!.date!,
+                      // ),
+                      CombinedPrepMealTransScreen(
+                    stage: 3,
+                    postProgramStage: model!.value!.date!,
+                  ),
+                ),
+              );
             }
             break;
           case 'post_appointment_done':
+            if (buttonId == 1) {
+              print(
+                  "Feedback stage : ${_transModel?.value
+                      ?.isMedicalFeedbackSubmitted}");
+
+              if (_transModel?.value?.isMedicalFeedbackSubmitted == false) {
+                goToScreen(
+                  const MedicalFeedbackForm(),
+                );
+              } else if (_transModel?.value?.isMedicalFeedbackSubmitted == true &&
+                  _transModel?.value?.isProgramFeedbackSubmitted == false) {
+                goToScreen(
+                  const TCardPage(
+                    programContinuesdStatus: 1,
+                  ),
+                );
+              } else if (_transModel?.value?.isProgramFeedbackSubmitted == true) {
+                goToScreen(
+                  const PostGutTypeDiagnosis(),
+                );
+              }
+            }
             break;
           case 'post_appointment_reschedule':
             if (buttonId == 1) {
@@ -3282,9 +3723,11 @@ class _NewDsPageState extends State<NewDsPage> {
 
               // add this before calling calendertimescreen for reschedule
               // _pref!.setString(AppConfig.appointmentId , '');
-              goToScreen(DoctorCalenderTimeScreen(
+              goToScreen(PpcConsBookingScreen(
                 isReschedule: true,
                 isPostProgram: true,
+                nourishTotalDays: _gutProgramModel!.value!.nourishTotalDays,
+                nourishStartedDate: _gutProgramModel!.value!.nourishStartedDate,
                 prevBookingDate: model?.value!.date,
                 prevBookingTime: model?.value!.appointmentStartTime,
                 doctorDetails: model?.value!.doctor,
@@ -3299,8 +3742,29 @@ class _NewDsPageState extends State<NewDsPage> {
 
       //******* GMG stage Card9 ******************
       // showing gmg and wnd report
+
       case StageType.gmg:
         if (buttonId == 1) {
+          print(
+              "Feedback stage : ${_transModel?.value?.isMedicalFeedbackSubmitted}");
+
+          if (_transModel?.value?.isMedicalFeedbackSubmitted == false) {
+            goToScreen(
+              const MedicalFeedbackForm(),
+            );
+          } else if (_transModel?.value?.isMedicalFeedbackSubmitted == true &&
+              _transModel?.value?.isProgramFeedbackSubmitted == false) {
+            goToScreen(
+              const TCardPage(
+                programContinuesdStatus: 1,
+              ),
+            );
+          } else if (_transModel?.value?.isProgramFeedbackSubmitted == true) {
+            goToScreen(
+              const PostGutTypeDiagnosis(),
+            );
+          }
+        } else if (buttonId == 2) {
           if (postProgramStage == "protocol_guide" ||
               postProgramStage == 'gmg_submitted') {
             if (_postConsultationAppointment!.value != null) {
@@ -3323,7 +3787,7 @@ class _NewDsPageState extends State<NewDsPage> {
             AppConfig().showSnackbar(context, "Can't access Locked Stage",
                 isError: true);
           }
-        } else if (buttonId == 2) {
+        } else if (buttonId == 3) {
           if (postProgramStage == "protocol_guide" ||
               postProgramStage == 'gmg_submitted') {
             if (_postConsultationAppointment!.value != null) {
@@ -3431,9 +3895,18 @@ class _NewDsPageState extends State<NewDsPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => (_prepratoryModel!.value!.isPrepCompleted!)
-                  ? const PrepratoryMealCompletedScreen()
-                  : CombinedPrepMealTransScreen(stage: 0)),
+            builder: (context) => (_prepratoryModel!.value!.isPrepCompleted!)
+                ? NewDayTracker(
+                    phases: "1",
+                    proceedProgramDayModel: SubmitMealPlanTrackerModel(
+                      day: 1.toString(),
+                    ),
+                  )
+                // const PrepratoryMealCompletedScreen()
+                :
+                // const MealPlanScreens(stage: 0),
+                CombinedPrepMealTransScreen(stage: 0),
+          ),
         ).then((value) => reloadUI());
       }
     }
@@ -3441,7 +3914,7 @@ class _NewDsPageState extends State<NewDsPage> {
 
   /// ProgramPlanScreen-> start program screen
   /// we r showing ProgramPlanScreen when isTransMealStarted is false
-  showTransitionMealScreen() {
+  showTransitionMealScreen(int buttonId) {
     if (_transModel != null) {
       if (_transModel!.value!.isTransMealStarted == false) {
         Navigator.of(context)
@@ -3458,13 +3931,48 @@ class _NewDsPageState extends State<NewDsPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => CombinedPrepMealTransScreen(
-                    stage: 3,
-                    postProgramStage: postProgramStage,
-                  )),
+            builder: (context) =>
+                //     MealPlanScreens(
+                //   stage: 3,
+                //   postProgramStage: postProgramStage,
+                // ),
+                CombinedPrepMealTransScreen(
+              stage: 3,
+              postProgramStage: postProgramStage,
+            ),
+          ),
         ).then((value) => reloadUI());
       }
     }
+    // if (_transModel != null) {
+    //   if (_transModel!.value!.isTransMealStarted == false) {
+    //     Navigator.of(context)
+    //         .push(
+    //           MaterialPageRoute(
+    //             builder: (context) => ProgramPlanScreen(
+    //               from: ProgramMealType.transition.name,
+    //               videoLink: _transModel?.value?.startVideo ?? "",
+    //             ),
+    //           ),
+    //         )
+    //         .then((value) => reloadUI());
+    //   } else {
+    //     Navigator.push(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) =>
+    //             //     MealPlanScreens(
+    //             //   stage: 3,
+    //             //   postProgramStage: postProgramStage,
+    //             // ),
+    //             CombinedPrepMealTransScreen(
+    //           stage: 3,
+    //           postProgramStage: postProgramStage,
+    //         ),
+    //       ),
+    //     ).then((value) => reloadUI());
+    //   }
+    // }
   }
 
   /// when user click on meal plan if still prep not completed than
@@ -3490,7 +3998,14 @@ class _NewDsPageState extends State<NewDsPage> {
         Navigator.of(context)
             .push(
               MaterialPageRoute(
-                builder: (context) => ProgramPlanScreen(
+                builder: (context) =>
+                    // MealPlanScreens(
+                    //     stage: (_gutProgramModel!.value!.startProgram == "1" &&
+                    //         _gutProgramModel!.value!.isDetoxCompleted == "1")
+                    //         ? 2
+                    //         : 1
+                    // ),
+                    ProgramPlanScreen(
                   from: (_gutProgramModel!.value!.startProgram == "1" &&
                           _gutProgramModel!.value!.isDetoxCompleted == "1")
                       ? ProgramMealType.healing.name
@@ -3505,17 +4020,19 @@ class _NewDsPageState extends State<NewDsPage> {
         Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => CombinedPrepMealTransScreen(
-                  stage: (_gutProgramModel!.value!.startProgram == "1" &&
-                          _gutProgramModel!.value!.isDetoxCompleted == "1")
-                      ? 2
-                      : 1)
-              // MealPlanScreen(
-              // transStage: transStage,
-              // receipeVideoLink: _gutProgramModel!.value!.recipeVideo,
-              // trackerVideoLink: _gutProgramModel!.value!.tracker_video_url
-              // ),
-              ),
+            builder: (context) =>
+                // MealPlanScreens(
+                //     stage: (_gutProgramModel!.value!.startProgram == "1" &&
+                //         _gutProgramModel!.value!.isDetoxCompleted == "1")
+                //         ? 2
+                //         : 1
+                // ),
+                CombinedPrepMealTransScreen(
+                    stage: (_gutProgramModel!.value!.startProgram == "1" &&
+                            _gutProgramModel!.value!.isDetoxCompleted == "1")
+                        ? 2
+                        : 1),
+          ),
         ).then((value) => reloadUI());
       }
     } else {

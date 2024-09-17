@@ -218,7 +218,8 @@ class _FaqScreenState extends State<FaqScreen> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(10),
-                  bottomLeft: Radius.circular(10),),
+                  bottomLeft: Radius.circular(10),
+                ),
                 color: gsecondaryColor,
               ),
               child: Icon(
@@ -228,9 +229,9 @@ class _FaqScreenState extends State<FaqScreen> {
               ),
             ),
             Expanded(
-              child: Padding(padding: EdgeInsets.only(top: 1.h),
+              child: Padding(
+                padding: EdgeInsets.only(top: 1.h),
                 child: TextFormField(
-
                   controller: searchController,
                   textAlign: TextAlign.start,
                   decoration: InputDecoration(
@@ -259,7 +260,7 @@ class _FaqScreenState extends State<FaqScreen> {
                         });
                       },
                       child: Padding(
-                        padding:  EdgeInsets.only(bottom: 1.h),
+                        padding: EdgeInsets.only(bottom: 1.h),
                         child: Icon(
                           Icons.cancel_outlined,
                           color: gBlackColor,
@@ -300,82 +301,82 @@ class _FaqScreenState extends State<FaqScreen> {
         ),
       ),
     );
-    return Center(
-      child: Container(
-        width: 50.w,
-        height: 30,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6),
-          color: Colors.white,
-          // border: Border.all(color: gHintTextColor, width: 1.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              blurRadius: 2,
-            ),
-          ],
-        ),
-        margin: EdgeInsets.symmetric(horizontal: 0.w, vertical: 1.h),
-        child: TextFormField(
-          controller: searchController,
-          textAlign: TextAlign.left,
-          decoration: InputDecoration(
-            prefixIconConstraints: BoxConstraints.tight(Size.square(30)),
-            prefixIcon: IntrinsicWidth(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(6),
-                      bottomLeft: Radius.circular(6)),
-                  color: gsecondaryColor,
-                ),
-                child: Icon(
-                  Icons.search,
-                  color: gWhiteColor,
-                  size: 14.sp,
-                ),
-              ),
-            ),
-            suffixIcon: GestureDetector(
-              onTap: () {
-                setState(() {
-                  searchController.clear();
-                  searchedFAQResults.clear();
-                });
-              },
-              child: Icon(
-                Icons.cancel_outlined,
-                color: gBlackColor,
-                size: 14.sp,
-              ),
-            ),
-            contentPadding: EdgeInsets.only(left: 20),
-            hintText: "Search...",
-            // suffixIcon: searchController.text.isNotEmpty
-            //     ? GestureDetector(
-            //         child:
-            //             Icon(Icons.close_outlined, size: 2.h, color: gBlackColor),
-            //         onTap: () {
-            //           searchController.clearComposing();
-            //           FocusScope.of(context).requestFocus(FocusNode());
-            //         },
-            //       )
-            //     : null,
-            hintStyle: TextStyle(
-              fontFamily: kFontBook,
-              color: gBlackColor,
-              fontSize: 9.sp,
-            ),
-            border: InputBorder.none,
-          ),
-          style: TextStyle(
-              fontFamily: "GothamBook", color: gBlackColor, fontSize: 11.sp),
-          onChanged: (value) {
-            onSearchTextChanged(value);
-          },
-        ),
-      ),
-    );
+    // return Center(
+    //   child: Container(
+    //     width: 50.w,
+    //     height: 30,
+    //     decoration: BoxDecoration(
+    //       borderRadius: BorderRadius.circular(6),
+    //       color: Colors.white,
+    //       // border: Border.all(color: gHintTextColor, width: 1.0),
+    //       boxShadow: [
+    //         BoxShadow(
+    //           color: Colors.grey.withOpacity(0.3),
+    //           blurRadius: 2,
+    //         ),
+    //       ],
+    //     ),
+    //     margin: EdgeInsets.symmetric(horizontal: 0.w, vertical: 1.h),
+    //     child: TextFormField(
+    //       controller: searchController,
+    //       textAlign: TextAlign.left,
+    //       decoration: InputDecoration(
+    //         prefixIconConstraints: BoxConstraints.tight(Size.square(30)),
+    //         prefixIcon: IntrinsicWidth(
+    //           child: Container(
+    //             decoration: BoxDecoration(
+    //               borderRadius: BorderRadius.only(
+    //                   topLeft: Radius.circular(6),
+    //                   bottomLeft: Radius.circular(6)),
+    //               color: gsecondaryColor,
+    //             ),
+    //             child: Icon(
+    //               Icons.search,
+    //               color: gWhiteColor,
+    //               size: 14.sp,
+    //             ),
+    //           ),
+    //         ),
+    //         suffixIcon: GestureDetector(
+    //           onTap: () {
+    //             setState(() {
+    //               searchController.clear();
+    //               searchedFAQResults.clear();
+    //             });
+    //           },
+    //           child: Icon(
+    //             Icons.cancel_outlined,
+    //             color: gBlackColor,
+    //             size: 14.sp,
+    //           ),
+    //         ),
+    //         contentPadding: EdgeInsets.only(left: 20),
+    //         hintText: "Search...",
+    //         // suffixIcon: searchController.text.isNotEmpty
+    //         //     ? GestureDetector(
+    //         //         child:
+    //         //             Icon(Icons.close_outlined, size: 2.h, color: gBlackColor),
+    //         //         onTap: () {
+    //         //           searchController.clearComposing();
+    //         //           FocusScope.of(context).requestFocus(FocusNode());
+    //         //         },
+    //         //       )
+    //         //     : null,
+    //         hintStyle: TextStyle(
+    //           fontFamily: kFontBook,
+    //           color: gBlackColor,
+    //           fontSize: 9.sp,
+    //         ),
+    //         border: InputBorder.none,
+    //       ),
+    //       style: TextStyle(
+    //           fontFamily: "GothamBook", color: gBlackColor, fontSize: 11.sp),
+    //       onChanged: (value) {
+    //         onSearchTextChanged(value);
+    //       },
+    //     ),
+    //   ),
+    // );
   }
 
   onSearchTextChanged(String text) async {
@@ -468,22 +469,103 @@ class _FaqScreenState extends State<FaqScreen> {
   }
 
   buildGrids() {
-    return GridView.builder(
-        scrollDirection: Axis.vertical,
-        physics: const ScrollPhysics(),
-        shrinkWrap: true,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          mainAxisSpacing: 30,
-          crossAxisSpacing: 15,
-          crossAxisCount: 4,
-          // mainAxisExtent: 20.h,
-          // childAspectRatio: MediaQuery.of(context).size.width /
-          //     (MediaQuery.of(context).size.height / 1.4),
-        ),
-        itemCount: faqGridList.length,
-        itemBuilder: (context, index) {
-          return gridTile(faqGridList[index]);
-        });
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 2.w),
+      child: GridView.builder(
+          scrollDirection: Axis.vertical,
+          physics: const ScrollPhysics(),
+          shrinkWrap: true,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            mainAxisSpacing: 30,
+            crossAxisSpacing: 15,
+            crossAxisCount:
+                MediaQuery.of(context).size.shortestSide < 600 ? 3 : 5,
+            // mainAxisExtent: 20.h,
+            // childAspectRatio: MediaQuery.of(context).size.width /
+            //     (MediaQuery.of(context).size.height / 1.4),
+          ),
+          itemCount: faqGridList.length,
+          itemBuilder: (context, index) {
+            return gridTile(faqGridList[index]);
+          }),
+    );
+  }
+
+  gridTile(GridTileItems items) {
+    return InkWell(
+      onTap: () {
+        goToScreen(
+          FaqDetailedList(
+            faqList: items.faqList,
+          ),
+        );
+        // switch(items.id){
+        //   case 0:
+        //     print(items.faqList);
+        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
+        //     break;
+        //   case 1:
+        //     items.faqList!.forEach((element) {
+        //       print("${element.question}");
+        //     });
+        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
+        //     break;
+        //   case 2:
+        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
+        //     break;
+        //   case 3:
+        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
+        //     break;
+        //   case 4:
+        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
+        //     break;
+        //   case 5:
+        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
+        //     break;
+        //   case 5:
+        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
+        //     break;
+        //   case 5:
+        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
+        //     break;
+        // }
+      },
+      child: Container(
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: gWhiteColor,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: kLineColor,
+                blurRadius: 2,
+                offset: const Offset(0.9, 1.5),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Flexible(
+                child: Center(
+                    child: Image.asset(
+                  items.assetImage,
+                  color: kLineColor,
+                  fit: BoxFit.scaleDown,
+                )),
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    items.name,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontFamily: kFontMedium, fontSize: 14.sp),
+                  ),
+                ),
+              )
+            ],
+          )),
+    );
   }
 
   buildQuestionsOld(FAQ faq, int index) {
@@ -830,82 +912,6 @@ class _FaqScreenState extends State<FaqScreen> {
       ),
     );
   }
-
-  gridTile(GridTileItems items) {
-    return InkWell(
-      onTap: () {
-        goToScreen(FaqDetailedList(
-          faqList: items.faqList,
-        ));
-        // switch(items.id){
-        //   case 0:
-        //     print(items.faqList);
-        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
-        //     break;
-        //   case 1:
-        //     items.faqList!.forEach((element) {
-        //       print("${element.question}");
-        //     });
-        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
-        //     break;
-        //   case 2:
-        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
-        //     break;
-        //   case 3:
-        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
-        //     break;
-        //   case 4:
-        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
-        //     break;
-        //   case 5:
-        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
-        //     break;
-        //   case 5:
-        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
-        //     break;
-        //   case 5:
-        //     goToScreen(FaqDetailedList(faqList: items.faqList,));
-        //     break;
-        // }
-      },
-      child: Container(
-          padding: EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: gWhiteColor,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: kLineColor,
-                blurRadius: 2,
-                offset: const Offset(0.9, 1.5),
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Flexible(
-                child: Center(
-                    child: Image.asset(
-                  items.assetImage,
-                  color: kLineColor,
-                  fit: BoxFit.scaleDown,
-                )),
-              ),
-              Expanded(
-                child: Center(
-                  child: Text(
-                    items.name,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontFamily: kFontMedium, fontSize: 14.sp),
-                  ),
-                ),
-              )
-            ],
-          )),
-    );
-  }
-
 }
 
 class GridTileItems {

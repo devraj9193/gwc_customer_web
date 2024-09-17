@@ -122,7 +122,8 @@ class ConsultationHistoryScreen extends StatelessWidget {
                     SizedBox(height: 1.5.h),
                     Center(
                       child: Text(
-                        "${consultationHistory?.appointDoctor?.doctor?.experience}Yrs of Experience\t""${consultationHistory?.appointDoctor?.doctor?.desc}" ?? '',
+                        "${consultationHistory?.appointDoctor?.doctor?.desc}" ?? '',
+                        // "${consultationHistory?.appointDoctor?.doctor?.experience}Yrs of Experience\t""${consultationHistory?.appointDoctor?.doctor?.desc}" ?? '',
                         style: TextStyle(
                           color: gBlackColor,
                           fontFamily: kFontBook,
@@ -216,13 +217,13 @@ class ConsultationHistoryScreen extends StatelessWidget {
           // center card widget
           Positioned(
             top: 36.h,
-            left: 0,
-            right: 0,
+            left: 20.w,
+            right: 20.w,
             child: Container(
-              width: double.maxFinite,
+              // width: double.maxFinite,
               height: 8.h,
-              // padding:
-              //     EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+              padding:
+                  EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.h),
               margin: EdgeInsets.symmetric(horizontal: 10.w),
               decoration: BoxDecoration(
                 color: gSitBackBgColor,
@@ -261,7 +262,6 @@ class ConsultationHistoryScreen extends StatelessWidget {
               ),
             ),
           ),
-
         ],
       );
     });

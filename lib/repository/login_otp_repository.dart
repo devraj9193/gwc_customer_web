@@ -5,8 +5,8 @@ class LoginOtpRepository{
 
   LoginOtpRepository({required this.apiClient}) : assert(apiClient != null);
 
-  Future loginWithOtpRepo(String phone, String otp, String fcm) async{
-    return await apiClient.serverLoginWithOtpApi(phone, otp, fcm);
+  Future loginWithOtpRepo(String phone, String otp, String fcm,String webDeviceToken) async{
+    return await apiClient.serverLoginWithOtpApi(phone, otp, fcm, webDeviceToken);
   }
 
   Future getOtpRepo(String phone) async{

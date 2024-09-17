@@ -24,7 +24,8 @@ import 'package:chewie/chewie.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:video_player/video_player.dart';
 import 'package:http/http.dart' as http;
 
@@ -89,7 +90,7 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
     print(
         "model.medicalReport.runtimeType: ${widget.childGetEvaluationDataModel?.medicalReport!.split(',')}");
     List list =
-        jsonDecode(widget.childGetEvaluationDataModel?.medicalReport ?? '');
+    jsonDecode(widget.childGetEvaluationDataModel?.medicalReport ?? '');
     print("report list: $list ${list.length}");
 
     showMedicalReport.clear();
@@ -150,10 +151,8 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                 MaterialPageRoute(
                   builder: (_) => TicketChatScreen(
                     userName: "${_pref?.getString(AppConfig.User_Name)}",
-                    thumbNail:
-                    "${_pref?.getString(AppConfig.User_Profile)}",
-                    ticketId:
-                    "${_pref?.getString(AppConfig.User_ticket_id)}",
+                    thumbNail: "${_pref?.getString(AppConfig.User_Profile)}",
+                    ticketId: _pref?.getString(AppConfig.User_ticket_id) ?? '',
                     subject: '',
                     email: "${_pref?.getString(AppConfig.User_Email)}",
                     ticketStatus: 1 ?? -1,
@@ -166,7 +165,6 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
               AssetImage("assets/images/noun-chat-5153452.png"),
             ),
           ),
-
           body: showUI(context),
         ),
       ),
@@ -183,7 +181,7 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               buildAppBar(
-                () {
+                    () {
                   Navigator.pop(context, true);
                 },
                 isBackEnable: true,
@@ -211,7 +209,7 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
           child: Container(
               width: double.maxFinite,
               padding:
-                  EdgeInsets.only(left: 3.w, top: 3.h, right: 3.w, bottom: 0.h),
+              EdgeInsets.only(left: 3.w, top: 3.h, right: 3.w, bottom: 0.h),
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
@@ -264,7 +262,7 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                 decoration: BoxDecoration(
                   color: eUser().buttonColor,
                   borderRadius:
-                      BorderRadius.circular(eUser().buttonBorderRadius),
+                  BorderRadius.circular(eUser().buttonBorderRadius),
                   // border: Border.all(
                   //     color: eUser().buttonBorderColor,
                   //     width: eUser().buttonBorderWidth
@@ -273,15 +271,15 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                 child: (showUploadProgress)
                     ? buildThreeBounceIndicator()
                     : Center(
-                        child: Text(
-                          'Go To Home',
-                          style: TextStyle(
-                            fontFamily: eUser().buttonTextFont,
-                            color: eUser().buttonTextColor,
-                            fontSize: eUser().buttonTextSize,
-                          ),
-                        ),
-                      ),
+                  child: Text(
+                    'Go To Home',
+                    style: TextStyle(
+                      fontFamily: eUser().buttonTextFont,
+                      color: eUser().buttonTextColor,
+                      fontSize: eUser().buttonTextSize,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -363,13 +361,15 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                   child: IntrinsicWidth(
                     child: GestureDetector(
                       onTap: () async {
-                        chooseFileUsingFilePicker();
+                        // chooseFileUsingFilePicker();
+                        pickFromFile();
                         // showChooserSheet();
                       },
                       child: Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: 3.h, horizontal: 0.w),
-                        padding: EdgeInsets.symmetric(vertical: 1.5.h,horizontal: 5.w),
+                        margin: EdgeInsets.symmetric(
+                            vertical: 3.h, horizontal: 0.w),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 1.5.h, horizontal: 5.w),
                         decoration: BoxDecoration(
                           color: gMainColor,
                           borderRadius: BorderRadius.circular(5),
@@ -413,17 +413,73 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                 SizedBox(
                   height: 0.5.h,
                 ),
-                if (_finalFiles.isNotEmpty)
-                  ListView.builder(
-                    itemCount: _finalFiles.length,
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    physics: ScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      final file = _finalFiles[index];
-                      return buildFile(file, index);
-                    },
+                if (medicalRecords.isNotEmpty)
+                  StatefulBuilder(builder: (_, setstate) {
+                    return ListView.builder(
+                      itemCount: medicalRecords.length,
+                      shrinkWrap: true,
+                      scrollDirection: Axis.vertical,
+                      physics: ScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        final file = medicalRecords[index];
+                        return buildFile(file, index);
+                      },
+                    );
+                  }),
+                Visibility(
+                  visible: medicalRecords.isNotEmpty,
+                  child: Padding(
+                    padding: padding,
+                    child: Center(
+                      child: IntrinsicWidth(
+                        child: GestureDetector(
+                          onTap: () async {
+                            // final res = await _videoPlayerController?.isPlaying();
+                            // if(res != null && res == true){
+                            //
+                            // }
+                            if (medicalRecords.isNotEmpty) {
+                              showUploadReportPopup();
+
+                              // if(videoPlayerController != null){
+                              //   videoPlayerController!.stop();
+                              // }
+                              if (_chewieController != null) {
+                                _chewieController!.videoPlayerController.pause();
+                              }
+                            }
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(vertical: 1.h),
+                            padding:
+                            EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                            decoration: BoxDecoration(
+                              color: eUser().buttonColor,
+                              borderRadius:
+                              BorderRadius.circular(eUser().buttonBorderRadius),
+                              // border: Border.all(
+                              //     color: eUser().buttonBorderColor,
+                              //     width: eUser().buttonBorderWidth
+                              // ),
+                            ),
+                            child: (showUploadProgress)
+                                ? buildThreeBounceIndicator()
+                                : Center(
+                              child: Text(
+                                'Done',
+                                style: TextStyle(
+                                  fontFamily: eUser().buttonTextFont,
+                                  color: eUser().buttonTextColor,
+                                  fontSize: eUser().buttonTextSize,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
+                ),
                 // SizedBox(
                 //   height: 5.h,
                 // ),
@@ -433,14 +489,13 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                       Center(
+                      Center(
                         child: Text(
                           "Don't have any reports?",
                           style: TextStyle(
-                            fontFamily: kFontBook,
-                            color: gHintTextColor,
-                            fontSize: 13.dp
-                          ),
+                              fontFamily: kFontBook,
+                              color: gHintTextColor,
+                              fontSize: 13.dp),
                         ),
                       ),
                       MediaQuery(
@@ -448,7 +503,9 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                             .copyWith(textScaleFactor: 0.8),
                         child: Center(
                           child: IntrinsicWidth(
-                            child: GestureDetector(
+                            child: (showSubmitProgress)
+                                ? Center(child: buildCircularIndicator())
+                                : GestureDetector(
                                 onTap: () {
                                   // if(_videoPlayerController != null){
                                   //   _videoPlayerController!.stop();
@@ -459,7 +516,7 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                                   if (_chewieController != null) {
                                     _chewieController!.pause();
                                   }
-                            
+
                                   Map finalMap = {
                                     "part": "3",
                                   };
@@ -469,9 +526,9 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                                   // finalMap.addAll(widget.evaluationModelFormat2!
                                   //     .toMap()
                                   //     .cast());
-                            
-                                  callApi(finalMap, null);
-                            
+
+                                  callApi(finalMap, null, setState);
+
                                   // Navigator.push(
                                   //     context,
                                   //     MaterialPageRoute(
@@ -482,8 +539,8 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                                   //     ));
                                 },
                                 child: Container(
-                                
-                                  margin: EdgeInsets.symmetric(vertical: 2.h),
+                                  margin:
+                                  EdgeInsets.symmetric(vertical: 2.h),
                                   padding: EdgeInsets.symmetric(
                                       vertical: 1.5.h, horizontal: 5.w),
                                   decoration: BoxDecoration(
@@ -516,60 +573,7 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
             ),
           ),
         ),
-        Visibility(
-           visible: medicalRecords.isNotEmpty,
-          child: Padding(
-            padding: padding,
-            child: Center(
-              child: IntrinsicWidth(
-                child: GestureDetector(
-                  onTap: () async {
-                    // final res = await _videoPlayerController?.isPlaying();
-                    // if(res != null && res == true){
-                    //
-                    // }
-                     if (medicalRecords.isNotEmpty) {
-                      showUploadReportPopup();
-                
-                      // if(videoPlayerController != null){
-                      //   videoPlayerController!.stop();
-                      // }
-                      if (_chewieController != null) {
-                        _chewieController!.videoPlayerController.pause();
-                      }
-                    }
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 1.h),
-                    padding:
-                        EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
-                    decoration: BoxDecoration(
-                      color: eUser().buttonColor,
-                      borderRadius:
-                          BorderRadius.circular(eUser().buttonBorderRadius),
-                      // border: Border.all(
-                      //     color: eUser().buttonBorderColor,
-                      //     width: eUser().buttonBorderWidth
-                      // ),
-                    ),
-                    child: (showUploadProgress)
-                        ? buildThreeBounceIndicator()
-                        : Center(
-                            child: Text(
-                              'Done',
-                              style: TextStyle(
-                                fontFamily: eUser().buttonTextFont,
-                                color: eUser().buttonTextColor,
-                                fontSize: eUser().buttonTextSize,
-                              ),
-                            ),
-                          ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
+
       ],
     );
   }
@@ -587,25 +591,28 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
       ))
           ?.files;
 
-          var path2 =_paths?.single.bytes;
+      medicalRecords = _paths!;
 
-          var path3 = _paths?.single.name;
+      print("medical Records : $medicalRecords");
 
-          if (!item.contains(path3)) {
-            item.add(path3);
-            File file = File(path3 ?? "");
-            setState(() {
-              objFile = _paths?.single;
-              medicalRecords.add(objFile!);
-              _finalFiles.add(file);
-              print("medical reports : $medicalRecords");
-              print("_finalFiles : $_finalFiles");
-            });
-          } else {
-            // Scaffold.of(globalkey2.currentContext??context)
-            AppConfig().showSnackbar(context, "File Already Exist", isError: true);
-          }
+      var path2 = _paths?.single.bytes;
 
+      var path3 = _paths?.single.name;
+
+      if (!item.contains(path3)) {
+        item.add(path3);
+        File file = File(path3 ?? "");
+        setState(() {
+          objFile = _paths?.single;
+          medicalRecords.add(objFile!);
+          _finalFiles.add(file);
+          print("medical reports : $medicalRecords");
+          print("_finalFiles : $_finalFiles");
+        });
+      } else {
+        // Scaffold.of(globalkey2.currentContext??context)
+        AppConfig().showSnackbar(context, "File Already Exist", isError: true);
+      }
     } on PlatformException catch (e) {
       log('Unsupported operation' + e.toString());
     } catch (e) {
@@ -671,11 +678,11 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                       ),
                       decoration: BoxDecoration(
                           border: Border(
-                        bottom: BorderSide(
-                          color: gHintTextColor,
-                          width: 3.0,
-                        ),
-                      )),
+                            bottom: BorderSide(
+                              color: gHintTextColor,
+                              width: 3.0,
+                            ),
+                          )),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -707,11 +714,11 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                           height: 10,
                           decoration: BoxDecoration(
                               border: Border(
-                            right: BorderSide(
-                              color: gHintTextColor,
-                              width: 1,
-                            ),
-                          )),
+                                right: BorderSide(
+                                  color: gHintTextColor,
+                                  width: 1,
+                                ),
+                              )),
                         ),
                         TextButton(
                             onPressed: () {
@@ -775,36 +782,45 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
 
   void pickFromFile() async {
     final result = await FilePicker.platform
-        .pickFiles(withReadStream: true, allowMultiple: false);
+        .pickFiles(
+      type: FileType.custom,
+      allowMultiple: true,
+      onFileLoading: (FilePickerStatus status) => print(status),
+      allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
+    );
 
     if (result == null) return;
-    if (result.files.first.extension!.contains("pdf") ||
-        result.files.first.extension!.contains("png") ||
-        result.files.first.extension!.contains("jpg") ||
-        result.files.first.extension!.contains("jpeg")) {
-      var path2 = result.files.single.path;
+    // if (result.files.first.extension!.contains("pdf") ||
+    //     result.files.first.extension!.contains("png") ||
+    //     result.files.first.extension!.contains("jpg") ||
+    //     result.files.first.extension!.contains("jpeg")) {
+    //   var path2 = result.files.single.path;
 
-      if (!item.contains(path2)) {
-        item.add(path2);
-        File file = File(path2 ?? "");
-        setState(() {
-          medicalRecords.add(result.files.first);
-          _finalFiles.add(file);
-          print("medical reports : $medicalRecords");
-          print("_finalFiles : $_finalFiles");
-        });
-      } else {
-        // Scaffold.of(globalkey2.currentContext??context)
-        AppConfig().showSnackbar(context, "File Already Exist", isError: true);
-      }
-    } else {
-      AppConfig().showSnackbar(context, "Please select png/jpg/Pdf files",
-          isError: true);
-    }
+    medicalRecords = result.files;
+
+    print("medical Records : $medicalRecords");
+
+    // if (!item.contains(path2)) {
+    //   item.add(path2);
+    //   File file = File(path2 ?? "");
+    //   setState(() {
+    //     medicalRecords.add(result.files.first);
+    //     _finalFiles.add(file);
+    //     print("medical reports : $medicalRecords");
+    //     print("_finalFiles : $_finalFiles");
+    //   });
+    // } else {
+    //   // Scaffold.of(globalkey2.currentContext??context)
+    //   AppConfig().showSnackbar(context, "File Already Exist", isError: true);
+    // }
+    // } else {
+    //   AppConfig().showSnackbar(context, "Please select png/jpg/Pdf files",
+    //       isError: true);
+    // }
     setState(() {});
   }
 
-  Widget buildFile(File file, int index) {
+  Widget buildFile(PlatformFile file, int index) {
     return buildRecordList(file, index: index);
 
     // return Wrap(
@@ -824,13 +840,13 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
     // );
   }
 
-  buildRecordList(File filename, {int? index}) {
+  buildRecordList(PlatformFile filename, {int? index}) {
     return ListTile(
       shape: Border(bottom: BorderSide()),
       // leading: SizedBox(
       //     width: 50, height: 50, child: Image.file(File(filename.path!))),
       title: Text(
-        filename.path.split("/").last,
+        filename.name,
         textAlign: TextAlign.start,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
@@ -842,8 +858,8 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
       trailing: GestureDetector(
           onTap: () {
             medicalRecords.removeAt(index!);
-            item.removeAt(index!);
-            _finalFiles.removeAt(index);
+            // item.removeAt(index);
+            // _finalFiles.removeAt(index);
             setState(() {});
           },
           child: const Icon(
@@ -991,7 +1007,8 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
   buildVideoPlayer() {
     if (_chewieController != null) {
       return AspectRatio(
-        aspectRatio:  MediaQuery.of(context).size.shortestSide < 600 ?14/6 : 16/9,
+        aspectRatio:
+        MediaQuery.of(context).size.shortestSide < 600 ? 16 / 9  : 3 / 1,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
@@ -1106,7 +1123,7 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
             data: MediaQuery.of(context).copyWith(textScaleFactor: 0.75),
             child: Center(
               child: IntrinsicWidth(
-                child:  (showSubmitProgress)
+                child: (showSubmitProgress)
                     ? Center(child: buildCircularIndicator())
                     : GestureDetector(
                     onTap: () {
@@ -1120,12 +1137,13 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                       // }
                       if (videoPlayerController != null)
                         videoPlayerController!.pause();
-                      if (_chewieController != null) _chewieController!.pause();
-                
+                      if (_chewieController != null)
+                        _chewieController!.pause();
+
                       Map finalMap = {
                         "part": "3",
                       };
-                
+
                       print("medical Reportsss : $medicalRecords");
                       // finalMap
                       //     .addAll(widget.evaluationModelFormat1!.toMap().cast());
@@ -1134,16 +1152,18 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
                       // uploadSelectedFile(
                       //     finalMap, medicalRecords.map((e) => e.bytes).toList());
                       callApi(
-                          finalMap, medicalRecords.map((e) => e.bytes).toList());
+                          finalMap,
+                          medicalRecords.map((e) => e.bytes).toList(),
+                          submitProgressState);
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 2.h),
-                      padding:
-                          EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 1.5.h, horizontal: 5.w),
                       decoration: BoxDecoration(
                         color: eUser().buttonColor,
-                        borderRadius:
-                            BorderRadius.circular(eUser().buttonBorderRadius),
+                        borderRadius: BorderRadius.circular(
+                            eUser().buttonBorderRadius),
                       ),
                       child: Center(
                         child: Text(
@@ -1197,10 +1217,11 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
               child: Text(
                 name,
                 style: buildTextStyle(
-                    color:
-                        name == selectedUploadRadio ? kTextColor : gHintTextColor,
+                    color: name == selectedUploadRadio
+                        ? kTextColor
+                        : gHintTextColor,
                     fontFamily:
-                        name == selectedUploadRadio ? kFontMedium : kFontBook),
+                    name == selectedUploadRadio ? kFontMedium : kFontBook),
               ),
             ),
           ],
@@ -1269,8 +1290,8 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
     print(result);
   }
 
-  void callApi(Map form, List? medicalReports) async {
-    submitProgressState(() {
+  void callApi(Map form, List? medicalReports, var setState) async {
+    setState(() {
       showSubmitProgress = true;
     });
 
@@ -1286,7 +1307,7 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
       Get.offAll(const DashboardScreen(
         index: 2,
       ));
-      submitProgressState(() {
+      setState(() {
         showSubmitProgress = false;
       });
       // Navigator.of(context).pushAndRemoveUntil(
@@ -1302,11 +1323,11 @@ class _EvaluationUploadReportState extends State<EvaluationUploadReport> {
     } else {
       ErrorModel result = res;
       AppConfig().showSnackbar(context, result.message ?? '', isError: true);
-      submitProgressState(() {
+      setState(() {
         showSubmitProgress = false;
       });
     }
-    submitProgressState(() {
+    setState(() {
       showSubmitProgress = true;
     });
   }
