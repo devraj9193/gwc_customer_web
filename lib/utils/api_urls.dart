@@ -31,6 +31,12 @@ var getOtpUrl = "${AppConfig().BASE_URL}/api/sendOTP";
 
 var getAppointmentSlotsListUrl = "${AppConfig().BASE_URL}/api/getData/slots/";
 
+var getUserAddressApiUrl =
+    "${AppConfig().BASE_URL}/api/getData/getUserAddress";
+
+var sensUserAddressApiUrl =
+    "${AppConfig().BASE_URL}/api/submitForm/postEditUserAddress";
+
 var bookAppointmentUrl =
     "${AppConfig().BASE_URL}/api/getData/bookOnlineAppointment";
 // "getData/book";
@@ -62,12 +68,27 @@ var getUserReportListUrl =
 var getMealProgramDayListUrl =
     "${AppConfig().BASE_URL}/api/listData/user_program_details";
 
+var getChiefQuestionListUrl =
+    "${AppConfig().BASE_URL}/api/getData/getChiefComplaintsQuestions";
+
+var submitChiefQuestionAnswerUrl =
+    "${AppConfig().BASE_URL}/api/submitForm/postChiefComplaintsQA";
+
+var submitPollQuestionAnswerUrl =
+    "${AppConfig().BASE_URL}/api/submitForm/postPollAnswers";
+
 /// need to pass day number 1,2,3 ....
 var getMealPlanDataUrl =
     "${AppConfig().BASE_URL}/api/getDataList/user_day_meal_plan";
 
 var submitDayPlanDetailsUrl =
     "${AppConfig().BASE_URL}/api/submitData/patient_meal_tracking";
+
+var getGwcProductsUrl =
+    "https://gutandhealth.in/api/list/getProductList";
+
+var submitGwcProductsUrl =
+    "${AppConfig().BASE_URL}/api/postData/postRazorPayOrder";
 
 var submitMealPlanTrackerUrl =
     "${AppConfig().BASE_URL}/api/submitData/online_patient_meal_tracking";

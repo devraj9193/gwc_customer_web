@@ -6,7 +6,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   emoji_picker_flutter
   file_selector_linux
   platform_device_id_linux
-  smart_auth
   stories_for_flutter
   url_launcher_linux
 )

@@ -3,7 +3,6 @@ import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
-import 'package:pinput/pinput.dart';
 import '../../../model/combined_meal_model/get_user_yoga_list_model.dart';
 import '../../../model/error_model.dart';
 import '../../../repository/api_service.dart';
@@ -13,6 +12,7 @@ import '../../../utils/app_config.dart';
 import '../../../widgets/constants.dart';
 import '../../../widgets/widgets.dart';
 import '../../profile_screens/my_yoga_screens/meal_plan_yoga_video.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyYogaScreen extends StatefulWidget {
   const MyYogaScreen({Key? key}) : super(key: key);
@@ -130,12 +130,13 @@ class _MyYogaScreenState extends State<MyYogaScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),child:
             buildAppBar(
               () {
                 Navigator.pop(context);
               },
               isBackEnable: true,
-            ),
+            ),),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
               child: Text(
@@ -152,7 +153,13 @@ class _MyYogaScreenState extends State<MyYogaScreen> {
                       child: buildCircularIndicator(),
                     ),
                   )
-                : Column(
+                : yogaLists.isEmpty ? Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 30.h),
+                child: Text("No Data",style: TextStyle(
+                    fontFamily: kFontMedium, color: gBlackColor, fontSize: 13.dp),),
+              ),
+            ) : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
@@ -276,6 +283,14 @@ class _MyYogaScreenState extends State<MyYogaScreen> {
                     },
                     itemBuilder: (context, index) {
                       YogaList lst = list[index];
+                      final a = lst.url;
+
+                      final file = a.split(".").last;
+
+                      String format = file.toString();
+
+                      print("video : $format");
+
                       return Column(
                         children: [
                           SizedBox(height: 4.h),
@@ -304,20 +319,31 @@ class _MyYogaScreenState extends State<MyYogaScreen> {
                             ),
                           ),
                           GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               if (areAnyTwoParametersNotEmpty(lst.url,
                                   lst.audioOnlyUrl, lst.videoOnlyUrl)) {
                                 showVideoType(lst);
                               } else {
                                 if (lst.url.isNotEmpty) {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => MealPlanYogaVideo(
-                                        videoUrl: lst.url.toString(),
-                                        heading: lst.name.toString(),
+                                  if (format == "pdf") {
+                                    print(lst.url);
+                                    if (await canLaunchUrl(
+                                        Uri.parse(lst.url ?? ''))) {
+                                      launch(lst.url ?? '');
+                                    } else {
+                                      // can't launch url, there is some error
+                                      throw "Could not launch ${lst.url}";
+                                    }
+                                  } else {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => MealPlanYogaVideo(
+                                          videoUrl: lst.url.toString(),
+                                          heading: lst.name.toString(),
+                                        ),
                                       ),
-                                    ),
-                                  );
+                                    );
+                                  }
                                 } else if (lst.audioOnlyUrl.isNotEmpty) {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
@@ -359,79 +385,85 @@ class _MyYogaScreenState extends State<MyYogaScreen> {
                     },
                   ),
                 ),
-              list.length > 1 ? Positioned(
-                  top: 15.h,
-                  left: 0.w,
-                  bottom: 0,
-                  child: GestureDetector(
-                    onTap: previousPage,
-                    child: Container(
-                      padding: const EdgeInsets.all(15),
-                      margin: EdgeInsets.only(bottom: 18.h, left: 5.w),
-                      decoration: const BoxDecoration(
-                        color: gWhiteColor,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                            spreadRadius: 2,
+                list.length > 1
+                    ? Positioned(
+                        top: 15.h,
+                        left: 0.w,
+                        bottom: 0,
+                        child: GestureDetector(
+                          onTap: previousPage,
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            margin: EdgeInsets.only(bottom: 18.h, left: 5.w),
+                            decoration: const BoxDecoration(
+                              color: gWhiteColor,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.arrow_back_ios_new_sharp,
+                                color: gGreyColor,
+                                size: 4.h,
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.arrow_back_ios_new_sharp,
-                          color: gGreyColor,
-                          size: 4.h,
                         ),
-                      ),
-                    ),
-                  ),
-                ) : const SizedBox(),
-                list.length > 1 ?  Positioned(
-                  top: 15.h,
-                  right: 0.w,
-                  bottom: 0,
-                  child: GestureDetector(
-                    onTap: () {
-                      nextPage(list);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(15),
-                      margin: EdgeInsets.only(bottom: 18.h, right: 5.w),
-                      decoration: const BoxDecoration(
-                        color: gWhiteColor,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                            spreadRadius: 2,
+                      )
+                    : const SizedBox(),
+                list.length > 1
+                    ? Positioned(
+                        top: 15.h,
+                        right: 0.w,
+                        bottom: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            nextPage(list);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            margin: EdgeInsets.only(bottom: 18.h, right: 5.w),
+                            decoration: const BoxDecoration(
+                              color: gWhiteColor,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: Center(
+                              child: Icon(
+                                Icons.arrow_forward_ios_sharp,
+                                color: gGreyColor,
+                                size: 4.h,
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Icon(
-                          Icons.arrow_forward_ios_sharp,
-                          color: gGreyColor,
-                          size: 4.h,
                         ),
-                      ),
-                    ),
-                  ),
-                ) : const SizedBox(),
+                      )
+                    : const SizedBox(),
               ],
             ),
           ),
         ),
-        list.length > 1 ? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            list.length,
-            (index) => buildDot(index, yogaLists[index].time),
-          ),
-        ) : const SizedBox(),
+        list.length > 1
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(
+                  list.length,
+                  (index) => buildDot(index, yogaLists[index].time),
+                ),
+              )
+            : const SizedBox(),
       ],
     );
   }
@@ -515,8 +547,7 @@ class _MyYogaScreenState extends State<MyYogaScreen> {
       height: 12,
       width: isSelected ? 24 : 12,
       decoration: BoxDecoration(
-        color: isSelected
-            ?  gsecondaryColor : gsecondaryColor.withOpacity(0.3),
+        color: isSelected ? gsecondaryColor : gsecondaryColor.withOpacity(0.3),
         borderRadius: BorderRadius.circular(6),
       ),
     );
@@ -538,6 +569,14 @@ class _MyYogaScreenState extends State<MyYogaScreen> {
   }
 
   showVideoType(YogaList urls) {
+    final a = urls.url;
+
+    final file = a.split(".").last;
+
+    String format = file.toString();
+
+    print("video : $format");
+
     return Get.bottomSheet(
       StatefulBuilder(builder: (context, setstate) {
         return Container(
@@ -610,7 +649,7 @@ class _MyYogaScreenState extends State<MyYogaScreen> {
               Center(
                 child: IntrinsicWidth(
                   child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       if (selectedIndex == 0) {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -621,14 +660,24 @@ class _MyYogaScreenState extends State<MyYogaScreen> {
                           ),
                         );
                       } else if (selectedIndex == 1) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => MealPlanYogaVideo(
-                              videoUrl: urls.url.toString(),
-                              heading: urls.name.toString(),
+                        if (format == "pdf") {
+                          print(urls.url);
+                          if (await canLaunchUrl(Uri.parse(urls.url ?? ''))) {
+                            launch(urls.url ?? '');
+                          } else {
+                            // can't launch url, there is some error
+                            throw "Could not launch ${urls.url}";
+                          }
+                        } else {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => MealPlanYogaVideo(
+                                videoUrl: urls.url.toString(),
+                                heading: urls.name.toString(),
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        }
                       } else if (selectedIndex == 2) {
                         Navigator.of(context).push(
                           MaterialPageRoute(

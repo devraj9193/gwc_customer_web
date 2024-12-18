@@ -36,6 +36,12 @@ class _ShoppingListScreenState extends State<ShoppingListScreen>
   int shoppingTapLength = 0;
   String tabText = "";
 
+  @override
+  void initState() {
+    super.initState();
+    getShoppingList();
+  }
+
   getShoppingList() async {
     setState(() {
       showShoppingLoading = true;
@@ -60,13 +66,6 @@ class _ShoppingListScreenState extends State<ShoppingListScreen>
         isFetchError = true;
       });
     }
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getShoppingList();
   }
 
   @override
@@ -135,8 +134,6 @@ class _ShoppingListScreenState extends State<ShoppingListScreen>
                                     child: TabBar(
                                       isScrollable: true,
                                       tabAlignment: TabAlignment.start,
-                                      // unselectedLabelColor: Colors.red,
-                                      // labelColor: gWhiteColor,
                                       controller: _tabController,
                                       dividerColor: Colors.transparent,
                                       unselectedLabelStyle: TextStyle(

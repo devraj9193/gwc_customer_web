@@ -28,13 +28,15 @@ import '../../repository/api_service.dart';
 import '../../repository/medical_program_feedback_repo/medical_feedback_repo.dart';
 import '../../services/medical_program_feedback_service/medical_feedback_service.dart';
 import '../../utils/app_config.dart';
+import '../../widgets/button_widget.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/widgets.dart';
 import '../evalution_form/check_box_settings.dart';
 
 class TCardPage extends StatefulWidget {
   final int programContinuesdStatus;
-  const TCardPage({Key? key, required this.programContinuesdStatus})
+  final bool isFromWeb;
+  const TCardPage({Key? key, required this.programContinuesdStatus,this.isFromWeb = false})
       : super(key: key);
 
   @override
@@ -311,7 +313,7 @@ class _TCardPageState extends State<TCardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return widget.isFromWeb ? buildMainView() : SafeArea(
       child: Scaffold(
         body: Padding(
           padding: EdgeInsets.only(left: 3.w, right: 3.w, top: 1.h),
@@ -389,93 +391,105 @@ class _TCardPageState extends State<TCardPage> {
               //     ),
               //   ),
               // ):
-              Expanded(
-                child: Center(
-                  child: TCard(
-                    cards: cards,
-                    lockYAxis: true,
-                    size: Size(
-                        MediaQuery.of(context).size.shortestSide < 600
-                            ? double.maxFinite
-                            : 60.w,
-                        80.h),
-                    delaySlideFor: 300,
-                    controller: _controller,
-                    onForward: (index, info) {
-                      print("onForward");
-                      print("${submittedIndex + 1}  $index");
-
-                      if (submittedIndex + 1 != index &&
-                          (submittedIndex + 1 < index)) {
-                        _controller.back();
-                      } else {
-                        _index = index;
-                        print("index: $index");
-                        print("Direction : ${info.direction}");
-                      }
-                      setState(() {});
-                    },
-                    onBack: (index, info) {
-                      print("onBack");
-                      _index = index;
-                      setState(() {});
-                    },
-                    onEnd: () {
-                      print('end');
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(height: 1.h),
-              Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        _controller.back();
-                      },
-                      child: const Icon(
-                        Icons.arrow_back_ios,
-                      ),
-                    ),
-                    SizedBox(width: 5.w),
-                    Text(
-                      "${_index + 1} of ${colors.length}",
-                      style: TextStyle(
-                        fontSize: 9.sp,
-                        color: gHintTextColor,
-                        height: 1.35,
-                        fontFamily: kFontMedium,
-                      ),
-                    ),
-                    SizedBox(width: 5.w),
-                    GestureDetector(
-                      onTap: () {
-                        print(_index);
-                        print(submittedIndex);
-                        print(_index == colors.length - 1);
-                        if (submittedIndex == _index &&
-                            _index != colors.length - 1) {
-                          _controller.forward();
-                        } else {}
-                      },
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        color: (submittedIndex == _index &&
-                                _index != colors.length - 1)
-                            ? gBlackColor
-                            : gGreyColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              Expanded(child:
+              buildMainView(),),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  buildMainView() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Center(
+            child: TCard(
+              cards: cards,
+              lockYAxis: true,
+              size: Size(
+                  MediaQuery.of(context).size.shortestSide < 600
+                      ? double.maxFinite
+                      : 50.w,
+                  80.h),
+              delaySlideFor: 300,
+              controller: _controller,
+              onForward: (index, info) {
+                print("onForward");
+                print("${submittedIndex + 1}  $index");
+
+                if (submittedIndex + 1 != index &&
+                    (submittedIndex + 1 < index)) {
+                  _controller.back();
+                } else {
+                  _index = index;
+                  print("index: $index");
+                  print("Direction : ${info.direction}");
+                }
+                setState(() {});
+              },
+              onBack: (index, info) {
+                print("onBack");
+                _index = index;
+                setState(() {});
+              },
+              onEnd: () {
+                print('end');
+              },
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.only(bottom: 2.h),
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () {
+                    _controller.back();
+                  },
+                  child: const Icon(
+                    Icons.arrow_back_ios,
+                  ),
+                ),
+                SizedBox(width: 5.w),
+                Text(
+                  "${_index + 1} of ${colors.length}",
+                  style: TextStyle(
+                    fontSize: 9.sp,
+                    color: gHintTextColor,
+                    height: 1.35,
+                    fontFamily: kFontMedium,
+                  ),
+                ),
+                SizedBox(width: 5.w),
+                GestureDetector(
+                  onTap: () {
+                    print(_index);
+                    print(submittedIndex);
+                    print(_index == colors.length - 1);
+                    if (submittedIndex == _index &&
+                        _index != colors.length - 1) {
+                      _controller.forward();
+                    } else {}
+                  },
+                  child: Icon(
+                    Icons.arrow_forward_ios,
+                    color: (submittedIndex == _index &&
+                        _index != colors.length - 1)
+                        ? gBlackColor
+                        : gGreyColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -592,36 +606,47 @@ class _TCardPageState extends State<TCardPage> {
   }
 
   buildPercentageButton(String title, Color color, func) {
-    return GestureDetector(
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 1.h),
+      child: ButtonWidget(
+        text: title,
+        onPressed: func,
+        isLoading: false,
+        textColor: (selectedProgramStatus == title) ? gWhiteColor : gBlackColor,
+        radius: 10,
+        buttonWidth: MediaQuery.of(context).size.shortestSide > 600
+            ? 10.w  : 23.w,
+        color: color,
+        font: (selectedProgramStatus == title) ? kFontMedium : kFontBook,
+      ),
+    );
+    GestureDetector(
       onTap: func,
-      child: IntrinsicWidth(
-        child: Container(
-          margin: EdgeInsets.symmetric(vertical: 1.h),
-          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.h),
-          decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: kLineColor.withOpacity(0.3),
-                offset: const Offset(2, 3),
-                blurRadius: 5,
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: (selectedProgramStatus == title)
-                    ? gWhiteColor
-                    : gBlackColor,
-                height: 1.3,
-                fontFamily:
-                    (selectedProgramStatus == title) ? kFontMedium : kFontBook,
-                fontSize: subHeadingFont,
-              ),
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 1.h),
+        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.h),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: kLineColor.withOpacity(0.3),
+              offset: const Offset(2, 3),
+              blurRadius: 5,
+            ),
+          ],
+        ),
+        child: Center(
+          child: Text(
+            title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color:
+                  (selectedProgramStatus == title) ? gWhiteColor : gBlackColor,
+              height: 1.3,
+              fontFamily:
+                  (selectedProgramStatus == title) ? kFontMedium : kFontBook,
+              fontSize: subHeadingFont,
             ),
           ),
         ),
@@ -2358,7 +2383,7 @@ class _TCardPageState extends State<TCardPage> {
                   child: buildLabelTextField("Give us a feedback on",
                       fontSize: headingFont),
                 ),
-                SizedBox(height: 2.h),
+                SizedBox(height: 1.h),
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
@@ -2366,7 +2391,7 @@ class _TCardPageState extends State<TCardPage> {
                     style: TextStyle(
                       fontSize: 13.dp,
                       color: gWhiteColor,
-                      height: 1.35,
+                      // height: 1.35,
                       fontFamily: kFontBook,
                     ),
                     children: [
@@ -2389,7 +2414,7 @@ class _TCardPageState extends State<TCardPage> {
                     style: TextStyle(
                       fontSize: 13.dp,
                       color: gWhiteColor,
-                      height: 1.35,
+                      // height: 1.35,
                       fontFamily: kFontBook,
                     ),
                     children: [
@@ -2412,7 +2437,7 @@ class _TCardPageState extends State<TCardPage> {
                     style: TextStyle(
                       fontSize: 13.dp,
                       color: gWhiteColor,
-                      height: 1.35,
+                      // height: 1.35,
                       fontFamily: kFontBook,
                     ),
                     children: [
@@ -2428,70 +2453,53 @@ class _TCardPageState extends State<TCardPage> {
                   ),
                 ),
                 buildRating3(),
-                SizedBox(height: 2.h),
-                SizedBox(
-                  width: 30.w,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: gsecondaryColor,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                    ),
-                    onPressed: () {
-                      if (!isLoading) {
-                        if (rating1.isEmpty ||
-                            rating2.isEmpty ||
-                            rating3.isEmpty) {
-                          AppConfig().showSnackbar(
-                              context, "Please Select All Rating",
-                              isError: true, bottomPadding: 10);
-                        } else {
-                          submitProgramFeedbackForm(
-                              setstate,
-                              widget.programContinuesdStatus,
-                              selectedAfterTheProgram.toString(),
-                              afterTheProgramController.text.toString(),
-                              selectedPercentage.toString(),
-                              selectedBreathing.toString(),
-                              mealyesno.toString(),
-                              yogayesno.toString(),
-                              mealHighLightController.text.toString(),
-                              positiveController.text.toString(),
-                              negativeController.text.toString(),
-                              selectedInfusions.toString(),
-                              selectedSoups.toString(),
-                              selectedPorridges.toString(),
-                              selectedPodi.toString(),
-                              selectedKheer.toString(),
-                              kitItemsController.text.toString(),
-                              rating1.toString(),
-                              rating2.toString(),
-                              rating3.toString(),
-                              improvedHealthController.text.toString(),
-                              suggestionsController.text.toString(),
-                              testimonialController.text.toString(),
-                              referenceController.text.toString(),
-                              supportPlans.toString(),
-                              "0"
+                // SizedBox(height: 1.h),
+                ButtonWidget(
+                  text: 'Submit',
+                  onPressed: () {
+                    if (!isLoading) {
+                      if (rating1.isEmpty ||
+                          rating2.isEmpty ||
+                          rating3.isEmpty) {
+                        AppConfig().showSnackbar(
+                            context, "Please Select All Rating",
+                            isError: true, bottomPadding: 10);
+                      } else {
+                        submitProgramFeedbackForm(
+                            setstate,
+                            widget.programContinuesdStatus,
+                            selectedAfterTheProgram.toString(),
+                            afterTheProgramController.text.toString(),
+                            selectedPercentage.toString(),
+                            selectedBreathing.toString(),
+                            mealyesno.toString(),
+                            yogayesno.toString(),
+                            mealHighLightController.text.toString(),
+                            positiveController.text.toString(),
+                            negativeController.text.toString(),
+                            selectedInfusions.toString(),
+                            selectedSoups.toString(),
+                            selectedPorridges.toString(),
+                            selectedPodi.toString(),
+                            selectedKheer.toString(),
+                            kitItemsController.text.toString(),
+                            rating1.toString(),
+                            rating2.toString(),
+                            rating3.toString(),
+                            improvedHealthController.text.toString(),
+                            suggestionsController.text.toString(),
+                            testimonialController.text.toString(),
+                            referenceController.text.toString(),
+                            supportPlans.toString(),
+                            "0"
                             // ifDiscontinuedController.text.toString(),
-                          );
-                        }
+                            );
                       }
-                    },
-                    child: (isLoading)
-                        ? buildThreeBounceIndicator(
-                        color: eUser().threeBounceIndicatorColor)
-                        : Center(
-                        child: Text(
-                          'Submit',
-                          style: TextStyle(
-                            fontFamily: eUser().buttonTextFont,
-                            color: eUser().buttonTextColor,
-                            fontSize: eUser().buttonTextSize,
-                          ),
-                        ),),
-                  ),
+                    }
+                  },
+                  isLoading: isLoading,
+                  radius: 10,
+                  buttonWidth: 20.w,
                 ),
               ],
             ),
@@ -2508,71 +2516,83 @@ class _TCardPageState extends State<TCardPage> {
   buildRating1() {
     return StatefulBuilder(builder: (_, setstate) {
       return Padding(
-        padding: EdgeInsets.symmetric(vertical: 2.h,horizontal: 2.w),
-        child: ReviewSlider(
-            initialValue:ratings1,
-            onChange: (int value) {
-              ratings1 = value;
-              if (ratings1 == 4.0) {
-                rating1 = "Very Good";
-              } else if (ratings1 == 3.0) {
-                rating1 = "Good";
-              } else if (ratings1 == 2.0) {
-                rating1 = "Average";
-              } else if (ratings1 == 1.0) {
-                rating1 = "Below Average";
-              } else if (ratings1 == 0.0) {
-                rating1 = "Poor";
-              }
-              print("ratings1 : $ratings1");
-            }),
+        padding: EdgeInsets.only(top: 1.h, left: 5.w,right: 5.w),
+        child: Transform.scale(
+          scale: 0.8,
+          child: ReviewSlider(
+              initialValue: ratings1,
+              circleDiameter: 45,
+              onChange: (int value) {
+                ratings1 = value;
+                if (ratings1 == 4.0) {
+                  rating1 = "Very Good";
+                } else if (ratings1 == 3.0) {
+                  rating1 = "Good";
+                } else if (ratings1 == 2.0) {
+                  rating1 = "Average";
+                } else if (ratings1 == 1.0) {
+                  rating1 = "Below Average";
+                } else if (ratings1 == 0.0) {
+                  rating1 = "Poor";
+                }
+                print("ratings1 : $ratings1");
+              }),
+        ),
       );
     });
   }
 
   buildRating2() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 2.h,horizontal: 2.w),
-      child: ReviewSlider(
-          initialValue:ratings2,
-          onChange: (int value) {
-            ratings2 = value;
-            if (ratings2 == 4.0) {
-              rating2 = "Very Good";
-            } else if (ratings2 == 3.0) {
-              rating2 = "Good";
-            } else if (ratings2 == 2.0) {
-              rating2 = "Average";
-            } else if (ratings2 == 1.0) {
-              rating2 = "Below Average";
-            } else if (ratings2 == 0.0) {
-              rating2 = "Poor";
-            }
-            print("ratings2 : $ratings2");
-          }),
+      padding: EdgeInsets.only(top: 1.h, left: 5.w,right: 5.w),
+      child: Transform.scale(
+        scale: 0.8,
+        child: ReviewSlider(
+            initialValue: ratings2,
+            circleDiameter: 45,
+            onChange: (int value) {
+              ratings2 = value;
+              if (ratings2 == 4.0) {
+                rating2 = "Very Good";
+              } else if (ratings2 == 3.0) {
+                rating2 = "Good";
+              } else if (ratings2 == 2.0) {
+                rating2 = "Average";
+              } else if (ratings2 == 1.0) {
+                rating2 = "Below Average";
+              } else if (ratings2 == 0.0) {
+                rating2 = "Poor";
+              }
+              print("ratings2 : $ratings2");
+            }),
+      ),
     );
   }
 
   buildRating3() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 2.h,horizontal: 2.w),
-      child: ReviewSlider(
-          initialValue:ratings3,
-          onChange: (int value) {
-            ratings3 = value;
-            if (ratings3 == 4.0) {
-              rating3 = "Very Good";
-            } else if (ratings3 == 3.0) {
-              rating3 = "Good";
-            } else if (ratings3 == 2.0) {
-              rating3 = "Average";
-            } else if (ratings3 == 1.0) {
-              rating3 = "Below Average";
-            } else if (ratings3 == 0.0) {
-              rating3 = "Poor";
-            }
-            print("ratings3 : $ratings3");
-          }),
+      padding: EdgeInsets.only(top: 1.h, left: 5.w,right: 5.w),
+      child: Transform.scale(
+        scale: 0.8,
+        child: ReviewSlider(
+            initialValue: ratings3,
+            circleDiameter: 45,
+            onChange: (int value) {
+              ratings3 = value;
+              if (ratings3 == 4.0) {
+                rating3 = "Very Good";
+              } else if (ratings3 == 3.0) {
+                rating3 = "Good";
+              } else if (ratings3 == 2.0) {
+                rating3 = "Average";
+              } else if (ratings3 == 1.0) {
+                rating3 = "Below Average";
+              } else if (ratings3 == 0.0) {
+                rating3 = "Poor";
+              }
+              print("ratings3 : $ratings3");
+            }),
+      ),
     );
   }
 
@@ -2580,115 +2600,208 @@ class _TCardPageState extends State<TCardPage> {
       CheckBoxSettings kitItems, String from, List<String> selectedItems) {
     return StatefulBuilder(builder: (_, setState) {
       return Center(
-        child: IntrinsicWidth(
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                if (from == 'influsions') {
-                  setState(() {
-                    if (!selectedItems.contains(kitItems.title)) {
-                      selectedItems.add(kitItems.title!);
-                      kitItems.value = influsionsValue;
-                    } else {
-                      setState(() {
-                        if (selectedItems.contains(kitItems.title)) {
-                          selectedItems.remove(kitItems.title!);
-                          kitItems.value = influsionsValue;
-                        }
-                      });
-                    }
-                  });
-                } else if (from == 'soups') {
-                  setState(() {
-                    if (!selectedItems.contains(kitItems.title)) {
-                      selectedItems.add(kitItems.title!);
-                      kitItems.value = influsionsValue;
-                    } else {
-                      setState(() {
-                        if (selectedItems.contains(kitItems.title)) {
-                          selectedItems.remove(kitItems.title!);
-                          kitItems.value = influsionsValue;
-                        }
-                      });
-                    }
-                  });
-                } else if (from == 'porridges') {
-                  setState(() {
-                    if (!selectedItems.contains(kitItems.title)) {
-                      selectedItems.add(kitItems.title!);
-                      kitItems.value = influsionsValue;
-                    } else {
-                      setState(() {
-                        if (selectedItems.contains(kitItems.title)) {
-                          selectedItems.remove(kitItems.title!);
-                          kitItems.value = influsionsValue;
-                        }
-                      });
-                    }
-                  });
-                } else if (from == 'podi') {
-                  setState(() {
-                    if (!selectedItems.contains(kitItems.title)) {
-                      selectedItems.add(kitItems.title!);
-                      kitItems.value = influsionsValue;
-                    } else {
-                      setState(() {
-                        if (selectedItems.contains(kitItems.title)) {
-                          selectedItems.remove(kitItems.title!);
-                          kitItems.value = influsionsValue;
-                        }
-                      });
-                    }
-                  });
-                } else if (from == 'kheer') {
-                  setState(() {
-                    if (!selectedItems.contains(kitItems.title)) {
-                      selectedItems.add(kitItems.title!);
-                      kitItems.value = influsionsValue;
-                    } else {
-                      setState(() {
-                        if (selectedItems.contains(kitItems.title)) {
-                          selectedItems.remove(kitItems.title!);
-                          kitItems.value = influsionsValue;
-                        }
-                      });
-                    }
-                  });
-                }
-                print(selectedItems);
-              });
-            },
-            child: Container(
-              margin: EdgeInsets.symmetric(vertical: 1.h),
-              padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.h),
-              decoration: BoxDecoration(
-                color: selectedItems.contains(kitItems.title)
-                    ? gsecondaryColor
-                    : gWhiteColor,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: kLineColor.withOpacity(0.3),
-                    offset: const Offset(2, 3),
-                    blurRadius: 5,
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Text(
-                  kitItems.title.toString(),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: gBlackColor,
-                    height: 1.3,
-                    fontFamily: kFontBook,
-                    fontSize: subHeadingFont,
-                  ),
-                ),
-              ),
-            ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 1.h,horizontal: 3.w),
+          child: ButtonWidget(text: kitItems.title.toString(),
+            onPressed: () {
+            setState(() {
+              if (from == 'influsions') {
+                setState(() {
+                  if (!selectedItems.contains(kitItems.title)) {
+                    selectedItems.add(kitItems.title!);
+                    kitItems.value = influsionsValue;
+                  } else {
+                    setState(() {
+                      if (selectedItems.contains(kitItems.title)) {
+                        selectedItems.remove(kitItems.title!);
+                        kitItems.value = influsionsValue;
+                      }
+                    });
+                  }
+                });
+              } else if (from == 'soups') {
+                setState(() {
+                  if (!selectedItems.contains(kitItems.title)) {
+                    selectedItems.add(kitItems.title!);
+                    kitItems.value = influsionsValue;
+                  } else {
+                    setState(() {
+                      if (selectedItems.contains(kitItems.title)) {
+                        selectedItems.remove(kitItems.title!);
+                        kitItems.value = influsionsValue;
+                      }
+                    });
+                  }
+                });
+              } else if (from == 'porridges') {
+                setState(() {
+                  if (!selectedItems.contains(kitItems.title)) {
+                    selectedItems.add(kitItems.title!);
+                    kitItems.value = influsionsValue;
+                  } else {
+                    setState(() {
+                      if (selectedItems.contains(kitItems.title)) {
+                        selectedItems.remove(kitItems.title!);
+                        kitItems.value = influsionsValue;
+                      }
+                    });
+                  }
+                });
+              } else if (from == 'podi') {
+                setState(() {
+                  if (!selectedItems.contains(kitItems.title)) {
+                    selectedItems.add(kitItems.title!);
+                    kitItems.value = influsionsValue;
+                  } else {
+                    setState(() {
+                      if (selectedItems.contains(kitItems.title)) {
+                        selectedItems.remove(kitItems.title!);
+                        kitItems.value = influsionsValue;
+                      }
+                    });
+                  }
+                });
+              } else if (from == 'kheer') {
+                setState(() {
+                  if (!selectedItems.contains(kitItems.title)) {
+                    selectedItems.add(kitItems.title!);
+                    kitItems.value = influsionsValue;
+                  } else {
+                    setState(() {
+                      if (selectedItems.contains(kitItems.title)) {
+                        selectedItems.remove(kitItems.title!);
+                        kitItems.value = influsionsValue;
+                      }
+                    });
+                  }
+                });
+              }
+              print(selectedItems);
+            });
+          },
+            isLoading: false,
+            color: selectedItems.contains(kitItems.title)
+                ? gsecondaryColor
+                : gWhiteColor,
+            textColor:  selectedItems.contains(kitItems.title)
+                ? gWhiteColor
+                : gBlackColor,
+            buttonWidth: double.maxFinite,
+            radius: 10,
+            font: selectedItems.contains(kitItems.title)
+                ? kFontMedium
+                : kFontBook,
           ),
         ),
+        // IntrinsicWidth(
+        //   child: GestureDetector(
+        //     onTap: () {
+        //       setState(() {
+        //         if (from == 'influsions') {
+        //           setState(() {
+        //             if (!selectedItems.contains(kitItems.title)) {
+        //               selectedItems.add(kitItems.title!);
+        //               kitItems.value = influsionsValue;
+        //             } else {
+        //               setState(() {
+        //                 if (selectedItems.contains(kitItems.title)) {
+        //                   selectedItems.remove(kitItems.title!);
+        //                   kitItems.value = influsionsValue;
+        //                 }
+        //               });
+        //             }
+        //           });
+        //         } else if (from == 'soups') {
+        //           setState(() {
+        //             if (!selectedItems.contains(kitItems.title)) {
+        //               selectedItems.add(kitItems.title!);
+        //               kitItems.value = influsionsValue;
+        //             } else {
+        //               setState(() {
+        //                 if (selectedItems.contains(kitItems.title)) {
+        //                   selectedItems.remove(kitItems.title!);
+        //                   kitItems.value = influsionsValue;
+        //                 }
+        //               });
+        //             }
+        //           });
+        //         } else if (from == 'porridges') {
+        //           setState(() {
+        //             if (!selectedItems.contains(kitItems.title)) {
+        //               selectedItems.add(kitItems.title!);
+        //               kitItems.value = influsionsValue;
+        //             } else {
+        //               setState(() {
+        //                 if (selectedItems.contains(kitItems.title)) {
+        //                   selectedItems.remove(kitItems.title!);
+        //                   kitItems.value = influsionsValue;
+        //                 }
+        //               });
+        //             }
+        //           });
+        //         } else if (from == 'podi') {
+        //           setState(() {
+        //             if (!selectedItems.contains(kitItems.title)) {
+        //               selectedItems.add(kitItems.title!);
+        //               kitItems.value = influsionsValue;
+        //             } else {
+        //               setState(() {
+        //                 if (selectedItems.contains(kitItems.title)) {
+        //                   selectedItems.remove(kitItems.title!);
+        //                   kitItems.value = influsionsValue;
+        //                 }
+        //               });
+        //             }
+        //           });
+        //         } else if (from == 'kheer') {
+        //           setState(() {
+        //             if (!selectedItems.contains(kitItems.title)) {
+        //               selectedItems.add(kitItems.title!);
+        //               kitItems.value = influsionsValue;
+        //             } else {
+        //               setState(() {
+        //                 if (selectedItems.contains(kitItems.title)) {
+        //                   selectedItems.remove(kitItems.title!);
+        //                   kitItems.value = influsionsValue;
+        //                 }
+        //               });
+        //             }
+        //           });
+        //         }
+        //         print(selectedItems);
+        //       });
+        //     },
+        //     child: Container(
+        //       margin: EdgeInsets.symmetric(vertical: 1.h),
+        //       padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.h),
+        //       decoration: BoxDecoration(
+        //         color: selectedItems.contains(kitItems.title)
+        //             ? gsecondaryColor
+        //             : gWhiteColor,
+        //         borderRadius: BorderRadius.circular(10),
+        //         boxShadow: [
+        //           BoxShadow(
+        //             color: kLineColor.withOpacity(0.3),
+        //             offset: const Offset(2, 3),
+        //             blurRadius: 5,
+        //           ),
+        //         ],
+        //       ),
+        //       child: Center(
+        //         child: Text(
+        //           kitItems.title.toString(),
+        //           textAlign: TextAlign.center,
+        //           style: TextStyle(
+        //             color: gBlackColor,
+        //             height: 1.3,
+        //             fontFamily: kFontBook,
+        //             fontSize: subHeadingFont,
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
       );
     });
   }

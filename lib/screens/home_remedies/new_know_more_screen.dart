@@ -193,22 +193,21 @@ class _NewKnowMoreScreenState extends State<NewKnowMoreScreen> {
                   color: Colors.grey.withOpacity(0.3),
                 ),
                 Center(
-                  child: IntrinsicWidth(
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 2.h),
-                      padding:
-                      EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
-                      decoration: BoxDecoration(
-                        color: gsecondaryColor,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Text(
-                        widget.title,
-                        style: TextStyle(
-                            fontFamily: eUser().mainHeadingFont,
-                            color: eUser().buttonTextColor,
-                            fontSize: eUser().mainHeadingFontSize),
-                      ),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(vertical: 2.h),
+                    padding: EdgeInsets.symmetric(
+                        vertical: 1.h, horizontal: 3.w),
+                    decoration: BoxDecoration(
+                      color: gsecondaryColor,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Text(
+                      widget.title ?? '',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: eUser().mainHeadingFont,
+                          color: eUser().buttonTextColor,
+                          fontSize: eUser().mainHeadingFontSize),
                     ),
                   ),
                 ),

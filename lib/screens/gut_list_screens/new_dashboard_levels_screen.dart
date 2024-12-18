@@ -2454,7 +2454,7 @@ class _NewDashboardLevelsScreenState extends State<NewDashboardLevelsScreen> {
                   MaterialPageRoute(
                     builder: (context) => CookKitTracking(
                       awb_number: _shippingApprovedModel?.value?.awbCode ?? '',
-                      currentStage: shippingStage!,
+                      currentStage: shippingStage!, isForeign: '',
                     ),
                   ),
                 )
@@ -2464,7 +2464,7 @@ class _NewDashboardLevelsScreenState extends State<NewDashboardLevelsScreen> {
                 .push(
                   MaterialPageRoute(
                     builder: (context) =>
-                        CookKitTracking(currentStage: shippingStage ?? ''),
+                        CookKitTracking(currentStage: shippingStage ?? '', isForeign: '',),
                   ),
                 )
                 .then((value) => reloadUI());

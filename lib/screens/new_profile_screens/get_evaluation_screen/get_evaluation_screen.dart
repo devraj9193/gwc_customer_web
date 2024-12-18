@@ -43,7 +43,7 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
               buildAppBar(() {
                 Navigator.pop(context);
               }),
-              SizedBox(height: 1.5.h),
+              SizedBox(height: 2.h),
               Text(
                 "Evaluation",
                 textAlign: TextAlign.center,
@@ -68,10 +68,12 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
                         return Expanded(
                           child: SingleChildScrollView(
                             child: Center(
-                              child: SizedBox( width:
-                              MediaQuery.of(context).size.shortestSide > 600
-                                  ? 40.w
-                                  : double.maxFinite,
+                              child: SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.shortestSide >
+                                            600
+                                        ? 40.w
+                                        : double.maxFinite,
                                 child: Column(
                                   children: [
                                     expansionTileWidget(
@@ -111,12 +113,179 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
                     } else if (snapshot.hasError) {
                       print("snapshot.error: ${snapshot.error}");
                     }
-                    return Padding(padding: EdgeInsets.symmetric(vertical: 20.h),child: buildCircularIndicator(),);
+                    return Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      child: buildCircularIndicator(),
+                    );
                   }),
             ],
           ),
+          // Column(
+          //   crossAxisAlignment: CrossAxisAlignment.start,
+          //   children: [
+          //     buildAppBar(() {
+          //       Navigator.pop(context);
+          //     }),
+          //     SizedBox(height: 1.5.h),
+          //     mainView(),
+          //     Text(
+          //       "Evaluation",
+          //       textAlign: TextAlign.center,
+          //       style: TextStyle(
+          //         fontFamily: kFontBold,
+          //         color: gBlackColor,
+          //         fontSize: 16.dp,
+          //       ),
+          //     ),
+          //     SizedBox(height: 3.h),
+          //     FutureBuilder(
+          //         future: _getEvaluationDataFuture,
+          //         builder: (_, snapshot) {
+          //           if (snapshot.hasData) {
+          //             print(snapshot.data);
+          //             print(snapshot.data.runtimeType);
+          //             if (snapshot.data.runtimeType == GetEvaluationDataModel) {
+          //               GetEvaluationDataModel model =
+          //                   snapshot.data as GetEvaluationDataModel;
+          //               ChildGetEvaluationDataModel? model1 = model.data;
+          //               getDetails(model1);
+          //               return Expanded(
+          //                 child: SingleChildScrollView(
+          //                   child: Center(
+          //                     child: SizedBox( width:
+          //                     MediaQuery.of(context).size.shortestSide > 600
+          //                         ? 40.w
+          //                         : double.maxFinite,
+          //                       child: Column(
+          //                         children: [
+          //                           expansionTileWidget(
+          //                             "Personal Details",
+          //                             buildPersonalDetails(model1),
+          //                           ),
+          //                           expansionTileWidget(
+          //                             "Health",
+          //                             buildHealthDetails(model1),
+          //                           ),
+          //                           expansionTileWidget(
+          //                             "Diet",
+          //                             buildDietDetails(model1),
+          //                           ),
+          //                           expansionTileWidget(
+          //                             "Food Habits",
+          //                             buildFoodHabitsDetails(model1),
+          //                           ),
+          //                           expansionTileWidget(
+          //                             "Life Style",
+          //                             buildLifeStyleDetails(model1),
+          //                           ),
+          //                           expansionTileWidget(
+          //                             "Bowel Type",
+          //                             buildBowelDetails(model1),
+          //                           ),
+          //                         ],
+          //                       ),
+          //                     ),
+          //                   ),
+          //                 ),
+          //               );
+          //             } else {
+          //               ErrorModel model = snapshot.data as ErrorModel;
+          //               print(model.message);
+          //             }
+          //           } else if (snapshot.hasError) {
+          //             print("snapshot.error: ${snapshot.error}");
+          //           }
+          //           return Padding(padding: EdgeInsets.symmetric(vertical: 20.h),child: buildCircularIndicator(),);
+          //         }),
+          //   ],
+          // ),
         ),
       ),
+    );
+  }
+
+  Widget mainView() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        buildAppBar(() {
+          Navigator.pop(context);
+        }),
+        SizedBox(height: 1.5.h),
+        mainView(),
+        Text(
+          "Evaluation",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontFamily: kFontBold,
+            color: gBlackColor,
+            fontSize: 16.dp,
+          ),
+        ),
+        SizedBox(height: 3.h),
+        FutureBuilder(
+            future: _getEvaluationDataFuture,
+            builder: (_, snapshot) {
+              if (snapshot.hasData) {
+                print(snapshot.data);
+                print(snapshot.data.runtimeType);
+                if (snapshot.data.runtimeType == GetEvaluationDataModel) {
+                  GetEvaluationDataModel model =
+                      snapshot.data as GetEvaluationDataModel;
+                  ChildGetEvaluationDataModel? model1 = model.data;
+                  getDetails(model1);
+                  return Expanded(
+                    child: SingleChildScrollView(
+                      child: Center(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.shortestSide > 600
+                              ? 40.w
+                              : double.maxFinite,
+                          child: Column(
+                            children: [
+                              expansionTileWidget(
+                                "Personal Details",
+                                buildPersonalDetails(model1),
+                              ),
+                              expansionTileWidget(
+                                "Health",
+                                buildHealthDetails(model1),
+                              ),
+                              expansionTileWidget(
+                                "Diet",
+                                buildDietDetails(model1),
+                              ),
+                              expansionTileWidget(
+                                "Food Habits",
+                                buildFoodHabitsDetails(model1),
+                              ),
+                              expansionTileWidget(
+                                "Life Style",
+                                buildLifeStyleDetails(model1),
+                              ),
+                              expansionTileWidget(
+                                "Bowel Type",
+                                buildBowelDetails(model1),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                } else {
+                  ErrorModel model = snapshot.data as ErrorModel;
+                  print(model.message);
+                }
+              } else if (snapshot.hasError) {
+                print("snapshot.error: ${snapshot.error}");
+              }
+              return Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.h),
+                child: buildCircularIndicator(),
+              );
+            }),
+      ],
     );
   }
 
@@ -334,7 +503,9 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
         SizedBox(height: 1.h),
         Visibility(
           visible: model?.vegNonVegVegan != null,
-          child:buildListTile(model?.vegNonVegVegan.toString().trim().toTitleCase() ?? "",),
+          child: buildListTile(
+            model?.vegNonVegVegan.toString().trim().toTitleCase() ?? "",
+          ),
         ),
         Visibility(
           visible: model?.vegNonVegVeganOther != null,
@@ -566,8 +737,8 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
       ),
       title: Text(
         title,
-        style:
-        TextStyle(fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
+        style: TextStyle(
+            fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
       ),
     );
   }
@@ -591,7 +762,8 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
           minLeadingWidth: 30,
           horizontalTitleGap: 0,
           dense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
 
           leading: const SizedBox(
             width: 15,
@@ -602,8 +774,8 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
           ),
           title: Text(
             selectedHealthCheckBox1[index] ?? "",
-            style:
-            TextStyle(fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
+            style: TextStyle(
+                fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
           ),
         );
       },
@@ -623,15 +795,16 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
           minLeadingWidth: 30,
           horizontalTitleGap: 0,
           dense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: const Icon(
             Icons.check_box_outlined,
             color: gsecondaryColor,
           ),
           title: Text(
             selectedHealthCheckBox2[index] ?? "",
-            style:
-            TextStyle(fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
+            style: TextStyle(
+                fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
           ),
         );
       },
@@ -650,15 +823,16 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
           minLeadingWidth: 30,
           horizontalTitleGap: 0,
           dense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: const Icon(
             Icons.check_box_outlined,
             color: gsecondaryColor,
           ),
           title: Text(
             selectedUrinSmellList[index] ?? "",
-            style:
-            TextStyle(fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
+            style: TextStyle(
+                fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
           ),
         );
       },
@@ -677,15 +851,16 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
           minLeadingWidth: 30,
           horizontalTitleGap: 0,
           dense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: const Icon(
             Icons.check_box_outlined,
             color: gsecondaryColor,
           ),
           title: Text(
             selectedmedicalInterventionsDoneBeforeList[index] ?? "",
-            style:
-            TextStyle(fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
+            style: TextStyle(
+                fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
           ),
         );
       },
@@ -704,15 +879,16 @@ class _GetEvaluationScreenState extends State<GetEvaluationScreen> {
           minLeadingWidth: 30,
           horizontalTitleGap: 0,
           dense: true,
-          contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+          contentPadding:
+              const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
           leading: const Icon(
             Icons.check_box_outlined,
             color: gsecondaryColor,
           ),
           title: Text(
             selectedHabitCheckBoxList[index] ?? "",
-            style:
-            TextStyle(fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
+            style: TextStyle(
+                fontFamily: kFontBold, color: gBlackColor, fontSize: 14.dp),
           ),
         );
       },

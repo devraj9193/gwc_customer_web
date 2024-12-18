@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
-import 'package:gwc_customer_web/screens/evalution_form/personal_details_screen2.dart';
+import 'package:gwc_customer_web/screens/evalution_form/web_eval_screens/web_eval_screen.dart';
 import 'package:http/http.dart' as http;
 
 import '../../model/dashboard_model/report_upload_model/report_upload_model.dart';
@@ -21,6 +21,7 @@ import '../../repository/profile_repository/get_user_profile_repo.dart';
 import '../../services/evaluation_fome_service/evaluation_form_service.dart';
 import '../../services/profile_screen_service/user_profile_service.dart';
 import '../../utils/app_config.dart';
+import '../../widgets/button_widget.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/widgets.dart';
 import '../uvdesk/ticket_chat_screens/ticket_chat_screen.dart';
@@ -31,7 +32,12 @@ import 'evaluation_form_page2.dart';
 
 class EvaluationFormPage1 extends StatefulWidget {
   final EdgeInsetsGeometry? padding;
-  const EvaluationFormPage1({Key? key, this.padding}) : super(key: key);
+  final bool isWeb;
+  const EvaluationFormPage1({
+    Key? key,
+    this.padding,
+    this.isWeb = false,
+  }) : super(key: key);
 
   @override
   State<EvaluationFormPage1> createState() => _EvaluationFormPage1State();
@@ -115,7 +121,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
   TextEditingController urinSmellController = TextEditingController();
   TextEditingController urinLooksLikeController = TextEditingController();
   TextEditingController medicalInterventionsDoneController =
-  TextEditingController();
+      TextEditingController();
   TextEditingController medicationsController = TextEditingController();
   TextEditingController holisticController = TextEditingController();
 
@@ -155,31 +161,31 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
     CheckBoxSettings(title: "Endocrine Diseases (Thyroid/Diabetes/PCOS)"),
     CheckBoxSettings(
         title:
-        "Heart Diseases (Palpitations/Low Blood Pressure/High Blood Pressure)"),
+            "Heart Diseases (Palpitations/Low Blood Pressure/High Blood Pressure)"),
     CheckBoxSettings(title: "Renal/Kidney Diseases (Kidney Stones)"),
     CheckBoxSettings(
         title: "Liver Diseases (Cirrhosis/Fatty Liver/Hepatitis/Jaundice)"),
     CheckBoxSettings(
         title:
-        "Neurological Diseases (Seizures/Fits/Convulsions/Headache/Migraine/Vertigo)"),
+            "Neurological Diseases (Seizures/Fits/Convulsions/Headache/Migraine/Vertigo)"),
     CheckBoxSettings(
         title:
-        "Digestive Diseases (Hernia/Hemorrhoids/Piles/Indigestion/Gall Stone/Pancreatitis/Irritable Bowel Syndrome)"),
+            "Digestive Diseases (Hernia/Hemorrhoids/Piles/Indigestion/Gall Stone/Pancreatitis/Irritable Bowel Syndrome)"),
     CheckBoxSettings(
         title:
-        "Skin Diseases (Psoriasis/Acne/Eczema/Herpes,/Skin Allergies/Dandruff/Rashes)"),
+            "Skin Diseases (Psoriasis/Acne/Eczema/Herpes,/Skin Allergies/Dandruff/Rashes)"),
     CheckBoxSettings(
         title:
-        "Respiratory Diseases (Asthama/Allergic bronchitis/Rhinitis/Sinusitis/Frequent Cold, Cough & Fever/Tonsillitis/Wheezing)"),
+            "Respiratory Diseases (Asthama/Allergic bronchitis/Rhinitis/Sinusitis/Frequent Cold, Cough & Fever/Tonsillitis/Wheezing)"),
     CheckBoxSettings(
         title:
-        "Reproductive Diseases (PCOD/Infertility/MenstrualDisorders/Heavy or Scanty Period Bleeding/Increased or Decreased Sexual Drive/Painful Periods /Irregular Cycles)"),
+            "Reproductive Diseases (PCOD/Infertility/MenstrualDisorders/Heavy or Scanty Period Bleeding/Increased or Decreased Sexual Drive/Painful Periods /Irregular Cycles)"),
     CheckBoxSettings(
         title:
-        "Skeletal Muscle Disorders (Muscular Dystrophy/Rheumatoid Arthritis/Arthritis/Spondylitis/Loss ofMuscle Mass)"),
+            "Skeletal Muscle Disorders (Muscular Dystrophy/Rheumatoid Arthritis/Arthritis/Spondylitis/Loss ofMuscle Mass)"),
     CheckBoxSettings(
         title:
-        "Psychological/Psychiatric Issues (Depression,Anxiety, OCD, ADHD, Mood Disorders, Schizophrenia,Personality Disorders, Eating Disorders)"),
+            "Psychological/Psychiatric Issues (Depression,Anxiety, OCD, ADHD, Mood Disorders, Schizophrenia,Personality Disorders, Eating Disorders)"),
     CheckBoxSettings(title: "None Of The Above"),
     CheckBoxSettings(title: "Other:"),
   ];
@@ -227,7 +233,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
     CheckBoxSettings(title: "Burping"),
     CheckBoxSettings(
         title:
-        "Sour Regurgitation/ Food Regurgitation (Food Coming back to your mouth)"),
+            "Sour Regurgitation/ Food Regurgitation (Food Coming back to your mouth)"),
     CheckBoxSettings(title: "Burning while passing urine"),
     CheckBoxSettings(title: "None Of The Above")
   ];
@@ -369,17 +375,17 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
       PageRouteBuilder(
           opaque: false, // set to false
           pageBuilder: (_, __, ___) => Container(
-            child: buildCircularIndicator(),
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                    blurRadius: 2, color: Colors.grey.withOpacity(0.5))
-              ],
-            ),
-          )),
+                child: buildCircularIndicator(),
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 2, color: Colors.grey.withOpacity(0.5))
+                  ],
+                ),
+              )),
     );
     final res = await UserProfileService(repository: userRepository)
         .getUserProfileService();
@@ -405,172 +411,178 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
 
       ChildGetEvaluationDataModel? model = model1.data;
 
-      childGetEvaluationDataModel= model;
+      childGetEvaluationDataModel = model;
 
-        print('storing');
-        print('model.urineColorOther: ${model?.urineColorOther}');
+      print('storing');
+      print('model.urineColorOther: ${model?.urineColorOther}');
 
-        fnameController.text = model?.patient?.user?.fname ?? '';
-        lnameController.text = model?.patient?.user?.lname ?? '';
-        mobileController.text = model?.patient?.user?.phone ?? '';
-        maritalStatus = model?.patient?.maritalStatus.toString().capitalize() ?? '';
-        gender = model?.patient?.user?.gender.toString().capitalize() ?? '';
-        emailController.text = model?.patient?.user?.email ?? '';
-        print("age: ${model?.patient?.user?.toJson()}");
-        ageController.text = model?.patient?.user?.age ?? '';
-        professionController.text = model?.patient?.user?.profession ?? '';
-        address1Controller.text = model?.patient?.user?.address ?? '';
-        address2Controller.text = model?.patient?.address2 ?? '';
-        stateController.text = model?.patient?.state ?? '';
-        cityController.text = model?.patient?.city ?? '';
-        countryController.text = model?.patient?.country ?? '';
+      fnameController.text = model?.patient?.user?.fname ?? '';
+      lnameController.text = model?.patient?.user?.lname ?? '';
+      mobileController.text = model?.patient?.user?.phone ?? '';
+      maritalStatus =
+          model?.patient?.maritalStatus.toString().capitalize() ?? '';
+      gender = model?.patient?.user?.gender.toString().capitalize() ?? '';
+      emailController.text = model?.patient?.user?.email ?? '';
+      print("age: ${model?.patient?.user?.toJson()}");
+      ageController.text = model?.patient?.user?.age ?? '';
+      professionController.text = model?.patient?.user?.profession ?? '';
+      address1Controller.text = model?.patient?.user?.address ?? '';
+      address2Controller.text = model?.patient?.address2 ?? '';
+      stateController.text = model?.patient?.state ?? '';
+      cityController.text = model?.patient?.city ?? '';
+      countryController.text = model?.patient?.country ?? '';
 
-        pinCodeController.text = model?.patient?.user?.pincode ?? '';
-        weightController.text = model?.weight ?? '';
-        heightText = model?.height ?? '';
-        if (heightText.isNotEmpty) {
-          ft = int.tryParse(heightText.split(".").first) ?? -1;
-          inches = int.tryParse(heightText.split(".").last) ?? -1;
+      pinCodeController.text = model?.patient?.user?.pincode ?? '';
+      weightController.text = model?.weight ?? '';
+      heightText = model?.height ?? '';
+      if (heightText.isNotEmpty) {
+        ft = int.tryParse(heightText.split(".").first) ?? -1;
+        inches = int.tryParse(heightText.split(".").last) ?? -1;
+      }
+      healController.text = model?.healthProblem ?? '';
+      // print("model.listProblems:${jsonDecode(model.listProblems ?? '')}");
+      selectedHealthCheckBox1
+          .addAll(List.from(jsonDecode(model?.listProblems ?? '')));
+      // print("selectedHealthCheckBox1[0]:${(selectedHealthCheckBox1[0].split(',') as List).map((e) => e).toList()}");
+      selectedHealthCheckBox1 = List.from(
+          (selectedHealthCheckBox1.first.split(',') as List)
+              .map((e) => e)
+              .toList());
+      healthCheckBox1.forEach((element) {
+        print(
+            'selectedHealthCheckBox1.any((element1) => element1 == element.title): ${selectedHealthCheckBox1.any((element1) => element1 == element.title)}');
+        if (selectedHealthCheckBox1
+            .any((element1) => element1 == element.title)) {
+          element.value = true;
         }
-        healController.text = model?.healthProblem ?? '';
-        // print("model.listProblems:${jsonDecode(model.listProblems ?? '')}");
-        selectedHealthCheckBox1
-            .addAll(List.from(jsonDecode(model?.listProblems ?? '')));
-        // print("selectedHealthCheckBox1[0]:${(selectedHealthCheckBox1[0].split(',') as List).map((e) => e).toList()}");
-        selectedHealthCheckBox1 = List.from(
-            (selectedHealthCheckBox1.first.split(',') as List).map((e) => e).toList());
-        healthCheckBox1.forEach((element) {
-          print(
-              'selectedHealthCheckBox1.any((element1) => element1 == element.title): ${selectedHealthCheckBox1.any((element1) => element1 == element.title)}');
-          if (selectedHealthCheckBox1
+      });
+
+      // selectedHealthCheckBox1.forEach((e1) {
+      //   healthCheckBox1.forEach((e2) {
+      //     print('e1=>$e1 e2=>${e2.title}');
+      //     print("e1 == e2.title:${e1 == e2.title}");
+      //     if(e1 == e2.title){
+      //       e2.value = true;
+      //     }
+      //   });
+      // });
+      checkbox1OtherController.text = model?.listProblemsOther ?? '';
+      selectedHealthCheckBox2
+          .addAll(List.from(jsonDecode(model?.listBodyIssues ?? '')));
+      if (selectedHealthCheckBox2.first != null) {
+        selectedHealthCheckBox2 = List.from(
+            (selectedHealthCheckBox2.first.split(',') as List)
+                .map((e) => e)
+                .toList());
+        healthCheckBox2.forEach((element) {
+          // print('selectedHealthCheckBox2.any((element1) => element1 == element.title): ${selectedHealthCheckBox2.any((element1) => element1 == element.title)}');
+          if (selectedHealthCheckBox2
               .any((element1) => element1 == element.title)) {
             element.value = true;
           }
         });
+      }
+      tongueCoatingRadio = model?.tongueCoating ?? '';
+      tongueCoatingController.text = model?.tongueCoatingOther ?? '';
 
-        // selectedHealthCheckBox1.forEach((e1) {
-        //   healthCheckBox1.forEach((e2) {
-        //     print('e1=>$e1 e2=>${e2.title}');
-        //     print("e1 == e2.title:${e1 == e2.title}");
-        //     if(e1 == e2.title){
-        //       e2.value = true;
-        //     }
-        //   });
-        // });
-        checkbox1OtherController.text = model?.listProblemsOther ?? '';
-        selectedHealthCheckBox2
-            .addAll(List.from(jsonDecode(model?.listBodyIssues ?? '')));
-        if (selectedHealthCheckBox2.first != null) {
-          selectedHealthCheckBox2 = List.from(
-              (selectedHealthCheckBox2.first.split(',') as List)
-                  .map((e) => e)
-                  .toList());
-          healthCheckBox2.forEach((element) {
-            // print('selectedHealthCheckBox2.any((element1) => element1 == element.title): ${selectedHealthCheckBox2.any((element1) => element1 == element.title)}');
-            if (selectedHealthCheckBox2
-                .any((element1) => element1 == element.title)) {
-              element.value = true;
-            }
-          });
+      selectedUrinFrequencyList
+          .addAll(List.from(jsonDecode(model?.anyUrinationIssue ?? '')));
+      selectedUrinFrequencyList = List.from(
+          (selectedUrinFrequencyList[0].split(',') as List)
+              .map((e) => e)
+              .toList());
+      urinationValue = selectedUrinFrequencyList.first;
+      // urinFrequencyList.forEach((element) {
+      //   if(selectedUrinFrequencyList.any((element1) => element1 == element.title)){
+      //     element.value = true;
+      //   }
+      // });
+
+      selectedUrinColorList
+          .addAll(List.from(jsonDecode(model?.urineColor ?? '')));
+      selectedUrinColorList = List.from(
+          (selectedUrinColorList[0].split(',') as List).map((e) => e).toList());
+      urineColorValue = selectedUrinColorList.first;
+      urinColorController.text = model?.urineColorOther ?? '';
+
+      // urinColorList.forEach((element) {
+      //   if(selectedUrinColorList.any((element1) => element1 == element.title)){
+      //     element.value = true;
+      //   }
+      // });
+
+      selectedUrinSmellList
+          .addAll(List.from(jsonDecode(model?.urineSmell ?? '')));
+      selectedUrinSmellList = List.from(
+          (selectedUrinSmellList[0].split(',') as List).map((e) => e).toList());
+      urinSmellList.forEach((element) {
+        print(selectedUrinSmellList);
+        print(
+            'urinSmellList.any((element1) => element1 == element.title): ${selectedUrinSmellList.any((element1) => element1 == element.title)}');
+        if (selectedUrinSmellList
+            .any((element1) => element1 == element.title)) {
+          element.value = true;
         }
-        tongueCoatingRadio = model?.tongueCoating ?? '';
-        tongueCoatingController.text = model?.tongueCoatingOther ?? '';
+        if (selectedUrinSmellList.any((element) => element == otherText)) {
+          urinSmellOtherSelected = true;
+        }
+      });
+      urinSmellController.text = model?.urineSmellOther ?? '';
 
-        selectedUrinFrequencyList
-            .addAll(List.from(jsonDecode(model?.anyUrinationIssue ?? '')));
-        selectedUrinFrequencyList = List.from(
-            (selectedUrinFrequencyList[0].split(',') as List)
-                .map((e) => e)
-                .toList());
-        urinationValue = selectedUrinFrequencyList.first;
-        // urinFrequencyList.forEach((element) {
-        //   if(selectedUrinFrequencyList.any((element1) => element1 == element.title)){
-        //     element.value = true;
-        //   }
-        // });
+      // selectedUrinLooksList
+      //     .addAll(List.from(jsonDecode(model.urineLookLike ?? '')));
+      // selectedUrinLooksList = List.from(
+      //     (selectedUrinLooksList[0].split(',') as List).map((e) => e).toList());
+      urineLookLikeValue = model?.urineLookLike ?? '';
+      // selectedUrinLooksList.first;
+      // urinLooksList.forEach((element) {
+      //   if(selectedUrinLooksList.any((element1) => element1 == element.title)){
+      //     element.value = true;
+      //   }
+      //   if(selectedUrinLooksList.any((element) => element == otherText)){
+      //     urinLooksLikeOtherSelected = true;
+      //   }
+      // });
+      urinLooksLikeController.text = model?.urineLookLikeOther ?? '';
+      selectedStoolMatch = model?.closestStoolType ?? '';
 
-        selectedUrinColorList.addAll(List.from(jsonDecode(model?.urineColor ?? '')));
-        selectedUrinColorList = List.from(
-            (selectedUrinColorList[0].split(',') as List).map((e) => e).toList());
-        urineColorValue = selectedUrinColorList.first;
-        urinColorController.text = model?.urineColorOther ?? '';
-
-        // urinColorList.forEach((element) {
-        //   if(selectedUrinColorList.any((element1) => element1 == element.title)){
-        //     element.value = true;
-        //   }
-        // });
-
-        selectedUrinSmellList.addAll(List.from(jsonDecode(model?.urineSmell ?? '')));
-        selectedUrinSmellList = List.from(
-            (selectedUrinSmellList[0].split(',') as List).map((e) => e).toList());
-        urinSmellList.forEach((element) {
-          print(selectedUrinSmellList);
-          print(
-              'urinSmellList.any((element1) => element1 == element.title): ${selectedUrinSmellList.any((element1) => element1 == element.title)}');
-          if (selectedUrinSmellList.any((element1) => element1 == element.title)) {
-            element.value = true;
-          }
-          if (selectedUrinSmellList.any((element) => element == otherText)) {
-            urinSmellOtherSelected = true;
-          }
-        });
-        urinSmellController.text = model?.urineSmellOther ?? '';
-
-        // selectedUrinLooksList
-        //     .addAll(List.from(jsonDecode(model.urineLookLike ?? '')));
-        // selectedUrinLooksList = List.from(
-        //     (selectedUrinLooksList[0].split(',') as List).map((e) => e).toList());
-        urineLookLikeValue = model?.urineLookLike ?? '';
-        // selectedUrinLooksList.first;
-        // urinLooksList.forEach((element) {
-        //   if(selectedUrinLooksList.any((element1) => element1 == element.title)){
-        //     element.value = true;
-        //   }
-        //   if(selectedUrinLooksList.any((element) => element == otherText)){
-        //     urinLooksLikeOtherSelected = true;
-        //   }
-        // });
-        urinLooksLikeController.text = model?.urineLookLikeOther ?? '';
-        selectedStoolMatch = model?.closestStoolType ?? '';
-
-        selectedmedicalInterventionsDoneBeforeList.addAll(
-            List.from(jsonDecode(model?.anyMedicalIntervationDoneBefore ?? '')));
-        selectedmedicalInterventionsDoneBeforeList = List.from(
-            (selectedmedicalInterventionsDoneBeforeList[0].split(',') as List)
-                .map((e) => e)
-                .toList());
-        medicalInterventionsDoneBeforeList.forEach((element) {
-          print(selectedmedicalInterventionsDoneBeforeList);
-          print(element.title);
-          print(
-              'medicalInterventionsDoneBeforeList.any((element1) => element1 == element.title): ${selectedmedicalInterventionsDoneBeforeList.any((element1) => element1 == element.title)}');
-          if (selectedmedicalInterventionsDoneBeforeList
-              .any((element1) => element1 == element.title)) {
-            element.value = true;
-          }
-          if (selectedmedicalInterventionsDoneBeforeList
-              .any((element) => element == otherText)) {
-            medicalInterventionsOtherSelected = true;
-          }
-        });
-        print(model?.anyMedicalIntervationDoneBeforeOther);
-        medicalInterventionsDoneController.text =
-            model?.anyMedicalIntervationDoneBeforeOther ?? '';
-        medicationsController.text = model?.anyMedicationConsumeAtMoment ?? '';
-        holisticController.text = model?.anyTherapiesHaveDoneBefore ?? '';
-        // print(
-        //     "model.medicalReport.runtimeType: ${model?.medicalReport!.split(',')}");
-        // List list = jsonDecode(model?.medicalReport ?? '');
-        // print("report list: $list ${list.length}");
-        //
-        // showMedicalReport.clear();
-        // if (list.isNotEmpty) {
-        //   list.forEach((element) {
-        //     print(element);
-        //     showMedicalReport.add(element.toString());
-        //   });
-        // }
+      selectedmedicalInterventionsDoneBeforeList.addAll(
+          List.from(jsonDecode(model?.anyMedicalIntervationDoneBefore ?? '')));
+      selectedmedicalInterventionsDoneBeforeList = List.from(
+          (selectedmedicalInterventionsDoneBeforeList[0].split(',') as List)
+              .map((e) => e)
+              .toList());
+      medicalInterventionsDoneBeforeList.forEach((element) {
+        print(selectedmedicalInterventionsDoneBeforeList);
+        print(element.title);
+        print(
+            'medicalInterventionsDoneBeforeList.any((element1) => element1 == element.title): ${selectedmedicalInterventionsDoneBeforeList.any((element1) => element1 == element.title)}');
+        if (selectedmedicalInterventionsDoneBeforeList
+            .any((element1) => element1 == element.title)) {
+          element.value = true;
+        }
+        if (selectedmedicalInterventionsDoneBeforeList
+            .any((element) => element == otherText)) {
+          medicalInterventionsOtherSelected = true;
+        }
+      });
+      print(model?.anyMedicalIntervationDoneBeforeOther);
+      medicalInterventionsDoneController.text =
+          model?.anyMedicalIntervationDoneBeforeOther ?? '';
+      medicationsController.text = model?.anyMedicationConsumeAtMoment ?? '';
+      holisticController.text = model?.anyTherapiesHaveDoneBefore ?? '';
+      // print(
+      //     "model.medicalReport.runtimeType: ${model?.medicalReport!.split(',')}");
+      // List list = jsonDecode(model?.medicalReport ?? '');
+      // print("report list: $list ${list.length}");
+      //
+      // showMedicalReport.clear();
+      // if (list.isNotEmpty) {
+      //   list.forEach((element) {
+      //     print(element);
+      //     showMedicalReport.add(element.toString());
+      //   });
+      // }
 
       setState(() {});
     }
@@ -585,42 +597,46 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration:const BoxDecoration(
-        image: DecorationImage(
-            image: AssetImage("assets/images/eval_bg.png"),
-            fit: BoxFit.fitWidth,
-            colorFilter:
-            ColorFilter.mode(kPrimaryColor, BlendMode.lighten)),
-      ),
-      child: SafeArea(
-        child: Scaffold(
-          backgroundColor: Colors.transparent,
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => TicketChatScreen(
-                    userName: "${_pref?.getString(AppConfig.User_Name)}",
-                    thumbNail: "${_pref?.getString(AppConfig.User_Profile)}",
-                    ticketId: _pref?.getString(AppConfig.User_ticket_id) ?? '',
-                    subject: '',
-                    email: "${_pref?.getString(AppConfig.User_Email)}",
-                    ticketStatus: 1,
+    return widget.isWeb
+        ? buildEvaluationForm()
+        : Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage("assets/images/eval_bg.png"),
+                  fit: BoxFit.fitWidth,
+                  colorFilter:
+                      ColorFilter.mode(kPrimaryColor, BlendMode.lighten)),
+            ),
+            child: SafeArea(
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                floatingActionButton: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TicketChatScreen(
+                          userName: "${_pref?.getString(AppConfig.User_Name)}",
+                          thumbNail:
+                              "${_pref?.getString(AppConfig.User_Profile)}",
+                          ticketId:
+                              _pref?.getString(AppConfig.User_ticket_id) ?? '',
+                          subject: '',
+                          email: "${_pref?.getString(AppConfig.User_Email)}",
+                          ticketStatus: 1,
+                        ),
+                      ),
+                    );
+                  },
+                  backgroundColor: gsecondaryColor.withOpacity(0.7),
+                  child: const ImageIcon(
+                    AssetImage("assets/images/noun-chat-5153452.png"),
                   ),
                 ),
-              );
-            },
-            backgroundColor: gsecondaryColor.withOpacity(0.7),
-            child: const ImageIcon(
-              AssetImage("assets/images/noun-chat-5153452.png"),
+                body: showUI(context),
+              ),
             ),
-          ),
-          body: showUI(context),
-        ),
-      ),
-    );
+          );
   }
 
   /// for showData ChildGetEvaluationDataModel? model this is mandatory
@@ -649,14 +665,12 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
           Expanded(
             child: Container(
                 width: double.maxFinite,
-                padding:
-                EdgeInsets.symmetric(horizontal: 3.w, vertical: 3.h),
+                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 3.h),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                        blurRadius: 2,
-                        color: Colors.grey.withOpacity(0.5))
+                        blurRadius: 2, color: Colors.grey.withOpacity(0.5))
                   ],
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(30),
@@ -686,40 +700,50 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
           children: [
             buildPersonalDetails(),
             buildHealthDetails(),
-            IntrinsicWidth(
-              child: GestureDetector(
-                onTap: () {
+            Center(
+              child: ButtonWidget(
+                onPressed: () {
                   checkFields(context);
                 },
-                child: Container(
-                  // width: 40.w,
-                  // height: 5.h,
-                  padding:
-                  EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
-                  decoration: BoxDecoration(
-                    color: eUser().buttonColor,
-                    borderRadius:
-                    BorderRadius.circular(eUser().buttonBorderRadius),
-                    // border: Border.all(
-                    //     color: eUser().buttonBorderColor,
-                    //     width: eUser().buttonBorderWidth
-                    // ),
-                  ),
-                  child:isSubmitPressed
-                      ? buildThreeBounceIndicator(color: gWhiteColor)
-                      : Center(
-                    child: Text(
-                      'Submit',
-                      style: TextStyle(
-                        fontFamily: eUser().buttonTextFont,
-                        color: eUser().buttonTextColor,
-                        fontSize: eUser().buttonTextSize,
-                      ),
-                    ),
-                  ),
-                ),
+                text: 'Submit',
+                isLoading: isSubmitPressed,
+                buttonWidth: 18.w,
               ),
             ),
+            // IntrinsicWidth(
+            //   child: GestureDetector(
+            //     onTap: () {
+            //       checkFields(context);
+            //     },
+            //     child: Container(
+            //       // width: 40.w,
+            //       // height: 5.h,
+            //       padding:
+            //       EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+            //       decoration: BoxDecoration(
+            //         color: eUser().buttonColor,
+            //         borderRadius:
+            //         BorderRadius.circular(eUser().buttonBorderRadius),
+            //         // border: Border.all(
+            //         //     color: eUser().buttonBorderColor,
+            //         //     width: eUser().buttonBorderWidth
+            //         // ),
+            //       ),
+            //       child:isSubmitPressed
+            //           ? buildThreeBounceIndicator(color: gWhiteColor)
+            //           : Center(
+            //         child: Text(
+            //           'Submit',
+            //           style: TextStyle(
+            //             fontFamily: eUser().buttonTextFont,
+            //             color: eUser().buttonTextColor,
+            //             fontSize: eUser().buttonTextSize,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -847,9 +871,8 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                         color: maritalStatus == "Single"
                             ? kTextColor
                             : gHintTextColor,
-                        fontFamily: maritalStatus == "Single"
-                            ? kFontMedium
-                            : kFontBook,
+                        fontFamily:
+                            maritalStatus == "Single" ? kFontMedium : kFontBook,
                       ),
                     ),
                   ],
@@ -966,8 +989,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
               controller: emailController,
               cursorColor: kPrimaryColor,
               validator: (value) {
-                if (value!.isEmpty ||
-                    !RegExp(r"^[a-z A-Z]").hasMatch(value)) {
+                if (value!.isEmpty || !RegExp(r"^[a-z A-Z]").hasMatch(value)) {
                   return 'Please enter your Email ID';
                 } else if (!RegExp(r"^[a-z A-Z]").hasMatch(value)) {
                   return 'Please enter your valid Email ID';
@@ -1044,7 +1066,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily:
-                              gender == "Male" ? kFontMedium : kFontBook),
+                                  gender == "Male" ? kFontMedium : kFontBook),
                         ),
                       ],
                     )),
@@ -1074,7 +1096,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                                 ? kTextColor
                                 : gHintTextColor,
                             fontFamily:
-                            gender == "Female" ? kFontMedium : kFontBook),
+                                gender == "Female" ? kFontMedium : kFontBook),
                       ),
                     ],
                   ),
@@ -1100,11 +1122,10 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                       Text(
                         "Other",
                         style: buildTextStyle(
-                            color: gender == "Other"
-                                ? kTextColor
-                                : gHintTextColor,
+                            color:
+                                gender == "Other" ? kTextColor : gHintTextColor,
                             fontFamily:
-                            gender == "Other" ? kFontMedium : kFontBook),
+                                gender == "Other" ? kFontMedium : kFontBook),
                       ),
                     ],
                   ),
@@ -1160,9 +1181,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
             ],
             // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           ),
-          SizedBox(
-            height: 2.h,
-          ),
+          SizedBox(height: 2.h),
           buildLabelTextField(
               'Full Postal Address To Deliver Your Ready To Cook Kit',
               fontSize: questionFont,
@@ -1224,8 +1243,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
               },
               onFieldSubmitted: (value) {
                 if (cityController.text.isEmpty) {
-                  String code =
-                      _pref?.getString(AppConfig.countryCode) ?? 'IN';
+                  String code = _pref?.getString(AppConfig.countryCode) ?? 'IN';
                   if (code.isNotEmpty && code == 'IN') {
                     fetchCountry(value, 'IN');
                   }
@@ -1238,23 +1256,23 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                 suffixIcon: (pinCodeController.text.length != 6)
                     ? null
                     : GestureDetector(
-                  onTap: () {
-                    String code =
-                        _pref?.getString(AppConfig.countryCode) ?? '';
-                    print('code: $code');
-                    // if (code.isNotEmpty && code == 'IN') {
-                    //   fetchCountry(pinCodeController.text, code);
-                    // }
-                    fetchCountry(pinCodeController.text, 'IN');
+                        onTap: () {
+                          String code =
+                              _pref?.getString(AppConfig.countryCode) ?? '';
+                          print('code: $code');
+                          // if (code.isNotEmpty && code == 'IN') {
+                          //   fetchCountry(pinCodeController.text, code);
+                          // }
+                          fetchCountry(pinCodeController.text, 'IN');
 
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  },
-                  child: const Icon(
-                    Icons.keyboard_arrow_right,
-                    color: gMainColor,
-                    size: 22,
-                  ),
-                ),
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        },
+                        child: const Icon(
+                          Icons.keyboard_arrow_right,
+                          color: gMainColor,
+                          size: 22,
+                        ),
+                      ),
               ),
               textInputAction: TextInputAction.next,
               inputFormatters: [
@@ -1266,9 +1284,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
               maxLength: 6,
             ),
           ),
-          SizedBox(
-            height: 2.h,
-          ),
+          SizedBox(height: 2.h),
           buildLabelTextField('City', fontSize: questionFont, key: cityKey),
           TextFormField(
             textCapitalization: TextCapitalization.sentences,
@@ -1289,9 +1305,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
             textAlign: TextAlign.start,
             keyboardType: TextInputType.streetAddress,
           ),
-          SizedBox(
-            height: 2.h,
-          ),
+          SizedBox(height: 2.h),
           buildLabelTextField('State', fontSize: questionFont, key: stateKey),
           TextFormField(
             textCapitalization: TextCapitalization.sentences,
@@ -1312,9 +1326,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
             textAlign: TextAlign.start,
             keyboardType: TextInputType.streetAddress,
           ),
-          SizedBox(
-            height: 2.h,
-          ),
+          SizedBox(height: 2.h),
           buildLabelTextField('Country',
               fontSize: questionFont, key: countryKey),
           TextFormField(
@@ -1389,7 +1401,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
             validator: (value) {
               if (value!.isEmpty) {
                 return 'Please enter your Weight';
-              } else              if (int.parse(value) < 20 || int.parse(value) > 120) {
+              } else if (int.parse(value) < 20 || int.parse(value) > 120) {
                 return 'Please enter Valid Weight';
               }
               return null;
@@ -1531,8 +1543,8 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() =>
-                      tongueCoatingRadio = "Coated with white layer");
+                      setState(
+                          () => tongueCoatingRadio = "Coated with white layer");
                     },
                     child: Row(
                       children: [
@@ -1549,11 +1561,11 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                           "Coated with white layer",
                           style: buildTextStyle(
                               color: tongueCoatingRadio ==
-                                  "Coated with white layer"
+                                      "Coated with white layer"
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: tongueCoatingRadio ==
-                                  "Coated with white layer"
+                                      "Coated with white layer"
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -1563,7 +1575,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                   GestureDetector(
                     onTap: () {
                       setState(() =>
-                      tongueCoatingRadio = "Coated with yellow layer");
+                          tongueCoatingRadio = "Coated with yellow layer");
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -1581,11 +1593,11 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                           "Coated with yellow layer",
                           style: buildTextStyle(
                               color: tongueCoatingRadio ==
-                                  "Coated with yellow layer"
+                                      "Coated with yellow layer"
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: tongueCoatingRadio ==
-                                  "Coated with yellow layer"
+                                      "Coated with yellow layer"
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -1594,8 +1606,8 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() =>
-                      tongueCoatingRadio = "Coated with black layer");
+                      setState(
+                          () => tongueCoatingRadio = "Coated with black layer");
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -1613,11 +1625,11 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                           "Coated with black layer",
                           style: buildTextStyle(
                               color: tongueCoatingRadio ==
-                                  "Coated with black layer"
+                                      "Coated with black layer"
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: tongueCoatingRadio ==
-                                  "Coated with black layer"
+                                      "Coated with black layer"
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -1922,9 +1934,8 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                           color: urinSmellOtherSelected
                               ? kTextColor
                               : gHintTextColor,
-                          fontFamily: urinSmellOtherSelected
-                              ? kFontMedium
-                              : kFontBook),
+                          fontFamily:
+                              urinSmellOtherSelected ? kFontMedium : kFontBook),
                     ),
                   ),
                   activeColor: kPrimaryColor,
@@ -2106,14 +2117,13 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                         Text(
                           "Seperate hard lumps",
                           style: buildTextStyle(
-                              color:
-                              selectedStoolMatch == "Seperate hard lumps"
+                              color: selectedStoolMatch == "Seperate hard lumps"
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily:
-                              selectedStoolMatch == "Seperate hard lumps"
-                                  ? kFontMedium
-                                  : kFontBook),
+                                  selectedStoolMatch == "Seperate hard lumps"
+                                      ? kFontMedium
+                                      : kFontBook),
                         ),
                       ],
                     ),
@@ -2139,13 +2149,13 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                           "Lumpy & sausage like",
                           style: buildTextStyle(
                               color:
-                              selectedStoolMatch == "Lumpy & sausage like"
-                                  ? kTextColor
-                                  : gHintTextColor,
+                                  selectedStoolMatch == "Lumpy & sausage like"
+                                      ? kTextColor
+                                      : gHintTextColor,
                               fontFamily:
-                              selectedStoolMatch == "Lumpy & sausage like"
-                                  ? kFontMedium
-                                  : kFontBook),
+                                  selectedStoolMatch == "Lumpy & sausage like"
+                                      ? kFontMedium
+                                      : kFontBook),
                         ),
                       ],
                     ),
@@ -2154,7 +2164,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                     onTap: () {
                       setState(() {
                         selectedStoolMatch =
-                        "Sausage shape with cracks on the surface";
+                            "Sausage shape with cracks on the surface";
                       });
                     },
                     child: Row(
@@ -2172,11 +2182,11 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                           "Sausage shape with cracks on the surface",
                           style: buildTextStyle(
                               color: selectedStoolMatch ==
-                                  "Sausage shape with cracks on the surface"
+                                      "Sausage shape with cracks on the surface"
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: selectedStoolMatch ==
-                                  "Sausage shape with cracks on the surface"
+                                      "Sausage shape with cracks on the surface"
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -2204,11 +2214,11 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                           "Smooth, soft sausage or snake",
                           style: buildTextStyle(
                               color: selectedStoolMatch ==
-                                  "Smooth, soft sausage or snake"
+                                      "Smooth, soft sausage or snake"
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: selectedStoolMatch ==
-                                  "Smooth, soft sausage or snake"
+                                      "Smooth, soft sausage or snake"
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -2218,8 +2228,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedStoolMatch =
-                        "Soft blobs with clear cut edges";
+                        selectedStoolMatch = "Soft blobs with clear cut edges";
                       });
                     },
                     child: Row(
@@ -2237,11 +2246,11 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                           "Soft blobs with clear cut edges",
                           style: buildTextStyle(
                               color: selectedStoolMatch ==
-                                  "Soft blobs with clear cut edges"
+                                      "Soft blobs with clear cut edges"
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: selectedStoolMatch ==
-                                  "Soft blobs with clear cut edges"
+                                      "Soft blobs with clear cut edges"
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -2251,8 +2260,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedStoolMatch =
-                        "Mushy consistency not Mostly";
+                        selectedStoolMatch = "Mushy consistency not Mostly";
                       });
                     },
                     child: Row(
@@ -2270,11 +2278,11 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                           "Mushy consistency not Mostly",
                           style: buildTextStyle(
                               color: selectedStoolMatch ==
-                                  "Mushy consistency not Mostly"
+                                      "Mushy consistency not Mostly"
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: selectedStoolMatch ==
-                                  "Mushy consistency not Mostly"
+                                      "Mushy consistency not Mostly"
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -2285,7 +2293,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                     onTap: () {
                       setState(() {
                         selectedStoolMatch =
-                        "Liquid consistency with no solid pieces";
+                            "Liquid consistency with no solid pieces";
                       });
                     },
                     child: Row(
@@ -2303,11 +2311,11 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                           "liquid consistency with no solid pieces",
                           style: buildTextStyle(
                               color: selectedStoolMatch ==
-                                  "liquid consistency with no solid pieces"
+                                      "liquid consistency with no solid pieces"
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: selectedStoolMatch ==
-                                  "liquid consistency with no solid pieces"
+                                      "liquid consistency with no solid pieces"
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -2362,8 +2370,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                         if (medicalInterventionsDoneBeforeList.last.value ==
                             true) {
                           selectedmedicalInterventionsDoneBeforeList.clear();
-                          medicalInterventionsDoneBeforeList.last.value =
-                          false;
+                          medicalInterventionsDoneBeforeList.last.value = false;
                         }
 
                         // old code
@@ -2396,8 +2403,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                     controller: medicalInterventionsDoneController,
                     cursorColor: kPrimaryColor,
                     validator: (value) {
-                      if (value!.isEmpty &&
-                          medicalInterventionsOtherSelected) {
+                      if (value!.isEmpty && medicalInterventionsOtherSelected) {
                         return 'Please enter Medical Interventions';
                       } else {
                         return null;
@@ -2539,7 +2545,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
 
   bool validEmail(String email) {
     return RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(email);
   }
 
@@ -2557,9 +2563,9 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
             healthCheckBox.title.toString(),
             style: buildTextStyle(
                 color:
-                healthCheckBox.value == true ? kTextColor : gHintTextColor,
+                    healthCheckBox.value == true ? kTextColor : gHintTextColor,
                 fontFamily:
-                healthCheckBox.value == true ? kFontMedium : kFontBook),
+                    healthCheckBox.value == true ? kFontMedium : kFontBook),
           ),
         ),
         dense: true,
@@ -2649,7 +2655,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                       .contains(healthCheckBox2.last.title)) {
                     // print("if");
                     selectedHealthCheckBox2.removeWhere(
-                            (element) => element == healthCheckBox2.last.title);
+                        (element) => element == healthCheckBox2.last.title);
                     healthCheckBox2.forEach((element) {
                       if (element.title == healthCheckBox2.last.title) {
                         element.value = false;
@@ -2964,17 +2970,17 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                 ),
                 items: lst
                     .map((String item) => DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: gBlackColor,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ))
+                          value: item,
+                          child: Text(
+                            item,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: gBlackColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ))
                     .toList(),
                 value: ft == -1 ? null : ft.toString(),
                 onChanged: (value) {
@@ -3059,17 +3065,17 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                 ),
                 items: lst1
                     .map((String item) => DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(
-                    item,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: gBlackColor,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ))
+                          value: item,
+                          child: Text(
+                            item,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: gBlackColor,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ))
                     .toList(),
                 value: (inches == -1) ? null : inches.toString(),
                 onChanged: (value) {
@@ -3235,7 +3241,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
                             ? kTextColor
                             : gHintTextColor,
                         fontFamily:
-                        urineColorValue == "Red" ? kFontMedium : kFontBook),
+                            urineColorValue == "Red" ? kFontMedium : kFontBook),
                   ),
                 ],
               ),
@@ -3530,7 +3536,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
   void addMedicalInterventionsDetails() {
     selectedmedicalInterventionsDoneBeforeList.clear();
     if (medicalInterventionsDoneBeforeList
-        .any((element) => element.value == true) ||
+            .any((element) => element.value == true) ||
         medicalInterventionsOtherSelected) {
       for (var element in medicalInterventionsDoneBeforeList) {
         if (element.value == true) {
@@ -3596,17 +3602,17 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
       PageRouteBuilder(
           opaque: false, // set to false
           pageBuilder: (_, __, ___) => Container(
-            child: buildCircularIndicator(),
-            width: 70,
-            height: 70,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                    blurRadius: 2, color: Colors.grey.withOpacity(0.5))
-              ],
-            ),
-          )),
+                child: buildCircularIndicator(),
+                width: 70,
+                height: 70,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 2, color: Colors.grey.withOpacity(0.5))
+                  ],
+                ),
+              )),
     );
 
     final res = await EvaluationFormService(repository: evalRepository)
@@ -3634,7 +3640,6 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
     }
     Navigator.pop(context);
   }
-
 
   createFormMap() {
     return EvaluationModelFormat1(
@@ -3675,7 +3680,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
           : '',
       stoolDetails: selectedStoolMatch,
       medical_interventions:
-      selectedmedicalInterventionsDoneBeforeList.join(','),
+          selectedmedicalInterventionsDoneBeforeList.join(','),
       medical_interventions_other: medicalInterventionsOtherSelected
           ? medicalInterventionsDoneController.text
           : '',
@@ -3811,7 +3816,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
             context, "Please Select Closest match to your stool",
             isError: true, bottomPadding: 100);
       } else if (medicalInterventionsDoneBeforeList
-          .every((element) => element.value == false) &&
+              .every((element) => element.value == false) &&
           medicalInterventionsOtherSelected == false) {
         Scrollable.ensureVisible(medicalIntervenKey.currentContext!,
             duration: const Duration(milliseconds: 1000));
@@ -3979,7 +3984,7 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
             context, "Please Select Closest match to your stool",
             isError: true, bottomPadding: 100);
       } else if (medicalInterventionsDoneBeforeList
-          .every((element) => element.value == false) &&
+              .every((element) => element.value == false) &&
           medicalInterventionsOtherSelected == false) {
         Scrollable.ensureVisible(medicalIntervenKey.currentContext!,
             duration: const Duration(milliseconds: 1000));
@@ -4046,7 +4051,10 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
           // builder: (ctx) => EvaluationUploadReport(
           //     evaluationModelFormat1: eval1,
           // )
-          builder: (ctx) => EvaluationFormPage2(childGetEvaluationDataModel: childGetEvaluationDataModel,),
+          builder: (ctx) => widget.isWeb
+              ? const WebEvalScreen() : EvaluationFormPage2(
+            childGetEvaluationDataModel: childGetEvaluationDataModel,
+          ),
           // const PersonalDetailsScreen2(
           //   // evaluationModelFormat1: eval1,
           //   // medicalReportList:
@@ -4078,5 +4086,4 @@ class _EvaluationFormPage1State extends State<EvaluationFormPage1> {
       httpClient: http.Client(),
     ),
   );
-
 }

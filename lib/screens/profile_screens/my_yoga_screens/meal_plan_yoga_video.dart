@@ -24,8 +24,11 @@ class _MealPlanYogaVideoState extends State<MealPlanYogaVideo> {
   @override
   void initState() {
     super.initState();
-    videoPlayerController = VideoPlayerController.network(widget.videoUrl)
-      ..initialize().then((_) {
+    videoPlayerController = VideoPlayerController.network(
+      // 'https://gutandhealth.com/storage/uploads/users/yoga_videos/Calm Module Functional (AR).mp4',
+      // 'https://darkred-stinkbug-387836.hostingersite.com//storage/uploads/users/yoga_videos/Calm%20Module%20Functional%20(AR).mp4',
+      widget.videoUrl,
+    )..initialize().then((_) {
         setState(() {
           isLoading = false;
         });

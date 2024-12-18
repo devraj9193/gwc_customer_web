@@ -25,6 +25,7 @@ import '../../model/program_model/start_program_on_swipe_model.dart';
 import '../../repository/api_service.dart';
 import '../../repository/program_repository/program_repository.dart';
 import '../../utils/app_config.dart';
+import '../../widgets/button_widget.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/video/normal_video.dart';
 import '../../widgets/widgets.dart';
@@ -115,121 +116,210 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
   }
 
   viewButtonWidget() {
-    return IntrinsicWidth(
-      child: GestureDetector(
-        onTap: () {
-          // if(_videoPlayerController != null) _videoPlayerController!.stop();
-          if (_chewieController != null &&
-              _chewieController!.isPlaying == true) {
-            if (videoPlayerController != null) videoPlayerController!.pause();
-            if (_chewieController != null) _chewieController!.pause();
-            return;
-          } else {
-            if (videoPlayerController != null) videoPlayerController!.dispose();
-            if (_chewieController != null) _chewieController!.dispose();
+    return ButtonWidget(
+      onPressed: () {
+        // if(_videoPlayerController != null) _videoPlayerController!.stop();
+        if (_chewieController != null && _chewieController!.isPlaying == true) {
+          if (videoPlayerController != null) videoPlayerController!.pause();
+          if (_chewieController != null) _chewieController!.pause();
+          return;
+        } else {
+          if (videoPlayerController != null) videoPlayerController!.dispose();
+          if (_chewieController != null) _chewieController!.dispose();
 
-            if (widget.from == ProgramMealType.prepratory.name) {
-              //get Preparatory day1 meals
-              gotoScreen(
-                // const MealPlanScreens(
-                //   stage: 0,
-                //   fromStartScreen: true,
-                // ),
-                CombinedPrepMealTransScreen(
-                  stage: 0,
-                  fromStartScreen: true,
-                ),
-              );
-            } else if (widget.from == ProgramMealType.detox.name) {
-              //get Normal Program day1 meals
-              final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
-              final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+          if (widget.from == ProgramMealType.prepratory.name) {
+            //get Preparatory day1 meals
+            gotoScreen(
+              // const MealPlanScreens(
+              //   stage: 0,
+              //   fromStartScreen: true,
+              // ),
+              CombinedPrepMealTransScreen(
+                stage: 0,
+                fromStartScreen: true,
+              ),
+            );
+          } else if (widget.from == ProgramMealType.detox.name) {
+            //get Normal Program day1 meals
+            final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
+            final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
 
-              gotoScreen(
-                // const MealPlanScreens(
-                //   stage: 1,
-                //   fromStartScreen: true,
-                // ),
-                CombinedPrepMealTransScreen(
-                  stage: 1,
-                  fromStartScreen: true,
-                ),
-              );
-              // gotoScreen( MealPlanScreen(
-              //   receipeVideoLink: mealUrl,
-              //   trackerVideoLink: trackerUrl,
-              //   viewDay1Details: true,
-              // ),);
-            } else if (widget.from == ProgramMealType.healing.name) {
-              //get Normal Program day1 meals
-              final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
-              final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+            gotoScreen(
+              // const MealPlanScreens(
+              //   stage: 1,
+              //   fromStartScreen: true,
+              // ),
+              CombinedPrepMealTransScreen(
+                stage: 1,
+                fromStartScreen: true,
+              ),
+            );
+            // gotoScreen( MealPlanScreen(
+            //   receipeVideoLink: mealUrl,
+            //   trackerVideoLink: trackerUrl,
+            //   viewDay1Details: true,
+            // ),);
+          } else if (widget.from == ProgramMealType.healing.name) {
+            //get Normal Program day1 meals
+            final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
+            final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
 
-              _pref!.setString(AppConfig.STORE_MEAL_DATA, "");
-              gotoScreen(
-                // const MealPlanScreens(
-                //   stage: 2,
-                //   fromStartScreen: true,
-                // ),
-                CombinedPrepMealTransScreen(
-                  stage: 2,
-                  fromStartScreen: true,
-                ),
-              );
-              // gotoScreen( MealPlanScreen(
-              //   receipeVideoLink: mealUrl,
-              //   trackerVideoLink: trackerUrl,
-              //   viewDay1Details: true,
-              // ),);
-            } else if (widget.from == ProgramMealType.transition.name) {
-              //get Transition day1 meals
-              final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+            _pref!.setString(AppConfig.STORE_MEAL_DATA, "");
+            gotoScreen(
+              // const MealPlanScreens(
+              //   stage: 2,
+              //   fromStartScreen: true,
+              // ),
+              CombinedPrepMealTransScreen(
+                stage: 2,
+                fromStartScreen: true,
+              ),
+            );
+            // gotoScreen( MealPlanScreen(
+            //   receipeVideoLink: mealUrl,
+            //   trackerVideoLink: trackerUrl,
+            //   viewDay1Details: true,
+            // ),);
+          } else if (widget.from == ProgramMealType.transition.name) {
+            //get Transition day1 meals
+            final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
 
-              gotoScreen(
-                // const MealPlanScreens(
-                //   stage: 3,
-                //   fromStartScreen: true,
-                // ),
-                CombinedPrepMealTransScreen(
-                  stage: 3,
-                  fromStartScreen: true,
-                ),
-              );
-              // gotoScreen(NewTransitionDesign(
-              //   totalDays: '1',
-              //   dayNumber: '1',
-              //   trackerVideoLink: trackerUrl
-              //   ,viewDay1Details: true,));
-            }
+            gotoScreen(
+              // const MealPlanScreens(
+              //   stage: 3,
+              //   fromStartScreen: true,
+              // ),
+              CombinedPrepMealTransScreen(
+                stage: 3,
+                fromStartScreen: true,
+              ),
+            );
+            // gotoScreen(NewTransitionDesign(
+            //   totalDays: '1',
+            //   dayNumber: '1',
+            //   trackerVideoLink: trackerUrl
+            //   ,viewDay1Details: true,));
           }
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
-          decoration: BoxDecoration(
-            color: eUser().buttonColor,
-            borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
-            // border: Border.all(
-            //     color: eUser().buttonBorderColor,
-            //     width: eUser().buttonBorderWidth
-            // ),
-          ),
-          child: Text(
-            'View',
-            style: TextStyle(
-              fontFamily: eUser().buttonTextFont,
-              color: eUser().buttonTextColor,
-              fontSize: eUser().buttonTextSize,
-            ),
-          ),
-        ),
-      ),
+        }
+      },
+      text: 'View',
+      isLoading: false,
+      buttonWidth: 25.w,
     );
+    // return IntrinsicWidth(
+    //   child: GestureDetector(
+    //     onTap: () {
+    //       // if(_videoPlayerController != null) _videoPlayerController!.stop();
+    //       if (_chewieController != null &&
+    //           _chewieController!.isPlaying == true) {
+    //         if (videoPlayerController != null) videoPlayerController!.pause();
+    //         if (_chewieController != null) _chewieController!.pause();
+    //         return;
+    //       } else {
+    //         if (videoPlayerController != null) videoPlayerController!.dispose();
+    //         if (_chewieController != null) _chewieController!.dispose();
+    //
+    //         if (widget.from == ProgramMealType.prepratory.name) {
+    //           //get Preparatory day1 meals
+    //           gotoScreen(
+    //             // const MealPlanScreens(
+    //             //   stage: 0,
+    //             //   fromStartScreen: true,
+    //             // ),
+    //             CombinedPrepMealTransScreen(
+    //               stage: 0,
+    //               fromStartScreen: true,
+    //             ),
+    //           );
+    //         } else if (widget.from == ProgramMealType.detox.name) {
+    //           //get Normal Program day1 meals
+    //           final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
+    //           final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+    //
+    //           gotoScreen(
+    //             // const MealPlanScreens(
+    //             //   stage: 1,
+    //             //   fromStartScreen: true,
+    //             // ),
+    //             CombinedPrepMealTransScreen(
+    //               stage: 1,
+    //               fromStartScreen: true,
+    //             ),
+    //           );
+    //           // gotoScreen( MealPlanScreen(
+    //           //   receipeVideoLink: mealUrl,
+    //           //   trackerVideoLink: trackerUrl,
+    //           //   viewDay1Details: true,
+    //           // ),);
+    //         } else if (widget.from == ProgramMealType.healing.name) {
+    //           //get Normal Program day1 meals
+    //           final mealUrl = _pref!.getString(AppConfig().receipeVideoUrl);
+    //           final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+    //
+    //           _pref!.setString(AppConfig.STORE_MEAL_DATA, "");
+    //           gotoScreen(
+    //             // const MealPlanScreens(
+    //             //   stage: 2,
+    //             //   fromStartScreen: true,
+    //             // ),
+    //             CombinedPrepMealTransScreen(
+    //               stage: 2,
+    //               fromStartScreen: true,
+    //             ),
+    //           );
+    //           // gotoScreen( MealPlanScreen(
+    //           //   receipeVideoLink: mealUrl,
+    //           //   trackerVideoLink: trackerUrl,
+    //           //   viewDay1Details: true,
+    //           // ),);
+    //         } else if (widget.from == ProgramMealType.transition.name) {
+    //           //get Transition day1 meals
+    //           final trackerUrl = _pref!.getString(AppConfig().trackerVideoUrl);
+    //
+    //           gotoScreen(
+    //             // const MealPlanScreens(
+    //             //   stage: 3,
+    //             //   fromStartScreen: true,
+    //             // ),
+    //             CombinedPrepMealTransScreen(
+    //               stage: 3,
+    //               fromStartScreen: true,
+    //             ),
+    //           );
+    //           // gotoScreen(NewTransitionDesign(
+    //           //   totalDays: '1',
+    //           //   dayNumber: '1',
+    //           //   trackerVideoLink: trackerUrl
+    //           //   ,viewDay1Details: true,));
+    //         }
+    //       }
+    //     },
+    //     child: Container(
+    //       padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+    //       decoration: BoxDecoration(
+    //         color: eUser().buttonColor,
+    //         borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
+    //         // border: Border.all(
+    //         //     color: eUser().buttonBorderColor,
+    //         //     width: eUser().buttonBorderWidth
+    //         // ),
+    //       ),
+    //       child: Text(
+    //         'View',
+    //         style: TextStyle(
+    //           fontFamily: eUser().buttonTextFont,
+    //           color: eUser().buttonTextColor,
+    //           fontSize: eUser().buttonTextSize,
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 
   startButtonWidget() {
-    return IntrinsicWidth(
-      child: GestureDetector(
-        onTap: () {
+    return ButtonWidget(
+        onPressed: () {
           if (videoPlayerController != null) videoPlayerController!.pause();
           if (_chewieController != null) _chewieController!.pause();
 
@@ -241,27 +331,44 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
           //   startProgram();
           // }
         },
-        child: Container(
-          padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
-          decoration: BoxDecoration(
-            color: eUser().buttonColor,
-            borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
-            // border: Border.all(
-            //     color: eUser().buttonBorderColor,
-            //     width: eUser().buttonBorderWidth
-            // ),
-          ),
-          child: Text(
-            'Start',
-            style: TextStyle(
-              fontFamily: eUser().buttonTextFont,
-              color: eUser().buttonTextColor,
-              fontSize: eUser().buttonTextSize,
-            ),
-          ),
-        ),
-      ),
+        text: 'Start',
+        isLoading: false,buttonWidth: 25.w,
     );
+    // return IntrinsicWidth(
+    //   child: GestureDetector(
+    //     onTap: () {
+    //       if (videoPlayerController != null) videoPlayerController!.pause();
+    //       if (_chewieController != null) _chewieController!.pause();
+    //
+    //       showConfirmSheet();
+    //       // if (widget.from == ProgramMealType.detox.name){
+    //       //   showConfirmSheet();
+    //       // }
+    //       // else{
+    //       //   startProgram();
+    //       // }
+    //     },
+    //     child: Container(
+    //       padding: EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+    //       decoration: BoxDecoration(
+    //         color: eUser().buttonColor,
+    //         borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
+    //         // border: Border.all(
+    //         //     color: eUser().buttonBorderColor,
+    //         //     width: eUser().buttonBorderWidth
+    //         // ),
+    //       ),
+    //       child: Text(
+    //         'Start',
+    //         style: TextStyle(
+    //           fontFamily: eUser().buttonTextFont,
+    //           color: eUser().buttonTextColor,
+    //           fontSize: eUser().buttonTextSize,
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 
   /// instead of slider we r showing button for all stages
@@ -661,7 +768,7 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
                           fontSize: 13.dp),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5.h),
+                      padding: EdgeInsets.symmetric(vertical: 7.h),
                       child: (isStarted)
                           ? Center(
                               child: buildThreeBounceIndicator(
@@ -674,7 +781,9 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                (widget.from == ProgramMealType.prepratory.name) ? viewButtonWidget() : const SizedBox(),
+                                (widget.from == ProgramMealType.prepratory.name)
+                                    ? viewButtonWidget()
+                                    : const SizedBox(),
                                 SizedBox(width: 3.w),
                                 startButtonWidget(),
                               ],
@@ -1022,50 +1131,71 @@ class _ProgramPlanScreenState extends State<ProgramPlanScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              GestureDetector(
-                onTap: () async {
+              ButtonWidget(
+                onPressed: () async {
                   startProgram();
                   Navigator.pop(context);
                 },
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
-                  decoration: BoxDecoration(
-                      color: gsecondaryColor,
-                      border: Border.all(color: kLineColor, width: 0.5),
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Text(
-                    "Yes",
-                    style: TextStyle(
-                      fontFamily: kFontMedium,
-                      color: gWhiteColor,
-                      fontSize: 12.dp,
-                    ),
-                  ),
-                ),
+                text: "Yes",
+                isLoading: false,
+                radius: 5,
+                buttonWidth: 15.w,
               ),
+              // GestureDetector(
+              //   onTap: () async {
+              //     startProgram();
+              //     Navigator.pop(context);
+              //   },
+              //   child: Container(
+              //     padding:
+              //         EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+              //     decoration: BoxDecoration(
+              //         color: gsecondaryColor,
+              //         border: Border.all(color: kLineColor, width: 0.5),
+              //         borderRadius: BorderRadius.circular(5)),
+              //     child: Text(
+              //       "Yes",
+              //       style: TextStyle(
+              //         fontFamily: kFontMedium,
+              //         color: gWhiteColor,
+              //         fontSize: 12.dp,
+              //       ),
+              //     ),
+              //   ),
+              // ),
               SizedBox(width: 5.w),
-              GestureDetector(
-                onTap: () {
+              ButtonWidget(
+                onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
-                  decoration: BoxDecoration(
-                      color: gWhiteColor,
-                      border: Border.all(color: kLineColor, width: 0.5),
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Text(
-                    "No",
-                    style: TextStyle(
-                      fontFamily: kFontMedium,
-                      color: gsecondaryColor,
-                      fontSize: 12.dp,
-                    ),
-                  ),
-                ),
+                text: "No",
+                isLoading: false,
+                radius: 5,
+                buttonWidth: 15.w,
+                color: gWhiteColor,
+                textColor: gsecondaryColor,
               ),
+              // GestureDetector(
+              //   onTap: () {
+              //     Navigator.pop(context);
+              //   },
+              //   child: Container(
+              //     padding:
+              //         EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+              //     decoration: BoxDecoration(
+              //         color: gWhiteColor,
+              //         border: Border.all(color: kLineColor, width: 0.5),
+              //         borderRadius: BorderRadius.circular(5)),
+              //     child: Text(
+              //       "No",
+              //       style: TextStyle(
+              //         fontFamily: kFontMedium,
+              //         color: gsecondaryColor,
+              //         fontSize: 12.dp,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
           SizedBox(height: 1.h)

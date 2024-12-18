@@ -2995,7 +2995,7 @@ class GutListState extends State<GutList> with SingleTickerProviderStateMixin {
                   builder: (context) => CookKitTracking(
                     awb_number:
                     _shippingApprovedModel?.value?.awbCode ?? '',
-                    currentStage: shippingStage!,
+                    currentStage: shippingStage!, isForeign: '',
                   ),
                 ),
               )
@@ -3005,7 +3005,7 @@ class GutListState extends State<GutList> with SingleTickerProviderStateMixin {
                   .push(
                 MaterialPageRoute(
                   builder: (context) =>
-                      CookKitTracking(currentStage: shippingStage ?? ''),
+                      CookKitTracking(currentStage: shippingStage ?? '', isForeign: '',),
                 ),
               )
                   .then((value) => reloadUI());

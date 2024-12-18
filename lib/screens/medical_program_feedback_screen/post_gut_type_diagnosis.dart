@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:tcard/tcard.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:gwc_customer_web/widgets/button_widget.dart';
+import 'package:tcard/tcard.dart';
 
 import '../../model/error_model.dart';
 import '../../model/new_user_model/register/register_model.dart';
@@ -15,7 +17,9 @@ import '../dashboard_screen.dart';
 import '../evalution_form/check_box_settings.dart';
 
 class PostGutTypeDiagnosis extends StatefulWidget {
-  const PostGutTypeDiagnosis({Key? key}) : super(key: key);
+  final bool isFromWeb;
+  const PostGutTypeDiagnosis({Key? key, this.isFromWeb = false})
+      : super(key: key);
 
   @override
   State<PostGutTypeDiagnosis> createState() => _PostGutTypeDiagnosisState();
@@ -29,9 +33,9 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   int submittedIndex = -1;
 
   TextEditingController selectedSymptomsAfterMealController =
-  TextEditingController();
+      TextEditingController();
   TextEditingController selectedSymptomsAfterStomachUpsetController =
-  TextEditingController();
+      TextEditingController();
 
   List<Color> colors = [
     kNumberCircleRed,
@@ -59,26 +63,26 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   buildCards() {
     return cards = List.generate(
       colors.length,
-          (int index) {
+      (int index) {
         return index == 0
             ? slider1(index)
             : index == 1
-            ? slider2(index)
-            : index == 2
-            ? slider3(index)
-            : index == 3
-            ? slider4(index)
-            : index == 4
-            ? slider5(index)
-            : index == 5
-            ? slider6(index)
-            : index == 6
-            ? slider7(index)
-            : index == 7
-            ? slider8(index)
-            : index == 8
-            ? slider9(index)
-            : Container();
+                ? slider2(index)
+                : index == 2
+                    ? slider3(index)
+                    : index == 3
+                        ? slider4(index)
+                        : index == 4
+                            ? slider5(index)
+                            : index == 5
+                                ? slider6(index)
+                                : index == 6
+                                    ? slider7(index)
+                                    : index == 7
+                                        ? slider8(index)
+                                        : index == 8
+                                            ? slider9(index)
+                                            : Container();
       },
     );
   }
@@ -114,7 +118,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   final effort = [
     CheckBoxSettings(
         title:
-        "Requires straining to evacuate like holding breath to initiate"),
+            "Requires straining to evacuate like holding breath to initiate"),
     CheckBoxSettings(title: "Moderate effort like deep breathing"),
     CheckBoxSettings(title: "Minimal strain"),
     CheckBoxSettings(title: "Effortless and immediate"),
@@ -132,7 +136,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   final frequency = [
     CheckBoxSettings(
         title:
-        "Not passing everyday/Unspecific time/Irregular (Within 24 - 48 hours)"),
+            "Not passing everyday/Unspecific time/Irregular (Within 24 - 48 hours)"),
     CheckBoxSettings(title: "Once in 24hrs"),
     CheckBoxSettings(title: "Two times in 24hrs"),
     CheckBoxSettings(title: "Multiple times"),
@@ -144,7 +148,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
     CheckBoxSettings(title: "No need for stimulants"),
     CheckBoxSettings(
         title:
-        "Loose stools/Urge to evacuate with spicy or after meals/milk inducing easy stools"),
+            "Loose stools/Urge to evacuate with spicy or after meals/milk inducing easy stools"),
     CheckBoxSettings(
         title: "Easy urge in the morning without any external aid"),
   ];
@@ -172,137 +176,151 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   @override
   Widget build(BuildContext context) {
     double h = MediaQuery.of(context).size.height;
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.only(left: 3.w, right: 3.w, top: 1.h),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                buildAppBar(
+    return widget.isFromWeb
+        ? buildMainView()
+        : Scaffold(
+            body: SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(left: 3.w, right: 3.w, top: 1.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    buildAppBar(
                       () {
-                    Navigator.pop(context);
-                  },
-                  isBackEnable: true,
-                ),
-                SizedBox(
-                  height: 1.h,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Gut Type Diagnosis after the Program",
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                          fontFamily: kFontBold,
-                          color: gBlackColor,
-                          height: 1.5,
-                          fontSize: headingFont),
+                        Navigator.pop(context);
+                      },
+                      isBackEnable: true,
                     ),
                     SizedBox(
-                      width: 2.w,
+                      height: 1.h,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Gut Type Diagnosis after the Program",
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                              fontFamily: kFontBold,
+                              color: gBlackColor,
+                              height: 1.5,
+                              fontSize: headingFont),
+                        ),
+                        SizedBox(
+                          width: 2.w,
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: kLineColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      "Your insights will enable us to gain a better understanding of your gut type, allowing us to provide you with tailored Gut Maintenance Guide and support moving forward.",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          fontFamily: kFontMedium,
+                          color: gHintTextColor,
+                          height: 1.3,
+                          fontSize: subHeadingFont),
+                    ),
+                    SizedBox(
+                      height: 1.h,
                     ),
                     Expanded(
-                      child: Container(
-                        height: 1,
-                        color: kLineColor,
-                      ),
+                      child: buildMainView(),
                     ),
                   ],
                 ),
-                Text(
-                  "Your insights will enable us to gain a better understanding of your gut type, allowing us to provide you with tailored Gut Maintenance Guide and support moving forward.",
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      fontFamily: kFontMedium,
-                      color: gHintTextColor,
-                      height: 1.3,
-                      fontSize: subHeadingFont),
-                ),
-                SizedBox(
-                  height: 1.h,
-                ),
-                Center(
-                  child: TCard(
-                    cards: cards,
-                    lockYAxis: true,
-                    size: Size(MediaQuery.of(context).size.shortestSide < 600 ? double.maxFinite : 60.w, 80.h),
-                    delaySlideFor: 300,
-                    controller: _controller,
-                    onForward: (index, info) {
-                      print("onForward");
-                      print("${submittedIndex + 1}  $index");
+              ),
+            ),
+          );
+  }
 
-                      if (submittedIndex + 1 != index &&
-                          (submittedIndex + 1 < index)) {
-                        _controller.back();
-                      } else {
-                        _index = index;
-                        print("index: $index");
-                        print("Direction : ${info.direction}");
-                      }
-                      setState(() {});
-                    },
-                    onBack: (index, info) {
-                      print("onBack");
-                      _index = index;
-                      setState(() {});
-                    },
-                    onEnd: () {
-                      print('end');
-                    },
-                  ),
-                ),
-                SizedBox(height: 1.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        _controller.back();
-                      },
-                      child: const Icon(
-                        Icons.arrow_back_ios,
-                      ),
-                    ),
-                    SizedBox(width: 5.w),
-                    Text(
-                      "${_index + 1} of ${colors.length}",
-                      style: TextStyle(
-                        fontSize: 13.dp,
-                        color: gHintTextColor,
-                        height: 1.35,
-                        fontFamily: kFontMedium,
-                      ),
-                    ),
-                    SizedBox(width: 5.w),
-                    GestureDetector(
-                      onTap: () {
-                        print(_index);
-                        print(submittedIndex);
-                        print(_index == colors.length - 1);
-                        if (submittedIndex == _index &&
-                            _index != colors.length - 1) {
-                          _controller.forward();
-                        } else {}
-                      },
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        color: (submittedIndex == _index &&
-                            _index != colors.length - 1)
-                            ? gBlackColor
-                            : gGreyColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+  buildMainView() {
+    return Column(
+      children: [
+        Expanded(
+          child: Center(
+            child: TCard(
+              cards: cards,
+              lockYAxis: true,
+              size: Size(
+                  MediaQuery.of(context).size.shortestSide < 600
+                      ? double.maxFinite
+                      : 60.w,
+                  80.h),
+              delaySlideFor: 300,
+              controller: _controller,
+              onForward: (index, info) {
+                print("onForward");
+                print("${submittedIndex + 1}  $index");
+
+                if (submittedIndex + 1 != index &&
+                    (submittedIndex + 1 < index)) {
+                  _controller.back();
+                } else {
+                  _index = index;
+                  print("index: $index");
+                  print("Direction : ${info.direction}");
+                }
+                setState(() {});
+              },
+              onBack: (index, info) {
+                print("onBack");
+                _index = index;
+                setState(() {});
+              },
+              onEnd: () {
+                print('end');
+              },
             ),
           ),
         ),
-      ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            GestureDetector(
+              onTap: () {
+                _controller.back();
+              },
+              child: const Icon(
+                Icons.arrow_back_ios,
+              ),
+            ),
+            SizedBox(width: 5.w),
+            Text(
+              "${_index + 1} of ${colors.length}",
+              style: TextStyle(
+                fontSize: 13.dp,
+                color: gHintTextColor,
+                height: 1.35,
+                fontFamily: kFontMedium,
+              ),
+            ),
+            SizedBox(width: 5.w),
+            GestureDetector(
+              onTap: () {
+                print(_index);
+                print(submittedIndex);
+                print(_index == colors.length - 1);
+                if (submittedIndex == _index && _index != colors.length - 1) {
+                  _controller.forward();
+                } else {}
+              },
+              child: Icon(
+                Icons.arrow_forward_ios,
+                color: (submittedIndex == _index && _index != colors.length - 1)
+                    ? gBlackColor
+                    : gGreyColor,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 2.h),
+      ],
     );
   }
 
@@ -322,38 +340,39 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildQuestionTitle(
-                  'Hunger pattern (When do you feel the true hunger?)',
-                  'True hunger is the urge felt after previous food is completely digested. NOT a craving or stress based need to eat.',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              ListView.separated(
-                  itemCount: hungerPattern.length,
-                  controller: ScrollController(),
-                  shrinkWrap: true,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    var success = hungerPattern[index];
-                    return Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            unselectedWidgetColor: gWhiteColor,
-                            disabledColor: gsecondaryColor),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2.h),
+                buildQuestionTitle(
+                    'Hunger pattern (When do you feel the true hunger?)',
+                    'True hunger is the urge felt after previous food is completely digested. NOT a craving or stress based need to eat.',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                ListView.separated(
+                    itemCount: hungerPattern.length,
+                    controller: ScrollController(),
+                    shrinkWrap: true,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      var success = hungerPattern[index];
+                      return Transform.translate(
+                        offset: const Offset(-10, 0),
                         child: RadioListTile(
-                          visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4), //
-
+                          visualDensity: const VisualDensity(
+                              horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                              MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
-
-                          activeColor: gsecondaryColor,
+                          fillColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return gsecondaryColor; // When selected
+                            }
+                            return gWhiteColor; // When unselected
+                          }),
+                          // activeColor: gsecondaryColor,
                           splashRadius: 0,
                           tileColor: gWhiteColor,
                           groupValue: selectedHungerPattern,
@@ -379,36 +398,37 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-              GestureDetector(
-                onTap: () {
-                  if (selectedHungerPattern.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One !",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 0;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 2.h,
+                      );
+                    }),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedHungerPattern.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Any One !",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 0;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical: 4.h),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 2.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -431,17 +451,17 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildQuestionTitle(
-                  'Stool consistency', 'Refer below given Bristol Stool chart',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              Expanded(child:  SingleChildScrollView(
-                child: ListView.separated(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2.h),
+                buildQuestionTitle('Stool consistency',
+                    'Refer below given Bristol Stool chart',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                ListView.separated(
                     itemCount: stoolConsistency.length,
                     controller: ScrollController(),
                     scrollDirection: Axis.vertical,
@@ -451,72 +471,74 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                       var success = stoolConsistency[index];
                       return Transform.translate(
                         offset: const Offset(-10, 0),
-                        child: Theme(
-                          data: Theme.of(context).copyWith(
-                              unselectedWidgetColor: gWhiteColor,
-                              disabledColor: gsecondaryColor),
-                          child: RadioListTile(
-                            visualDensity:
-                            VisualDensity(horizontal: -4, vertical: -4), //
-                            materialTapTargetSize:
-                            MaterialTapTargetSize.shrinkWrap,
-                            value: success.title.toString(),
-                            activeColor: gsecondaryColor,
-                            splashRadius: 0,
-                            groupValue: selectedStoolConsistency,
-                            // controlAffinity: ListTileControlAffinity.trailing,
-                            onChanged: (value) {
-                              setstate(() {
-                                selectedStoolConsistency = value.toString();
-                                print(
-                                    "selectedStoolConsistency: $selectedStoolConsistency");
-                              });
-                            },
-                            title: Transform.translate(
-                              offset: const Offset(-10, 0),
-                              child: Text(
-                                success.title ?? '',
-                                style: TextStyle(
-                                  color: gWhiteColor,
-                                  height: 1.3,
-                                  fontFamily: kFontBook,
-                                  fontSize: subHeadingFont,
-                                ),
-                                // style: AllListText().subHeadingText(),
+                        child: RadioListTile(
+                          visualDensity: const VisualDensity(
+                              horizontal: -4, vertical: -4), //
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          value: success.title.toString(),
+                          fillColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return gsecondaryColor; // When selected
+                            }
+                            return gWhiteColor; // When unselected
+                          }),
+                          // activeColor: gsecondaryColor,
+                          splashRadius: 0,
+                          groupValue: selectedStoolConsistency,
+                          // controlAffinity: ListTileControlAffinity.trailing,
+                          onChanged: (value) {
+                            setstate(() {
+                              selectedStoolConsistency = value.toString();
+                              print(
+                                  "selectedStoolConsistency: $selectedStoolConsistency");
+                            });
+                          },
+                          title: Transform.translate(
+                            offset: const Offset(-10, 0),
+                            child: Text(
+                              success.title ?? '',
+                              style: TextStyle(
+                                color: gWhiteColor,
+                                height: 1.3,
+                                fontFamily: kFontBook,
+                                fontSize: subHeadingFont,
                               ),
+                              // style: AllListText().subHeadingText(),
                             ),
                           ),
                         ),
                       );
                     }),
-              ),),
-              GestureDetector(
-                onTap: () {
-                  if (selectedStoolConsistency.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One !",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 1;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 2.h,
+                GestureDetector(
+                  onTap: () {
+                    if (selectedStoolConsistency.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Any One !",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 1;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical: 4.h),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 2.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -598,35 +620,38 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildQuestionTitle('Evacuation time',
-                  'Time taken from the time you sit on the pot to wash',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              ListView.separated(
-                  itemCount: evacuationTime.length,
-                  controller: ScrollController(),
-                  shrinkWrap: true,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    var success = evacuationTime[index];
-                    return Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            unselectedWidgetColor: gWhiteColor,
-                            disabledColor: gsecondaryColor),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2.h),
+                buildQuestionTitle('Evacuation time',
+                    'Time taken from the time you sit on the pot to wash',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                ListView.separated(
+                    itemCount: evacuationTime.length,
+                    controller: ScrollController(),
+                    shrinkWrap: true,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      var success = evacuationTime[index];
+                      return Transform.translate(
+                        offset: const Offset(-10, 0),
                         child: RadioListTile(
-                          visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4), //
+                          visualDensity: const VisualDensity(
+                              horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                              MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
-                          activeColor: gsecondaryColor,
+                          fillColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return gsecondaryColor; // When selected
+                            }
+                            return gWhiteColor; // When unselected
+                          }),
+                          // activeColor: gsecondaryColor,
                           splashRadius: 0,
                           groupValue: selectedEvacuationTime,
                           // controlAffinity: ListTileControlAffinity.trailing,
@@ -651,36 +676,37 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-              GestureDetector(
-                onTap: () {
-                  if (selectedEvacuationTime.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One !",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 2;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 2.h,
+                      );
+                    }),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedEvacuationTime.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Any One !",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 2;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical: 4.h),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 2.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -703,35 +729,38 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildQuestionTitle('Effort', 'The push or strain to pass motion.',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              ListView.separated(
-                  itemCount: effort.length,
-                  controller: ScrollController(),
-                  shrinkWrap: true,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    var success = effort[index];
-                    return Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            unselectedWidgetColor: gWhiteColor,
-                            disabledColor: gsecondaryColor),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2.h),
+                buildQuestionTitle(
+                    'Effort', 'The push or strain to pass motion.',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                ListView.separated(
+                    itemCount: effort.length,
+                    controller: ScrollController(),
+                    shrinkWrap: true,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      var success = effort[index];
+                      return Transform.translate(
+                        offset: const Offset(-10, 0),
                         child: RadioListTile(
-                          visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4), //
+                          visualDensity: const VisualDensity(
+                              horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                              MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
-                          activeColor: gsecondaryColor,
-                          splashRadius: 0,
+                          fillColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return gsecondaryColor; // When selected
+                            }
+                            return gWhiteColor; // When unselected
+                          }),
+                          // activeColor: gsecondaryColor,                        splashRadius: 0,
                           groupValue: selectedEffort,
                           // controlAffinity: ListTileControlAffinity.trailing,
                           onChanged: (value) {
@@ -754,36 +783,37 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-              GestureDetector(
-                onTap: () {
-                  if (selectedEffort.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One !",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 3;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 2.h,
+                      );
+                    }),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedEffort.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Any One !",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 3;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical: 4.h),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 2.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -806,35 +836,38 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildQuestionTitle(
-                  'Frequency', 'The push or strain to pass motion.',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              ListView.separated(
-                  itemCount: frequency.length,
-                  controller: ScrollController(),
-                  shrinkWrap: true,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    var success = frequency[index];
-                    return Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            unselectedWidgetColor: gWhiteColor,
-                            disabledColor: gsecondaryColor),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2.h),
+                buildQuestionTitle(
+                    'Frequency', 'The push or strain to pass motion.',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                ListView.separated(
+                    itemCount: frequency.length,
+                    controller: ScrollController(),
+                    shrinkWrap: true,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      var success = frequency[index];
+                      return Transform.translate(
+                        offset: const Offset(-10, 0),
                         child: RadioListTile(
-                          visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4), //
+                          visualDensity: const VisualDensity(
+                              horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                              MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
-                          activeColor: gsecondaryColor,
+                          fillColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return gsecondaryColor; // When selected
+                            }
+                            return gWhiteColor; // When unselected
+                          }),
+                          // activeColor: gsecondaryColor,
                           splashRadius: 0,
                           groupValue: selectedFrequency,
                           // controlAffinity: ListTileControlAffinity.trailing,
@@ -858,36 +891,37 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-              GestureDetector(
-                onTap: () {
-                  if (selectedFrequency.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One !",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 4;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 2.h,
+                      );
+                    }),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedFrequency.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Any One !",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 4;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical: 4.h),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 2.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -910,35 +944,38 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildQuestionTitle('Stimulation',
-                  'Do you need any aid or is there a trigger that help you  pass motion',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              ListView.separated(
-                  itemCount: stimulation.length,
-                  controller: ScrollController(),
-                  shrinkWrap: true,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    var success = stimulation[index];
-                    return Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            unselectedWidgetColor: gWhiteColor,
-                            disabledColor: gsecondaryColor),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2.h),
+                buildQuestionTitle('Stimulation',
+                    'Do you need any aid or is there a trigger that help you  pass motion',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                ListView.separated(
+                    itemCount: stimulation.length,
+                    controller: ScrollController(),
+                    shrinkWrap: true,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      var success = stimulation[index];
+                      return Transform.translate(
+                        offset: const Offset(-10, 0),
                         child: RadioListTile(
-                          visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4), //
+                          visualDensity: const VisualDensity(
+                              horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                              MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
-                          activeColor: gsecondaryColor,
+                          fillColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return gsecondaryColor; // When selected
+                            }
+                            return gWhiteColor; // When unselected
+                          }),
+                          // activeColor: gsecondaryColor,
                           splashRadius: 0,
                           groupValue: selectedStimulation,
                           // controlAffinity: ListTileControlAffinity.trailing,
@@ -963,36 +1000,37 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-              GestureDetector(
-                onTap: () {
-                  if (selectedStimulation.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One !",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 5;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 2.h,
+                      );
+                    }),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedStimulation.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Any One !",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 5;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical: 4.h),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 2.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1015,35 +1053,38 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildQuestionTitle('Satisfaction after evacuation',
-                  'The feeling of excreting completely & feeling complete relief',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              ListView.separated(
-                  itemCount: satisfactionAfterEvacuation.length,
-                  controller: ScrollController(),
-                  shrinkWrap: true,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    var success = satisfactionAfterEvacuation[index];
-                    return Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            unselectedWidgetColor: gWhiteColor,
-                            disabledColor: gsecondaryColor),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2.h),
+                buildQuestionTitle('Satisfaction after evacuation',
+                    'The feeling of excreting completely & feeling complete relief',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                ListView.separated(
+                    itemCount: satisfactionAfterEvacuation.length,
+                    controller: ScrollController(),
+                    shrinkWrap: true,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      var success = satisfactionAfterEvacuation[index];
+                      return Transform.translate(
+                        offset: const Offset(-10, 0),
                         child: RadioListTile(
-                          visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4), //
+                          visualDensity: const VisualDensity(
+                              horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                              MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
-                          activeColor: gsecondaryColor,
+                          fillColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return gsecondaryColor; // When selected
+                            }
+                            return gWhiteColor; // When unselected
+                          }),
+                          // activeColor: gsecondaryColor,
                           splashRadius: 0,
                           groupValue: selectedSatisfactionAfterEvacuation,
                           // controlAffinity: ListTileControlAffinity.trailing,
@@ -1069,36 +1110,37 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }),
-              GestureDetector(
-                onTap: () {
-                  if (selectedSatisfactionAfterEvacuation.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One !",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 6;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 2.h,
+                      );
+                    }),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedSatisfactionAfterEvacuation.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Any One !",
+                          isError: true, bottomPadding: 10);
+                    } else {
+                      submittedIndex = 6;
+                      _controller.forward();
+                    }
+                  },
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical: 4.h),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 2.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1121,36 +1163,39 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildQuestionTitle(
-                  'What are the usual or common symptoms you experience even after the normal meal?',
-                  'This is not regular but a tendency which occurs occasionally when you have either over eaten or had certain types of food',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              ListView.separated(
-                  itemCount: symptomsAfterMeal.length,
-                  controller: ScrollController(),
-                  shrinkWrap: true,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    var success = symptomsAfterMeal[index];
-                    return Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            unselectedWidgetColor: gWhiteColor,
-                            disabledColor: gsecondaryColor),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2.h),
+                buildQuestionTitle(
+                    'What are the usual or common symptoms you experience even after the normal meal?',
+                    'This is not regular but a tendency which occurs occasionally when you have either over eaten or had certain types of food',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                ListView.separated(
+                    itemCount: symptomsAfterMeal.length,
+                    controller: ScrollController(),
+                    shrinkWrap: true,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      var success = symptomsAfterMeal[index];
+                      return Transform.translate(
+                        offset: const Offset(-10, 0),
                         child: RadioListTile(
-                          visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4), //
+                          visualDensity: const VisualDensity(
+                              horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                              MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
-                          activeColor: gsecondaryColor,
+                          fillColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return gsecondaryColor; // When selected
+                            }
+                            return gWhiteColor; // When unselected
+                          }),
+                          // activeColor: gsecondaryColor,
                           splashRadius: 0,
                           groupValue: selectedSymptomsAfterMeal,
                           // controlAffinity: ListTileControlAffinity.trailing,
@@ -1175,77 +1220,78 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             ),
                           ),
                         ),
+                      );
+                    }),
+                Visibility(
+                  visible: selectedSymptomsAfterMeal == "Other",
+                  child: TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: selectedSymptomsAfterMealController,
+                    cursorColor: kPrimaryColor,
+                    validator: (value) {
+                      if (value!.isEmpty &&
+                          selectedSymptomsAfterMeal == "Other") {
+                        return 'Please Mention Other Details with minimum 2 characters';
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Your Answer",
+                      hintStyle: TextStyle(
+                          fontFamily: eUser().userTextFieldHintFont,
+                          fontSize: eUser().userTextFieldHintFontSize,
+                          color: gWhiteColor),
+                      counterText: "",
+                      border: const UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: gWhiteColor,
+                            width: 1.0,
+                            style: BorderStyle.solid),
                       ),
-                    );
-                  }),
-              Visibility(
-                visible: selectedSymptomsAfterMeal == "Other",
-                child: TextFormField(
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: selectedSymptomsAfterMealController,
-                  cursorColor: kPrimaryColor,
-                  validator: (value) {
-                    if (value!.isEmpty &&
-                        selectedSymptomsAfterMeal == "Other") {
-                      return 'Please Mention Other Details with minimum 2 characters';
+                      // suffixIcon: suffixIcon,
+                      // enabledBorder: enabledBorder,
+                      // focusedBorder: focusBoder,
+                    ),
+                    textInputAction: TextInputAction.next,
+                    textAlign: TextAlign.start,
+                    keyboardType: TextInputType.text,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    if (selectedSymptomsAfterMeal.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Select Any One !",
+                          isError: true, bottomPadding: 10);
+                    } else if (selectedSymptomsAfterMeal == 'Other' &&
+                        selectedSymptomsAfterMealController.text.isEmpty) {
+                      AppConfig().showSnackbar(
+                          context, "Please Enter your answer",
+                          isError: true, bottomPadding: 10);
                     } else {
-                      return null;
+                      submittedIndex = 7;
+                      _controller.forward();
                     }
                   },
-                  decoration: InputDecoration(
-                    hintText: "Your Answer",
-                    hintStyle: TextStyle(
-                        fontFamily: eUser().userTextFieldHintFont,
-                        fontSize: eUser().userTextFieldHintFontSize,
-                        color: gWhiteColor),
-                    counterText: "",
-                    border: const UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: gWhiteColor,
-                          width: 1.0,
-                          style: BorderStyle.solid),
-                    ),
-                    // suffixIcon: suffixIcon,
-                    // enabledBorder: enabledBorder,
-                    // focusedBorder: focusBoder,
-                  ),
-                  textInputAction: TextInputAction.next,
-                  textAlign: TextAlign.start,
-                  keyboardType: TextInputType.text,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  if (selectedSymptomsAfterMeal.isEmpty) {
-                    AppConfig().showSnackbar(context, "Please Select Any One !",
-                        isError: true, bottomPadding: 10);
-                  } else if (selectedSymptomsAfterMeal == 'Other' &&
-                      selectedSymptomsAfterMealController.text.isEmpty) {
-                    AppConfig().showSnackbar(
-                        context, "Please Enter your answer",
-                        isError: true, bottomPadding: 10);
-                  } else {
-                    submittedIndex = 7;
-                    _controller.forward();
-                  }
-                },
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 4.h),
-                    decoration: BoxDecoration(
-                        color: gWhiteColor, shape: BoxShape.circle),
-                    child: Center(
-                      child: Icon(
-                        Icons.done_outlined,
-                        color: gsecondaryColor,
-                        size: 2.h,
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(vertical: 4.h),
+                      decoration: BoxDecoration(
+                          color: gWhiteColor, shape: BoxShape.circle),
+                      child: Center(
+                        child: Icon(
+                          Icons.done_outlined,
+                          color: gsecondaryColor,
+                          size: 2.h,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -1268,36 +1314,39 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
           ],
         ),
         child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: 2.h),
-              buildQuestionTitle(
-                  'What are the usual symptoms whenever you have a stomach upset?',
-                  'We are trying to assess the tendency of your gut when you have a stomach upset',
-                  fontSize: headingFont),
-              SizedBox(height: 1.h),
-              ListView.separated(
-                  itemCount: symptomsAfterStomachUpset.length,
-                  controller: ScrollController(),
-                  shrinkWrap: true,
-                  separatorBuilder: (_, __) => const SizedBox(height: 10),
-                  itemBuilder: (context, index) {
-                    var success = symptomsAfterStomachUpset[index];
-                    return Transform.translate(
-                      offset: const Offset(-10, 0),
-                      child: Theme(
-                        data: Theme.of(context).copyWith(
-                            unselectedWidgetColor: gWhiteColor,
-                            disabledColor: gsecondaryColor),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(height: 2.h),
+                buildQuestionTitle(
+                    'What are the usual symptoms whenever you have a stomach upset?',
+                    'We are trying to assess the tendency of your gut when you have a stomach upset',
+                    fontSize: headingFont),
+                SizedBox(height: 1.h),
+                ListView.separated(
+                    itemCount: symptomsAfterStomachUpset.length,
+                    controller: ScrollController(),
+                    shrinkWrap: true,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      var success = symptomsAfterStomachUpset[index];
+                      return Transform.translate(
+                        offset: const Offset(-10, 0),
                         child: RadioListTile(
-                          visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4), //
+                          visualDensity: const VisualDensity(
+                              horizontal: -4, vertical: -4), //
                           materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
+                              MaterialTapTargetSize.shrinkWrap,
                           value: success.title.toString(),
-                          activeColor: gsecondaryColor,
+                          fillColor: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.selected)) {
+                              return gsecondaryColor; // When selected
+                            }
+                            return gWhiteColor; // When unselected
+                          }),
+                          // activeColor: gsecondaryColor,
                           splashRadius: 0,
                           groupValue: selectedSymptomsAfterStomachUpset,
                           // controlAffinity: ListTileControlAffinity.trailing,
@@ -1323,55 +1372,57 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                             ),
                           ),
                         ),
+                      );
+                    }),
+                Visibility(
+                  visible: selectedSymptomsAfterStomachUpset == "Other",
+                  child: TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: selectedSymptomsAfterStomachUpsetController,
+                    cursorColor: kPrimaryColor,
+                    validator: (value) {
+                      if (value!.isEmpty &&
+                          selectedSymptomsAfterStomachUpset == "Other") {
+                        return 'Please Mention Other Details with minimum 2 characters';
+                      } else {
+                        return null;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Your Answer",
+                      hintStyle: TextStyle(
+                          fontFamily: eUser().userTextFieldHintFont,
+                          fontSize: eUser().userTextFieldHintFontSize,
+                          color: gWhiteColor),
+                      counterText: "",
+                      border: const UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color: gWhiteColor,
+                            width: 1.0,
+                            style: BorderStyle.solid),
                       ),
-                    );
-                  }),
-              Visibility(
-                visible: selectedSymptomsAfterStomachUpset == "Other",
-                child: TextFormField(
-                  textCapitalization: TextCapitalization.sentences,
-                  controller: selectedSymptomsAfterStomachUpsetController,
-                  cursorColor: kPrimaryColor,
-                  validator: (value) {
-                    if (value!.isEmpty &&
-                        selectedSymptomsAfterStomachUpset == "Other") {
-                      return 'Please Mention Other Details with minimum 2 characters';
-                    } else {
-                      return null;
-                    }
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Your Answer",
-                    hintStyle: TextStyle(
-                        fontFamily: eUser().userTextFieldHintFont,
-                        fontSize: eUser().userTextFieldHintFontSize,
-                        color: gWhiteColor),
-                    counterText: "",
-                    border: const UnderlineInputBorder(
-                      borderSide: BorderSide(
-                          color: gWhiteColor,
-                          width: 1.0,
-                          style: BorderStyle.solid),
+                      // suffixIcon: suffixIcon,
+                      // enabledBorder: enabledBorder,
+                      // focusedBorder: focusBoder,
                     ),
-                    // suffixIcon: suffixIcon,
-                    // enabledBorder: enabledBorder,
-                    // focusedBorder: focusBoder,
+                    textInputAction: TextInputAction.next,
+                    textAlign: TextAlign.start,
+                    keyboardType: TextInputType.text,
                   ),
-                  textInputAction: TextInputAction.next,
-                  textAlign: TextAlign.start,
-                  keyboardType: TextInputType.text,
                 ),
-              ),
-              Center(
-                child: IntrinsicWidth(
-                  child: GestureDetector(
-                    onTap: () {
+                Center(
+                    child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.h),
+                  child: ButtonWidget(
+                    text: 'Submit',
+                    onPressed: () {
                       if (!isLoading) {
                         if (selectedSymptomsAfterStomachUpset.isEmpty) {
                           AppConfig().showSnackbar(
                               context, "Please Select Any One !",
                               isError: true, bottomPadding: 10);
-                        } else if (selectedSymptomsAfterStomachUpset == 'Other' &&
+                        } else if (selectedSymptomsAfterStomachUpset ==
+                                'Other' &&
                             selectedSymptomsAfterStomachUpsetController
                                 .text.isEmpty) {
                           AppConfig().showSnackbar(
@@ -1382,34 +1433,61 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
                         }
                       }
                     },
-                    child: Container(padding: EdgeInsets.symmetric(vertical: 1.5.h,horizontal: 5.w),
-                      margin: EdgeInsets.symmetric(vertical: 4.h),
-                      decoration: BoxDecoration(
-                        color: eUser().buttonColor,
-                        borderRadius:
-                        BorderRadius.circular(eUser().buttonBorderRadius),
-                        // border: Border.all(
-                        //     color: eUser().buttonBorderColor,
-                        //     width: eUser().buttonBorderWidth
-                        // ),
-                      ),
-                      child: (isLoading)
-                          ? buildThreeBounceIndicator(
-                          color: eUser().threeBounceIndicatorColor)
-                          : Center(
-                          child: Text(
-                            'Submit',
-                            style: TextStyle(
-                              fontFamily: eUser().buttonTextFont,
-                              color: eUser().buttonTextColor,
-                              fontSize: eUser().buttonTextSize,
-                            ),
-                          )),
-                    ),
+                    isLoading: isLoading,
+                    buttonWidth: 20.w,
                   ),
-                ),
-              ),
-            ],
+                )
+                    // IntrinsicWidth(
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       if (!isLoading) {
+                    //         if (selectedSymptomsAfterStomachUpset.isEmpty) {
+                    //           AppConfig().showSnackbar(
+                    //               context, "Please Select Any One !",
+                    //               isError: true, bottomPadding: 10);
+                    //         } else if (selectedSymptomsAfterStomachUpset ==
+                    //                 'Other' &&
+                    //             selectedSymptomsAfterStomachUpsetController
+                    //                 .text.isEmpty) {
+                    //           AppConfig().showSnackbar(
+                    //               context, "Please Enter your answer",
+                    //               isError: true, bottomPadding: 10);
+                    //         } else {
+                    //           submitGutDiagnosisForm(setstate);
+                    //         }
+                    //       }
+                    //     },
+                    //     child: Container(
+                    //       padding: EdgeInsets.symmetric(
+                    //           vertical: 1.5.h, horizontal: 5.w),
+                    //       margin: EdgeInsets.symmetric(vertical: 4.h),
+                    //       decoration: BoxDecoration(
+                    //         color: eUser().buttonColor,
+                    //         borderRadius:
+                    //             BorderRadius.circular(eUser().buttonBorderRadius),
+                    //         // border: Border.all(
+                    //         //     color: eUser().buttonBorderColor,
+                    //         //     width: eUser().buttonBorderWidth
+                    //         // ),
+                    //       ),
+                    //       child: (isLoading)
+                    //           ? buildThreeBounceIndicator(
+                    //               color: eUser().threeBounceIndicatorColor)
+                    //           : Center(
+                    //               child: Text(
+                    //               'Submit',
+                    //               style: TextStyle(
+                    //                 fontFamily: eUser().buttonTextFont,
+                    //                 color: eUser().buttonTextColor,
+                    //                 fontSize: eUser().buttonTextSize,
+                    //               ),
+                    //             )),
+                    //     ),
+                    //   ),
+                    // ),
+                    ),
+              ],
+            ),
           ),
         ),
       );
@@ -1462,8 +1540,8 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
   );
 
   void submitGutDiagnosisForm(
-      Function setstate,
-      ) async {
+    Function setstate,
+  ) async {
     Map formDetails = {
       'hunger_pattern': selectedHungerPattern,
       'stool_consistency': selectedStoolConsistency,
@@ -1480,7 +1558,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
       isLoading = true;
     });
     final res =
-    await medicalFeedbackService?.submitGutDiagnosisService(formDetails);
+        await medicalFeedbackService?.submitGutDiagnosisService(formDetails);
 
     print("submitGutDiagnosisForm:$res");
     print("res.runtimeType: ${res.runtimeType}");
@@ -1512,7 +1590,7 @@ class _PostGutTypeDiagnosisState extends State<PostGutTypeDiagnosis> {
               index: 2,
             ),
           ),
-              (route) => route.isFirst);
+          (route) => route.isFirst);
     }
     setstate(() {
       isLoading = false;

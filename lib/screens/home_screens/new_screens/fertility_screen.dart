@@ -29,7 +29,7 @@ class _FertilityScreenState extends State<FertilityScreen> {
 
   final _pref = AppConfig().preferences;
 
-  final carouselController = CarouselController();
+  // final carouselController = CarouselController();
   int _current = 0;
 
 
@@ -311,7 +311,7 @@ class _FertilityScreenState extends State<FertilityScreen> {
             height: 20.h,
             width: double.maxFinite,
             child: CarouselSlider(
-              carouselController: carouselController,
+              // carouselController: carouselController,
               options: CarouselOptions(
                   viewportFraction: .8,
                   aspectRatio: 1.2,

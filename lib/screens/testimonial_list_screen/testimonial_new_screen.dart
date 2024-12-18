@@ -1,9 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gwc_customer_web/screens/testimonial_list_screen/web_testimonial_screen.dart';
 import 'package:lottie/lottie.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:http/http.dart' as http;
 import 'package:smooth_star_rating_null_safety/smooth_star_rating_null_safety.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:video_player/video_player.dart';
@@ -27,177 +28,149 @@ class TestimonialNewScreen extends StatefulWidget {
 }
 
 class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
-  late AboutProgramService _aboutProgramService;
-  VideoPlayerController? _sheetVideoController;
-  ChewieController? _sheetChewieController;
-
-  late Future _getTestimonialList;
-
-  final AboutProgramRepository repository = AboutProgramRepository(
-    apiClient: ApiClient(
-      httpClient: http.Client(),
-    ),
-  );
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _aboutProgramService = AboutProgramService(repository: repository);
-    getFuture();
-    wake();
+    getFeedsList();
   }
 
-  wake() async {
-    if (await WakelockPlus.enabled == false) {
-      WakelockPlus.enable();
+  bool isLoading = false;
+  List<FeedbackList> feedbackList = [];
+
+  getFeedsList() async {
+    setState(() {
+      isLoading = true;
+    });
+    final result = await AboutProgramService(repository: repository)
+        .serverAboutProgramService();
+    print("result: $result");
+
+    if (result.runtimeType == AboutProgramModel) {
+      print("Ticket List");
+      AboutProgramModel model = result as AboutProgramModel;
+
+      feedbackList = model.data?.feedbackList ?? [];
+    } else {
+      ErrorModel model = result as ErrorModel;
+      print("error: ${model.message}");
+      setState(() {
+        isLoading = false;
+      });
     }
-  }
-
-  getFuture() {
-    _getTestimonialList = _aboutProgramService.serverAboutProgramService();
+    setState(() {
+      isLoading = false;
+    });
+    print(result);
   }
 
   @override
   Widget build(BuildContext context) {
     var h = MediaQuery.of(context).size.height;
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: gBackgroundColor,
-        body: Column(
-          children: [
-            Container(
-              height: h/2.2,
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
-                ),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 3,
-                    color: Colors.grey,
-                  ),
-                ],
-              ),
-              child: Stack(
+    return Scaffold(
+      backgroundColor: gBackgroundColor,
+      body: (isLoading)
+          ? Center(
+              child: buildCircularIndicator(),
+            )
+          : SafeArea(
+              child: Column(
                 children: [
-                  Positioned(
-                    top: 1.h,
-                    left: 2.w,
-                    right: 0,
-                    child: buildAppBar(
-                      () {},
-                      isBackEnable: false,
+                  Container(
+                    height: h / 2.5,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(40),
+                        bottomRight: Radius.circular(40),
+                      ),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 3,
+                          color: Colors.grey,
+                        ),
+                      ],
                     ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 4.h,
-                    child: Column(
+                    child: Stack(
                       children: [
-                        Image(
-                          image: const AssetImage(
-                            "assets/images/Group 9757.png",
-                          ),
-                          height: 30.h,
-                        ),
-                        SizedBox(height: 2.h),
-                        Text(
-                          "Feedback",
-                          style: TextStyle(
-                            color: eUser().mainHeadingColor,
-                            fontSize: eUser().mainHeadingFontSize,
-                            fontFamily: kFontBold,
-                            height: 1.5,
+                        Positioned(
+                          top: 1.h,
+                          left: 2.w,
+                          right: 0,
+                          child: buildAppBar(
+                            () {},
+                            isBackEnable: false,
                           ),
                         ),
-                        Text(
-                          "Here are our success stories",
-                          style: TextStyle(
-                            color: eUser().mainHeadingColor,
-                            fontSize: eUser().mainHeadingFontSize,
-                            fontFamily: kFontBook,
-                            height: 1.5,
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          top: 4.h,
+                          child: Column(
+                            children: [
+                              Image(
+                                image: const AssetImage(
+                                  "assets/images/Group 9757.png",
+                                ),
+                                height: 25.h,
+                              ),
+                              SizedBox(height: 2.h),
+                              Text(
+                                "Feedback",
+                                style: TextStyle(
+                                  color: eUser().mainHeadingColor,
+                                  fontSize: eUser().mainHeadingFontSize,
+                                  fontFamily: kFontBold,
+                                  height: 1.5,
+                                ),
+                              ),
+                              Text(
+                                "Here are our success stories",
+                                style: TextStyle(
+                                  color: eUser().mainHeadingColor,
+                                  fontSize: eUser().mainHeadingFontSize,
+                                  fontFamily: kFontBook,
+                                  height: 1.5,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: MediaQuery.of(context).size.shortestSide > 600
+                          ? WebTestimonialScreen(
+                              feedbackList: feedbackList,
+                            )
+                          : newUI(),
+                    ),
+                  ),
                 ],
               ),
             ),
-            Expanded(
-              child: SizedBox(width: MediaQuery.of(context).size.shortestSide > 600 ? 50.w : double.maxFinite,
-                child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: newUI(),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
   newUI() {
-    return FutureBuilder(
-        future: _getTestimonialList,
-        builder: (_, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              if (snapshot.data.runtimeType == ErrorModel) {
-                var model = snapshot.data as ErrorModel;
-                return Center(
-                  child: Text(
-                    model.message ?? '',
-                    style: TextStyle(fontFamily: kFontMedium, fontSize: 10.sp),
-                  ),
-                );
-              } else {
-                var model = snapshot.data as AboutProgramModel;
-                List<FeedbackList> feedbackList =
-                    model.data?.feedbackList ?? [];
-                if (feedbackList.isEmpty) {
-                  return noData();
-                } else {
-                  return ListView.builder(
-                      itemCount: feedbackList.length,
-                      itemBuilder: (_, index) {
-                        print(
-                            "feedbackList[index].file: ${feedbackList[index].file.runtimeType}");
-                        return showCardViews(
-                          userProfile:
-                              feedbackList[index].addedBy?.profile ?? '',
-                          feedbackTime: DateFormat('dd MMM yyyy , hh:mm a')
-                              .format(DateTime.parse(
-                                      feedbackList[index].addedBy?.createdAt ??
-                                          '')
-                                  .toLocal()),
-                          feedbackUser: feedbackList[index].addedBy?.name ?? '',
-                          feedback: feedbackList[index].feedback,
-                          imagePath: (feedbackList[index].file == null)
-                              ? null
-                              : feedbackList[index].file?.first,
-                          rating: feedbackList[index].rating,
-                        );
-                      });
-                }
-              }
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  snapshot.error.toString(),
-                  style: TextStyle(fontFamily: kFontMedium, fontSize: 10.sp),
-                ),
-              );
-            }
-          }
-          return Center(
-            child: buildCircularIndicator(),
+    return ListView.builder(
+        itemCount: feedbackList.length,
+        itemBuilder: (_, index) {
+          print(
+              "feedbackList[index].file: ${feedbackList[index].file.runtimeType}");
+          return showCardViews(
+            userProfile: feedbackList[index].addedBy?.profile ?? '',
+            feedbackTime: DateFormat('dd MMM yyyy , hh:mm a').format(
+                DateTime.parse(feedbackList[index].addedBy?.createdAt ?? '')
+                    .toLocal()),
+            feedbackUser: feedbackList[index].addedBy?.name ?? '',
+            feedback: feedbackList[index].feedback,
+            imagePath: (feedbackList[index].file == null)
+                ? null
+                : feedbackList[index].file?.first,
+            rating: feedbackList[index].rating,
           );
         });
   }
@@ -252,9 +225,8 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
                   color: gsecondaryColor,
                   borderRadius: BorderRadius.circular(5),
                   image: DecorationImage(
-                    image: AssetImage("assets/images/meal_placeholder.png"),
-                    fit: BoxFit.fill
-                  ),
+                      image: AssetImage("assets/images/meal_placeholder.png"),
+                      fit: BoxFit.fill),
                 ),
                 // child: Image(
                 //   image: AssetImage("assets/images/meal_placeholder.png"),
@@ -275,7 +247,9 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
                     Text(
                       feedbackTime ?? '',
                       style: TextStyle(
-                          fontSize: 12.5.dp, fontFamily: kFontBook, height: 1.5),
+                          fontSize: 12.5.dp,
+                          fontFamily: kFontBook,
+                          height: 1.5),
                     ),
                     buildRating(
                       double.parse(
@@ -623,4 +597,10 @@ class _TestimonialNewScreenState extends State<TestimonialNewScreen> {
       }
     });
   }
+
+  final AboutProgramRepository repository = AboutProgramRepository(
+    apiClient: ApiClient(
+      httpClient: http.Client(),
+    ),
+  );
 }

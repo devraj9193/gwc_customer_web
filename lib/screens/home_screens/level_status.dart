@@ -15,6 +15,7 @@ import '../appointment_screens/consultation_screens/medical_report_details.dart'
 import '../appointment_screens/consultation_screens/upload_files.dart';
 import '../cook_kit_shipping_screens/cook_kit_tracking.dart';
 import '../evalution_form/evaluation_get_details.dart';
+import '../new_profile_screens/reports_screens/my_reports_screen.dart';
 import 'common_widget.dart';
 import 'package:vertical_percent_indicator/vertical_percent_indicator.dart';
 import 'package:http/http.dart' as http;
@@ -349,7 +350,7 @@ class _LevelStatusState extends State<LevelStatus> {
                 onTap: (){
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => UploadFiles(isFromSettings: true,),
+                      builder: (context) => const MyReportsScreen(fromDashboard: true,),
                     ),
                   );
                 },
@@ -683,7 +684,7 @@ class _LevelStatusState extends State<LevelStatus> {
                       builder: (context) => CookKitTracking(
                         awb_number:  '',
                         currentStage: '',
-                        initialIndex: 1,
+                        initialIndex: 1, isForeign: '',
                       ),
                     ),
                   );
@@ -726,7 +727,7 @@ class _LevelStatusState extends State<LevelStatus> {
                     MaterialPageRoute(
                       builder: (context) => CookKitTracking(
                         awb_number:  '',
-                        currentStage: '',
+                        currentStage: '', isForeign: '',
                       ),
                     ),
                   );

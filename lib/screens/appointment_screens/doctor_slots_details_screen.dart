@@ -272,7 +272,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                     ),
                   ),
                   SizedBox(
-                    height: 2.h,
+                    height: 2.h
                   ),
                   Center(
                     child: Text(
@@ -285,7 +285,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                     ),
                   ),
                   SizedBox(
-                    height: 1.h,
+                    height: 1.h
                   ),
                   Center(
                     child: Text(
@@ -607,7 +607,7 @@ class _DoctorSlotsDetailsScreenState extends State<DoctorSlotsDetailsScreen>
                                 //   ),
                                 // ),
                                 SizedBox(
-                                  height: 4.h,
+                                  height: 4.h
                                 ),
                                 Visibility(
                                   // visible: !widget.isPostProgram,

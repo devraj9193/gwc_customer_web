@@ -6,6 +6,7 @@ consultation stage is check_user_reports
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/widgets/widgets.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import '../../../widgets/button_widget.dart';
 import '../../../widgets/constants.dart';
 
 class CheckUserReportsScreen extends StatelessWidget {
@@ -47,38 +48,50 @@ class CheckUserReportsScreen extends StatelessWidget {
                 SizedBox(
                   height: 15.h,
                 ),
+
                 Center(
-                  child: MediaQuery(
-                    data: MediaQuery.of(context).copyWith(textScaleFactor: 0.8),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        width: 40.w,
-                        height: 5.h,
-                        padding:
-                        EdgeInsets.symmetric(vertical: 1.h, horizontal: 15.w),
-                        decoration: BoxDecoration(
-                          color: eUser().buttonColor,
-                          borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
-                          // border: Border.all(
-                          //     color: eUser().buttonBorderColor,
-                          //     width: eUser().buttonBorderWidth
-                          // ),
-                        ),
-                        child: Center(child: Text(
-                          'Got It',
-                          style: TextStyle(
-                            fontFamily: eUser().buttonTextFont,
-                            color: eUser().buttonTextColor,
-                            fontSize: eUser().buttonTextSize,
-                          ),
-                        )),
-                      ),
-                    ),
+                  child: ButtonWidget(
+                    text: 'Got It',
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    isLoading: false,
+                    color: eUser().buttonColor,
+                    radius: 8,buttonWidth: 20.w,
                   ),
-                )
+                ),
+                // Center(
+                //   child: MediaQuery(
+                //     data: MediaQuery.of(context).copyWith(textScaleFactor: 0.8),
+                //     child: GestureDetector(
+                //       onTap: () {
+                //         Navigator.pop(context);
+                //       },
+                //       child: Container(
+                //         width: 40.w,
+                //         height: 5.h,
+                //         padding:
+                //         EdgeInsets.symmetric(vertical: 1.h, horizontal: 15.w),
+                //         decoration: BoxDecoration(
+                //           color: eUser().buttonColor,
+                //           borderRadius: BorderRadius.circular(eUser().buttonBorderRadius),
+                //           // border: Border.all(
+                //           //     color: eUser().buttonBorderColor,
+                //           //     width: eUser().buttonBorderWidth
+                //           // ),
+                //         ),
+                //         child: Center(child: Text(
+                //           'Got It',
+                //           style: TextStyle(
+                //             fontFamily: eUser().buttonTextFont,
+                //             color: eUser().buttonTextColor,
+                //             fontSize: eUser().buttonTextSize,
+                //           ),
+                //         )),
+                //       ),
+                //     ),
+                //   ),
+                // )
               ],
             )
           ],

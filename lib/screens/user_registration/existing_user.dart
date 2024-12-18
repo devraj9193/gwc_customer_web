@@ -47,6 +47,7 @@ import '../../repository/evaluation_form_repository/evanluation_form_repo.dart';
 import '../../repository/profile_repository/get_user_profile_repo.dart';
 import '../../services/evaluation_fome_service/evaluation_form_service.dart';
 import '../../services/profile_screen_service/user_profile_service.dart';
+import '../../widgets/button_widget.dart';
 import '../dashboard_screen.dart';
 import 'new_user/choose_your_problem_screen.dart';
 import 'package:pinput/pinput.dart';
@@ -399,124 +400,63 @@ class _ExistingUserState extends State<ExistingUser> {
               ),
               SizedBox(height: 5.h),
               Center(
-                child: IntrinsicWidth(
-                  child: GestureDetector(
-                    // onTap: (showLoginProgress) ? null : () {
-                    onTap: () {
-                      if (showOpenBottomSheetProgress) {
-                      } else {
-                        if (mobileFormKey.currentState!.validate()) {
-                          if (isPhone(phoneController.text)) {
-                            print("ifff");
-                            setState(() {
-                              showOpenBottomSheetProgress = true;
-                            });
-                            // buildGetOTP(context);
-                            getOtp(phoneController.text);
-                          }
-                        } else {
-                          AppConfig().showSnackbar(
-                              context, 'Enter your Mobile Number',
-                              isError: true);
+                child: ButtonWidget(
+                  text: 'GET OTP',
+                  buttonWidth: 25.w,
+                  onPressed: () {
+                    if (showOpenBottomSheetProgress) {
+                    } else {
+                      if (mobileFormKey.currentState!.validate()) {
+                        if (isPhone(phoneController.text)) {
+                          print("ifff");
+                          setState(() {
+                            showOpenBottomSheetProgress = true;
+                          });
+                          // buildGetOTP(context);
+                          getOtp(phoneController.text);
                         }
+                      } else {
+                        AppConfig().showSnackbar(
+                            context, 'Enter your Mobile Number',
+                            isError: true);
                       }
-                    },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 4.h),
-                      padding: EdgeInsets.symmetric(
-                          vertical: 1.5.h, horizontal: 5.w),
-                      decoration: BoxDecoration(
-                        color: (phoneController.text.isEmpty ||
-                                otpController.text.isEmpty)
-                            ? eUser().buttonColor
-                            : eUser().buttonColor,
-                        borderRadius:
-                            BorderRadius.circular(eUser().buttonBorderRadius),
-                        // border: Border.all(
-                        //     color: eUser().buttonBorderColor,
-                        //     width: eUser().buttonBorderWidth
-                        // ),
-                      ),
-                      child: (showOpenBottomSheetProgress)
-                          ? buildThreeBounceIndicator(
-                              color: eUser().threeBounceIndicatorColor)
-                          : Center(
-                              child: Text(
-                                'GET OTP',
-                                style: TextStyle(
-                                  fontFamily: eUser().buttonTextFont,
-                                  color: (phoneController.text.isEmpty ||
-                                          otpController.text.isEmpty)
-                                      ? eUser().buttonTextColor
-                                      : eUser().buttonTextColor,
-                                  fontSize: eUser().buttonTextSize,
-                                ),
-                              ),
-                            ),
-                    ),
-                  ),
+                    }
+                  },
+                  isLoading: showOpenBottomSheetProgress,
                 ),
               ),
-              // Center(
-              //   child: GestureDetector(
-              //     onTap: () {
-              //       Navigator.of(context).push(
-              //         MaterialPageRoute(
-              //           builder: (context) => const ChooseYourProblemScreen(),
-              //         ),
-              //       );
-              //     },
-              //     child: Container(
-              //       margin: EdgeInsets.symmetric(vertical: 4.h),
-              //       padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 8.w),
-              //       decoration: BoxDecoration(
-              //         color: Colors.white,
-              //         borderRadius: BorderRadius.circular(30),
-              //         border: Border.all(color: gsecondaryColor, width: 1.5),
-              //       ),
-              //       child: Text(
-              //         'New User',
-              //         style: TextStyle(
-              //           fontFamily: "GothamRoundedBold_21016",
-              //           color: Colors.black87.withOpacity(0.7),
-              //           fontSize: 10.dp,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),,
               SizedBox(height: 8.h),
-              Center(
-                child: RichText(
-                    text: TextSpan(
-                        text: "Don't have an Account? ",
-                        style: TextStyle(
-                          height: 1.5,
-                          fontFamily: eUser().anAccountTextFont,
-                          color: eUser().anAccountTextColor,
-                          fontSize: eUser().anAccountTextFontSize,
-                        ),
-                        children: [
-                      TextSpan(
-                          text: 'Signup',
-                          style: TextStyle(
-                            height: 1.5,
-                            fontFamily: eUser().loginSignupTextFont,
-                            color: eUser().loginSignupTextColor,
-                            fontSize: eUser().loginSignupTextFontSize,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      // SitBackScreen(),
-                                      const ChooseYourProblemScreen(),
-                                ),
-                              );
-                            })
-                    ])),
-              )
+              // Center(
+              //   child: RichText(
+              //       text: TextSpan(
+              //           text: "Don't have an Account? ",
+              //           style: TextStyle(
+              //             height: 1.5,
+              //             fontFamily: eUser().anAccountTextFont,
+              //             color: eUser().anAccountTextColor,
+              //             fontSize: eUser().anAccountTextFontSize,
+              //           ),
+              //           children: [
+              //         TextSpan(
+              //             text: 'Signup',
+              //             style: TextStyle(
+              //               height: 1.5,
+              //               fontFamily: eUser().loginSignupTextFont,
+              //               color: eUser().loginSignupTextColor,
+              //               fontSize: eUser().loginSignupTextFontSize,
+              //             ),
+              //             recognizer: TapGestureRecognizer()
+              //               ..onTap = () {
+              //                 Navigator.of(context).push(
+              //                   MaterialPageRoute(
+              //                     builder: (context) =>
+              //                         // SitBackScreen(),
+              //                         const ChooseYourProblemScreen(),
+              //                   ),
+              //                 );
+              //               })
+              //       ])),
+              // )
             ],
           ),
         ),
@@ -628,9 +568,9 @@ class _ExistingUserState extends State<ExistingUser> {
                                 controller: otpController,
                                 length: 6,
                                 focusNode: focusNode,
-                                androidSmsAutofillMethod:
-                                    AndroidSmsAutofillMethod.smsUserConsentApi,
-                                listenForMultipleSmsOnAndroid: true,
+                                // androidSmsAutofillMethod:
+                                //     AndroidSmsAutofillMethod.smsUserConsentApi,
+                                // listenForMultipleSmsOnAndroid: true,
                                 defaultPinTheme: defaultPinTheme,
                                 validator: (value) {
                                   return value == otpController.text
@@ -749,67 +689,31 @@ class _ExistingUserState extends State<ExistingUser> {
                             ),
                             SizedBox(height: 2.h),
                             Center(
-                              child: (showLoginProgress)
-                                  ? Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 4.h),
-                                      child: buildThreeBounceIndicator(
-                                        color: gsecondaryColor,
-                                      ),
-                                    )
-                                  : GestureDetector(
-                                      // onTap: (showLoginProgress) ? null : () {
-                                      onTap: (showLoginProgress)
-                                          ? null
-                                          : () {
-                                              final fcmToken = _pref.getString(
-                                                  AppConfig.FCM_WEB_TOKEN);
+                              child: ButtonWidget(
+                                text: 'LOGIN',
+                                buttonWidth: 18.w,
+                                onPressed: showLoginProgress
+                                    ? (){}
+                                    : () {
+                                  final fcmToken = _pref.getString(
+                                      AppConfig.FCM_WEB_TOKEN);
 
-                                              if (mobileFormKey.currentState!
-                                                      .validate() &&
-                                                  phoneController
-                                                      .text.isNotEmpty &&
-                                                  otpController
-                                                      .text.isNotEmpty) {
-                                                login(
-                                                    phoneController.text,
-                                                    otpController.text,
-                                                    "",
-                                                    fcmToken ?? "");
-                                              }
-                                            },
-                                      child: Container(
-                                        margin:
-                                            EdgeInsets.symmetric(vertical: 4.h),
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 1.5.h, horizontal: 5.w),
-                                        decoration: BoxDecoration(
-                                          color: (phoneController
-                                                      .text.isEmpty ||
-                                                  otpController.text.isEmpty)
-                                              ? eUser().buttonColor
-                                              : eUser().buttonColor,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          // border: Border.all(
-                                          //     color: eUser().buttonBorderColor,
-                                          //     width: eUser().buttonBorderWidth
-                                          // ),
-                                        ),
-                                        child: Text(
-                                          'LOGIN',
-                                          style: TextStyle(
-                                            fontFamily: eUser().buttonTextFont,
-                                            color: (phoneController
-                                                        .text.isEmpty ||
-                                                    otpController.text.isEmpty)
-                                                ? eUser().buttonTextColor
-                                                : eUser().buttonTextColor,
-                                            fontSize: eUser().buttonTextSize,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                  if (mobileFormKey.currentState!
+                                      .validate() &&
+                                      phoneController
+                                          .text.isNotEmpty &&
+                                      otpController
+                                          .text.isNotEmpty) {
+                                    login(
+                                        phoneController.text,
+                                        otpController.text,
+                                        "",
+                                        fcmToken ?? "");
+                                  }
+                                },
+                                isLoading: showLoginProgress,
+                                radius: 10,
+                              ),
                             ),
                           ],
                         );

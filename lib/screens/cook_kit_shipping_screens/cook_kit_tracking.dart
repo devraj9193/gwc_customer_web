@@ -24,6 +24,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gwc_customer_web/screens/cook_kit_shipping_screens/shopping_list_screen.dart';
+import 'package:gwc_customer_web/screens/cook_kit_shipping_screens/web_screens/tracking_web_screens.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:http/http.dart' as http;
@@ -40,22 +41,26 @@ import '../../utils/app_config.dart';
 import '../../widgets/constants.dart';
 import '../gut_list_screens/new_dashboard_stages.dart';
 import 'meal_plan_completed_stage_screen.dart';
+import 'new_shipment_approved_screen.dart';
+import 'new_shopping_list_screen.dart';
 
 class CookKitTracking extends StatefulWidget {
-  /// to show the respctive design for some stages
+  /// to show the respective design for some stages
   final String currentStage;
   final String? awb_number;
+  final String isForeign;
 
   /// to select tabs inistailly
   /// by default 0 -> tracker
   /// 1-> shopping list
   final int initialIndex;
-  const CookKitTracking(
-      {Key? key,
-      this.awb_number,
-      required this.currentStage,
-      this.initialIndex = 0})
-      : super(key: key);
+  const CookKitTracking({
+    Key? key,
+    this.awb_number,
+    required this.currentStage,
+    this.initialIndex = 0,
+    required this.isForeign,
+  }) : super(key: key);
 
   @override
   State<CookKitTracking> createState() => _CookKitTrackingState();
@@ -117,123 +122,16 @@ class _CookKitTrackingState extends State<CookKitTracking> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: gBackgroundColor,
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildAppBar(
-                  () {
-                    Navigator.pop(context);
-                  },
-                  showHelpIcon: false,
-                  helpOnTap: () {
-                    // if(planNotePdfLink != null || planNotePdfLink!.isNotEmpty){
-                    //   Navigator.push(context, MaterialPageRoute(builder: (ctx)=>
-                    //       MealPdf(pdfLink: planNotePdfLink! ,
-                    //         heading: "Note",
-                    //       )));
-                    // }
-                    // else{
-                    //   AppConfig().showSnackbar(context, "Note Link Not available", isError: true);
-                    // }
-                  }),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 2.h),
-                child: Text(
-                  "Shipping",
-                  style: TextStyle(
-                      fontFamily: kFontMedium,
-                      color: gBlackColor,
-                      fontSize: 15.dp),
-                ),
-              ),
-              Flexible(
-                child: (showTrackingProgress)
-                    ? buildCircularIndicator()
-                    : shipRocketUI(context),
-              ),
-              // Container(
-              //   margin: EdgeInsets.symmetric(horizontal: 5.w),
-              //   height: 35,
-              //   child: TabBar(
-              //     labelColor: eUser().userFieldLabelColor,
-              //     unselectedLabelColor: eUser().userTextFieldColor,
-              //     // padding: EdgeInsets.symmetric(horizontal: 3.w),
-              //     isScrollable: false,
-              //     indicatorColor: gsecondaryColor,
-              //     labelStyle: TextStyle(
-              //         fontFamily: kFontMedium,
-              //         color: gPrimaryColor,
-              //         fontSize: 12.sp),
-              //     unselectedLabelStyle: TextStyle(
-              //         fontFamily: kFontBook,
-              //         color: gHintTextColor,
-              //         fontSize: 10.sp),
-              //     // labelPadding: EdgeInsets.only(
-              //     //     right: 10.w, left: 2.w, top: 1.h, bottom: 1.h),
-              //     indicatorPadding: EdgeInsets.symmetric(horizontal: 5.w),
-              //     tabs: const [
-              //       Tab(text: 'Shipping'),
-              //       Tab(text: 'Shopping'),
-              //     ],
-              //   ),
-              // ),
-              //
-              // Flexible(
-              //     child: TabBarView(
-              //       physics: const NeverScrollableScrollPhysics(),
-              //       children: [
-              //         (showTrackingProgress)
-              //             ? buildCircularIndicator()
-              //             : shipRocketUI(context),
-              //         const ShoppingListScreen(),
-              //         // (showShoppingLoading) ? buildCircularIndicator() : shoppingUi(),
-              //       ],
-              //     ))
-              // Padding(
-              //   padding: EdgeInsets.symmetric(horizontal: 3.w),
-              //   child: TabBar(
-              //     labelColor: eUser().userFieldLabelColor,
-              //     unselectedLabelColor: gHintTextColor,
-              //     isScrollable: false,
-              //     indicatorColor: gsecondaryColor,
-              //     // indicatorPadding: EdgeInsets.only(right: 5.w, left: 5.w),
-              //     unselectedLabelStyle: TextStyle(
-              //         fontFamily: "GothamBook",
-              //         color: gHintTextColor,
-              //         fontSize: 9.sp),
-              //     labelStyle: TextStyle(
-              //         fontFamily: "GothamMedium",
-              //         color: gBlackColor,
-              //         fontSize: 11.sp),
-              //     tabs: const [
-              //       Tab(text: 'Shipping'),
-              //       Tab(text: 'Shopping'),
-              //     ],
-              //   ),
-              // ),
-              // Expanded(
-              //   child: TabBarView(
-              //     children: [
-              //       (showTrackingProgress)
-              //           ? buildCircularIndicator()
-              //           : shipRocketUI(context),
-              //       ShoppingListScreen(),
-              //       // (showShoppingLoading)
-              //       //     ? buildCircularIndicator()
-              //       //     : shoppingUi(),
-              //     ],
-              //   ),
-              // ),
-            ],
-          ),
-        ),
-      ),
-    );
+    return MediaQuery.of(context).size.shortestSide > 600
+        ? TrackingWebScreens(
+            currentStage: widget.currentStage,
+            awbNumber: widget.awb_number,
+            initialIndex: widget.initialIndex,
+      isForeign: widget.isForeign,
+          )
+        : (showTrackingProgress)
+            ? buildCircularIndicator()
+            : shipRocketUI(context);
   }
 
   tabView() {
@@ -268,7 +166,7 @@ class _CookKitTrackingState extends State<CookKitTracking> {
               (showTrackingProgress)
                   ? buildCircularIndicator()
                   : shipRocketUI(context),
-              ShoppingListScreen(),
+              const NewShoppingListScreen(),
               // (showShoppingLoading) ? buildCircularIndicator() : shoppingUi(),
             ],
           ))
@@ -706,129 +604,243 @@ class _CookKitTrackingState extends State<CookKitTracking> {
             widget.currentStage == "shipping_packed") &&
         widget.awb_number != null) {
       return (!showErrorText)
-          ? SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: 45.h,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                            "assets/images/Group 2541.png",
-                          ),
-                          fit: BoxFit.fill),
-                    ),
-                    child: Stack(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(top: 3.h, left: 2.w),
-                          child: Text(
-                            "Ready to cook Kit Shipping",
-                            style: TextStyle(
-                              fontFamily: kFontBold,
-                              fontSize: 12.sp,
-                              color: gPrimaryColor,
-                            ),
-                          ),
-                        ),
-                        Center(
-                          child: SizedBox(
-                            height: 25.h,
-                            child: const Image(
-                              image: AssetImage("assets/images/G.png"),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    // shrinkWrap: true,
+          ? Scaffold(
+              backgroundColor: gWhiteColor,
+              body: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      estimatedDateView(),
-                      Visibility(
-                        visible: trackerList.isNotEmpty,
-                        child: Row(
-                          // mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Expanded(
-                              child: AnotherStepper(
-                                stepperList: getStepper(),
-                                gap: gap,
-                                isInitialText: true,
-                                initialText: getStepperInitialValue(),
-                                scrollPhysics:
-                                    const NeverScrollableScrollPhysics(),
-                                stepperDirection: Axis.vertical,
-                                horizontalStepperHeight: 5,
-                                dotWidget: getIcons(),
-                                activeBarColor: gPrimaryColor,
-                                inActiveBarColor: Colors.grey.shade200,
-                                activeIndex: activeStep,
-                                barThickness: 5,
-                                titleTextStyle: TextStyle(
-                                  fontSize: 10.sp,
-                                  fontFamily: kFontMedium,
-                                ),
-                                subtitleTextStyle: TextStyle(
-                                  fontSize: 8.sp,
+                      buildAppBar(
+                        () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 2.h),
+                        child: Text(
+                          "Shipping",
+                          style: TextStyle(
+                              fontFamily: kFontMedium,
+                              color: gBlackColor,
+                              fontSize: 15.dp),
+                        ),
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Center(
+                                child: Image.asset(
+                                  (isDelivered)
+                                      ? "assets/images/delivered.gif"
+                                      : "assets/images/truck_moving.gif",
+                                  height: 25.h,
+                                  fit: BoxFit.fill,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // trackingField(),
-                      SizedBox(height: 5.h),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          "Delivery Address",
-                          style: TextStyle(
-                            fontFamily: kFontBold,
-                            fontSize: 12.sp,
-                            color: gPrimaryColor,
+                              // Container(
+                              //   width: double.infinity,
+                              //   height: 45.h,
+                              //   decoration: const BoxDecoration(
+                              //     image: DecorationImage(
+                              //         image: AssetImage(
+                              //           "assets/images/Group 2541.png",
+                              //         ),
+                              //         fit: BoxFit.fill),
+                              //   ),
+                              //   child: Stack(
+                              //     children: [
+                              //       Padding(
+                              //         padding: EdgeInsets.only(top: 3.h, left: 2.w),
+                              //         child: Text(
+                              //           "Ready to cook Kit Shipping",
+                              //           style: TextStyle(
+                              //             fontFamily: kFontBold,
+                              //             fontSize: 12.sp,
+                              //             color: gPrimaryColor,
+                              //           ),
+                              //         ),
+                              //       ),
+                              //       Center(
+                              //         child: SizedBox(
+                              //           height: 25.h,
+                              //           child: const Image(
+                              //             image: AssetImage("assets/images/G.png"),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
+                              Column(
+                                // shrinkWrap: true,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  estimatedDateView(),
+                                  Visibility(
+                                    visible: trackerList.isNotEmpty,
+                                    child: Row(
+                                      // mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Expanded(
+                                          child: AnotherStepper(
+                                            stepperList: getStepper(),
+                                            gap: gap,
+                                            isInitialText: true,
+                                            initialText:
+                                                getStepperInitialValue(),
+                                            scrollPhysics:
+                                                const NeverScrollableScrollPhysics(),
+                                            stepperDirection: Axis.vertical,
+                                            horizontalStepperHeight: 5,
+                                            dotWidget: getIcons(),
+                                            activeBarColor: gPrimaryColor,
+                                            inActiveBarColor:
+                                                Colors.grey.shade200,
+                                            activeIndex: activeStep,
+                                            barThickness: 5,
+                                            titleTextStyle: TextStyle(
+                                              fontSize: 10.sp,
+                                              fontFamily: kFontMedium,
+                                            ),
+                                            subtitleTextStyle: TextStyle(
+                                              fontSize: 8.sp,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // trackingField(),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      "Delivery Address",
+                                      style: TextStyle(
+                                        fontFamily: kFontBold,
+                                        fontSize: 12.sp,
+                                        color: gPrimaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 1.h),
+                                  ListTile(
+                                    leading: Container(
+                                      height: 5.h,
+                                      width: 12.w,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        border: Border.all(
+                                            color: gMainColor, width: 1),
+                                      ),
+                                      child: const Icon(
+                                        Icons.location_on,
+                                        color: gPrimaryColor,
+                                      ),
+                                    ),
+                                    title: Text(
+                                      shipAddress,
+                                      // _pref?.getString(AppConfig.SHIPPING_ADDRESS) ??  "",
+                                      style: TextStyle(
+                                        height: 1.5,
+                                        fontFamily: kFontBook,
+                                        fontSize: 11.sp,
+                                        color: gTextColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                      SizedBox(height: 1.h),
-                      ListTile(
-                        leading: Container(
-                          height: 5.h,
-                          width: 12.w,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: gMainColor, width: 1),
-                          ),
-                          child: const Icon(
-                            Icons.location_on,
-                            color: gPrimaryColor,
-                          ),
-                        ),
-                        title: Text(
-                          shipAddress,
-                          // _pref?.getString(AppConfig.SHIPPING_ADDRESS) ??  "",
-                          style: TextStyle(
-                            height: 1.5,
-                            fontFamily: kFontBook,
-                            fontSize: 11.sp,
-                            color: gTextColor,
-                          ),
-                        ),
-                      ),
+                      )
+                      // Container(
+                      //   margin: EdgeInsets.symmetric(horizontal: 5.w),
+                      //   height: 35,
+                      //   child: TabBar(
+                      //     labelColor: eUser().userFieldLabelColor,
+                      //     unselectedLabelColor: eUser().userTextFieldColor,
+                      //     // padding: EdgeInsets.symmetric(horizontal: 3.w),
+                      //     isScrollable: false,
+                      //     indicatorColor: gsecondaryColor,
+                      //     labelStyle: TextStyle(
+                      //         fontFamily: kFontMedium,
+                      //         color: gPrimaryColor,
+                      //         fontSize: 12.sp),
+                      //     unselectedLabelStyle: TextStyle(
+                      //         fontFamily: kFontBook,
+                      //         color: gHintTextColor,
+                      //         fontSize: 10.sp),
+                      //     // labelPadding: EdgeInsets.only(
+                      //     //     right: 10.w, left: 2.w, top: 1.h, bottom: 1.h),
+                      //     indicatorPadding: EdgeInsets.symmetric(horizontal: 5.w),
+                      //     tabs: const [
+                      //       Tab(text: 'Shipping'),
+                      //       Tab(text: 'Shopping'),
+                      //     ],
+                      //   ),
+                      // ),
+                      //
+                      // Flexible(
+                      //     child: TabBarView(
+                      //       physics: const NeverScrollableScrollPhysics(),
+                      //       children: [
+                      //         (showTrackingProgress)
+                      //             ? buildCircularIndicator()
+                      //             : shipRocketUI(context),
+                      //         const ShoppingListScreen(),
+                      //         // (showShoppingLoading) ? buildCircularIndicator() : shoppingUi(),
+                      //       ],
+                      //     ))
+                      // Padding(
+                      //   padding: EdgeInsets.symmetric(horizontal: 3.w),
+                      //   child: TabBar(
+                      //     labelColor: eUser().userFieldLabelColor,
+                      //     unselectedLabelColor: gHintTextColor,
+                      //     isScrollable: false,
+                      //     indicatorColor: gsecondaryColor,
+                      //     // indicatorPadding: EdgeInsets.only(right: 5.w, left: 5.w),
+                      //     unselectedLabelStyle: TextStyle(
+                      //         fontFamily: "GothamBook",
+                      //         color: gHintTextColor,
+                      //         fontSize: 9.sp),
+                      //     labelStyle: TextStyle(
+                      //         fontFamily: "GothamMedium",
+                      //         color: gBlackColor,
+                      //         fontSize: 11.sp),
+                      //     tabs: const [
+                      //       Tab(text: 'Shipping'),
+                      //       Tab(text: 'Shopping'),
+                      //     ],
+                      //   ),
+                      // ),
+                      // Expanded(
+                      //   child: TabBarView(
+                      //     children: [
+                      //       (showTrackingProgress)
+                      //           ? buildCircularIndicator()
+                      //           : shipRocketUI(context),
+                      //       ShoppingListScreen(),
+                      //       // (showShoppingLoading)
+                      //       //     ? buildCircularIndicator()
+                      //       //     : shoppingUi(),
+                      //     ],
+                      //   ),
+                      // ),
                     ],
                   ),
-                ],
+                ),
               ),
             )
           : Center(child: showProductgifWhenTrackerSideError());
     } else if (widget.currentStage == 'meal_plan_completed') {
-      return NewMealPopupScreen();
+      return NewShipmentApprovedScreen(isForeign: widget.isForeign,);
     } else {
       return (showErrorText)
           ? Center(child: showProductgifWhenTrackerSideError())
@@ -842,24 +854,49 @@ class _CookKitTrackingState extends State<CookKitTracking> {
   }
 
   showProductgifWhenTrackerSideError() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset("assets/images/Shipping.gif"),
-        SizedBox(
-          height: 1.5.h,
-        ),
-        Text(
-          "Your kit is being dispatched.\nThis page will be updated soon with live tracking details.",
-          style: TextStyle(
-              fontFamily: kFontBold,
-              color: gTextColor,
-              fontSize: headingFont,
-              height: 1.5),
-          textAlign: TextAlign.center,
-        )
-      ],
+    return Scaffold(
+      backgroundColor: gWhiteColor,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+            child: buildAppBar(
+              () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 0.h, horizontal: 3.w),
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                "Shipping",
+                style: TextStyle(
+                    fontFamily: kFontMedium,
+                    color: gBlackColor,
+                    fontSize: 15.dp),
+              ),
+            ),
+          ),
+          SizedBox(height: 2.h),
+          Image.asset("assets/images/Shipping.gif"),
+          SizedBox(
+            height: 1.5.h,
+          ),
+          Text(
+            "Your kit is being dispatched.\nThis page will be updated soon with live tracking details.",
+            style: TextStyle(
+                fontFamily: kFontBold,
+                color: gTextColor,
+                fontSize: headingFont,
+                height: 1.5),
+            textAlign: TextAlign.center,
+          )
+        ],
+      ),
     );
   }
 
@@ -1071,7 +1108,6 @@ class _CookKitTrackingState extends State<CookKitTracking> {
           errorTextResponse = data.response.trackingData.error ?? '';
         });
       } else {
-
         if (data.response.trackingData.shipmentTrackActivities != null) {
           print(data.response.trackingData.shipmentTrackActivities);
           data.response.trackingData.shipmentTrackActivities!
@@ -1083,7 +1119,7 @@ class _CookKitTrackingState extends State<CookKitTracking> {
               });
             }
           });
-        }else{
+        } else {
           setState(() {
             showErrorText = true;
           });

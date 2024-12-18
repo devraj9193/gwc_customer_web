@@ -7,6 +7,7 @@ import '../../../repository/api_service.dart';
 import '../../../repository/consultation_repository/get_report_repository.dart';
 import '../../../services/consultation_service/report_service.dart';
 import '../../../utils/app_config.dart';
+import '../../../widgets/button_widget.dart';
 import '../../../widgets/constants.dart';
 import '../../../widgets/show_photo_viewer.dart';
 import '../../../widgets/widgets.dart';
@@ -73,20 +74,11 @@ class _GetUserReportsState extends State<GetUserReports> {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 3.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Center(
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.shortestSide > 600
-                        ? 40.w
-                        : double.maxFinite,
-                    child: buildUserUploaded(),
-                  ),
-                ),
-              ),
-            ],
+          child: SizedBox(
+            width: MediaQuery.of(context).size.shortestSide > 600
+                ? 40.w
+                : double.maxFinite,
+            child: buildUserUploaded(),
           ),
         ),
       ),
@@ -94,123 +86,110 @@ class _GetUserReportsState extends State<GetUserReports> {
   }
 
   buildUserUploaded() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 1,
-          color: kLineColor.withOpacity(0.3),
-          width: double.maxFinite,
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            child: ListView.builder(
-              scrollDirection: Axis.vertical,
-              physics: const NeverScrollableScrollPhysics(),
+    return SingleChildScrollView(
+      child: ListView.builder(
+        scrollDirection: Axis.vertical,
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: widget.userReport.length,
+        itemBuilder: ((context, index) {
+          ChildReportListModel ind = widget.userReport[index];
+          return ListView.builder(
               shrinkWrap: true,
-              itemCount: widget.userReport.length,
-              itemBuilder: ((context, index) {
-                ChildReportListModel ind = widget.userReport[index];
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount:
+                  ind.report.toString().split("/").last.split(',').length,
+              itemBuilder: (_, i) {
+                List<String> reportNameList =
+                    ind.report.toString().split("/").last.split(',');
+                return GestureDetector(
+                  onTap: () async {
+                    var origin = Uri.parse(ind.report.toString()).origin;
+                    var path = Uri.parse(ind.report.toString()).path;
+                    var dir =
+                        path.substring(0, path.lastIndexOf('/')) + "/";
+                    print("dir: $dir");
+                    print(
+                        "origin: ${Uri.parse(ind.report.toString()).origin}");
+                    print(
+                        "path: ${Uri.parse(ind.report.toString()).path}");
 
-                return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount:
-                        ind.report.toString().split("/").last.split(',').length,
-                    itemBuilder: (_, i) {
-                      List<String> reportNameList =
-                          ind.report.toString().split("/").last.split(',');
-                      return GestureDetector(
-                        onTap: () async {
-                          var origin = Uri.parse(ind.report.toString()).origin;
-                          var path = Uri.parse(ind.report.toString()).path;
-                          var dir =
-                              path.substring(0, path.lastIndexOf('/')) + "/";
-                          print("dir: $dir");
-                          print(
-                              "origin: ${Uri.parse(ind.report.toString()).origin}");
-                          print(
-                              "path: ${Uri.parse(ind.report.toString()).path}");
-
-                          final url = origin + dir + reportNameList[i];
-                          if (url.isNotEmpty) {
-                            print("URL : $url");
-                            if (url.toLowerCase().contains(".jpg") ||
-                                url.toLowerCase().contains(".png") ||
-                                url.toLowerCase().contains(".jpeg")) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (ctx) => CustomPhotoViewer(url: url),
-                                ),
-                              );
-                            } else {
-                              if (await canLaunchUrl(Uri.parse(url ?? ''))) {
-                                launch(url ?? '');
-                              } else {
-                                throw "Could not launch $url";
-                              }
-                              print("URL : $url");
-                            }
-                          }
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(
-                              vertical: 1.h, horizontal: 2.w),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2.h, horizontal: 3.w),
-                          decoration: BoxDecoration(
-                            color: gWhiteColor,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.3),
-                                blurRadius: 10,
-                                offset: const Offset(2, 3),
-                              ),
-                            ],
+                    final url = origin + dir + reportNameList[i];
+                    if (url.isNotEmpty) {
+                      print("URL : $url");
+                      if (url.toLowerCase().contains(".jpg") ||
+                          url.toLowerCase().contains(".png") ||
+                          url.toLowerCase().contains(".jpeg")) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => CustomPhotoViewer(url: url),
                           ),
-                          child: Row(
+                        );
+                      } else {
+                        if (await canLaunchUrl(Uri.parse(url ?? ''))) {
+                          launch(url ?? '');
+                        } else {
+                          throw "Could not launch $url";
+                        }
+                        print("URL : $url");
+                      }
+                    }
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(
+                        vertical: 1.h, horizontal: 2.w),
+                    padding: EdgeInsets.symmetric(
+                        vertical: 2.h, horizontal: 3.w),
+                    decoration: BoxDecoration(
+                      color: gWhiteColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(2, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Image(
+                          height: 4.h,
+                          image: const AssetImage(
+                              "assets/images/Group 2722.png"),
+                        ),
+                        SizedBox(width: 3.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Image(
-                                height: 4.h,
-                                image: const AssetImage(
-                                    "assets/images/Group 2722.png"),
-                              ),
-                              SizedBox(width: 3.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      reportNameList[i],
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.start,
-                                      maxLines: 2,
-                                      style: TextStyle(
-                                          height: 1.2,
-                                          fontFamily: kFontMedium,
-                                          color: gBlackColor,
-                                          fontSize: 9.dp),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(width: 3.w),
-                              Icon(
-                                Icons.arrow_forward_ios_outlined,
-                                color: gsecondaryColor,
-                                size: 2.h,
+                              Text(
+                                reportNameList[i],
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.start,
+                                maxLines: 2,
+                                style: TextStyle(
+                                    height: 1.2,
+                                    fontFamily: kFontMedium,
+                                    color: gBlackColor,
+                                    fontSize: 9.dp),
                               ),
                             ],
                           ),
                         ),
-                      );
-                    });
-              }),
-            ),
-          ),
-        ),
-      ],
+                        SizedBox(width: 3.w),
+                        Icon(
+                          Icons.arrow_forward_ios_outlined,
+                          color: gsecondaryColor,
+                          size: 2.h,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              });
+        }),
+      ),
     );
   }
 
@@ -252,61 +231,103 @@ class _GetUserReportsState extends State<GetUserReports> {
               child: Container(
                 height: 40.h,
                 padding: EdgeInsets.symmetric(vertical: 2.h, horizontal: 5.w),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (medicalRecords.isNotEmpty)
-                        ListView.builder(
-                          itemCount: medicalRecords.length,
-                          shrinkWrap: true,
-                          scrollDirection: Axis.vertical,
-                          physics: const ScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final file = medicalRecords[index];
-                            return buildPopUpRecordList(file, setState,
-                                index: index);
-                          },
-                        ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 1.h, horizontal: 5.w),
-                        child: Center(
-                          child: IntrinsicWidth(
-                            child: GestureDetector(
-                              onTap: () async {
-                                submitUserRequestedUploadReport();
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(top: 3.h),
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 1.5.h, horizontal: 10.w),
-                                decoration: BoxDecoration(
-                                  color: eUser().buttonColor,
-                                  borderRadius: BorderRadius.circular(8),
-                                  // border:
-                                  //     Border.all(color: gMainColor, width: 1),
-                                ),
-                                child: (showSubmitProgress)
-                                    ? buildThreeBounceIndicator(
-                                        color: gWhiteColor)
-                                    : Center(
-                                        child: Text(
-                                          'Submit',
-                                          style: TextStyle(
-                                            fontFamily: kFontBold,
-                                            color: gWhiteColor,
-                                            fontSize: 11.dp,
-                                          ),
-                                        ),
-                                      ),
-                              ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // SizedBox(width: 26.w),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              'Upload Files',
+                              style: TextStyle(
+                                  fontFamily: "GothamRoundedBold_21016",
+                                  color: gTextColor,
+                                  fontSize: 12.sp),
                             ),
                           ),
                         ),
+                        // SizedBox(width: 26.w),
+                        InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Icon(
+                            Icons.clear,
+                            color: gBlackColor,
+                            size: 2.5.h,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 5,
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 1.h),
+                    if (medicalRecords.isNotEmpty)
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: ListView.builder(
+                            itemCount: medicalRecords.length,
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            physics: const ScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              final file = medicalRecords[index];
+                              return buildPopUpRecordList(file, setState,
+                                  index: index);
+                            },
+                          ),
+                        ),
                       ),
-                    ],
-                  ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 1.h, horizontal: 5.w),
+                      child: Center(
+                        child: ButtonWidget(
+                          onPressed: () async {
+                            submitUserRequestedUploadReport();
+                          },
+                          text: 'Submit',
+                          isLoading: showSubmitProgress,
+                          buttonWidth: 20.w,
+                        ),
+                        // IntrinsicWidth(
+                        //   child: GestureDetector(
+                        //     onTap: () async {
+                        //       submitUserRequestedUploadReport();
+                        //     },
+                        //     child: Container(
+                        //       margin: EdgeInsets.only(top: 3.h),
+                        //       padding: EdgeInsets.symmetric(
+                        //           vertical: 1.5.h, horizontal: 10.w),
+                        //       decoration: BoxDecoration(
+                        //         color: eUser().buttonColor,
+                        //         borderRadius: BorderRadius.circular(8),
+                        //         // border:
+                        //         //     Border.all(color: gMainColor, width: 1),
+                        //       ),
+                        //       child: (showSubmitProgress)
+                        //           ? buildThreeBounceIndicator(
+                        //               color: gWhiteColor)
+                        //           : Center(
+                        //               child: Text(
+                        //                 'Submit',
+                        //                 style: TextStyle(
+                        //                   fontFamily: kFontBold,
+                        //                   color: gWhiteColor,
+                        //                   fontSize: 11.dp,
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //     ),
+                        //   ),
+                        // ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -330,16 +351,17 @@ class _GetUserReportsState extends State<GetUserReports> {
         ),
       ),
       trailing: GestureDetector(
-          onTap: () {
-            medicalRecords.removeAt(index!);
-            // item.removeAt(index);
-            // _finalFiles.removeAt(index);
-            setstate(() {});
-          },
-          child: const Icon(
-            Icons.delete_outline_outlined,
-            color: gMainColor,
-          )),
+        onTap: () {
+          medicalRecords.removeAt(index!);
+          // item.removeAt(index);
+          // _finalFiles.removeAt(index);
+          setstate(() {});
+        },
+        child: const Icon(
+          Icons.delete_outline_outlined,
+          color: gMainColor,
+        ),
+      ),
     );
   }
 

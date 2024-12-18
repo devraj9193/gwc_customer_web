@@ -44,6 +44,8 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../meal_json.dart';
+import '../model/chief_qa_model/get_chief_qa_list_model.dart';
+import '../model/chief_qa_model/send_qa_model.dart';
 import '../model/combined_meal_model/get_user_yoga_list_model.dart';
 import '../model/combined_meal_model/meal_plan_tracker_modl/send_meal_plan_tracker_model.dart';
 import '../model/consultation_model/appointment_booking/appointment_book_model.dart';
@@ -56,6 +58,7 @@ import '../model/dashboard_model/shipping_approved/ship_approved_model.dart';
 import '../model/error_model.dart';
 import '../model/evaluation_from_models/get_country_details_model.dart';
 import '../model/faq_model/faq_list_model.dart';
+import '../model/gwc_products_model/get_gwc_products_model.dart';
 import '../model/home_model/bmi_bmr_model.dart';
 import '../model/home_model/get_remainder_model.dart';
 import '../model/home_model/graph_list_model.dart';
@@ -69,6 +72,8 @@ import '../model/program_model/meal_plan_details_model/meal_plan_details_model.d
 import '../model/shift_slots_model/shift_slots_model.dart';
 import '../model/shift_slots_model/unique_slots_model.dart';
 import '../model/ship_track_model/shipping_track_model.dart';
+import '../model/ship_track_model/user_address_model/get_user_address_model.dart';
+import '../model/ship_track_model/user_address_model/send_user_address_model.dart';
 import '../model/success_message_model.dart';
 import '../model/uvdesk_model/get_ticket_list_model.dart';
 import '../model/uvdesk_model/get_ticket_threads_list_model.dart';
@@ -307,7 +312,10 @@ class ApiClient {
 
     try {
       final response = await httpClient
-          .post(Uri.parse(path), body: jsonEncode(bodyParam),)
+          .post(
+            Uri.parse(path),
+            body: jsonEncode(bodyParam),
+          )
           .timeout(Duration(seconds: 45));
 
       print("getShippingTokenApi url : $path");
@@ -379,28 +387,28 @@ class ApiClient {
     dynamic result;
 
     // try {
-      final response = await httpClient.post(
-        Uri.parse(path),
-        headers: {
-          // "Authorization": "Bearer ${AppConfig().bearerToken}",
-          "Authorization": getHeaderToken(),
-        },
-      ).timeout(Duration(seconds: 45));
+    final response = await httpClient.post(
+      Uri.parse(path),
+      headers: {
+        // "Authorization": "Bearer ${AppConfig().bearerToken}",
+        "Authorization": getHeaderToken(),
+      },
+    ).timeout(Duration(seconds: 45));
 
-      print('shipRocketTrackingTrackerApi Response header: $path');
-      print(
-          'shipRocketTrackingTrackerApi Response status: ${response.statusCode}');
-      print('shipRocketTrackingTrackerApi Response body: ${response.body}');
+    print('shipRocketTrackingTrackerApi Response header: $path');
+    print(
+        'shipRocketTrackingTrackerApi Response status: ${response.statusCode}');
+    print('shipRocketTrackingTrackerApi Response body: ${response.body}');
 
-      if (response.statusCode != 200) {
-        final res = jsonDecode(response.body);
-        result = ErrorModel.fromJson(res);
-      } else if (response.statusCode == 500) {
-        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
-      } else {
-        final res = jsonDecode(response.body);
-        result = ShippingTrackModel.fromJson(res);
-      }
+    if (response.statusCode != 200) {
+      final res = jsonDecode(response.body);
+      result = ErrorModel.fromJson(res);
+    } else if (response.statusCode == 500) {
+      result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+    } else {
+      final res = jsonDecode(response.body);
+      result = ShippingTrackModel.fromJson(res);
+    }
     // } catch (e) {
     //   result = ErrorModel(status: "0", message: e.toString());
     // }
@@ -579,8 +587,10 @@ class ApiClient {
     return result;
   }
 
-  Future getPpcAppointmentSlotListApi(String selectedDate,String doctorId) async {
-    final path = "$getPpcAppointmentSlotUrl/?date=$selectedDate&doctorId=$doctorId";
+  Future getPpcAppointmentSlotListApi(
+      String selectedDate, String doctorId) async {
+    final path =
+        "$getPpcAppointmentSlotUrl/?date=$selectedDate&doctorId=$doctorId";
 
     var startTime = DateTime.now().millisecondsSinceEpoch;
 
@@ -593,13 +603,12 @@ class ApiClient {
       "Authorization": getHeaderToken(),
     };
     try {
-
       final response = await httpClient
-              .post(
-                Uri.parse(path),
-                headers: header,
-              )
-              .timeout(const Duration(seconds: 45));
+          .post(
+            Uri.parse(path),
+            headers: header,
+          )
+          .timeout(const Duration(seconds: 45));
 
       print("getAppointmentSlotListApi response path:" + path);
 
@@ -625,7 +634,7 @@ class ApiClient {
     return result;
   }
 
-  Future bookAppointmentApi(String date, String slotTime,String doctorId,
+  Future bookAppointmentApi(String date, String slotTime, String doctorId,
       {String? appointmentId, bool isPostprogram = false}) async {
     final path = bookAppointmentUrl;
 
@@ -633,7 +642,7 @@ class ApiClient {
 
     var startTime = DateTime.now().millisecondsSinceEpoch;
 
-    Map param = {'booking_date': date, 'slot': slotTime,'doctor_id' : doctorId};
+    Map param = {'booking_date': date, 'slot': slotTime, 'doctor_id': doctorId};
     if (isPostprogram == true) {
       param.putIfAbsent("status", () => 'post_program');
     }
@@ -657,8 +666,7 @@ class ApiClient {
         },
         body: param,
       );
-      print(
-          "bookAppointmentApi url :" + path);
+      print("bookAppointmentApi url :" + path);
       print(
           "bookAppointmentApi response code:" + response.statusCode.toString());
       print("bookAppointmentApi response body:" + response.body);
@@ -670,7 +678,6 @@ class ApiClient {
       if (res['status'].toString() == '200') {
         print(res);
         result = AppointmentBookingModel.fromJson(res);
-
       } else if (response.statusCode == 500) {
         result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
       } else {
@@ -758,58 +765,58 @@ class ApiClient {
 
     Map<String, String> m2 = Map.from(form);
     print(m2);
-     try {
-    var request = http.MultipartRequest('POST', Uri.parse(path));
-    var headers = {
-      // "Authorization": "Bearer ${AppConfig().bearerToken}",
-      "Authorization": getHeaderToken(),
-      'Accept': 'application/json',
-    };
+    try {
+      var request = http.MultipartRequest('POST', Uri.parse(path));
+      var headers = {
+        // "Authorization": "Bearer ${AppConfig().bearerToken}",
+        "Authorization": getHeaderToken(),
+        'Accept': 'application/json',
+      };
 
-    if (medicalReports != null) {
-      medicalReports.forEach((element) async {
-        request.files.add(http.MultipartFile.fromBytes(
-            'medical_report[]', element.bytes as List<int>,
-            filename: element.name));
-      });
-    }
+      if (medicalReports != null) {
+        medicalReports.forEach((element) async {
+          request.files.add(http.MultipartFile.fromBytes(
+              'medical_report[]', element.bytes as List<int>,
+              filename: element.name));
+        });
+      }
 
-    // //-------Send request
-    // var resp = await request.send();
-    //
-    // //------Read response
-    // String results = await resp.stream.bytesToString();
-    //
-    // //-------Your response
-    // print(results);
+      // //-------Send request
+      // var resp = await request.send();
+      //
+      // //------Read response
+      // String results = await resp.stream.bytesToString();
+      //
+      // //-------Your response
+      // print(results);
 
-    request.headers.addAll(headers);
-    request.fields.addAll(m2);
+      request.headers.addAll(headers);
+      request.fields.addAll(m2);
 
-    print("upload files : ${request.files}");
+      print("upload files : ${request.files}");
 
-    var response = await http.Response.fromStream(await request.send())
-        .timeout(Duration(seconds: 50));
+      var response = await http.Response.fromStream(await request.send())
+          .timeout(Duration(seconds: 50));
 
-    print("submitEvaluationFormApi response code:" + path);
-    print("submitEvaluationFormApi response code:" +
-        response.statusCode.toString());
-    print("submitEvaluationFormApi response body:" + response.body);
-    var totalTime = DateTime.now().millisecondsSinceEpoch - startTime;
-    print("response Time:" + (totalTime / 1000).round().toString());
+      print("submitEvaluationFormApi response code:" + path);
+      print("submitEvaluationFormApi response code:" +
+          response.statusCode.toString());
+      print("submitEvaluationFormApi response body:" + response.body);
+      var totalTime = DateTime.now().millisecondsSinceEpoch - startTime;
+      print("response Time:" + (totalTime / 1000).round().toString());
 
-    print(
-        "start: $startTime end: ${DateTime.now().millisecondsSinceEpoch}  total: $totalTime");
+      print(
+          "start: $startTime end: ${DateTime.now().millisecondsSinceEpoch}  total: $totalTime");
 
-    final res = jsonDecode(response.body);
-    print('${res['status'].runtimeType} ${res['status']}');
-    if (res['status'].toString() == '200') {
-      result = ReportUploadModel.fromJson(res);
-    } else if (response.statusCode == 500) {
-      result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
-    } else {
-      result = ErrorModel.fromJson(res);
-    }
+      final res = jsonDecode(response.body);
+      print('${res['status'].runtimeType} ${res['status']}');
+      if (res['status'].toString() == '200') {
+        result = ReportUploadModel.fromJson(res);
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        result = ErrorModel.fromJson(res);
+      }
     } catch (e) {
       print("catch error: ${e}");
       result = ErrorModel(status: "0", message: e.toString());
@@ -1206,8 +1213,8 @@ class ApiClient {
   }
 
   Future submitMealPlanApi(
-      SubmitMealPlanTrackerModel model,
-      ) async {
+    SubmitMealPlanTrackerModel model,
+  ) async {
     var url = submitDayPlanDetailsUrl;
 
     dynamic result;
@@ -1259,6 +1266,195 @@ class ApiClient {
       print(e);
       result = ErrorModel(status: "", message: e.toString());
     }
+    return result;
+  }
+
+  Future getGwcProductsApi() async {
+    final path = getGwcProductsUrl;
+    Object result;
+
+    try {
+      final response = await httpClient.get(
+        Uri.parse(path),
+      ).timeout(const Duration(seconds: 45));
+      print("url: $path");
+      print("getGwcProductsApi response code:" +
+          response.statusCode.toString());
+      print("getGwcProductsApi response body:" + response.body);
+
+      final res = jsonDecode(response.body);
+      print('${res['status'].runtimeType} ${res['status']}');
+
+      if (res['status'].toString() == '200') {
+        result = GetGwcProductsModel.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        result = ErrorModel.fromJson(res);
+      }
+    } catch (e) {
+      print("catch error$e");
+      result = ErrorModel(status: "0", message: e.toString());
+    }
+    return result;
+  }
+
+  Future submitGwcProductsApi(
+      Map details,
+      ) async {
+    var url = submitGwcProductsUrl;
+
+    dynamic result;
+
+    print("submitGwcProductsApi Details: $details");
+
+    try {
+      final response = await httpClient
+          .post(Uri.parse(url),
+          body: details)
+          .timeout(const Duration(seconds: 45));
+
+      print('submitGwcProductsApi Response header: $url');
+      print('submitGwcProductsApi Response status: ${response.statusCode}');
+      print('submitGwcProductsApi Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final res = jsonDecode(response.body);
+        if (res['status'] == 200) {
+          result = SendChiefQaModel.fromJson(res);
+        } else {
+          result = ErrorModel.fromJson(jsonDecode(response.body));
+        }
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        print('submitGwcProductsApi error: ${response.reasonPhrase}');
+        result = ErrorModel.fromJson(jsonDecode(response.body));
+      }
+    } catch (e) {
+      result = ErrorModel(status: "0", message: e.toString());
+    }
+
+    return result;
+  }
+
+  Future getChiefQuestionsListApi() async {
+    String path = getChiefQuestionListUrl;
+    var result;
+
+    try {
+      final response = await httpClient.get(
+        Uri.parse(path),
+        headers: {
+          // "Authorization": "Bearer ${AppConfig().bearerToken}",
+          "Authorization": getHeaderToken(),
+        },
+      ).timeout(const Duration(seconds: 45));
+
+      print("getChiefQuestionsListApi Url:" + getUserReportListUrl);
+      print("getChiefQuestionsListApi response code:" +
+          response.statusCode.toString());
+      print("getChiefQuestionsListApi response body:" + response.body);
+
+      final res = jsonDecode(response.body);
+      print('${res['status'].runtimeType} ${res['status']}');
+      if (res['status'].toString() == '200') {
+        result = GetChiefQaListModel.fromJson(jsonDecode(response.body));
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        result = ErrorModel.fromJson(res);
+      }
+    } catch (e) {
+      print("catch error");
+      result = ErrorModel(status: "0", message: e.toString());
+    }
+    return result;
+  }
+
+  Future submitChiefQuestionAnswerApi(
+      Map answers,
+      ) async {
+    var url = submitChiefQuestionAnswerUrl;
+
+    dynamic result;
+
+    print("Chief Answers: $answers");
+
+    try {
+      final response = await httpClient
+          .post(Uri.parse(url),
+          headers: {
+            // "Authorization": "Bearer ${AppConfig().bearerToken}",
+            "Authorization": getHeaderToken(),
+          },
+          body: answers)
+          .timeout(const Duration(seconds: 45));
+
+      print('submitChiefQuestionAnswerApi Response header: $url');
+      print('submitChiefQuestionAnswerApi Response status: ${response.statusCode}');
+      print('submitChiefQuestionAnswerApi Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final res = jsonDecode(response.body);
+        if (res['status'] == 200) {
+          result = SendChiefQaModel.fromJson(res);
+        } else {
+          result = ErrorModel.fromJson(jsonDecode(response.body));
+        }
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        print('submitChiefQuestionAnswerApi error: ${response.reasonPhrase}');
+        result = ErrorModel.fromJson(jsonDecode(response.body));
+      }
+    } catch (e) {
+      result = ErrorModel(status: "0", message: e.toString());
+    }
+
+    return result;
+  }
+
+  Future submitPollQuestionAnswerApi(
+      Map answers,
+      ) async {
+    var url = submitPollQuestionAnswerUrl;
+
+    dynamic result;
+
+    print("submitPollQuestionAnswerApi Answers: $answers");
+
+    try {
+      final response = await httpClient
+          .post(Uri.parse(url),
+          headers: {
+            // "Authorization": "Bearer ${AppConfig().bearerToken}",
+            "Authorization": getHeaderToken(),
+          },
+          body: answers)
+          .timeout(const Duration(seconds: 45));
+
+      print('submitPollQuestionAnswerApi Response header: $url');
+      print('submitPollQuestionAnswerApi Response status: ${response.statusCode}');
+      print('submitPollQuestionAnswerApi Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final res = jsonDecode(response.body);
+        if (res['status'] == 201) {
+          result = SendChiefQaModel.fromJson(res);
+        } else {
+          result = ErrorModel.fromJson(jsonDecode(response.body));
+        }
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        print('submitChiefQuestionAnswerApi error: ${response.reasonPhrase}');
+        result = ErrorModel.fromJson(jsonDecode(response.body));
+      }
+    } catch (e) {
+      result = ErrorModel(status: "0", message: e.toString());
+    }
+
     return result;
   }
 
@@ -1363,9 +1559,9 @@ class ApiClient {
   }
 
   Future submitMealPlanTrackerApi(
-      SubmitMealPlanTrackerModel model,
-      List<PlatformFile> files,
-      ) async {
+    SubmitMealPlanTrackerModel model,
+    Uint8List files,
+  ) async {
     var url = submitMealPlanTrackerUrl;
 
     dynamic result;
@@ -1382,12 +1578,14 @@ class ApiClient {
         "Authorization": getHeaderToken(),
       };
 
-      files.forEach((element) async {
-        request.files.add( http.MultipartFile.fromBytes(
-            'tongue_image', files.first.bytes as List<int>,
-            filename: files.first.name));
-      });
-          request.fields.addAll(m);
+      request.files.add(http.MultipartFile.fromBytes(
+        'tongue_image',
+        files,
+        filename:
+            "${_prefs?.getString(AppConfig.User_Name)}_tongue_picture.jpg",
+      ),);
+
+      request.fields.addAll(m);
       request.headers.addAll(headers);
 
       var response = await http.Response.fromStream(await request.send())
@@ -1500,6 +1698,85 @@ class ApiClient {
     return result;
   }
   //https://api.worldpostallocations.com/?postalcode=570008&countrycode=IN
+
+  Future getUserAddressApi() async {
+    final String path = getUserAddressApiUrl;
+    dynamic result;
+
+    try {
+      final response = await httpClient.get(
+        Uri.parse(path),
+        headers: {
+          // "Authorization": "Bearer ${AppConfig().bearerToken}",
+          "Authorization": getHeaderToken(),
+        },
+      ).timeout(const Duration(seconds: 45));
+
+      print('getUserAddressApi Response header: $path');
+      print('getUserAddressApi Response status: ${response.statusCode}');
+      print('getUserAddressApi Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final res = jsonDecode(response.body);
+        if (res['status'] == 200) {
+          result = GetUserAddressModel.fromJson(res);
+        } else if (response.statusCode == 500) {
+          result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+        } else {
+          result = ErrorModel.fromJson(jsonDecode(response.body));
+        }
+      } else {
+        print('getUserAddressApi error: ${response.reasonPhrase}');
+        result = ErrorModel.fromJson(jsonDecode(response.body));
+      }
+    } catch (e) {
+      result = ErrorModel(status: "0", message: e.toString());
+    }
+
+    return result;
+  }
+
+  Future sendUserAddressApi(Map details) async {
+    final String path = sensUserAddressApiUrl;
+    dynamic result;
+
+    Map bodyParam = details;
+
+    print("details : $bodyParam");
+
+    try {
+      final response = await httpClient
+          .post(Uri.parse(path),
+              headers: {
+                // "Authorization": "Bearer ${AppConfig().bearerToken}",
+                "Authorization": getHeaderToken(),
+              },
+              body: bodyParam)
+          .timeout(const Duration(seconds: 45));
+
+      print('sendUserAddressApi Response header: $path');
+      print('sendUserAddressApi Response status: ${response.statusCode}');
+      print('sendUserAddressApi Response body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final res = jsonDecode(response.body);
+        if (res['status'] == 200) {
+          result = SendUserAddressModel.fromJson(res);
+        } else {
+          result = ErrorModel.fromJson(jsonDecode(response.body));
+        }
+      } else if (response.statusCode == 500) {
+        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      } else {
+        print('shippingApproveApi error: ${response.reasonPhrase}');
+        result = ErrorModel.fromJson(jsonDecode(response.body));
+      }
+    } catch (e) {
+      result = ErrorModel(status: "0", message: e.toString());
+    }
+
+    return result;
+  }
 
   getPinCodeDetails(String pincode, String countryCode) async {
     final String path = "$getPinCodeFormApiUrl/$pincode";
@@ -2314,19 +2591,16 @@ class ApiClient {
 
     print("token: ${getHeaderToken()}");
     try {
-
       final response = await httpClient.get(
         Uri.parse(path),
         headers: {
           // "Authorization": "Bearer ${AppConfig().bearerToken}",
           "Authorization": getHeaderToken(),
-
         },
       ).timeout(const Duration(seconds: 45));
-      print(
-          "getConsultationSlotsApi response path:" + path);
-      print(
-          "getConsultationSlotsApi response code:" + response.statusCode.toString());
+      print("getConsultationSlotsApi response path:" + path);
+      print("getConsultationSlotsApi response code:" +
+          response.statusCode.toString());
       print("getConsultationSlotsApi response body:" + response.toString());
 
       final res = jsonDecode(response.body);
@@ -2345,46 +2619,45 @@ class ApiClient {
     return result;
   }
 
-  Future getShiftSlotsApi(String selectedDate,String shiftType,String doctorId) async {
-    final path = "$getShiftSlotsUrl?date=$selectedDate&shift_type=$shiftType&user_id=$doctorId";
+  Future getShiftSlotsApi(
+      String selectedDate, String shiftType, String doctorId) async {
+    final path =
+        "$getShiftSlotsUrl?date=$selectedDate&shift_type=$shiftType&user_id=$doctorId";
     var result;
 
     print("--- Shift Slots ---");
 
     Map m = {
-        "user_id" : _prefs?.getString(AppConfig.userDoctorId),
-        "shift_type" : "followup_slots",
-        "date" : selectedDate
+      "user_id": _prefs?.getString(AppConfig.userDoctorId),
+      "shift_type": "followup_slots",
+      "date": selectedDate
     };
 
     print("token: ${getHeaderToken()}");
     // try {
 
-      final response = await httpClient.get(
-        Uri.parse(path),
-        headers: {
-          // "Authorization": "Bearer ${AppConfig().bearerToken}",
-          "Authorization": getHeaderToken(),
+    final response = await httpClient.get(
+      Uri.parse(path),
+      headers: {
+        // "Authorization": "Bearer ${AppConfig().bearerToken}",
+        "Authorization": getHeaderToken(),
+      },
+    ).timeout(const Duration(seconds: 45));
+    print("getShiftSlotsApi response path:" + path);
+    print("getShiftSlotsApi response code:" + response.statusCode.toString());
+    print("getShiftSlotsApi response body:" + response.toString());
 
-        },
-      ).timeout(const Duration(seconds: 45));
-      print(
-          "getShiftSlotsApi response path:" + path);
-      print(
-          "getShiftSlotsApi response code:" + response.statusCode.toString());
-      print("getShiftSlotsApi response body:" + response.toString());
+    final res = jsonDecode(response.body);
+    print('${res['status'].runtimeType} ${res['status']}');
+    if (res['status'].toString() == '200') {
+      result = ShiftSlotsModel.fromJson(res);
 
-      final res = jsonDecode(response.body);
-      print('${res['status'].runtimeType} ${res['status']}');
-      if (res['status'].toString() == '200') {
-        result = ShiftSlotsModel.fromJson(res);
-
-        print("getShiftSlotsApi response : $result");
-      } else if (response.statusCode == 500) {
-        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
-      } else {
-        result = ErrorModel.fromJson(res);
-      }
+      print("getShiftSlotsApi response : $result");
+    } else if (response.statusCode == 500) {
+      result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+    } else {
+      result = ErrorModel.fromJson(res);
+    }
     // } catch (e) {
     //   print("getShiftSlotsApi catch error ${e}");
     //   result = ErrorModel(status: "0", message: e.toString());
@@ -3468,36 +3741,35 @@ class ApiClient {
     print("getUserYogaListApi response url:" + path);
 
     // try {
-      final response = await httpClient.get(
-        Uri.parse(path),
-        headers: {
-          // "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZTFlMTkzNGQyMDU0YWIyNjMyMjM1NmJkYmY5OTA1OGYyZmRmODA2NmQ3NTY3YzZkYmRkMzdhZGEyYzZkYTQzZjFkMWI0NDA5Zjg4MzA3ZWUiLCJpYXQiOjE3MTYxNzk4MzguMDY0ODM3OTMyNTg2NjY5OTIxODc1LCJuYmYiOjE3MTYxNzk4MzguMDY0ODQxMDMyMDI4MTk4MjQyMTg3NSwiZXhwIjoxNzQ3NzE1ODM4LjA2MDkwNTkzMzM4MDEyNjk1MzEyNSwic3ViIjoiNzg5Iiwic2NvcGVzIjpbXX0.N-E1rS2N9N8WZ0zGJTCY_wau9EFNDEv4cS5S2XETTW2ZOrlxMAHtbRBfkPbSRUS_COfoNmYdk5P2muNwMVCw1jhI0AMNwoHxOjGQ4Qfb3g-OW_LGdqdWPkhfV4DdRbLM7ATFXUjL25310X7D95B1mJ8p2j6byN8K8pKqaC4efB7T6byWbCFcNkIoVBG9JCk76rY_oX1pMhaE4hJNMbB56rwR0a-cyvzS9oedxlFWBaq6nDp5CbVvfAssFQ-5IkXqpfh4g8iWkNaCZxRh14ehs_ONNhrP-bG4qD6iKLgtKyuEH44zQXinYyvvLCaipI1WP8wiAGzupU1H23fmh30IwRhdUjbvGtb5N4VSS49tDu6IqKWj5UszEON3_GcGbbCc5mvCnY-Qg3vFAwYu-7ErFMPAe4d4jMjItxN7GJkKyKjc-3XzdQZ1ndaXIEzMDW604Lc8mfhbfqpUd_P_XKPHiX0ZwmdGiovnp1bod8u6x9Ziw1_gFCHw6NgMtiYkU4haBcdWOaacjNSmfhJsFGmlD2Bwsd3yEKq8PUO7pqf4p0rZuH8nGUBF1a7kayhdjb67IzgKhZNjUhJNpUfFvk2T8RJtv6XGx8mHR9uFcFgRDBtbU9W9me0il0_zgmMvfzeJw6_cy_N3qg1KuU5vWMPkRA-ewv4GY7-vTTp5hamCjhg",
-          "Authorization": getHeaderToken(),
-        },
-      ).timeout(const Duration(seconds: 45));
+    final response = await httpClient.get(
+      Uri.parse(path),
+      headers: {
+        // "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZTFlMTkzNGQyMDU0YWIyNjMyMjM1NmJkYmY5OTA1OGYyZmRmODA2NmQ3NTY3YzZkYmRkMzdhZGEyYzZkYTQzZjFkMWI0NDA5Zjg4MzA3ZWUiLCJpYXQiOjE3MTYxNzk4MzguMDY0ODM3OTMyNTg2NjY5OTIxODc1LCJuYmYiOjE3MTYxNzk4MzguMDY0ODQxMDMyMDI4MTk4MjQyMTg3NSwiZXhwIjoxNzQ3NzE1ODM4LjA2MDkwNTkzMzM4MDEyNjk1MzEyNSwic3ViIjoiNzg5Iiwic2NvcGVzIjpbXX0.N-E1rS2N9N8WZ0zGJTCY_wau9EFNDEv4cS5S2XETTW2ZOrlxMAHtbRBfkPbSRUS_COfoNmYdk5P2muNwMVCw1jhI0AMNwoHxOjGQ4Qfb3g-OW_LGdqdWPkhfV4DdRbLM7ATFXUjL25310X7D95B1mJ8p2j6byN8K8pKqaC4efB7T6byWbCFcNkIoVBG9JCk76rY_oX1pMhaE4hJNMbB56rwR0a-cyvzS9oedxlFWBaq6nDp5CbVvfAssFQ-5IkXqpfh4g8iWkNaCZxRh14ehs_ONNhrP-bG4qD6iKLgtKyuEH44zQXinYyvvLCaipI1WP8wiAGzupU1H23fmh30IwRhdUjbvGtb5N4VSS49tDu6IqKWj5UszEON3_GcGbbCc5mvCnY-Qg3vFAwYu-7ErFMPAe4d4jMjItxN7GJkKyKjc-3XzdQZ1ndaXIEzMDW604Lc8mfhbfqpUd_P_XKPHiX0ZwmdGiovnp1bod8u6x9Ziw1_gFCHw6NgMtiYkU4haBcdWOaacjNSmfhJsFGmlD2Bwsd3yEKq8PUO7pqf4p0rZuH8nGUBF1a7kayhdjb67IzgKhZNjUhJNpUfFvk2T8RJtv6XGx8mHR9uFcFgRDBtbU9W9me0il0_zgmMvfzeJw6_cy_N3qg1KuU5vWMPkRA-ewv4GY7-vTTp5hamCjhg",
+        "Authorization": getHeaderToken(),
+      },
+    ).timeout(const Duration(seconds: 45));
 
-      print("getUserYogaListApi response url:" + path);
-      print(
-          "getUserYogaListApi response code:" + response.statusCode.toString());
-      print("getUserYogaListApi response body:" + response.body);
+    print("getUserYogaListApi response url:" + path);
+    print("getUserYogaListApi response code:" + response.statusCode.toString());
+    print("getUserYogaListApi response body:" + response.body);
 
-      if (response.statusCode == 200) {
-        final res = jsonDecode(response.body);
-        print('${res['status'].runtimeType} ${res['status']}');
-        print(res['Detox']);
+    if (response.statusCode == 200) {
+      final res = jsonDecode(response.body);
+      print('${res['status'].runtimeType} ${res['status']}');
+      print(res['Detox']);
 
-        if (res['status'].toString() == '200') {
-          result = GetUserYogaListModel.fromJson(jsonDecode(response.body));
-        } else {
-          result = ErrorModel.fromJson(res);
-        }
-      } else if (response.statusCode == 500) {
-        result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+      if (res['status'].toString() == '200') {
+        result = GetUserYogaListModel.fromJson(jsonDecode(response.body));
       } else {
-        print('status not equal called');
-        final res = jsonDecode(response.body);
         result = ErrorModel.fromJson(res);
       }
+    } else if (response.statusCode == 500) {
+      result = ErrorModel(status: "0", message: AppConfig.oopsMessage);
+    } else {
+      print('status not equal called');
+      final res = jsonDecode(response.body);
+      result = ErrorModel.fromJson(res);
+    }
     // } catch (e) {
     //   print("catch error::> $e");
     //   result = ErrorModel(status: "0", message: e.toString());

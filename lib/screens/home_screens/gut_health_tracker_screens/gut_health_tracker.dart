@@ -2,7 +2,8 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:intl/intl.dart' show DateFormat;
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../utils/app_config.dart';
@@ -23,7 +24,7 @@ class _GutHealthTrackerState extends State<GutHealthTracker> {
   DateTime _targetDateTime = DateTime.now();
   String selectedSummary = "";
 
-  final carouselController = CarouselController();
+  // final carouselController = CarouselController();
 
   final dataMap = <String, double>{
     "Stools": 55,
@@ -65,16 +66,16 @@ class _GutHealthTrackerState extends State<GutHealthTracker> {
         fontSize: eUser().userTextFieldHintFontSize,
       ),
       // textAlignment: ChartAlignment.far,
-        //       //   // format: 'point.y%',
-        //       //   tooltipPosition: TooltipPosition.pointer,
-        // builder: (dynamic data, dynamic point, dynamic series,
-        //     int pointIndex, int seriesIndex) {
-        //   return Container(
-        //       child: Text(
-        //           'PointIndex : ${pointIndex.toString()}'
-        //       )
-        //   );
-        // }
+      //       //   // format: 'point.y%',
+      //       //   tooltipPosition: TooltipPosition.pointer,
+      // builder: (dynamic data, dynamic point, dynamic series,
+      //     int pointIndex, int seriesIndex) {
+      //   return Container(
+      //       child: Text(
+      //           'PointIndex : ${pointIndex.toString()}'
+      //       )
+      //   );
+      // }
     );
     super.initState();
   }
@@ -396,7 +397,7 @@ class _GutHealthTrackerState extends State<GutHealthTracker> {
         // prevMonthDayBorderColor: Colors.grey.withOpacity(0.2),
         weekDayFormat: WeekdayFormat.narrow,
         onDayPressed: (date, events) {
-           setState(() => _currentDate2 = date);
+          setState(() => _currentDate2 = date);
           for (var event in events) {
             AppConfig().showSnackbar(context, '${event.title} $selectedSummary',
                 isError: true);

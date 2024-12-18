@@ -14,7 +14,7 @@ import 'package:http/http.dart' as http;
 import 'package:async/async.dart';
 import '../../../repository/api_service.dart';
 import '../../../utils/app_config.dart';
-import '../../../widgets/widgets.dart';
+import '../../../widgets/button_widget.dart';
 import 'package:flutter_emoji_feedback/flutter_emoji_feedback.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -289,39 +289,57 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          GestureDetector(
-                            onTap: () {
+                          ButtonWidget(
+                            onPressed: () {
                               if (ratings == 0.0) {
                                 AppConfig().showSnackbar(
                                     context, "Please select the rating",
                                     isError: true);
                               } else if (formKey.currentState!.validate()) {
                                 submitRating();
+
                               }
                             },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 5.w, vertical: 1.h),
-                              decoration: BoxDecoration(
-                                color: kNumberCircleAmber,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: (isSubmitted)
-                                    ? buildThreeBounceIndicator(
-                                        color:
-                                            eUser().threeBounceIndicatorColor)
-                                    : Text(
-                                        'Submit',
-                                        style: TextStyle(
-                                          fontFamily: eUser().buttonTextFont,
-                                          color: gBlackColor,
-                                          fontSize: eUser().buttonTextSize,
-                                        ),
-                                      ),
-                              ),
-                            ),
+                            text: 'Submit',
+                            isLoading: isSubmitted,
+                            buttonWidth: 20.w,
+                            radius: 8,
+                            color: kNumberCircleAmber,
+                            textColor: gBlackColor,
                           ),
+                          // GestureDetector(
+                          //   onTap: () {
+                          //     if (ratings == 0.0) {
+                          //       AppConfig().showSnackbar(
+                          //           context, "Please select the rating",
+                          //           isError: true);
+                          //     } else if (formKey.currentState!.validate()) {
+                          //       submitRating();
+                          //     }
+                          //   },
+                          //   child: Container(
+                          //     padding: EdgeInsets.symmetric(
+                          //         horizontal: 5.w, vertical: 1.h),
+                          //     decoration: BoxDecoration(
+                          //       color: kNumberCircleAmber,
+                          //       borderRadius: BorderRadius.circular(8),
+                          //     ),
+                          //     child: Center(
+                          //       child: (isSubmitted)
+                          //           ? buildThreeBounceIndicator(
+                          //               color:
+                          //                   eUser().threeBounceIndicatorColor)
+                          //           : Text(
+                          //               'Submit',
+                          //               style: TextStyle(
+                          //                 fontFamily: eUser().buttonTextFont,
+                          //                 color: gBlackColor,
+                          //                 fontSize: eUser().buttonTextSize,
+                          //               ),
+                          //             ),
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -339,7 +357,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
 
   buildRecordList(PlatformFile file, {int? index}) {
     return ListTile(
-      shape: Border(bottom: BorderSide()),
+      shape: const Border(bottom: BorderSide()),
       // leading: SizedBox(
       //     width: 50, height: 50, child: Image.file(File(filename.path!))),
       title: Text(

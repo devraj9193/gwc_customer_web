@@ -104,7 +104,8 @@ class ChildGetEvaluationDataModel {
         this.bowelPatternOther,
         this.createdAt,
         this.updatedAt,
-        this.patient});
+        this.patient,
+      });
 
   ChildGetEvaluationDataModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -164,69 +165,69 @@ class ChildGetEvaluationDataModel {
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     patient =
-    json['patient'] != null ? new ChildEvalPatient.fromJson(json['patient']) : null;
+    json['patient'] != null ? ChildEvalPatient.fromJson(json['patient']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['patient_id'] = this.patientId;
-    data['weight'] = this.weight;
-    data['height'] = this.height;
-    data['health_problem'] = this.healthProblem;
-    data['list_problems'] = this.listProblems;
-    data['list_problems_other'] = this.listProblemsOther;
-    data['list_body_issues'] = this.listBodyIssues;
-    data['tongue_coating'] = this.tongueCoating;
-    data['tongue_coating_other'] = this.tongueCoatingOther;
-    data['any_urination_issue'] = this.anyUrinationIssue;
-    data['urine_color'] = this.urineColor;
-    data['urine_color_other'] = this.urineColorOther;
-    data['urine_smell'] = this.urineSmell;
-    data['urine_smell_other'] = this.urineSmellOther;
-    data['urine_look_like'] = this.urineLookLike;
-    data['urine_look_like_other'] = this.urineLookLikeOther;
-    data['closest_stool_type'] = this.closestStoolType;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['patient_id'] = patientId;
+    data['weight'] = weight;
+    data['height'] = height;
+    data['health_problem'] = healthProblem;
+    data['list_problems'] = listProblems;
+    data['list_problems_other'] = listProblemsOther;
+    data['list_body_issues'] = listBodyIssues;
+    data['tongue_coating'] = tongueCoating;
+    data['tongue_coating_other'] = tongueCoatingOther;
+    data['any_urination_issue'] = anyUrinationIssue;
+    data['urine_color'] = urineColor;
+    data['urine_color_other'] = urineColorOther;
+    data['urine_smell'] = urineSmell;
+    data['urine_smell_other'] = urineSmellOther;
+    data['urine_look_like'] = urineLookLike;
+    data['urine_look_like_other'] = urineLookLikeOther;
+    data['closest_stool_type'] = closestStoolType;
     data['any_medical_intervation_done_before'] =
-        this.anyMedicalIntervationDoneBefore;
+        anyMedicalIntervationDoneBefore;
     data['any_medical_intervation_done_before_other'] =
-        this.anyMedicalIntervationDoneBeforeOther;
+        anyMedicalIntervationDoneBeforeOther;
     data['any_medication_consume_at_moment'] =
-        this.anyMedicationConsumeAtMoment;
-    data['any_therapies_have_done_before'] = this.anyTherapiesHaveDoneBefore;
-    data['medical_report'] = this.medicalReport;
+        anyMedicationConsumeAtMoment;
+    data['any_therapies_have_done_before'] = anyTherapiesHaveDoneBefore;
+    data['medical_report'] = medicalReport;
 
-    data['veg_nonveg_vegan'] = this.vegNonVegVegan;
-    data['veg_nonveg_vegan_other'] = this.vegNonVegVeganOther;
+    data['veg_nonveg_vegan'] = vegNonVegVegan;
+    data['veg_nonveg_vegan_other'] = vegNonVegVeganOther;
 
-    data['early_morning'] = this.earlyMorning;
-    data['breakfast'] = this.breakfast;
-    data['mid_day'] = this.midDay;
-    data['lunch'] = this.lunch;
-    data['evening'] = this.evening;
-    data['dinner'] = this.dinner;
-    data['post_dinner'] = this.postDinner;
+    data['early_morning'] = earlyMorning;
+    data['breakfast'] = breakfast;
+    data['mid_day'] = midDay;
+    data['lunch'] = lunch;
+    data['evening'] = evening;
+    data['dinner'] = dinner;
+    data['post_dinner'] = postDinner;
 
     data['mention_if_any_food_affects_your_digesion'] =
-        this.mentionIfAnyFoodAffectsYourDigesion;
-    data['any_special_diet'] = this.anySpecialDiet;
-    data['any_food_allergy'] = this.anyFoodAllergy;
-    data['any_intolerance'] = this.anyIntolerance;
-    data['any_severe_food_cravings'] = this.anySevereFoodCravings;
-    data['any_dislike_food'] = this.anyDislikeFood;
-    data['no_galsses_day'] = this.noGalssesDay;
-    data['any_habbit_or_addiction'] = this.anyHabbitOrAddiction;
-    data['any_habbit_or_addiction_other'] = this.anyHabbitOrAddictionOther;
-    data['after_meal_preference'] = this.afterMealPreference;
-    data['after_meal_preference_other'] = this.afterMealPreferenceOther;
-    data['hunger_pattern'] = this.hungerPattern;
-    data['hunger_pattern_other'] = this.hungerPatternOther;
-    data['bowel_pattern'] = this.bowelPattern;
-    data['bowel_pattern_other'] = this.bowelPatternOther;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.patient != null) {
-      data['patient'] = this.patient!.toJson();
+        mentionIfAnyFoodAffectsYourDigesion;
+    data['any_special_diet'] = anySpecialDiet;
+    data['any_food_allergy'] = anyFoodAllergy;
+    data['any_intolerance'] = anyIntolerance;
+    data['any_severe_food_cravings'] = anySevereFoodCravings;
+    data['any_dislike_food'] = anyDislikeFood;
+    data['no_galsses_day'] = noGalssesDay;
+    data['any_habbit_or_addiction'] = anyHabbitOrAddiction;
+    data['any_habbit_or_addiction_other'] = anyHabbitOrAddictionOther;
+    data['after_meal_preference'] = afterMealPreference;
+    data['after_meal_preference_other'] = afterMealPreferenceOther;
+    data['hunger_pattern'] = hungerPattern;
+    data['hunger_pattern_other'] = hungerPatternOther;
+    data['bowel_pattern'] = bowelPattern;
+    data['bowel_pattern_other'] = bowelPatternOther;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    if (patient != null) {
+      data['patient'] = patient!.toJson();
     }
     return data;
   }

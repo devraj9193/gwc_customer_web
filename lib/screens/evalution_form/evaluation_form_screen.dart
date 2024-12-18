@@ -1,14 +1,12 @@
-import 'package:get/get.dart';
+import 'package:gwc_customer_web/screens/evalution_form/web_eval_screens/web_eval_screen.dart';
+import 'package:gwc_customer_web/widgets/button_widget.dart';
 import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import '../../model/error_model.dart';
-import '../../model/profile_model/logout_model.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../repository/api_service.dart';
 import '../../repository/login_otp_repository.dart';
-import '../../services/login_otp_service.dart';
 import '../../utils/app_config.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/exit_widget.dart';
@@ -16,7 +14,6 @@ import '../../widgets/widgets.dart';
 import '../gut_list_screens/new_stages_data.dart';
 import '../user_registration/existing_user.dart';
 import 'evaluation_form_page1.dart';
-import 'personal_details_screen.dart';
 
 class EvaluationFormScreen extends StatefulWidget {
   /// isFromSplashScreen is used to handle back button press event
@@ -82,7 +79,7 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
                     customAction: true,
                     isBackEnable: false,
                   ),
-                   Center(
+                  Center(
                     child: Image(
                       image: AssetImage("assets/images/eval.png"),
                       height: 45.h,
@@ -133,7 +130,7 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
                   Padding(
                     padding: const EdgeInsets.only(right: 25.0),
                     child: Text(
-                      "Do fill this to the best of your knowledge.\nAll your data is confidential & is visible to only your doctors & a few team members who assist them.\nTime to fill 3-4 Minutes",
+                      "Do fill this to the best of your knowledge. All your data is confidential & is visible to only your doctors & a few team members who assist them. Time to fill 3-4 Minutes",
                       textAlign: TextAlign.justify,
                       style: TextStyle(
                           fontFamily: kFontBook,
@@ -168,77 +165,93 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
                     height: 4.h,
                   ),
                   Center(
-                    child: IntrinsicWidth(
-                      child: GestureDetector(
-                        // onTap: (showLoginProgress) ? null : () {
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => const EvaluationFormPage1(),
-                              // const PersonalDetailsScreen(showData: true,),
-                            ),
-                          );
-                      
-                          /// local storage details
-                          // _pref.remove(AppConfig.eval1);
-                          // if(_pref.getString(AppConfig.eval1) != null && _pref.getString(AppConfig.eval1) != ""){
-                          //   final jsonEval1 = _pref.getString(AppConfig.eval1);
-                          //   if(_pref.getString(AppConfig.eval2) != null && _pref.getString(AppConfig.eval2) != ""){
-                          //
-                          //     final jsonEval2 = _pref.getString(AppConfig.eval2);
-                          //
-                          //     Navigator.push(context, MaterialPageRoute(
-                          //         builder: (ctx) => EvaluationUploadReport(
-                          //           evaluationModelFormat1: EvaluationModelFormat1.fromMap(json.decode(jsonEval1!)),
-                          //           evaluationModelFormat2: EvaluationModelFormat2.fromMap(json.decode(jsonEval2!)),
-                          //         )
-                          //     ));
-                          //   }
-                          //   else{
-                          //     Navigator.push(
-                          //         context,
-                          //         MaterialPageRoute(
-                          //             builder: (ctx) => PersonalDetailsScreen2(
-                          //               evaluationModelFormat1: EvaluationModelFormat1.fromMap(json.decode(jsonEval1!)),
-                          //             )
-                          //         ));
-                          //   }
-                          // }
-                          // else{
-                          //   Navigator.of(context).push(
-                          //     MaterialPageRoute(
-                          //       builder: (context) => const PersonalDetailsScreen(),
-                          //     ),
-                          //   );
-                          // }
-                        },
-                        child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 4.h),
-                          padding: EdgeInsets.symmetric(
-                              vertical: 1.5.h, horizontal: 5.w),
-                          decoration: BoxDecoration(
-                            color: eUser().buttonColor,
-                            borderRadius:
-                                BorderRadius.circular(eUser().buttonBorderRadius),
-                            // border: Border.all(
-                            //     color: eUser().buttonBorderColor,
-                            //     width: eUser().buttonBorderWidth
-                            // ),
+                    child: ButtonWidget(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) =>  MediaQuery.of(context).size.shortestSide > 600
+                                ? const WebEvalScreen()
+                                : const EvaluationFormPage1(),
                           ),
-                          child: Center(
-                            child: Text(
-                              'NEXT',
-                              style: TextStyle(
-                                fontFamily: eUser().buttonTextFont,
-                                color: eUser().buttonTextColor,
-                                fontSize: eUser().buttonTextSize,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+                        );
+                      },
+                      text: 'NEXT',
+                      isLoading: false,
+                      buttonWidth: 18.w,
                     ),
                   ),
+                  // Center(
+                  //   child: IntrinsicWidth(
+                  //     child: GestureDetector(
+                  //       // onTap: (showLoginProgress) ? null : () {
+                  //       onTap: () {
+                  //         Navigator.of(context).push(
+                  //           MaterialPageRoute(
+                  //             builder: (context) => const EvaluationFormPage1(),
+                  //             // const PersonalDetailsScreen(showData: true,),
+                  //           ),
+                  //         );
+                  //
+                  //         /// local storage details
+                  //         // _pref.remove(AppConfig.eval1);
+                  //         // if(_pref.getString(AppConfig.eval1) != null && _pref.getString(AppConfig.eval1) != ""){
+                  //         //   final jsonEval1 = _pref.getString(AppConfig.eval1);
+                  //         //   if(_pref.getString(AppConfig.eval2) != null && _pref.getString(AppConfig.eval2) != ""){
+                  //         //
+                  //         //     final jsonEval2 = _pref.getString(AppConfig.eval2);
+                  //         //
+                  //         //     Navigator.push(context, MaterialPageRoute(
+                  //         //         builder: (ctx) => EvaluationUploadReport(
+                  //         //           evaluationModelFormat1: EvaluationModelFormat1.fromMap(json.decode(jsonEval1!)),
+                  //         //           evaluationModelFormat2: EvaluationModelFormat2.fromMap(json.decode(jsonEval2!)),
+                  //         //         )
+                  //         //     ));
+                  //         //   }
+                  //         //   else{
+                  //         //     Navigator.push(
+                  //         //         context,
+                  //         //         MaterialPageRoute(
+                  //         //             builder: (ctx) => PersonalDetailsScreen2(
+                  //         //               evaluationModelFormat1: EvaluationModelFormat1.fromMap(json.decode(jsonEval1!)),
+                  //         //             )
+                  //         //         ));
+                  //         //   }
+                  //         // }
+                  //         // else{
+                  //         //   Navigator.of(context).push(
+                  //         //     MaterialPageRoute(
+                  //         //       builder: (context) => const PersonalDetailsScreen(),
+                  //         //     ),
+                  //         //   );
+                  //         // }
+                  //       },
+                  //       child: Container(
+                  //         margin: EdgeInsets.symmetric(vertical: 4.h),
+                  //         padding: EdgeInsets.symmetric(
+                  //             vertical: 1.5.h, horizontal: 5.w),
+                  //         decoration: BoxDecoration(
+                  //           color: eUser().buttonColor,
+                  //           borderRadius: BorderRadius.circular(
+                  //               eUser().buttonBorderRadius),
+                  //           // border: Border.all(
+                  //           //     color: eUser().buttonBorderColor,
+                  //           //     width: eUser().buttonBorderWidth
+                  //           // ),
+                  //         ),
+                  //         child: Center(
+                  //           child: Text(
+                  //             'NEXT',
+                  //             style: TextStyle(
+                  //               fontFamily: eUser().buttonTextFont,
+                  //               color: eUser().buttonTextColor,
+                  //               fontSize: eUser().buttonTextSize,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   // Center(
                   //   child: CommonButton.submitButton(() {
                   //     Navigator.of(context).push(
@@ -302,49 +315,66 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
           (showLogoutProgress)
               ? Center(child: buildCircularIndicator())
               : Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: () => logOut(),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 1.h, horizontal: 12.w),
-                  decoration: BoxDecoration(
-                      color: gsecondaryColor,
-                      border: Border.all(color: kLineColor, width: 0.5),
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Text(
-                    "YES",
-                    style: TextStyle(
-                      fontFamily: kFontMedium,
-                      color: gWhiteColor,
-                      fontSize: 11.dp,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ButtonWidget(
+                      onPressed: () => logOut(),
+                      text: "Yes",
+                      isLoading: false,
+                      radius: 5,
+                      buttonWidth: 15.w,
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(width: 5.w),
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 1.h, horizontal: 12.w),
-                  decoration: BoxDecoration(
+                    SizedBox(width: 5.w),
+                    ButtonWidget(
+                      onPressed: () => Navigator.pop(context),
+                      text: "No",
+                      isLoading: false,
+                      radius: 5,
+                      buttonWidth: 15.w,
                       color: gWhiteColor,
-                      border: Border.all(color: kLineColor, width: 0.5),
-                      borderRadius: BorderRadius.circular(5)),
-                  child: Text(
-                    "NO",
-                    style: TextStyle(
-                      fontFamily: kFontMedium,
-                      color: gsecondaryColor,
-                      fontSize: 11.dp,
+                      textColor: gsecondaryColor,
                     ),
-                  ),
+                    // GestureDetector(
+                    //   onTap: () => logOut(),
+                    //   child: Container(
+                    //     padding: EdgeInsets.symmetric(
+                    //         vertical: 1.h, horizontal: 12.w),
+                    //     decoration: BoxDecoration(
+                    //         color: gsecondaryColor,
+                    //         border: Border.all(color: kLineColor, width: 0.5),
+                    //         borderRadius: BorderRadius.circular(5)),
+                    //     child: Text(
+                    //       "YES",
+                    //       style: TextStyle(
+                    //         fontFamily: kFontMedium,
+                    //         color: gWhiteColor,
+                    //         fontSize: 11.dp,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(width: 5.w),
+                    // GestureDetector(
+                    //   onTap: () => Navigator.pop(context),
+                    //   child: Container(
+                    //     padding: EdgeInsets.symmetric(
+                    //         vertical: 1.h, horizontal: 12.w),
+                    //     decoration: BoxDecoration(
+                    //         color: gWhiteColor,
+                    //         border: Border.all(color: kLineColor, width: 0.5),
+                    //         borderRadius: BorderRadius.circular(5)),
+                    //     child: Text(
+                    //       "NO",
+                    //       style: TextStyle(
+                    //         fontFamily: kFontMedium,
+                    //         color: gsecondaryColor,
+                    //         fontSize: 11.dp,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
                 ),
-              ),
-            ],
-          ),
           SizedBox(height: 1.h)
         ],
       );
@@ -361,24 +391,24 @@ class _EvaluationFormScreenState extends State<EvaluationFormScreen> {
     logoutProgressState(() {
       showLogoutProgress = true;
     });
-    final res =
-    await LoginWithOtpService(repository: repository).logoutService();
-
-    if (res.runtimeType == LogoutModel) {
+    // final res =
+    //     await LoginWithOtpService(repository: repository).logoutService();
+    //
+    // if (res.runtimeType == LogoutModel) {
       clearAllUserDetails();
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const ExistingUser(),
       ));
-    } else {
-      ErrorModel model = res as ErrorModel;
-      Get.snackbar(
-        "",
-        model.message!,
-        colorText: gWhiteColor,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: gsecondaryColor.withOpacity(0.55),
-      );
-    }
+    // } else {
+    //   ErrorModel model = res as ErrorModel;
+    //   Get.snackbar(
+    //     "",
+    //     model.message!,
+    //     colorText: gWhiteColor,
+    //     snackPosition: SnackPosition.BOTTOM,
+    //     backgroundColor: gsecondaryColor.withOpacity(0.55),
+    //   );
+    // }
 
     logoutProgressState(() {
       showLogoutProgress = true;

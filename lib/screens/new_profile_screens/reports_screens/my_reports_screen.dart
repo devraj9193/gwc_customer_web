@@ -15,7 +15,11 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 
 class MyReportsScreen extends StatefulWidget {
-  const MyReportsScreen({Key? key}) : super(key: key);
+  final bool fromDashboard;
+  const MyReportsScreen({
+    Key? key,
+    this.fromDashboard = false,
+  }) : super(key: key);
 
   @override
   State<MyReportsScreen> createState() => _MyReportsScreenState();
@@ -99,7 +103,7 @@ class _MyReportsScreenState extends State<MyReportsScreen> {
         }
         if (gmgReport.isEmpty) {
           print("gmgReport List : ${gmgReport.length}");
-          myTabs.removeAt(3);
+          // myTabs.removeAt(3);
         }
         if (endReport.isEmpty) {
           print("endReport List : ${endReport.length}");
@@ -122,57 +126,68 @@ class _MyReportsScreenState extends State<MyReportsScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: buildAppBar(
-            () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (ctx) => const DashboardScreen(index: 4),
-                ),
-              );
-            },
-          ),
-        ),
-        body: showUploadProgress
-            ? Center(child:  buildCircularIndicator(),)
-            : Column(crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w),
-                  child: Text(
-                    "My Reports",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: kFontBold,
-                      color: gBlackColor,
-                      fontSize: 16.dp,
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+                    child: buildAppBar(
+                      () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => DashboardScreen(
+                                index: widget.fromDashboard ? 2 : 4),
+                          ),
+                        );
+                      },
                     ),
                   ),
-                ),
-                SizedBox(height: 3.h),
-                GridView.builder(
-                    scrollDirection: Axis.vertical,
-                    physics: const ScrollPhysics(),
-                    shrinkWrap: true,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      mainAxisExtent: MediaQuery.of(context).size.shortestSide > 600
-                          ? 30.h : 25.h,
-                      crossAxisSpacing: 15,
-                      mainAxisSpacing: 15,
-                      crossAxisCount: MediaQuery.of(context).size.shortestSide > 600
-                          ? 5 : 3,
-                    ),
-                    itemCount: myTabs.length,
-                    itemBuilder: (context, index) {
-                      return gridTile(myTabs[index]);
-                    }),
-              ],
+                  showUploadProgress
+                      ? Center(
+                    child: buildCircularIndicator(),
+                  )
+                      : Column(crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 2.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 3.w),
+                        child: Text(
+                          "My Reports",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: kFontBold,
+                            color: gBlackColor,
+                            fontSize: 16.dp,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 2.h),
+                      GridView.builder(
+                          scrollDirection: Axis.vertical,
+                          physics: const ScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            mainAxisExtent:
+                            MediaQuery.of(context).size.shortestSide > 600
+                                ? 30.h
+                                : 25.h,
+                            crossAxisSpacing: 15,
+                            mainAxisSpacing: 15,
+                            crossAxisCount:
+                            MediaQuery.of(context).size.shortestSide > 600 ? 5 : 3,
+                          ),
+                          itemCount: myTabs.length,
+                          itemBuilder: (context, index) {
+                            return gridTile(myTabs[index]);
+                          }),
+                    ],
+                  ),
+                ],
+              ),
             ),
-      ),
     );
   }
 
@@ -254,8 +269,9 @@ class _MyReportsScreenState extends State<MyReportsScreen> {
                 child: Image.asset(
                   items['images'],
                   fit: BoxFit.fill,
-                  height:MediaQuery.of(context).size.shortestSide > 600
-                      ?  23.h : 18.h,
+                  height: MediaQuery.of(context).size.shortestSide > 600
+                      ? 23.h
+                      : 18.h,
                   width: double.maxFinite,
                 ),
               ),

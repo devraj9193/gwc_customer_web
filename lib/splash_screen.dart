@@ -15,38 +15,24 @@ API's used in this screen:
  */
 
 import 'dart:async';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/repository/enquiry_status_repository.dart';
 import 'package:gwc_customer_web/screens/evalution_form/evaluation_form_screen.dart';
-import 'package:gwc_customer_web/screens/profile_screens/call_support_method.dart';
 import 'package:gwc_customer_web/screens/user_registration/existing_user.dart';
-import 'package:gwc_customer_web/screens/user_registration/new_user/sit_back_screen.dart';
 import 'package:gwc_customer_web/services/enquiry_status_service.dart';
-import 'package:gwc_customer_web/services/local_notification_service.dart';
 import 'package:gwc_customer_web/utils/app_config.dart';
 import 'package:gwc_customer_web/widgets/background_widget.dart';
 import 'package:gwc_customer_web/widgets/notification_class.dart';
 import 'package:gwc_customer_web/widgets/open_alert_box.dart';
-// import 'package:new_version/new_version.dart';
-import 'package:provider/provider.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'model/enquiry_status_model.dart';
 import 'model/error_model.dart';
 import 'repository/api_service.dart';
 import 'package:http/http.dart' as http;
-
 import 'screens/dashboard_screen.dart';
 import 'package:flutter_sim_country_code/flutter_sim_country_code.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-
-import 'screens/notification_screen.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:open_store/open_store.dart';
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -55,9 +41,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver {
-  final PageController _pageController = PageController(initialPage: 0);
-  int _currentPage = 0;
+class _SplashScreenState extends State<SplashScreen>
+    with WidgetsBindingObserver {
   Timer? _timer;
 
   bool isLogin = false;
@@ -69,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
 
   /// by default status is 1
   /// 1 existing user screen
-  /// 0 sitback screen
+  /// 0 setback screen
   int? enquiryStatus;
 
   bool isError = false;
@@ -82,15 +67,13 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
     int end = DateTime.now().millisecondsSinceEpoch;
     var totalTime = end - start;
     print("response Time:" + (totalTime / 1000).round().toString());
-
-    print(
-        "start: $start end: ${end}  total: $totalTime");
+    print("start: $start end: $end  total: $totalTime");
     WidgetsBinding.instance.addObserver(this);
     // checkNewVersion();
     getDeviceId();
     super.initState();
     // runAllAsync();
-    // firebaseNotif();
+    // firebaseNotify();
     // listenMessages();
   }
 
@@ -116,7 +99,6 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
   //   getApplicationContext().sendBroadcast(addIntent);
   // }
 
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print("didChangeAppLifecycleState");
@@ -124,7 +106,7 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
       case AppLifecycleState.resumed:
         print("app in resumed");
         // print("deviceId:--  $deviceId");
-        if(isAppUpdateAlertClosed){
+        if (isAppUpdateAlertClosed) {
           getEnquiryStatus(deviceId!);
         }
         // show update alert if user didnot updated the app
@@ -137,6 +119,9 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
         break;
       case AppLifecycleState.detached:
         print("app in detached");
+        break;
+      case AppLifecycleState.hidden:
+        // TODO: Handle this case.
         break;
     }
   }
@@ -178,24 +163,24 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
   //   }
   // }
 
-  Future getDeviceId() async{
+  Future getDeviceId() async {
     final _pref = AppConfig().preferences;
     print(_pref!.getString(AppConfig().deviceId));
-    print(_pref!.getString(AppConfig().deviceId) == null);
+    print(_pref.getString(AppConfig().deviceId) == null);
     print(_pref.getString(AppConfig().deviceId) != "");
 
-    if(_pref!.getString(AppConfig().deviceId) == null || _pref.getString(AppConfig().deviceId) == ""){
+    if (_pref.getString(AppConfig().deviceId) == null ||
+        _pref.getString(AppConfig().deviceId) == "") {
       print("getDeviceId if");
       await AppConfig().getDeviceId().then((id) {
         print("deviceId: $id");
-        if(id != null){
+        if (id != null) {
           _pref.setString(AppConfig().deviceId, id);
           deviceId = id;
           getEnquiryStatus(id);
         }
       });
-    }
-    else{
+    } else {
       print("getDeviceId else");
       deviceId = _pref.getString(AppConfig().deviceId);
       getEnquiryStatus(deviceId!);
@@ -206,9 +191,10 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
     // if we need country code picker on login uncomment this
     String? n = await FlutterSimCountryCode.simCountryCode;
     print("country: $n");
-    if(n!= null) _pref!.setString(AppConfig.countryCode, n);
+    if (n != null) _pref.setString(AppConfig.countryCode, n);
   }
-  late FirebaseMessaging messaging;
+
+  // late FirebaseMessaging messaging;
 
   // static final _notificationsPlugin = FlutterLocalNotificationsPlugin();
   // firebaseNotif() async{
@@ -291,8 +277,8 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
   //   print("starting Application!");
   // }
 
-  Future getSession() async{
-    await notificationFunction();
+  Future getSession() async {
+    // await notificationFunction();
   }
 
   // Future listenNotifications()async{
@@ -401,7 +387,7 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
   //   print('User granted permission: ${settings.authorizationStatus}');
   // }
 
-  startTimer(){
+  startTimer() {
     // _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
     //   if (_currentPage < 1) {
     //     _currentPage++;
@@ -418,43 +404,39 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
     getScreen();
   }
 
-  getEnquiryStatus(String deviceId) async{
-
-    final result = await EnquiryStatusService(repository: repository).enquiryStatusService(deviceId);
+  getEnquiryStatus(String deviceId) async {
+    final result = await EnquiryStatusService(repository: repository)
+        .enquiryStatusService(deviceId);
 
     print("getEnquiryStatus: $result");
-    if(result.runtimeType == EnquiryStatusModel){
+    if (result.runtimeType == EnquiryStatusModel) {
       EnquiryStatusModel model = result as EnquiryStatusModel;
 
-      if(model.androidVersion! > AppConfig.androidVersion){
+      if (model.androidVersion! > AppConfig.androidVersion) {
         showAppUpdateAlert();
         isAppUpdateAlertClosed = false;
-      }
-      else{
-        if(model.errorMsg!.contains("No data found")){
+      } else {
+        if (model.errorMsg!.contains("No data found")) {
           setState(() {
             // show login if new deviceId
             enquiryStatus = 1;
             isError = false;
           });
-        }
-        else{
+        } else {
           setState(() {
             enquiryStatus = model.enquiryStatus ?? 0;
             isError = false;
           });
         }
       }
-    }
-    else{
+    } else {
       ErrorModel model = result as ErrorModel;
       print("getEnquiryStatus error from main: ${model.message}");
       setState(() {
         isError = true;
-        if(model.message!.contains("Failed host lookup")){
+        if (model.message!.contains("Failed host lookup")) {
           errorMsg = AppConfig.networkErrorText;
-        }
-        else{
+        } else {
           errorMsg = AppConfig.oopsMessage;
         }
       });
@@ -462,13 +444,14 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
     startTimer();
   }
 
-  getScreen(){
+  getScreen() {
     setState(() {
       isLogin = _pref.getBool(AppConfig.isLogin) ?? false;
       evalStatus = _pref.getString(AppConfig.EVAL_STATUS) ?? '';
     });
 
-    print("_pref.getBool(AppConfig.isLogin): ${_pref.getBool(AppConfig.isLogin)}");
+    print(
+        "_pref.getBool(AppConfig.isLogin): ${_pref.getBool(AppConfig.isLogin)}");
     print("isLogin: $isLogin");
     // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
     //   if(isError){
@@ -477,8 +460,6 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
     //   }
     // });
   }
-
-
 
   @override
   void dispose() {
@@ -492,20 +473,25 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
     print("-- -- build");
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    //I/flutter (13659): Ssamsung Mobile wdth: 384.0 * height: 781.8666666666667
-    print("Ssamsung Mobile wdth: $width * height: $height");
-    return
-      Scaffold(
+    //I/flutter (13659): Samsung Mobile width: 384.0 * height: 781.8666666666667
+    print("Samsung Mobile width: $width * height: $height");
+    return Scaffold(
       body: Stack(
         children: <Widget>[
-          if(enquiryStatus != null)
-            (enquiryStatus!.isEven)
-                ? SitBackScreen()
-                : !isLogin
-                ? ExistingUser()
-                : (evalStatus!.contains("no_evaluation") || evalStatus!.contains("pending"))
-                ? EvaluationFormScreen(isFromSplashScreen: true,)
-                : DashboardScreen(index: 2,),
+          // if (enquiryStatus != null)
+          //   (enquiryStatus!.isEven)
+          //       ? const SitBackScreen()
+          //       :
+            !isLogin
+                    ? const ExistingUser()
+                    : (evalStatus!.contains("no_evaluation") ||
+                            evalStatus!.contains("pending"))
+                        ? const EvaluationFormScreen(
+                            isFromSplashScreen: true,
+                          )
+                        : const DashboardScreen(
+                            index: 2,
+                          ),
           // PageView(
           //   reverse: false,
           //   onPageChanged: (int page) {
@@ -538,7 +524,7 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
       child: Center(
         child: Image(
           width: 70.w,
-          image: AssetImage("assets/images/Gut welness logo.png"),
+          image: const AssetImage("assets/images/Gut welness logo.png"),
         ),
         // SvgPicture.asset(
         //     "assets/images/splash_screen/Splash screen Logo.svg"),
@@ -552,7 +538,7 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
     ),
   );
 
-  showAlert(){
+  showAlert() {
     return openAlertBox(
         context: context,
         barrierDismissible: false,
@@ -560,22 +546,20 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
         titleNeeded: false,
         isSingleButton: true,
         positiveButtonName: 'Retry',
-        positiveButton: (){
-          if(deviceId != null){
+        positiveButton: () {
+          if (deviceId != null) {
             getEnquiryStatus(deviceId!);
             Navigator.pop(context);
-          }
-          else{
+          } else {
             getDeviceId();
             Navigator.pop(context);
           }
-        }
-    );
+        });
   }
 
   bool isAppUpdateAlertClosed = true;
 
-  showAppUpdateAlert(){
+  showAppUpdateAlert() {
     return openAlertBox(
         context: context,
         barrierDismissible: false,
@@ -584,17 +568,16 @@ class _SplashScreenState extends State<SplashScreen> with WidgetsBindingObserver
         title: "Update Available",
         isSingleButton: true,
         positiveButtonName: 'Update Now',
-        positiveButton: (){
+        positiveButton: () {
           OpenStore.instance.open(
-              // appStoreId: '284815942', // AppStore id of your app for iOS
-              // appStoreIdMacOS: '284815942', // AppStore id of your app for MacOS (appStoreId used as default)
-              androidAppBundleId: AppConfig.androidBundleId, // Android app bundle package name
-              // windowsProductId: '9NZTWSQNTD0S' // Microsoft store id for Widnows apps
+            // appStoreId: '284815942', // AppStore id of your app for iOS
+            // appStoreIdMacOS: '284815942', // AppStore id of your app for MacOS (appStoreId used as default)
+            androidAppBundleId:
+                AppConfig.androidBundleId, // Android app bundle package name
+            // windowsProductId: '9NZTWSQNTD0S' // Microsoft store id for Widnows apps
           );
           isAppUpdateAlertClosed = true;
           Navigator.pop(context);
-        }
-    );
+        });
   }
-
 }

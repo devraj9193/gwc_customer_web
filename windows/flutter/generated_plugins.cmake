@@ -9,7 +9,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
   permission_handler_windows
   platform_device_id_windows
-  smart_auth
   stories_for_flutter
   syncfusion_pdfviewer_windows
   url_launcher_windows

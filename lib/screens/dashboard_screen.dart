@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:gwc_customer_web/screens/medical_program_feedback_screen/card_selection.dart';
 import 'package:gwc_customer_web/screens/profile_screens/settings_screen.dart';
+import 'package:gwc_customer_web/screens/program_plans/program_start_screen.dart';
 import 'package:gwc_customer_web/screens/testimonial_list_screen/testimonial_new_screen.dart';
 import 'package:gwc_customer_web/screens/uvdesk/ticket_details_screen.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:gwc_customer_web/widgets/pdf_view.dart';
+import '../model/combined_meal_model/meal_plan_tracker_modl/send_meal_plan_tracker_model.dart';
 import '../model/error_model.dart';
 import '../model/uvdesk_model/new_ticket_details_model.dart';
 import '../repository/api_service.dart';
@@ -13,16 +16,37 @@ import '../repository/uvdesk_repository/uvdesk_repo.dart';
 import '../services/uvdesk_service/uv_desk_service.dart';
 import '../utils/app_config.dart';
 import '../widgets/constants.dart';
+import 'appointment_screens/consultation_screens/check_user_report_screen.dart';
+import 'appointment_screens/consultation_screens/upload_files.dart';
+import 'appointment_screens/doctor_calender_time_screen.dart';
+import 'appointment_screens/new_screens/new_appointment_screen.dart';
 import 'combined_meal_plan/combined_meal_screen.dart';
+import 'combined_meal_plan/tracker_widgets/new-day_tracker.dart';
+import 'cook_kit_shipping_screens/meal_plan_completed_stage_screen.dart';
+import 'cook_kit_shipping_screens/new_shipment_approved_screen.dart';
+import 'cook_kit_shipping_screens/new_shopping_list_screen.dart';
+import 'cook_kit_shipping_screens/shopping_list_screen.dart';
+import 'cook_kit_shipping_screens/web_screens/tracking_web_screens.dart';
+import 'evalution_form/evaluation_form_page1.dart';
+import 'evalution_form/evaluation_upload_report.dart';
+import 'evalution_form/web_eval_screens/web_eval_screen.dart';
 import 'feed_screens/feeds_list.dart';
+import 'feed_screens/web_feed_screen.dart';
 import 'follow_up_Call_screens/follow_up_call_date_screen.dart';
 import 'follow_up_Call_screens/sample.dart';
+import 'follow_up_Call_screens/web_follow_up_call.dart';
 import 'gut_list_screens/new_list_stages_screen.dart';
+import 'gwc_products/gwc_product_screen.dart';
+import 'home_screens/gut_health_tracker_screens/gut_health_tracker.dart';
 import 'home_screens/level_status.dart';
 import 'package:http/http.dart' as http;
 import 'package:badges/badges.dart' as badges;
+import 'medical_program_feedback_screen/medical_feedback_form.dart';
+import 'medical_program_feedback_screen/post_gut_type_diagnosis.dart';
+import 'medical_program_feedback_screen/web_feedback_forms_screen.dart';
 import 'new_profile_screens/feedback_screen/feedback_screen.dart';
 import 'new_profile_screens/new_profile_screen.dart';
+import 'new_profile_screens/web_screens/profile_web_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final int index;
@@ -116,11 +140,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     switch (index) {
       case 0:
         {
-          return kDebugMode ? const CombinedPrepMealTransScreen(stage: 3,) : const LevelStatus();
+          return kDebugMode
+              ? const PdfView(pdfUrl: "https://gutandhealth.com/storage/uploads/users/meal_protocol/file_888_20241113_120607.pdf")
+              : const LevelStatus();
         }
       case 1:
         {
-          return kDebugMode ? const TCardPage(programContinuesdStatus: 1) : const FeedsList();
+          return const WebFeedScreen();
         }
       case 2:
         {
@@ -128,13 +154,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         }
       case 3:
         {
-          return const TestimonialNewScreen();
+          return kDebugMode
+              ? const NewShipmentApprovedScreen(isForeign: '',)
+              : const TestimonialNewScreen();
         }
       case 4:
         {
-          return NewProfileScreen(
-            showBadge: isReplied,
-          );
+          return MediaQuery.of(context).size.shortestSide > 600
+              ? const ProfileWebScreen()
+              : NewProfileScreen(
+                  showBadge: isReplied,
+                );
         }
     }
   }

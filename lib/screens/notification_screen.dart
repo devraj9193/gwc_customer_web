@@ -27,7 +27,7 @@ import '../widgets/constants.dart';
 import '../widgets/widgets.dart';
 import 'appointment_screens/consultation_screens/consultation_success.dart';
 import 'appointment_screens/consultation_screens/medical_report_screen.dart';
-import 'appointment_screens/doctor_slots_details_screen.dart';
+import 'appointment_screens/new_screens/new_appointment_join_screen.dart';
 import 'cook_kit_shipping_screens/cook_kit_tracking.dart';
 
 /// enum for each stages we get in Notification api
@@ -389,7 +389,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       else if(type == NotificationTypeEnum.reminder_appointment.name){
         final model = jsonDecode(_localStorageDashboardModel!.appointmentModel!);
         if(model != null){
-          goToScreen(DoctorSlotsDetailsScreen(bookingDate: model!.value!.date!,
+          goToScreen(NewAppointmentJoinScreen(bookingDate: model!.value!.date!,
             bookingTime: model.value!.slotStartTime!,
             dashboardValueMap: model.value!.toJson(),isFromDashboard: true,));
         }
@@ -398,14 +398,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
         print(_localStorageDashboardModel!.toJson());
         final model = jsonDecode(_localStorageDashboardModel!.appointmentModel!);
         if(model != null){
-          goToScreen(DoctorSlotsDetailsScreen(bookingDate: model!.value!.date!,
+          goToScreen(NewAppointmentJoinScreen(bookingDate: model!.value!.date!,
             bookingTime: model.value!.slotStartTime!,
             dashboardValueMap: model.value!.toJson(),isFromDashboard: true,));
         }
 
       }
       else if(type == NotificationTypeEnum.shopping.name){
-        goToScreen(CookKitTracking(currentStage: _localStorageDashboardModel?.shippingStage ?? ''));
+        goToScreen(CookKitTracking(currentStage: _localStorageDashboardModel?.shippingStage ?? '', isForeign: '',));
         // asset = 'assets/images/notification/list_upload.png';
       }
     }

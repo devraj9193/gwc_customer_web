@@ -13,10 +13,14 @@ once medical feedback submitetd we r showing card screen instead of finafeedback
  */
 
 import 'package:flutter/material.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:http/http.dart' as http;
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:gwc_customer_web/widgets/button_widget.dart';
+import 'package:http/http.dart' as http;
+import '../../model/chief_qa_model/get_chief_qa_list_model.dart';
 import '../../model/error_model.dart';
 import '../../model/new_user_model/register/register_model.dart';
 import '../../repository/api_service.dart';
+import '../../repository/chief_question_repo/chief_question_repo.dart';
 import '../../repository/medical_program_feedback_repo/medical_feedback_repo.dart';
 import '../../services/medical_program_feedback_service/medical_feedback_service.dart';
 import '../../utils/app_config.dart';
@@ -26,7 +30,9 @@ import '../../widgets/widgets.dart';
 import 'card_selection.dart';
 
 class MedicalFeedbackForm extends StatefulWidget {
-  const MedicalFeedbackForm({Key? key}) : super(key: key);
+  final bool isFromWeb;
+  const MedicalFeedbackForm({Key? key, this.isFromWeb = false})
+      : super(key: key);
 
   @override
   State<MedicalFeedbackForm> createState() => _MedicalFeedbackFormState();
@@ -45,7 +51,7 @@ class _MedicalFeedbackFormState extends State<MedicalFeedbackForm> {
 
   String emptyStringMsg = AppConfig().emptyStringMsg;
 
-   MedicalFeedbackService? medicalFeedbackService;
+  MedicalFeedbackService? medicalFeedbackService;
 
   String? deviceId, fcmToken;
 
@@ -53,31 +59,76 @@ class _MedicalFeedbackFormState extends State<MedicalFeedbackForm> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    getQAList();
     medicalFeedbackService = MedicalFeedbackService(feedbackRepo: repository);
+  }
 
+  bool isQALoading = false;
+  List<String> chiefQAList = [];
+  String pain = "";
+  String headache = "";
+  String burning = "";
+
+  getQAList() async {
+    setState(() {
+      isQALoading = true;
+    });
+    final result = await quesRepository.getChiefQuestionListRepo();
+    print("result: $result");
+
+    if (result.runtimeType == GetChiefQaListModel) {
+      print("Ticket List");
+      GetChiefQaListModel model = result as GetChiefQaListModel;
+
+      chiefQAList = model.data ?? [];
+
+      setState(() {
+          resolvedController =
+              TextEditingController(text: chiefQAList.join('\n'));
+      });
+    } else {
+      ErrorModel model = result as ErrorModel;
+      print("error: ${model.message}");
+      setState(() {
+        isQALoading = false;
+      });
+    }
+    setState(() {
+      isQALoading = false;
+    });
+    print(result);
   }
 
   @override
   Widget build(BuildContext context) {
-    return UnfocusWidget(
-      child: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/eval_bg.png"),
-            fit: BoxFit.fitWidth,
-            colorFilter: ColorFilter.mode(kPrimaryColor, BlendMode.lighten),
-          ),
-        ),
-        child: SafeArea(
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: showUI(context),
-          ),
-        ),
-      ),
-    );
+    return (isQALoading)
+        ? Center(
+            child: buildCircularIndicator(),
+          )
+        : widget.isFromWeb
+            ? Padding(
+                padding: EdgeInsets.only(right: 2.w, left: 2.w, top: 2.h),
+                child: buildMedicalFeedbackForm(),
+              )
+            : UnfocusWidget(
+                child: Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/images/eval_bg.png"),
+                      fit: BoxFit.fitWidth,
+                      colorFilter:
+                          ColorFilter.mode(kPrimaryColor, BlendMode.lighten),
+                    ),
+                  ),
+                  child: SafeArea(
+                    child: Scaffold(
+                      backgroundColor: Colors.transparent,
+                      body: showUI(context),
+                    ),
+                  ),
+                ),
+              );
   }
 
   showUI(BuildContext context) {
@@ -110,10 +161,7 @@ class _MedicalFeedbackFormState extends State<MedicalFeedbackForm> {
                 topRight: Radius.circular(30),
               ),
             ),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: buildMedicalFeedbackForm(),
-            ),
+            child: buildMedicalFeedbackForm(),
           ),
         ),
       ],
@@ -123,167 +171,174 @@ class _MedicalFeedbackFormState extends State<MedicalFeedbackForm> {
   buildMedicalFeedbackForm() {
     return Form(
       key: formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                "Medical Feedback form ",
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  "Medical Feedback form ",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      fontFamily: kFontBold,
+                      color: gBlackColor,
+                      height: 1.5,
+                      fontSize: headingFont),
+                ),
+                SizedBox(
+                  width: 2.w,
+                ),
+                Expanded(
+                  child: Container(
+                    height: 1,
+                    color: kLineColor,
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              "I hope your detoxification process went well. Please update us on your health's development.",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                  fontFamily: kFontMedium,
+                  color: gHintTextColor,
+                  height: 1.3,
+                  fontSize: subHeadingFont),
+            ),
+            SizedBox(
+              height: 2.5.h,
+            ),
+            buildLabelTextField(
+                'What were the RESOLVED digestive health issues after the program? Please list them below along with the % of improvement. ',
+                fontSize: questionFont),
+            SizedBox(height: 1.h),
+            Container(
+                    height: 25.h,
+                    padding: EdgeInsets.symmetric(horizontal: 3.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                          color: Colors.grey.withOpacity(0.3), width: 1),
+                    ),
+                    child: TextFormField(
+                      maxLines: null, // Set this
+                      textCapitalization: TextCapitalization.sentences,
+                      controller: resolvedController,
+                      cursorColor: kPrimaryColor,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter Your Answer';
+                        } else if (value.length < 2) {
+                          return emptyStringMsg;
+                        } else {
+                          return null;
+                        }
+                      },
+                      decoration: InputDecoration(
+                        hintText: "Your Answer",
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(
+                          fontFamily: eUser().userTextFieldHintFont,
+                          color: eUser().userTextFieldHintColor,
+                          fontSize: eUser().userTextFieldHintFontSize,
+                        ),
+                      ),
+                      // textInputAction: TextInputAction.next,
+                      textAlign: TextAlign.start,
+                      keyboardType: TextInputType.multiline,
+                    ),
+                  ),
+            SizedBox(height: 2.h),
+            buildLabelTextField(
+                'What were the UNRESOLVED digestive health issues after the program? Please list them below ',
+                fontSize: questionFont),
+            SizedBox(height: 1.h),
+            Container(
+              height: 15.h,
+              padding: EdgeInsets.symmetric(horizontal: 3.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(5),
+                border:
+                    Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
+              ),
+              child: TextFormField(
+                maxLines: null, // Set this
+                textCapitalization: TextCapitalization.sentences,
+                controller: unResolvedController,
+                cursorColor: kPrimaryColor,
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Please enter Your Answer';
+                  } else if (value.length < 2) {
+                    return emptyStringMsg;
+                  } else {
+                    return null;
+                  }
+                },
+                decoration: InputDecoration(
+                  hintText: "Your Answer",
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(
+                    fontFamily: eUser().userTextFieldHintFont,
+                    color: eUser().userTextFieldHintColor,
+                    fontSize: eUser().userTextFieldHintFontSize,
+                  ),
+                ),
+                textInputAction: TextInputAction.none,
                 textAlign: TextAlign.start,
-                style: TextStyle(
-                    fontFamily: kFontBold,
-                    color: gBlackColor,
-                    height: 1.5,
-                    fontSize: headingFont),
-              ),
-              SizedBox(
-                width: 2.w,
-              ),
-              Expanded(
-                child: Container(
-                  height: 1,
-                  color: kLineColor,
-                ),
-              ),
-            ],
-          ),
-          Text(
-            "I hope your detoxification process went well. Please update us on your health's development.",
-            textAlign: TextAlign.start,
-            style: TextStyle(
-                fontFamily: kFontMedium,
-                color: gHintTextColor,
-                height: 1.3,
-                fontSize: subHeadingFont),
-          ),
-          SizedBox(
-            height: 2.5.h,
-          ),
-          buildLabelTextField(
-              'What were the RESOLVED digestive health issues after the program? Please list them below along with the % of improvement. ',
-              fontSize: questionFont),
-          SizedBox(height: 1.h),
-          Container(
-            height: 15.h,
-            padding: EdgeInsets.symmetric(horizontal: 3.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
-            ),
-            child: TextFormField(
-              maxLines: null, // Set this
-              textCapitalization: TextCapitalization.sentences,
-              controller: resolvedController,
-              cursorColor: kPrimaryColor,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter Your Answer';
-                } else if (value.length < 2) {
-                  return emptyStringMsg;
-                } else {
-                  return null;
-                }
-              },
-              decoration: InputDecoration(
-                hintText: "Your Answer",
-                border: InputBorder.none,
-                hintStyle: TextStyle(
-                  fontFamily: eUser().userTextFieldHintFont,
-                  color: eUser().userTextFieldHintColor,
-                  fontSize: eUser().userTextFieldHintFontSize,
-                ),
-              ),
-              // textInputAction: TextInputAction.next,
-              textAlign: TextAlign.start,
-              keyboardType: TextInputType.multiline,
-            ),
-          ),
-          SizedBox(height: 2.h),
-          buildLabelTextField(
-              'What were the UNRESOLVED digestive health issues after the program? Please list them below ',
-              fontSize: questionFont),
-          SizedBox(height: 1.h),
-          Container(
-            height: 15.h,
-            padding: EdgeInsets.symmetric(horizontal: 3.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.grey.withOpacity(0.3), width: 1),
-            ),
-            child: TextFormField(
-              maxLines: null, // Set this
-              textCapitalization: TextCapitalization.sentences,
-              controller: unResolvedController,
-              cursorColor: kPrimaryColor,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Please enter Your Answer';
-                } else if (value.length < 2) {
-                  return emptyStringMsg;
-                } else {
-                  return null;
-                }
-              },
-              decoration: InputDecoration(
-                hintText: "Your Answer",
-                border: InputBorder.none,
-                hintStyle: TextStyle(
-                  fontFamily: eUser().userTextFieldHintFont,
-                  color: eUser().userTextFieldHintColor,
-                  fontSize: eUser().userTextFieldHintFontSize,
-                ),
-              ),
-              textInputAction: TextInputAction.none,
-              textAlign: TextAlign.start,
 
-              keyboardType: TextInputType.multiline,
+                keyboardType: TextInputType.multiline,
+              ),
             ),
-          ),
-          SizedBox(height: 2.h),
-          buildLabelTextField(
-              'Tell us (the current status) about your after meal preferences ',
-              fontSize: questionFont),
-          SizedBox(height: 0.5.h),
-          mealPreferencesRadioButton(),
-          SizedBox(height: 2.h),
-          buildLabelTextField(
-              'Tell us (the current status) about your hunger pattern ',
-              fontSize: questionFont),
-          SizedBox(height: 0.5.h),
-          hungerPatternRadioButton(),
-          SizedBox(height: 2.h),
-          buildLabelTextField(
-              'Tell us (the current status) about your bowel pattern ',
-              fontSize: questionFont),
-          SizedBox(height: 0.5.h),
-          bowelPatternRadioButton(),
-          SizedBox(height: 2.h),
-          buildLabelTextField(
-              'Have your food cravings and lifestyle habits changed for the better? ',
-              fontSize: questionFont),
-          SizedBox(height: 0.5.h),
-          lifeHabitsRadioButton(),
-          SizedBox(height: 5.h),
-          Center(
-            child: IntrinsicWidth(
-              child: GestureDetector(
-                onTap: () {
+            SizedBox(height: 2.h),
+            buildLabelTextField(
+                'Tell us (the current status) about your after meal preferences ',
+                fontSize: questionFont),
+            SizedBox(height: 0.5.h),
+            mealPreferencesRadioButton(),
+            SizedBox(height: 2.h),
+            buildLabelTextField(
+                'Tell us (the current status) about your hunger pattern ',
+                fontSize: questionFont),
+            SizedBox(height: 0.5.h),
+            hungerPatternRadioButton(),
+            SizedBox(height: 2.h),
+            buildLabelTextField(
+                'Tell us (the current status) about your bowel pattern ',
+                fontSize: questionFont),
+            SizedBox(height: 0.5.h),
+            bowelPatternRadioButton(),
+            SizedBox(height: 2.h),
+            buildLabelTextField(
+                'Have your food cravings and lifestyle habits changed for the better? ',
+                fontSize: questionFont),
+            SizedBox(height: 0.5.h),
+            lifeHabitsRadioButton(),
+            SizedBox(height: 5.h),
+            Center(
+              child: ButtonWidget(
+                text: 'Submit',
+                onPressed: () {
                   if (formKey.currentState!.validate()) {
                     if (mealPreferences.isEmpty) {
-                      AppConfig().showSnackbar(context, "Please Select Meal Preference",
+                      AppConfig().showSnackbar(
+                          context, "Please Select Meal Preference",
                           isError: true, bottomPadding: 10);
                     } else if (hungerPattern.isEmpty) {
-                      AppConfig().showSnackbar(context, "Please Select Hunger Pattern",
+                      AppConfig().showSnackbar(
+                          context, "Please Select Hunger Pattern",
                           isError: true, bottomPadding: 10);
                     } else if (bowelPattern.isEmpty) {
-                      AppConfig().showSnackbar(context, "Please Select Bowel Pattern",
+                      AppConfig().showSnackbar(
+                          context, "Please Select Bowel Pattern",
                           isError: true, bottomPadding: 10);
                     } else if (lifestyleHabits.isEmpty) {
-                      AppConfig().showSnackbar(context, "Please Select Life Style",
+                      AppConfig().showSnackbar(
+                          context, "Please Select Life Style",
                           isError: true, bottomPadding: 10);
                     } else {
                       submitMedicalFeedbackForm(
@@ -296,39 +351,83 @@ class _MedicalFeedbackFormState extends State<MedicalFeedbackForm> {
                       );
                     }
                   } else {
-                    AppConfig().showSnackbar(context, "Please Enter Your Answer",
+                    AppConfig().showSnackbar(
+                        context, "Please Enter Your Answer",
                         isError: true, bottomPadding: 10);
                   }
                 },
-                child: Container(
-                 padding: EdgeInsets.symmetric(horizontal: 5.w,vertical: 1.5.h),
-                                 decoration: BoxDecoration(
-                    color: eUser().buttonColor,
-                    borderRadius:
-                        BorderRadius.circular(eUser().buttonBorderRadius),
-                    // border: Border.all(
-                    //     color: eUser().buttonBorderColor,
-                    //     width: eUser().buttonBorderWidth
-                    // ),
-                  ),
-                  child: (isLoading) ? buildThreeBounceIndicator(color: eUser().threeBounceIndicatorColor)
-                      : Center(
-                      child: Text(
-                    'Submit',
-                    style: TextStyle(
-                      fontFamily: eUser().buttonTextFont,
-                      color: eUser().buttonTextColor,
-                      fontSize: eUser().buttonTextSize,
-                    ),
-                  )),
-                ),
+                isLoading: isLoading,
+                buttonWidth: 20.w,
               ),
+              // IntrinsicWidth(
+              //   child: GestureDetector(
+              //     onTap: () {
+              //       if (formKey.currentState!.validate()) {
+              //         if (mealPreferences.isEmpty) {
+              //           AppConfig().showSnackbar(
+              //               context, "Please Select Meal Preference",
+              //               isError: true, bottomPadding: 10);
+              //         } else if (hungerPattern.isEmpty) {
+              //           AppConfig().showSnackbar(
+              //               context, "Please Select Hunger Pattern",
+              //               isError: true, bottomPadding: 10);
+              //         } else if (bowelPattern.isEmpty) {
+              //           AppConfig().showSnackbar(
+              //               context, "Please Select Bowel Pattern",
+              //               isError: true, bottomPadding: 10);
+              //         } else if (lifestyleHabits.isEmpty) {
+              //           AppConfig().showSnackbar(
+              //               context, "Please Select Life Style",
+              //               isError: true, bottomPadding: 10);
+              //         } else {
+              //           submitMedicalFeedbackForm(
+              //             resolvedController.text.toString(),
+              //             unResolvedController.text.toString(),
+              //             mealPreferences.toString(),
+              //             hungerPattern.toString(),
+              //             bowelPattern.toString(),
+              //             lifestyleHabits.toString(),
+              //           );
+              //         }
+              //       } else {
+              //         AppConfig().showSnackbar(
+              //             context, "Please Enter Your Answer",
+              //             isError: true, bottomPadding: 10);
+              //       }
+              //     },
+              //     child: Container(
+              //       padding:
+              //           EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.h),
+              //       decoration: BoxDecoration(
+              //         color: eUser().buttonColor,
+              //         borderRadius:
+              //             BorderRadius.circular(eUser().buttonBorderRadius),
+              //         // border: Border.all(
+              //         //     color: eUser().buttonBorderColor,
+              //         //     width: eUser().buttonBorderWidth
+              //         // ),
+              //       ),
+              //       child: (isLoading)
+              //           ? buildThreeBounceIndicator(
+              //               color: eUser().threeBounceIndicatorColor)
+              //           : Center(
+              //               child: Text(
+              //               'Submit',
+              //               style: TextStyle(
+              //                 fontFamily: eUser().buttonTextFont,
+              //                 color: eUser().buttonTextColor,
+              //                 fontSize: eUser().buttonTextSize,
+              //               ),
+              //             )),
+              //     ),
+              //   ),
+              // ),
             ),
-          ),
-          SizedBox(
-            height: 2.h,
-          ),
-        ],
+            SizedBox(
+              height: 2.h,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -742,12 +841,6 @@ class _MedicalFeedbackFormState extends State<MedicalFeedbackForm> {
     );
   }
 
-  final FeedbackRepo repository = FeedbackRepo(
-    apiClient: ApiClient(
-      httpClient: http.Client(),
-    ),
-  );
-
   void submitMedicalFeedbackForm(
     String resolvedDigestiveIssue,
     String unresolvedDigestiveIssue,
@@ -782,6 +875,7 @@ class _MedicalFeedbackFormState extends State<MedicalFeedbackForm> {
       //     ),
       //         (route) => route.isFirst
       // );
+      print("RES : $response");
     } else {
       String result = (res as ErrorModel).message ?? '';
       AppConfig().showSnackbar(context, result, isError: true, duration: 4);
@@ -789,15 +883,24 @@ class _MedicalFeedbackFormState extends State<MedicalFeedbackForm> {
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
               builder: (context) => const TCardPage(
-                programContinuesdStatus: 1,
-              )
-          ),
-              (route) => route.isFirst
-      );
-
+                    programContinuesdStatus: 1,
+                  )),
+          (route) => route.isFirst);
     }
     setState(() {
       isLoading = false;
     });
   }
+
+  final FeedbackRepo repository = FeedbackRepo(
+    apiClient: ApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
+  final ChiefQuestionRepo quesRepository = ChiefQuestionRepo(
+    apiClient: ApiClient(
+      httpClient: http.Client(),
+    ),
+  );
 }

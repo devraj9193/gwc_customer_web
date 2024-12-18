@@ -32,7 +32,7 @@ class HomeScreens extends StatefulWidget {
 }
 
 class _HomeScreensState extends State<HomeScreens> {
-  final carouselController = CarouselController();
+  // final carouselController = CarouselController();
   String? badgeNotification;
   final SharedPreferences _pref = AppConfig().preferences!;
   String? currentUser,bmi,bmr;
@@ -261,7 +261,7 @@ class _HomeScreensState extends State<HomeScreens> {
             height: 18.h,
             width: double.maxFinite,
             child: CarouselSlider(
-              carouselController: carouselController,
+              // carouselController: carouselController,
               options: CarouselOptions(
                   viewportFraction: .6,
                   aspectRatio: 1.2,

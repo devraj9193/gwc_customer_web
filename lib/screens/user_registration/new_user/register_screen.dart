@@ -23,6 +23,7 @@ import '../../../utils/app_config.dart';
 import '../../../widgets/constants.dart';
 import '../../../widgets/unfocus_widget.dart';
 import '../../../widgets/widgets.dart';
+import '../existing_user.dart';
 import 'about_the_program.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -715,7 +716,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (context) => const SitBackScreen(),
+          builder: (context) => const ExistingUser(),
         ),
           (route) => false
       );

@@ -1,8 +1,5 @@
 import 'package:gwc_customer_web/model/consultation_model/appointment_booking/child_doctor_model.dart';
 import 'package:gwc_customer_web/model/consultation_model/appointment_booking/child_team_member.dart';
-
-import '../../consultation_model/appointment_booking/child_doctor_model.dart';
-import '../../consultation_model/appointment_booking/child_team_member.dart';
 import 'child_team_patients_appointment.dart';
 
 class ChildAppointmentDetails {
@@ -10,6 +7,7 @@ class ChildAppointmentDetails {
   String? programEndReport;
   String? programEndReportUser;
   String? gmgPdfUrl;
+  String? mealProtocol;
   // this is for post consultation stage -> parameters
   int? id;
   String? teamPatientId;
@@ -33,36 +31,36 @@ class ChildAppointmentDetails {
   ChildTeamPatientsAppointment? teamPatients;
 
   ChildAppointmentDetails(
-      {
-        this.programEndReport,
-        this.programEndReportUser,
-        this.gmgPdfUrl,
-        this.id,
-        this.teamPatientId,
-        this.date,
-        this.slotStartTime,
-        this.slotEndTime,
-        this.type,
-        this.status,
-        this.zoomJoinUrl,
-        this.zoomStartUrl,
-        this.zoomId,
-        this.zoomPassword,
-        this.createdAt,
-        this.updatedAt,
-        this.appointmentDate,
-        this.appointmentStartTime,
-        this.kaleyraJoinurl,
-        this.kaleyraSuccessTeamId,
-        this.teamMember,
-        this.doctor,
-        this.teamPatients});
+      {this.programEndReport,
+      this.programEndReportUser,
+      this.gmgPdfUrl,
+      this.mealProtocol,
+      this.id,
+      this.teamPatientId,
+      this.date,
+      this.slotStartTime,
+      this.slotEndTime,
+      this.type,
+      this.status,
+      this.zoomJoinUrl,
+      this.zoomStartUrl,
+      this.zoomId,
+      this.zoomPassword,
+      this.createdAt,
+      this.updatedAt,
+      this.appointmentDate,
+      this.appointmentStartTime,
+      this.kaleyraJoinurl,
+      this.kaleyraSuccessTeamId,
+      this.teamMember,
+      this.doctor,
+      this.teamPatients});
 
   ChildAppointmentDetails.fromJson(Map<String, dynamic> json) {
     programEndReport = json['Program_End_Report'];
     programEndReportUser = json['Program_End_Report_User'];
     gmgPdfUrl = json['gmg'];
-
+    mealProtocol = json['meal_protocol'];
     // post consultation
     id = json['id'];
     teamPatientId = json['team_patient_id'].toString();
@@ -80,52 +78,52 @@ class ChildAppointmentDetails {
     updatedAt = json['updated_at'];
     kaleyraSuccessTeamId = json['kaleyra_success_team_id'].toString();
     appointmentDate = json['appointment_date'];
-    appointmentStartTime = json['slot_start_time'] ?? json['appointment_start_time'];
+    appointmentStartTime =
+        json['slot_start_time'] ?? json['appointment_start_time'];
     teamPatients = json['team_patients'] != null
-        ? new ChildTeamPatientsAppointment.fromJson(json['team_patients'])
+        ? ChildTeamPatientsAppointment.fromJson(json['team_patients'])
         : null;
     if (json['team'] != null) {
       teamMember = <TeamMember>[];
       json['team'].forEach((v) {
-        teamMember!.add(new TeamMember.fromJson(v));
+        teamMember!.add(TeamMember.fromJson(v));
       });
     }
     print(json['doctor_details']);
     doctor = (json['doctor_details'] != null)
         ? (json['doctor_details']['doctor'] != null)
-        ? new ChildDoctorModel.fromJson(json['doctor_details']['doctor'])
-        : new ChildDoctorModel.fromJson(json['doctor_details'])
+            ? ChildDoctorModel.fromJson(json['doctor_details']['doctor'])
+            : ChildDoctorModel.fromJson(json['doctor_details'])
         : null;
-
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['team_patient_id'] = this.teamPatientId;
-    data['date'] = this.date;
-    data['slot_start_time'] = this.slotStartTime;
-    data['slot_end_time'] = this.slotEndTime;
-    data['type'] = this.type;
-    data['status'] = this.status;
-    data['zoom_join_url'] = this.zoomJoinUrl;
-    data['zoom_start_url'] = this.zoomStartUrl;
-    data['zoom_id'] = this.zoomId;
-    data['zoom_password'] = this.zoomPassword;
-    data['kaleyra_user_url'] = this.kaleyraJoinurl;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['kaleyra_success_team_id'] = this.kaleyraSuccessTeamId;
-    data['appointment_date'] = this.appointmentDate;
-    data['appointment_start_time'] = this.appointmentStartTime;
-    if (this.teamPatients != null) {
-      data['team_patients'] = this.teamPatients!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['team_patient_id'] = teamPatientId;
+    data['date'] = date;
+    data['slot_start_time'] = slotStartTime;
+    data['slot_end_time'] = slotEndTime;
+    data['type'] = type;
+    data['status'] = status;
+    data['zoom_join_url'] = zoomJoinUrl;
+    data['zoom_start_url'] = zoomStartUrl;
+    data['zoom_id'] = zoomId;
+    data['zoom_password'] = zoomPassword;
+    data['kaleyra_user_url'] = kaleyraJoinurl;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['kaleyra_success_team_id'] = kaleyraSuccessTeamId;
+    data['appointment_date'] = appointmentDate;
+    data['appointment_start_time'] = appointmentStartTime;
+    if (teamPatients != null) {
+      data['team_patients'] = teamPatients!.toJson();
     }
-    if (this.teamMember != null) {
-      data['team'] = this.teamMember!.map((v) => v.toJson()).toList();
+    if (teamMember != null) {
+      data['team'] = teamMember!.map((v) => v.toJson()).toList();
     }
-    if (this.doctor != null) {
-      data['doctor_details'] = this.doctor!.toJson();
+    if (doctor != null) {
+      data['doctor_details'] = doctor!.toJson();
     }
     return data;
   }

@@ -1,69 +1,29 @@
+import 'dart:html' as html;
+import 'dart:ui' as ui; // Conditional import handles web-specific APIs
+
 import 'package:flutter/material.dart';
-import 'package:flutter_emoji_feedback/flutter_emoji_feedback.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';
 
-import '../../widgets/constants.dart';
+class PdfViewerWeb extends StatelessWidget {
+  final String pdfUrl =
+      'https://gutandhealth.com/storage/uploads/users/meal_protocol/file_888_20241113_120607.pdf';
 
-class EmojiFeedbackExample extends StatefulWidget {
-  const EmojiFeedbackExample({Key? key}) : super(key: key);
-
-  @override
-  _EmojiFeedbackExampleState createState() => _EmojiFeedbackExampleState();
-}
-
-class _EmojiFeedbackExampleState extends State<EmojiFeedbackExample> {
-  int selectedEmojiIndex = -1;
+  const PdfViewerWeb({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Emoji Feedback Example'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'How was your experience?',
-              style: TextStyle(fontSize: 20),
-            ),
-            SizedBox(height: 20),
-            EmojiFeedback(
-              rating: 5,
-              enableFeedback: true,
-              elementSize: 50, spaceBetweenItems: 0,
-              inactiveElementBlendColor: Colors.transparent,
-              labelTextStyle: TextStyle(
-                fontSize: 12.dp,
-                fontFamily: kFontBook,
-                color: gWhiteColor,
-              ),
-              onChanged: (index) {
-                setState(() {
-                  selectedEmojiIndex = index!;
-                });
-                print('Selected Emoji Index: $index');
-              },
-              // Customize the emojis
-              emojiPreset: const [
-                EmojiModel(src: '😡', label: ""),
-                EmojiModel(src: '😕', label: ""),
-                EmojiModel(src: '😐', label: ""),
-                EmojiModel(src: '😊', label: ""),
-                EmojiModel(src: '😍', label: ""),
+    const String viewId = 'pdf-viewer';
 
-              ],
-            ),
-            SizedBox(height: 30),
-            if (selectedEmojiIndex != -1)
-              Text(
-                'You selected: ${selectedEmojiIndex + 1}',
-                style: TextStyle(fontSize: 18, color: Colors.blueAccent),
-              ),
-          ],
-        ),
-      ),
+// // Register the iframe as a platform view for Flutter Web
+//     ui.platformViewRegistry.registerViewFactory(
+//       viewId,
+//       (int viewId) => html.IFrameElement()
+//         ..src = pdfUrl
+//         ..style.border = 'none', // Removes iframe border
+//     );
+
+    return Scaffold(
+      appBar: AppBar(title: Text("PDF Viewer")),
+      body: HtmlElementView(viewType: viewId),
     );
   }
 }

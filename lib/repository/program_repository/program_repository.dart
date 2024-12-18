@@ -1,7 +1,6 @@
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:http/http.dart';
-
 import '../../model/combined_meal_model/meal_plan_tracker_modl/send_meal_plan_tracker_model.dart';
 import '../../model/program_model/proceed_model/send_proceed_program_model.dart';
 import '../api_service.dart';
@@ -41,7 +40,7 @@ class ProgramRepository{
     return await apiClient.submitMealPlanApi(model);
   }
 
-  Future submitMealPlanTrackerRepo(SubmitMealPlanTrackerModel model, List<PlatformFile> file) async{
+  Future submitMealPlanTrackerRepo(SubmitMealPlanTrackerModel model, Uint8List file) async{
     return await apiClient.submitMealPlanTrackerApi(model, file);
   }
 

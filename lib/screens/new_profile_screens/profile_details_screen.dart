@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:gwc_customer_web/model/profile_model/user_profile/send_user_model.dart';
+import 'package:gwc_customer_web/screens/new_profile_screens/profile_screen_widgets/bottom_sheet_widget.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
 import 'package:gwc_customer_web/widgets/dart_extensions.dart';
 import 'package:image_picker/image_picker.dart';
@@ -20,6 +21,7 @@ import '../../repository/profile_repository/get_user_profile_repo.dart';
 import '../../services/login_otp_service.dart';
 import '../../services/profile_screen_service/user_profile_service.dart';
 import '../../utils/app_config.dart';
+import '../../widgets/button_widget.dart';
 import '../../widgets/widgets.dart';
 import '../gut_list_screens/new_stages_data.dart';
 import '../user_registration/existing_user.dart';
@@ -61,9 +63,35 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     getProfileData();
   }
 
-  getProfileData() {
-    getProfileDetails =
-        UserProfileService(repository: repository).getUserProfileService();
+  bool isLoading = false;
+  ChildUserModel? subData;
+
+  getProfileData() async {
+    setState(() {
+      isLoading = true;
+    });
+    final result = await UserProfileService(repository: repository)
+        .getUserProfileService();
+    print("result: $result");
+
+    if (result.runtimeType == UserProfileModel) {
+      print("Ticket List");
+      UserProfileModel model = result as UserProfileModel;
+
+      setState(() {
+        subData = model.data;
+      });
+    } else {
+      ErrorModel model = result as ErrorModel;
+      print("error: ${model.message}");
+      setState(() {
+        isLoading = false;
+      });
+    }
+    setState(() {
+      isLoading = false;
+    });
+    print(result);
   }
 
   updateProfileData(Map user) async {
@@ -85,313 +113,361 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: gWhiteColor,
-      body: SafeArea(
-        child: FutureBuilder(
-            future: getProfileDetails,
-            builder: (_, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data.runtimeType == UserProfileModel) {
-                  UserProfileModel data = snapshot.data as UserProfileModel;
-                  ChildUserModel? subData = data.data;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 3.w),
-                        child: buildAppBar(
+    return  Scaffold(
+            backgroundColor: gWhiteColor,
+            body: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 3.w,vertical: 1.h),
+                    child: buildAppBar(
                           () {
-                            Navigator.pop(context);
-                          },
-                          showLogo: false,
-                          showChild: true,
-                          customAction: true,
-                          child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                        Navigator.pop(context);
+                      },
+                      showLogo: false,
+                      showChild: true,
+                      customAction: true,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "My Profile",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: kFontBold,
+                              color: gBlackColor,
+                              fontSize: 16.dp,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(right: 3.w),
+                            child: RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                children: <TextSpan>[
+                                  TextSpan(
+                                    text: 'V.',
+                                    style: TextStyle(
+                                        fontFamily: kFontMedium,
+                                        color: gBlackColor,
+                                        fontSize: 6.dp),
+                                  ),
+                                  TextSpan(
+                                    text: "13.2",
+                                    style: TextStyle(
+                                        fontFamily: kFontBook,
+                                        color: gBlackColor,
+                                        fontSize: 6.dp),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        (!isEdit)
+                            ? InkWell(
+                            onTap: () {
+                              toggleEdit();
+                              if (isEdit) {
+                                setState(() {
+                                  ChildUserModel data = subData!;
+                                  print(
+                                      "${data.name}, ${data.age}");
+                                  fnameController.text =
+                                      data.fname ?? '';
+                                  lnameController.text =
+                                      data.lname ?? '';
+                                  ageController.text =
+                                      data.age ?? '';
+                                  genderSelected = data.gender!
+                                      .toTitleCase() ??
+                                      '';
+                                  emailController.text =
+                                  data.email!;
+                                  mobileController.text =
+                                  data.phone!;
+                                });
+                              }
+                            },
+                            child: SvgPicture.asset(
+                              "assets/images/Icon feather-edit.svg",
+                              color: Colors.grey,
+                              fit: BoxFit.contain,
+                              height: 2.5.h,
+                            ))
+                            : Align(
+                          alignment: Alignment.topRight,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                "My Profile",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontFamily: kFontBold,
-                                  color: gBlackColor,
-                                  fontSize: 16.dp,
+                              GestureDetector(
+                                onTap: () {
+                                  toggleEdit();
+                                  _image = null;
+                                },
+                                child: const Icon(
+                                  Icons.clear,
                                 ),
                               ),
-                              Padding(
-                                padding: EdgeInsets.only(right: 3.w),
-                                child: RichText(
-                                  textAlign: TextAlign.center,
-                                  text: TextSpan(
-                                    children: <TextSpan>[
-                                      TextSpan(
-                                        text: 'V.',
-                                        style: TextStyle(
-                                            fontFamily: kFontMedium,
-                                            color: gBlackColor,
-                                            fontSize: 6.dp),
-                                      ),
-                                      TextSpan(
-                                        text: "10.5",
-                                        style: TextStyle(
-                                            fontFamily: kFontBook,
-                                            color: gBlackColor,
-                                            fontSize: 6.dp),
-                                      ),
-                                    ],
+                              SizedBox(width: 1.w),
+                              GestureDetector(
+                                onTap: () async {
+                                  if (int.parse(ageController
+                                      .text) <
+                                      10 ||
+                                      int.parse(ageController
+                                          .text) >
+                                          100) {
+                                    AppConfig().showSnackbar(
+                                        context,
+                                        "Age Should be Greater than 10 and less than 100",
+                                        isError: true);
+                                  } else {
+                                    var file;
+                                    if (_image != null) {
+                                      file = await http
+                                          .MultipartFile
+                                          .fromPath("photo",
+                                          _image!.path);
+                                    }
+                                    SendUserModel user =
+                                    SendUserModel(
+                                        fname:
+                                        fnameController
+                                            .text,
+                                        lname:
+                                        lnameController
+                                            .text,
+                                        age: ageController
+                                            .text,
+                                        gender: genderSelected
+                                            .toLowerCase(),
+                                        email:
+                                        subData?.email,
+                                        phone:
+                                        subData?.phone,
+                                        profile: (_image !=
+                                            null &&
+                                            file !=
+                                                null)
+                                            ? file
+                                            : null);
+                                    updateProfileData(
+                                        user.toJson());
+                                  }
+
+                                  // toggleEdit();
+                                },
+                                child: const Icon(
+                                  Icons.check,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  (isLoading)
+                      ? Padding(padding: EdgeInsets.symmetric(vertical: 30.h),
+                    child: Center(child: buildCircularIndicator(),),
+                  )
+                      :  Expanded(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        width:
+                        MediaQuery.of(context).size.shortestSide >
+                            600
+                            ? 50.w
+                            : double.maxFinite,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 2.h, horizontal: 3.w),
+                        decoration: BoxDecoration(
+                          color: gWhiteColor,
+                          border: Border.all(
+                            color: MediaQuery.of(context)
+                                .size
+                                .shortestSide >
+                                600
+                                ? gGreyColor.withOpacity(0.5)
+                                : gWhiteColor,
+                            width: MediaQuery.of(context)
+                                .size
+                                .shortestSide >
+                                600
+                                ? 1
+                                : 0,
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(
+                                  top: 0.h, bottom: 2.h),
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: gWhiteColor,
+                                border: Border.all(
+                                  color: gGreyColor.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: gWhiteColor,
+                                  border: Border.all(
+                                    color:
+                                    gGreyColor.withOpacity(0.3),
                                   ),
+                                ),
+                                child: Center(
+                                  child: CircleAvatar(
+                                    radius: 8.h,
+                                    backgroundImage: NetworkImage(
+                                      subData?.profile ?? '',
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text(
+                              "${subData?.name}",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontFamily: eUser().mainHeadingFont,
+                                  color: eUser().mainHeadingColor,
+                                  fontSize:
+                                  eUser().mainHeadingFontSize),
+                            ),
+                            SizedBox(height: 1.h),
+                            Text(
+                              "${subData?.profession}",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontFamily:
+                                  eUser().userTextFieldHintFont,
+                                  color: gHintTextColor,
+                                  fontSize:
+                                  eUser().userTextFieldFontSize),
+                            ),
+                            SizedBox(height: 5.h),
+                            Column(
+                              children: [
+                                profileTile(
+                                    "First Name: ",
+                                    subData?.fname ??
+                                        "Gut-Wellness Club",
+                                    controller: fnameController),
+                                profileTile(
+                                    "Last Name: ",
+                                    subData?.lname ??
+                                        "Gut-Wellness Club",
+                                    controller: lnameController),
+                                profileTile(
+                                    "Age: ", subData?.age ?? '',
+                                    controller: ageController,
+                                    maxLength: 2),
+                                genderTile(
+                                    'Gender', subData?.gender ?? "")
+                                // profileTile("Email: ", subData?.email ?? ''),
+                                // profileTile("Mobile Number: ", subData?.phone ?? ''),
+                              ],
+                            ),
+
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: IntrinsicWidth(
+                      child: GestureDetector(
+                        onTap: () {
+                          AppConfig().showSheet(
+                            context,
+                            logoutWidget(),
+                            bottomSheetHeight: 45.h,
+                            isDismissible: true,
+                          );
+                          // showPersistentBottomSheet(context);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(top: 4.h),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 1.h,
+                              horizontal: 3.w),
+                          decoration: BoxDecoration(
+                            color: gWhiteColor,
+                            borderRadius:
+                            BorderRadius.circular(10),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: kLineColor,
+                                offset: Offset(2, 3),
+                                blurRadius: 5,
+                              )
+                            ],
+                            // border: Border.all(
+                            //   width: 1,
+                            //   color: kLineColor,
+                            // ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.center,
+                            crossAxisAlignment:
+                            CrossAxisAlignment.center,
+                            children: [
+                              Image(
+                                image: const AssetImage(
+                                  "assets/images/Group 2744.png",
+                                ),
+                                height: 4.h,
+                              ),
+                              SizedBox(width: 1.w),
+                              Text(
+                                "Logout",
+                                style: TextStyle(
+                                  color: kTextColor,
+                                  fontFamily: kFontBook,
+                                  fontSize: 13.dp,
                                 ),
                               ),
                             ],
                           ),
-                          actions: [
-                            (!isEdit)
-                                ? InkWell(
-                                    onTap: () {
-                                      toggleEdit();
-                                      if (isEdit) {
-                                        setState(() {
-                                          ChildUserModel data = subData!;
-                                          print("${data.name}, ${data.age}");
-                                          fnameController.text =
-                                              data.fname ?? '';
-                                          lnameController.text =
-                                              data.lname ?? '';
-                                          ageController.text = data.age ?? '';
-                                          genderSelected =
-                                              data.gender!.toTitleCase() ?? '';
-                                          emailController.text = data.email!;
-                                          mobileController.text = data.phone!;
-                                        });
-                                      }
-                                    },
-                                    child: SvgPicture.asset(
-                                      "assets/images/Icon feather-edit.svg",
-                                      color: Colors.grey,
-                                      fit: BoxFit.contain,
-                                      height: 2.5.h,
-                                    ))
-                                : Align(
-                                    alignment: Alignment.topRight,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            toggleEdit();
-                                            _image = null;
-                                          },
-                                          child: const Icon(
-                                            Icons.clear,
-                                          ),
-                                        ),
-                                        SizedBox(width: 1.w),
-                                        GestureDetector(
-                                          onTap: () async {
-                                            if (int.parse(ageController.text) <
-                                                    10 ||
-                                                int.parse(ageController.text) >
-                                                    100) {
-                                              AppConfig().showSnackbar(context,
-                                                  "Age Should be Greater than 10 and less than 100",
-                                                  isError: true);
-                                            } else {
-                                              var file;
-                                              if (_image != null) {
-                                                file = await http.MultipartFile
-                                                    .fromPath(
-                                                        "photo", _image!.path);
-                                              }
-                                              SendUserModel user =
-                                                  SendUserModel(
-                                                      fname:
-                                                          fnameController.text,
-                                                      lname:
-                                                          lnameController.text,
-                                                      age: ageController.text,
-                                                      gender: genderSelected
-                                                          .toLowerCase(),
-                                                      email: subData!.email,
-                                                      phone: subData.phone,
-                                                      profile:
-                                                          (_image != null &&
-                                                                  file != null)
-                                                              ? file
-                                                              : null);
-                                              updateProfileData(user.toJson());
-                                            }
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                ],
+              ),
+            ),
+          );
+  }
 
-                                            // toggleEdit();
-                                          },
-                                          child: const Icon(
-                                            Icons.check,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Container(
-                            width:
-                                MediaQuery.of(context).size.shortestSide > 600
-                                    ? 50.w
-                                    : double.maxFinite,
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2.h, horizontal: 3.w),
-                            decoration: BoxDecoration(
-                              color: gWhiteColor,
-                              border: Border.all(
-                                color: MediaQuery.of(context).size.shortestSide > 600 ? gGreyColor.withOpacity(0.5) : gWhiteColor,
-                                width: MediaQuery.of(context).size.shortestSide > 600 ? 1 : 0,
-                              ),
-                            ),
-                            child: Column(
-                              children: [
-                                Container(
-                                  margin:
-                                      EdgeInsets.only(top: 0.h, bottom: 2.h),
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: gWhiteColor,
-                                    border: Border.all(
-                                      color: gGreyColor.withOpacity(0.3),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: gWhiteColor,
-                                      border: Border.all(
-                                        color: gGreyColor.withOpacity(0.3),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: CircleAvatar(
-                                        radius: 8.h,
-                                        backgroundImage: NetworkImage(
-                                          subData!.profile!,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Text(
-                                  "${subData.name}",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontFamily: eUser().mainHeadingFont,
-                                      color: eUser().mainHeadingColor,
-                                      fontSize: eUser().mainHeadingFontSize),
-                                ),
-                                SizedBox(height: 1.h),
-                                Text(
-                                  "${subData.profession}",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontFamily: eUser().userTextFieldHintFont,
-                                      color: gHintTextColor,
-                                      fontSize: eUser().userTextFieldFontSize),
-                                ),
-                                SizedBox(height: 5.h),
-                                Column(
-                                  children: [
-                                    profileTile("First Name: ",
-                                        subData.fname ?? "Gut-Wellness Club",
-                                        controller: fnameController),
-                                    profileTile("Last Name: ",
-                                        subData.lname ?? "Gut-Wellness Club",
-                                        controller: lnameController),
-                                    profileTile("Age: ", subData.age ?? '',
-                                        controller: ageController,
-                                        maxLength: 2),
-                                    genderTile('Gender', subData.gender ?? "")
-                                    // profileTile("Email: ", subData?.email ?? ''),
-                                    // profileTile("Mobile Number: ", subData?.phone ?? ''),
-                                  ],
-                                ),
-                                Center(
-                                  child: IntrinsicWidth(
-                                    child: GestureDetector(
-                                      onTap: () => AppConfig().showSheet(
-                                        context,
-                                        logoutWidget(),
-                                        bottomSheetHeight: 45.h,
-                                        isDismissible: true,
-                                      ),
-                                      child: Container(
-                                        margin: EdgeInsets.only(top: 4.h),
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 1.h, horizontal: 3.w),
-                                        decoration: BoxDecoration(
-                                          color: gWhiteColor,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color: kLineColor,
-                                              offset: Offset(2, 3),
-                                              blurRadius: 5,
-                                            )
-                                          ],
-                                          // border: Border.all(
-                                          //   width: 1,
-                                          //   color: kLineColor,
-                                          // ),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Image(
-                                              image: const AssetImage(
-                                                "assets/images/Group 2744.png",
-                                              ),
-                                              height: 4.h,
-                                            ),
-                                            SizedBox(width: 1.w),
-                                            Text(
-                                              "Logout",
-                                              style: TextStyle(
-                                                color: kTextColor,
-                                                fontFamily: kFontBook,
-                                                fontSize: 13.dp,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  ErrorModel data = snapshot.data as ErrorModel;
-                  // AppConfig().showSnackbar(context, data.message ?? 'Unauthenticated', isError: true);
-                  errorDisplayLayout();
-                }
-              } else if (snapshot.hasError) {
-                // AppConfig().showSnackbar(context, snapshot.error.toString(), isError: true);
-                errorDisplayLayout();
-              }
-              return Padding(
-                padding: EdgeInsets.symmetric(vertical: 30.h),
-                child: buildCircularIndicator(),
-              );
-            }),
+  void showPersistentBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true, // Full-screen control over bottom sheet
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(20), // Add margin on all sides
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const BottomSheetWidget(),
+        ),
       ),
     );
   }
@@ -434,7 +510,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     print(controller);
     print(controller.runtimeType);
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 5.w),
+      padding: EdgeInsets.only(top: 1.h,bottom: 1.h, left: 3.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         // mainAxisSize: MainAxisSize.min,
@@ -444,34 +520,34 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             style: TextStyle(
               color: gHintTextColor,
               fontFamily: kFontBook,
-              fontSize: 10.dp,
+              fontSize: 12.dp,
             ),
           ),
           SizedBox(height: 1.h),
-          // (isEdit && controller != null)
-          //     ? TextField(
-          //   controller: controller,
-          //   readOnly: !isEdit,
-          //   decoration: InputDecoration(
-          //       contentPadding: EdgeInsets.all(0.0),
-          //       isDense: true,
-          //       counterText: ""
-          //     // border: InputBorde,
-          //   ),
-          //   minLines: 1,
-          //   maxLines: 1,
-          //   maxLength: maxLength,
-          //   // onSaved: (String value) {
-          //   //   // This optional block of code can be used to run
-          //   //   // code when the user saves the form.
-          //   // },
-          //   // validator: (value) {
-          //   //   if(value!.isEmpty){
-          //   //     return 'Name filed can\'t be empty';
-          //   //   }
-          //   // },
-          // )
-          //     :
+          (isEdit && controller != null)
+              ? TextField(
+            controller: controller,
+            readOnly: !isEdit,
+            decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(0.0),
+                isDense: true,
+                counterText: ""
+              // border: InputBorde,
+            ),
+            minLines: 1,
+            maxLines: 1,
+            maxLength: maxLength,
+            // onSaved: (String value) {
+            //   // This optional block of code can be used to run
+            //   // code when the user saves the form.
+            // },
+            // validator: (value) {
+            //   if(value!.isEmpty){
+            //     return 'Name filed can\'t be empty';
+            //   }
+            // },
+          )
+              :
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -480,7 +556,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 style: TextStyle(
                   color: gBlackColor,
                   fontFamily: kFontBold,
-                  fontSize: 11.dp,
+                  fontSize: 14.dp,
                 ),
               ),
               Container(
@@ -885,24 +961,24 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     logoutProgressState(() {
       showLogoutProgress = true;
     });
-    final res =
-        await LoginWithOtpService(repository: logoutRepository).logoutService();
-
-    if (res.runtimeType == LogoutModel) {
+    // final res =
+    //     await LoginWithOtpService(repository: logoutRepository).logoutService();
+    //
+    // if (res.runtimeType == LogoutModel) {
       clearAllUserDetails();
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const ExistingUser(),
       ));
-    } else {
-      ErrorModel model = res as ErrorModel;
-      Get.snackbar(
-        "",
-        model.message!,
-        colorText: gWhiteColor,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: gsecondaryColor.withOpacity(0.55),
-      );
-    }
+    // } else {
+    //   ErrorModel model = res as ErrorModel;
+    //   Get.snackbar(
+    //     "",
+    //     model.message!,
+    //     colorText: gWhiteColor,
+    //     snackPosition: SnackPosition.BOTTOM,
+    //     backgroundColor: gsecondaryColor.withOpacity(0.55),
+    //   );
+    // }
 
     logoutProgressState(() {
       showLogoutProgress = true;
@@ -967,55 +1043,72 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
               ),
             ),
           ),
-          SizedBox(height: 3.h),
+          SizedBox(height: 5.h),
           (showLogoutProgress)
               ? Center(child: buildCircularIndicator())
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    IntrinsicWidth(
-                      child: GestureDetector(
-                        onTap: () => logOut(),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 1.5.h, horizontal: 5.w),
-                          decoration: BoxDecoration(
-                              color: gsecondaryColor,
-                              border: Border.all(color: kLineColor, width: 0.5),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Text(
-                            "YES",
-                            style: TextStyle(
-                              fontFamily: kFontMedium,
-                              color: gWhiteColor,
-                              fontSize: 11.dp,
-                            ),
-                          ),
-                        ),
-                      ),
+                    ButtonWidget(
+                      onPressed: () => logOut(),
+                      text: "Yes",
+                      isLoading: false,
+                      radius: 5,
+                      buttonWidth: 15.w,
                     ),
                     SizedBox(width: 5.w),
-                    IntrinsicWidth(
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 1.5.h, horizontal: 5.w),
-                          decoration: BoxDecoration(
-                              color: gWhiteColor,
-                              border: Border.all(color: kLineColor, width: 0.5),
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Text(
-                            "NO",
-                            style: TextStyle(
-                              fontFamily: kFontMedium,
-                              color: gsecondaryColor,
-                              fontSize: 11.dp,
-                            ),
-                          ),
-                        ),
-                      ),
+                    ButtonWidget(
+                      onPressed: () => Navigator.pop(context),
+                      text: "No",
+                      isLoading: false,
+                      radius: 5,
+                      buttonWidth: 15.w,
+                      color: gWhiteColor,
+                      textColor: gsecondaryColor,
                     ),
+                    // IntrinsicWidth(
+                    //   child: GestureDetector(
+                    //     onTap: () => logOut(),
+                    //     child: Container(
+                    //       padding: EdgeInsets.symmetric(
+                    //           vertical: 1.5.h, horizontal: 5.w),
+                    //       decoration: BoxDecoration(
+                    //           color: gsecondaryColor,
+                    //           border: Border.all(color: kLineColor, width: 0.5),
+                    //           borderRadius: BorderRadius.circular(5)),
+                    //       child: Text(
+                    //         "YES",
+                    //         style: TextStyle(
+                    //           fontFamily: kFontMedium,
+                    //           color: gWhiteColor,
+                    //           fontSize: 11.dp,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(width: 5.w),
+                    // IntrinsicWidth(
+                    //   child: GestureDetector(
+                    //     onTap: () => Navigator.pop(context),
+                    //     child: Container(
+                    //       padding: EdgeInsets.symmetric(
+                    //           vertical: 1.5.h, horizontal: 5.w),
+                    //       decoration: BoxDecoration(
+                    //           color: gWhiteColor,
+                    //           border: Border.all(color: kLineColor, width: 0.5),
+                    //           borderRadius: BorderRadius.circular(5)),
+                    //       child: Text(
+                    //         "NO",
+                    //         style: TextStyle(
+                    //           fontFamily: kFontMedium,
+                    //           color: gsecondaryColor,
+                    //           fontSize: 11.dp,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
           SizedBox(height: 1.h)

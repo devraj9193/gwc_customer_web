@@ -21,4 +21,12 @@ class ShipTrackService{
     return await repository.sendSippingApproveStatusRepo(approveStatus, selectedDate!);
   }
 
+  Future getUserAddressService() async{
+    return await repository.getUserAddressRepo();
+  }
+
+  Future sendUserAddressService(Map details) async{
+    return await repository.sendUserAddressRepo(details);
+  }
+
 }

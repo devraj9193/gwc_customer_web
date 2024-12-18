@@ -221,12 +221,14 @@ import 'dart:ui';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/screens/gut_list_screens/ppc_popup.dart';
+import 'package:gwc_customer_web/widgets/logout_widget.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import '../../model/chief_qa_model/send_qa_model.dart';
 import '../../model/combined_meal_model/meal_plan_tracker_modl/send_meal_plan_tracker_model.dart';
 import '../../model/dashboard_model/get_appointment/get_appointment_after_appointed.dart';
 import '../../model/dashboard_model/get_dashboard_data_model.dart';
@@ -241,6 +243,7 @@ import '../../model/ship_track_model/sipping_approve_model.dart';
 import '../../model/user_slot_for_schedule_model/user_slot_days_schedule_model.dart';
 import '../../model/uvdesk_model/new_ticket_details_model.dart';
 import '../../repository/api_service.dart';
+import '../../repository/chief_question_repo/chief_question_repo.dart';
 import '../../repository/dashboard_repo/gut_repository/dashboard_repository.dart';
 import '../../repository/login_otp_repository.dart';
 import '../../repository/post_program_repo/post_program_repository.dart';
@@ -256,6 +259,7 @@ import '../../services/shipping_service/ship_track_service.dart';
 import '../../services/user_slot_for_schedule_service/user_slot_for_schedule_service.dart';
 import '../../services/uvdesk_service/uv_desk_service.dart';
 import '../../utils/app_config.dart';
+import '../../widgets/button_widget.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/scrolling_text.dart';
 import '../../widgets/video/normal_video.dart';
@@ -264,23 +268,23 @@ import '../appointment_screens/consultation_screens/check_user_report_screen.dar
 import '../appointment_screens/consultation_screens/consultation_history.dart';
 import '../appointment_screens/consultation_screens/medical_report_screen.dart';
 import '../appointment_screens/consultation_screens/upload_files.dart';
-import '../appointment_screens/doctor_calender_time_screen.dart';
-import '../appointment_screens/doctor_slots_details_screen.dart';
-import '../appointment_screens/ppc_cons_booking_screen.dart';
+import '../appointment_screens/new_screens/new_appointment_join_screen.dart';
+import '../appointment_screens/new_screens/new_appointment_screen.dart';
 import '../combined_meal_plan/combined_meal_screen.dart';
 import '../combined_meal_plan/tracker_widgets/new-day_tracker.dart';
 import '../cook_kit_shipping_screens/cook_kit_tracking.dart';
-import '../cook_kit_shipping_screens/shopping_list_screen.dart';
+import '../cook_kit_shipping_screens/new_shopping_list_screen.dart';
 import '../cook_kit_shipping_screens/tracking_pop_up.dart';
-import '../evalution_form/evaluation_get_details.dart';
-import '../follow_up_Call_screens/follow_up_call_date_screen.dart';
-import '../follow_up_Call_screens/follow_up_call_screen.dart';
+import '../follow_up_Call_screens/web_follow_up_call.dart';
 import '../help_screens/help_screen.dart';
 import 'package:intl/intl.dart';
-import '../home_remedies/home_remedies_screen.dart';
+import '../home_remedies/web_home_remedies.dart';
 import '../medical_program_feedback_screen/card_selection.dart';
 import '../medical_program_feedback_screen/medical_feedback_form.dart';
 import '../medical_program_feedback_screen/post_gut_type_diagnosis.dart';
+import '../medical_program_feedback_screen/web_feedback_forms_screen.dart';
+import '../new_profile_screens/get_evaluation_screen/get_evaluation_screen.dart';
+import '../new_profile_screens/reports_screens/my_reports_screen.dart';
 import '../notification_screen.dart';
 import '../post_program_screens/new_post_program/pp_levels_demo.dart';
 import '../post_program_screens/protcol_guide_details.dart';
@@ -297,12 +301,12 @@ class NewDsPage extends StatefulWidget {
 }
 
 class _NewDsPageState extends State<NewDsPage> {
-  final _scrollController = ScrollController();
+  // final _scrollController = ScrollController();
   static const newCompletedStageColor = Color(0xff68B881);
   static const newCompletedStageBtnColor = Color(0xFF93C2A2);
   static const newCurrentStageColor = Color(0xffFFD23F);
   // static const newCurrentStageButtonColor = Color(0xffFD8B7B);
-  static const newCurrentStageButtonColor = Color(0xffFd10034);
+  static const newCurrentStageButtonColor = Color(0xfffd10034);
 
   final _pref = AppConfig().preferences;
   ScrollPhysics physics = const AlwaysScrollableScrollPhysics();
@@ -320,6 +324,8 @@ class _NewDsPageState extends State<NewDsPage> {
   String? badgeNotification;
 
   String? isMrRead;
+
+  GetTeamPatient? getTeamPatientModel;
 
   late GutDataService _gutDataService;
 
@@ -375,25 +381,25 @@ class _NewDsPageState extends State<NewDsPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getUserProfile();
-    WakelockPlus.disable();
-    getIsTimePassedOrNot("09:00");
-    getFollowUpCallDetails();
-    chkPpcBookPopUp();
+    // getUserProfile();
+    // WakelockPlus.disable();
+    // getIsTimePassedOrNot("09:00");
+    // getFollowUpCallDetails();
+    // chkPpcBookPopUp();
     // getThreadsList();
-    getShippingDetails();
-    if (_pref!.getString(AppConfig().shipRocketBearer) == null ||
-        _pref!.getString(AppConfig().shipRocketBearer)!.isEmpty) {
-      getShipRocketToken();
-    } else {
-      String token = _pref!.getString(AppConfig().shipRocketBearer)!;
-      Map<String, dynamic> payload = Jwt.parseJwt(token);
-      print('shipRocketToken : $payload');
-      var date = DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
-      if (!DateTime.now().difference(date).isNegative) {
-        getShipRocketToken();
-      }
-    }
+    // getShippingDetails();
+    // if (_pref!.getString(AppConfig().shipRocketBearer) == null ||
+    //     _pref!.getString(AppConfig().shipRocketBearer)!.isEmpty) {
+    //   getShipRocketToken();
+    // } else {
+    //   String token = _pref!.getString(AppConfig().shipRocketBearer)!;
+    //   Map<String, dynamic> payload = Jwt.parseJwt(token);
+    //   print('shipRocketToken : $payload');
+    //   var date = DateTime.fromMillisecondsSinceEpoch(payload['exp'] * 1000);
+    //   if (!DateTime.now().difference(date).isNegative) {
+    //     getShipRocketToken();
+    //   }
+    // }
   }
 
   ///ticket isReplied save
@@ -433,6 +439,115 @@ class _NewDsPageState extends State<NewDsPage> {
   bool isFollowUpBook = false;
 
   String followUpSlot = "";
+
+  /// poll question
+  String? selectedPollQus; // Stores the selected value
+  final List<String> options = [
+    "I’ve read and understood it, but I have a few questions.",
+    "I’ve read and understood it, and I plan to follow it diligently.",
+    "I’ve read it, but I find it challenging to follow.",
+    'I’ve read it, but I’d prefer a quick explanation from the doctor.',
+    'I’ve not read it yet.',
+  ]; // List of options
+  pollQuePopUp() {
+    print("----- poll question popup --------");
+
+    return AppConfig().showSheet(
+        context,
+        StatefulBuilder(builder: (_, setstate) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Text(
+                  "Optimal health starts with a gut-focused meal protocol, and we’re excited to support you! How’s it going so far? Let us know— we’re here to help you make the most of it!",
+                  style: TextStyle(
+                      fontSize: bottomSheetHeadingFontSize,
+                      fontFamily: bottomSheetHeadingFontFamily,
+                      height: 1.4),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                child: Divider(
+                  color: kLineColor,
+                  thickness: 1.2,
+                ),
+              ),
+              SizedBox(height: 1.5.h),
+              ...options.map((option) {
+                return RadioListTile<String>(
+                  title: Text(option),
+                  value: option,
+                  activeColor: gsecondaryColor,
+                  groupValue: selectedPollQus,
+                  onChanged: (value) {
+                    setstate(() {
+                      selectedPollQus = value;
+                    });
+                  },
+                );
+              }).toList(),
+              Center(
+                child: ButtonWidget(
+                  text: 'Submit',
+                  onPressed: submitLoading
+                      ? () {}
+                      : () {
+                          sendDataToApi(setstate);
+                        },
+                  isLoading: submitLoading,
+                  radius: 10,
+                  buttonWidth: 20.w,
+                ),
+              ),
+              SizedBox(height: 1.h),
+            ],
+          );
+        }),
+        bottomSheetHeight: 80.h,
+        isDismissible: false,
+        isSheetCloseNeeded: false,
+        sheetCloseOnTap: () {
+          Navigator.pop(context);
+        });
+  }
+
+  bool submitLoading = false;
+
+  Future<void> sendDataToApi(setstate) async {
+    if (selectedPollQus!.isNotEmpty) {
+      setstate(() {
+        submitLoading = true;
+      });
+
+      Map<String, dynamic> data = {
+        'mp_poll': selectedPollQus,
+      };
+
+      final res = await pollRepository.submitPollQuestionAnswerRepo(data);
+
+      print("sendDataToApi:$res");
+      print("res.runtimeType: ${res.runtimeType}");
+
+      if (res.runtimeType == SendChiefQaModel) {
+        SendChiefQaModel response = res;
+        print("response : $response");
+        Navigator.pop(context);
+      } else {
+        String result = (res as ErrorModel).message ?? '';
+        AppConfig().showSnackbar(context, result, isError: true, duration: 4);
+      }
+      setstate(() {
+        submitLoading = false;
+      });
+    } else {
+      AppConfig().showSnackbar(context, 'Please select an option',
+          isError: true, duration: 4);
+    }
+  }
 
   /// once we got data from api
   /// if any date is today than we r showing showFollowUpDetailsInPopup
@@ -512,7 +627,7 @@ class _NewDsPageState extends State<NewDsPage> {
 
   /// enable this when we need to hide followup sheet after consultation
   getIsTimePassedOrNot(String date) {
-    final today = DateTime.now();
+    // final today = DateTime.now();
     print("getIsTimePassedOrNot");
     print(DateFormat('hh:mm').parse(date));
     final getT = DateFormat('hh:mm').parse(date);
@@ -534,6 +649,7 @@ class _NewDsPageState extends State<NewDsPage> {
   /// else isBook: as false
   showFollowUpDetailsInPopup(
       {required bool isBook, ChildUserSlotDaysForScheduleModel? details}) {
+    bool isSunday = checkIfSunday(details?.date ?? '');
     return AppConfig().showSheet(
         context,
         StatefulBuilder(builder: (_, setstate) {
@@ -572,16 +688,17 @@ class _NewDsPageState extends State<NewDsPage> {
                   textAlign: TextAlign.center,
                 ),
               ),
+              SizedBox(height: 3.h),
               if (!isBook)
                 Center(
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const FollowUpCallDateScreen(),
-                              // const FollowUpCallScreen(),
-                          ),
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const WebFollowUpCall(),
+                          // const FollowUpCallScreen(),
+                        ),
                       );
                     },
                     child: Container(
@@ -609,7 +726,7 @@ class _NewDsPageState extends State<NewDsPage> {
         }),
         bottomSheetHeight: 50.h,
         isDismissible: false,
-        isSheetCloseNeeded: false,
+        isSheetCloseNeeded: isSunday ? true : false,
         sheetCloseOnTap: () {
           Navigator.pop(context);
         });
@@ -754,7 +871,7 @@ class _NewDsPageState extends State<NewDsPage> {
                     Navigator.of(context)
                         .push(
                           MaterialPageRoute(
-                            builder: (context) => PpcConsBookingScreen(
+                            builder: (context) => NewAppointmentScreen(
                               isPostProgram: true,
                               nourishStartedDate: nourishStartedDate,
                               nourishTotalDays: nourishTotalDays,
@@ -898,8 +1015,8 @@ class _NewDsPageState extends State<NewDsPage> {
         } else {
           errorMsg = AppConfig.oopsMessage;
         }
-        Future.delayed(Duration(seconds: 0)).whenComplete(
-            () => AppConfig().showSnackbar(context, errorMsg ?? '',
+        Future.delayed(const Duration(seconds: 0)).whenComplete(
+            () => AppConfig().showSnackbar(context, errorMsg,
                 isError: true,
                 duration: 50000,
                 action: SnackBarAction(
@@ -921,6 +1038,8 @@ class _NewDsPageState extends State<NewDsPage> {
       badgeNotification = _getDashboardDataModel.notification;
       print("mrread: ${_getDashboardDataModel.isMrRead}");
       isMrRead = _getDashboardDataModel.isMrRead;
+
+      getTeamPatientModel = _getDashboardDataModel.getTeamPatient;
 
       print(
           "_getDashboardDataModel.app_consulation: ${_getDashboardDataModel.app_consulation}");
@@ -1139,343 +1258,351 @@ class _NewDsPageState extends State<NewDsPage> {
   Widget build(BuildContext context) {
     print("build called");
     final Size size = MediaQuery.of(context).size;
-    final double categoryHeight = size.height * 0.30;
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        body: SizedBox(
+    // final double categoryHeight = size.height * 0.30;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SizedBox(
           height: size.height,
-          child: (isProgressDialogOpened)
-              ? Shimmer.fromColors(
-                  baseColor: Colors.grey.withOpacity(0.3),
-                  highlightColor: Colors.grey.withOpacity(0.7),
-                  child: IgnorePointer(child: cards()),
-                )
-              : RefreshIndicator(
-                  child: cards(),
-                  onRefresh: () {
-                    getData();
-                    return Future.value();
-                  }),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(
+                    left: 3.w, right: 3.w, bottom: 1.w, top: 1.h),
+                child: buildAppBar(
+                    () {
+                      Navigator.pop(context);
+                    },
+                    badgeNotification: badgeNotification,
+                    isBackEnable: false,
+                    showNotificationIcon: true,
+                    notificationOnTap: () {
+                      Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const NotificationScreen()))
+                          .then((value) => reloadUI());
+                    },
+                    showHelpIcon: false,
+                    helpOnTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => HelpScreen()));
+                    },
+                    showSupportIcon: true,
+                    supportOnTap: () {
+                      showSupportCallSheet(context);
+                    },
+                    showLogoutIcon: true,
+                    logoutOnTap: () {
+                      AppConfig().showSheet(
+                        context,
+                        const LogoutWidget(),
+                        bottomSheetHeight: 45.h,
+                        isDismissible: true,
+                      );
+                    }),
+              ),
+              Expanded(
+                child: (isProgressDialogOpened)
+                    ? Shimmer.fromColors(
+                        baseColor: Colors.grey.withOpacity(0.3),
+                        highlightColor: Colors.grey.withOpacity(0.7),
+                        child: IgnorePointer(child: cards()),
+                      )
+                    : RefreshIndicator(
+                        child: cards(),
+                        onRefresh: () {
+                          getData();
+                          return Future.value();
+                        }),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   cards() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding:
-              EdgeInsets.only(left: 5.w, right: 5.w, bottom: 1.w, top: 1.h),
-          child: buildAppBar(
-            () {
-              Navigator.pop(context);
-            },
-            badgeNotification: badgeNotification,
-            isBackEnable: false,
-            showNotificationIcon: true,
-            notificationOnTap: () {
-              Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const NotificationScreen()))
-                  .then((value) => reloadUI());
-            },
-            showHelpIcon: false,
-            helpOnTap: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => HelpScreen()));
-            },
-            showSupportIcon: true,
-            supportOnTap: () {
-              showSupportCallSheet(context);
-            },
-          ),
-        ),
-        Expanded(
-          child: CustomScrollView(slivers: [
-            SliverToBoxAdapter(
+    return CustomScrollView(slivers: [
+      SliverToBoxAdapter(
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.only(top: 4.h),
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                      "assets/images/dashboard_stages/Mask Group 43505.png"),
+                  opacity: 0.5,
+                  fit: BoxFit.fill,
+                ),
+              ),
               child: Column(
                 children: [
-                  Container(
-                    padding: EdgeInsets.only(top: 4.h),
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(
-                            "assets/images/dashboard_stages/Mask Group 43505.png"),
-                        opacity: 0.5,
-                        fit: BoxFit.fill,
+                  isFollowUpBook
+                      ? SizedBox(
+                          height: 5.h,
+                          child: ScrollingText(
+                            text:
+                                "You have a call booked at @$followUpSlot with your doctor",
+                            textStyle: TextStyle(
+                                color: gsecondaryColor,
+                                fontSize: questionFont,
+                                fontFamily: kFontMedium),
+                          ),
+                        )
+                      : const SizedBox(),
+                  GestureDetector(
+                    onTap: handleTrackerRemedyOnTap,
+                    child: IntrinsicWidth(
+                      child: Container(
+                        // height: 3.h,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 3.w, vertical: 1.5.h),
+                        margin: EdgeInsets.symmetric(
+                          vertical: 2.h,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20.0)),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black.withAlpha(100),
+                                blurRadius: 10.0),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              "assets/images/home_remedies.png",
+                              height: 2.5.h,
+                              fit: BoxFit.scaleDown,
+                            ),
+                            SizedBox(width: 1.w),
+                            Text(
+                              "Instant Remedies",
+                              style: TextStyle(
+                                height: 1.3,
+                                fontFamily: eUser().userFieldLabelFont,
+                                color: eUser().mainHeadingColor,
+                                fontSize: bottomSheetSubHeadingSFontSize,
+                              ),
+                            ),
+                            // Icon(
+                            //   Icons.arrow_forward,
+                            //   color: gMainColor,
+                            //   size: 10.dp,
+                            // )
+                          ],
+                        ),
                       ),
                     ),
-                    child: Column(
-                      children: [
-                        isFollowUpBook
-                            ? SizedBox(
-                                height: 5.h,
-                                child: ScrollingText(
-                                  text:
-                                      "You have a call booked at @$followUpSlot with your doctor",
-                                  textStyle: TextStyle(
-                                      color: gsecondaryColor,
-                                      fontSize: questionFont,
-                                      fontFamily: kFontMedium),
-                                ),
-                              )
-                            : const SizedBox(),
-                        GestureDetector(
-                          onTap: handleTrackerRemedyOnTap,
-                          child: IntrinsicWidth(
-                            child: Container(
-                              // height: 3.h,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 3.w, vertical: 1.5.h),
-                              margin: EdgeInsets.symmetric(
-                                vertical: 2.h,
-                              ),
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(
-                                    Radius.circular(20.0)),
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.black.withAlpha(100),
-                                      blurRadius: 10.0),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    "assets/images/home_remedies.png",
-                                    height: 2.5.h,
-                                    fit: BoxFit.scaleDown,
-                                  ),
-                                  SizedBox(width: 1.w),
-                                  Text(
-                                    "Instant Remedies",
-                                    style: TextStyle(
-                                      height: 1.3,
-                                      fontFamily: eUser().userFieldLabelFont,
-                                      color: eUser().mainHeadingColor,
-                                      fontSize: bottomSheetSubHeadingSFontSize,
-                                    ),
-                                  ),
-                                  // Icon(
-                                  //   Icons.arrow_forward,
-                                  //   color: gMainColor,
-                                  //   size: 10.dp,
-                                  // )
-                                ],
-                              ),
+                  ),
+                  SizedBox(height: 5.h),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 6.w),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const WebFollowUpCall(),
+                              // const FollowUpCallScreen(),
+                              // const NewScheduleScreen(),
                             ),
-                          ),
-                        ),
-                        SizedBox(height: 5.h),
-                        Align(
-                          alignment: Alignment.topRight,
-                          child: Padding(
-                            padding: EdgeInsets.only(right: 6.w),
-                            child: InkWell(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const FollowUpCallDateScreen(),
-                                    // const FollowUpCallScreen(),
-                                    // const NewScheduleScreen(),
-                                  ),
-                                );
-                              },
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  ImageIcon(
-                                    const AssetImage(
-                                        "assets/images/new_ds/follow_up.png"),
-                                    size: 11.dp,
-                                    color: gHintTextColor,
-                                  ),
-                                  const SizedBox(
-                                    width: 3,
-                                  ),
-                                  Text(
-                                    'Follow-up call',
-                                    style: TextStyle(
-                                      color: gHintTextColor,
-                                      fontSize: headingFont,
-                                      decoration: TextDecoration.underline,
-                                    ),
-                                  )
-                                ],
-                              ),
+                          );
+                        },
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ImageIcon(
+                              const AssetImage(
+                                  "assets/images/new_ds/follow_up.png"),
+                              size: 11.dp,
+                              color: gHintTextColor,
                             ),
-                          ),
+                            const SizedBox(
+                              width: 3,
+                            ),
+                            Text(
+                              'Follow-up call',
+                              style: TextStyle(
+                                color: gHintTextColor,
+                                fontSize: headingFont,
+                                decoration: TextDecoration.underline,
+                              ),
+                            )
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                  SizedBox(height: 0.h),
-                  ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: stageData.length,
-                      itemBuilder: (_, index) {
-                        print("index---> $index $current $selected");
-
-                        if (index < current && selected != index) {
-                          print("if");
-                          return AnimatedAlign(
-                            duration: const Duration(milliseconds: 800),
-
-                            /// added this for click event to the yellow card
-                            /// (index+1 == current) ? 0.95
-                            heightFactor:
-                                (index + 1 == current) ? 0.95 : heightFactor,
-                            alignment: Alignment.topCenter,
-                            child: bigCard(
-                              title: stageData[index].title,
-                              subText: stageData[index].subTitle,
-                              image: stageData[index].rightImage,
-                              steps: stageData[index].step,
-                              index: index,
-                              btn1Name: stageData[index].btn1Name,
-                              btn2Name: stageData[index].btn2Name,
-                              btn3Name: stageData[index].btn3Name,
-                              type: stageData[index].type,
-                              bgColor: stageData[index].bgColor,
-                              btn1Color: stageData[index].btn1Color,
-                              btn2Color: stageData[index].btn2Color,
-                              btn3Color: stageData[index].btn3Color,
-                            ),
-                          );
-                        } else if (index == current) {
-                          print("else if1");
-                          print("${stageData[index].title}");
-                          return Column(
-                            children: [
-                              /// up arrow when drag
-                              /// this is not using
-                              AnimatedSize(
-                                duration: const Duration(milliseconds: 500),
-                                child: SizedBox(
-                                  height: (selected == current - 1 &&
-                                          heightFactor == 0.20)
-                                      ? 0
-                                      : 40,
-                                  child: Visibility(
-                                    visible: heightFactor == 1.0,
-                                    child: Center(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            heightFactor = 0.20;
-                                          });
-                                        },
-                                        child: Container(
-                                          width: 50,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.amber),
-                                          child: Center(
-                                            child: SizedBox(
-                                                width: 30,
-                                                height: 30,
-                                                child: Image.asset(
-                                                  "assets/images/dashboard_stages/up_arrow.png",
-                                                  fit: BoxFit.scaleDown,
-                                                )),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              /// bottom 1st card after yellow card
-                              Visibility(
-                                visible: heightFactor != 1.0,
-                                child: Align(
-                                  heightFactor: 0.7,
-                                  alignment: Alignment.topRight,
-                                  child: smallCard(
-                                    stageData[index].title,
-                                    stageData[index].subTitle,
-                                    stageData[index].rightImage,
-                                    stageData[index].step,
-                                  ),
-                                ),
-                              )
-                            ],
-                          );
-                        } else if (index == selected) {
-                          print("else if2");
-                          return AnimatedAlign(
-                            duration: const Duration(milliseconds: 800),
-                            heightFactor: 1,
-                            alignment: Alignment.topCenter,
-                            child: bigCard(
-                                title: stageData[index].title,
-                                subText: stageData[index].subTitle,
-                                image: stageData[index].rightImage,
-                                steps: stageData[index].step,
-                                index: index,
-                                btn1Name: stageData[index].btn1Name,
-                                btn2Name: stageData[index].btn2Name,
-                                btn3Name: stageData[index].btn3Name,
-                                type: stageData[index].type,
-                                bgColor: stageData[index].bgColor,
-                                btn1Color: stageData[index].btn1Color,
-                                btn2Color: stageData[index].btn2Color,
-                                btn3Color: stageData[index].btn3Color,
-                                showCard: stageData[index].showCard),
-                          );
-                        } else if (index > selected && index < current) {
-                          print("else if3");
-                          return AnimatedAlign(
-                            duration: const Duration(milliseconds: 800),
-                            heightFactor: 0.7,
-                            alignment: Alignment.topRight,
-                            child: bigCard(
-                                title: stageData[index].title,
-                                subText: stageData[index].subTitle,
-                                image: stageData[index].rightImage,
-                                steps: stageData[index].step,
-                                index: index,
-                                btn1Name: stageData[index].btn1Name,
-                                btn2Name: stageData[index].btn2Name,
-                                btn3Name: stageData[index].btn3Name,
-                                type: stageData[index].type,
-                                showCard: stageData[index].showCard),
-                          );
-                        } else {
-                          /// last item
-                          print(
-                              "else small index: $index ${stageData[index].title}");
-                          return Visibility(
-                            // visible: heightFactor != 1.0,
-                            child: AnimatedAlign(
-                              duration: const Duration(milliseconds: 800),
-                              heightFactor: 0.7,
-                              alignment: Alignment.topCenter,
-                              child: smallCard(
-                                stageData[index].title,
-                                stageData[index].subTitle,
-                                stageData[index].rightImage,
-                                stageData[index].step,
-                              ),
-                            ),
-                          );
-                        }
-                      })
                 ],
               ),
             ),
-          ]),
+            SizedBox(height: 0.h),
+            ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: stageData.length,
+                itemBuilder: (_, index) {
+                  print("index---> $index $current $selected");
+
+                  if (index < current && selected != index) {
+                    print("if");
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 800),
+
+                      /// added this for click event to the yellow card
+                      /// (index+1 == current) ? 0.95
+                      heightFactor:
+                          (index + 1 == current) ? 0.95 : heightFactor,
+                      alignment: Alignment.topCenter,
+                      child: bigCard(
+                        title: stageData[index].title,
+                        subText: stageData[index].subTitle,
+                        image: stageData[index].rightImage,
+                        steps: stageData[index].step,
+                        index: index,
+                        btn1Name: stageData[index].btn1Name,
+                        btn2Name: stageData[index].btn2Name,
+                        btn3Name: stageData[index].btn3Name,
+                        type: stageData[index].type,
+                        bgColor: stageData[index].bgColor,
+                        btn1Color: stageData[index].btn1Color,
+                        btn2Color: stageData[index].btn2Color,
+                        btn3Color: stageData[index].btn3Color,
+                      ),
+                    );
+                  } else if (index == current) {
+                    print("else if1");
+                    print("${stageData[index].title}");
+                    return Column(
+                      children: [
+                        /// up arrow when drag
+                        /// this is not using
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 500),
+                          child: SizedBox(
+                            height: (selected == current - 1 &&
+                                    heightFactor == 0.20)
+                                ? 0
+                                : 40,
+                            child: Visibility(
+                              visible: heightFactor == 1.0,
+                              child: Center(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      heightFactor = 0.20;
+                                    });
+                                  },
+                                  child: Container(
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.amber),
+                                    child: Center(
+                                      child: SizedBox(
+                                          width: 30,
+                                          height: 30,
+                                          child: Image.asset(
+                                            "assets/images/dashboard_stages/up_arrow.png",
+                                            fit: BoxFit.scaleDown,
+                                          )),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        /// bottom 1st card after yellow card
+                        Visibility(
+                          visible: heightFactor != 1.0,
+                          child: Align(
+                            heightFactor: 0.7,
+                            alignment: Alignment.topRight,
+                            child: smallCard(
+                              stageData[index].title,
+                              stageData[index].subTitle,
+                              stageData[index].rightImage,
+                              stageData[index].step,
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  } else if (index == selected) {
+                    print("else if2");
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 800),
+                      heightFactor: 1,
+                      alignment: Alignment.topCenter,
+                      child: bigCard(
+                          title: stageData[index].title,
+                          subText: stageData[index].subTitle,
+                          image: stageData[index].rightImage,
+                          steps: stageData[index].step,
+                          index: index,
+                          btn1Name: stageData[index].btn1Name,
+                          btn2Name: stageData[index].btn2Name,
+                          btn3Name: stageData[index].btn3Name,
+                          type: stageData[index].type,
+                          bgColor: stageData[index].bgColor,
+                          btn1Color: stageData[index].btn1Color,
+                          btn2Color: stageData[index].btn2Color,
+                          btn3Color: stageData[index].btn3Color,
+                          showCard: stageData[index].showCard),
+                    );
+                  } else if (index > selected && index < current) {
+                    print("else if3");
+                    return AnimatedAlign(
+                      duration: const Duration(milliseconds: 800),
+                      heightFactor: 0.7,
+                      alignment: Alignment.topRight,
+                      child: bigCard(
+                          title: stageData[index].title,
+                          subText: stageData[index].subTitle,
+                          image: stageData[index].rightImage,
+                          steps: stageData[index].step,
+                          index: index,
+                          btn1Name: stageData[index].btn1Name,
+                          btn2Name: stageData[index].btn2Name,
+                          btn3Name: stageData[index].btn3Name,
+                          type: stageData[index].type,
+                          showCard: stageData[index].showCard),
+                    );
+                  } else {
+                    /// last item
+                    print("else small index: $index ${stageData[index].title}");
+                    return Visibility(
+                      // visible: heightFactor != 1.0,
+                      child: AnimatedAlign(
+                        duration: const Duration(milliseconds: 800),
+                        heightFactor: 0.7,
+                        alignment: Alignment.topCenter,
+                        child: smallCard(
+                          stageData[index].title,
+                          stageData[index].subTitle,
+                          stageData[index].rightImage,
+                          stageData[index].step,
+                        ),
+                      ),
+                    );
+                  }
+                })
+          ],
         ),
-      ],
-    );
+      ),
+    ]);
   }
 
   bool isInAppCallPressed = false;
@@ -1744,7 +1871,7 @@ class _NewDsPageState extends State<NewDsPage> {
                       children: [
                         if (btn1Name != null)
                           buildButton(
-                              btn1Name ?? '',
+                              btn1Name,
                               (btn1Color != null)
                                   ? btn1Color
                                   : index == current - 1
@@ -1920,7 +2047,6 @@ class _NewDsPageState extends State<NewDsPage> {
                             imageFilter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                             child: RichText(
                               textAlign: TextAlign.start,
-                              textScaleFactor: 0.85,
                               maxLines: 2,
                               text: TextSpan(
                                 children: [
@@ -1953,7 +2079,7 @@ class _NewDsPageState extends State<NewDsPage> {
                                     ),
                                   )
                                 ],
-                              ),
+                              ), textScaler: TextScaler.linear(0.85),
                             ),
                           ),
                         ),
@@ -2002,7 +2128,6 @@ class _NewDsPageState extends State<NewDsPage> {
   /// button widget
   buildButton(String title, Color color, int buttonId, StageType stageType) {
     return GestureDetector(
-      // behavior: HitTestBehavior.deferToChild,
       onTap: () {
         handleButtonOnTapByType(stageType, buttonId);
       },
@@ -2039,7 +2164,7 @@ class _NewDsPageState extends State<NewDsPage> {
   // this is used to show on meal_plan_completed stage to get accept from customer
   // now we r not using this
   mealPlanCompleteSheet() {
-    Future.delayed(Duration(seconds: 0)).whenComplete(() {
+    Future.delayed(const Duration(seconds: 0)).whenComplete(() {
       if (shippingStage == 'meal_plan_completed') {
         if (!isShown) {
           setState(() {
@@ -2399,7 +2524,7 @@ class _NewDsPageState extends State<NewDsPage> {
   /// 4-> Medical Report, 5-> Kit Under Process(shipping), 6-> Programs(prep, detox, healing, nourish),
   /// 7-> Post Program consultaion(with feedback), 8-> GMG(Reports)
   void updateNewStage(String? stage) {
-    print("consultationStage: ==> ${stage}");
+    print("consultationStage: ==> $stage");
     switch (stage) {
       case 'evaluation_done':
         current = 2;
@@ -2415,7 +2540,7 @@ class _NewDsPageState extends State<NewDsPage> {
 
         final model = _getAppointmentDetailsModel;
         final prevBookingDate = model!.value!.date;
-        final prevBookingTime = model!.value!.appointmentStartTime;
+        final prevBookingTime = model.value!.appointmentStartTime;
         stageData[1].subTitle =
             "You missed your scheduled slot at $prevBookingDate:$prevBookingTime  \n$consultationRescheduleStageSubText";
         stageData[1].btn1Name = "Join";
@@ -2926,9 +3051,9 @@ class _NewDsPageState extends State<NewDsPage> {
         // if (_gutPostProgramModel!.isProgramFeedbackSubmitted != "1") {
         //   stageData[7].btn2Color = newCurrentStageButtonColor.withOpacity(0.6);
         // } else {
-          stageData[7].btn1Name = null;
-          stageData[7].btn2Color = newCurrentStageButtonColor;
-          stageData[7].subTitle = PpcScheduleText;
+        stageData[7].btn1Name = null;
+        stageData[7].btn2Color = newCurrentStageButtonColor;
+        stageData[7].subTitle = PpcScheduleText;
         // }
 
         stageData[5].btn2Color = null;
@@ -2986,8 +3111,8 @@ class _NewDsPageState extends State<NewDsPage> {
         final slotTime = _postConsultationAppointment!.value!.slotStartTime!;
 
         final curTime = DateTime.now();
-        var res = DateFormat("yyyy-MM-dd HH:mm:ss")
-            .parse("${slotDate} ${slotTime}:00");
+        var res =
+            DateFormat("yyyy-MM-dd HH:mm:ss").parse("$slotDate $slotTime:00");
 
         stageData[7].subTitle =
             "Your consultation has been booked for $slotDate $slotTime.\n" +
@@ -3069,12 +3194,21 @@ class _NewDsPageState extends State<NewDsPage> {
 
         stageData[6].btn1Name = "Completed";
         stageData[6].btn1Color = newCompletedStageBtnColor;
+
+        print(
+            "Program Analysis Status : ${_transModel!.value!.isGutDiagnosisSubmitted}");
+
         if (_transModel!.value!.isGutDiagnosisSubmitted == false) {
-          stageData[8].btn1Name = "Feedback";
-        }else{
-          stageData[8].btn1Name = null;
+          stageData[7].btn1Name = "Program Analysis";
+        } else {
+          stageData[7].btn1Name = null;
         }
         stageData[7].btn2Name = null;
+        if (_prepratoryModel!.value!.mealProtocol!.isNotEmpty) {
+          stageData[7].btn3Name = "View Meal Protocol";
+        } else {
+          stageData[7].btn3Name = null;
+        }
         stageData[7].subTitle = ppcAfterConsultationText;
 
         stageData[5].btn1Name = null;
@@ -3112,13 +3246,21 @@ class _NewDsPageState extends State<NewDsPage> {
             "Feedback submit chk : ${_transModel!.value!.isProgramFeedbackSubmitted}");
 
         if (_transModel!.value!.isGutDiagnosisSubmitted == false) {
-          stageData[8].btn1Name = "Feedback";
-          stageData[8].btn2Name = null;
+          stageData[8].btn1Name = "Program Analysis";
+          if (_postConsultationAppointment!.value!.mealProtocol!.isNotEmpty) {
+            stageData[8].btn2Name = "View Meal Protocol";
+          } else {
+            stageData[8].btn2Name = null;
+          }
           stageData[8].btn3Name = null;
         } else {
-          stageData[8].btn1Name = null;
+          if (_postConsultationAppointment!.value!.mealProtocol!.isNotEmpty) {
+            stageData[8].btn1Name = "View Meal Protocol";
+          } else {
+            stageData[8].btn1Name = null;
+          }
           stageData[8].btn2Name = "View GMG";
-          // stageData[8].btn3Name = "View End report";
+          stageData[8].btn3Name = null;
         }
 
         break;
@@ -3164,7 +3306,7 @@ class _NewDsPageState extends State<NewDsPage> {
     print(type);
     switch (type) {
       case StageType.evaluation:
-        goToScreen(EvaluationGetDetails());
+        goToScreen(const GetEvaluationScreen());
         break;
       //******* Medical consultation stage Card 2 ******************
       case StageType.med_consultation:
@@ -3172,10 +3314,10 @@ class _NewDsPageState extends State<NewDsPage> {
         if (buttonId == 1) {
           switch (consultationStage) {
             case 'evaluation_done':
-              goToScreen(DoctorCalenderTimeScreen());
+              goToScreen(NewAppointmentScreen());
               break;
             case 'pending':
-              goToScreen(DoctorCalenderTimeScreen());
+              goToScreen(NewAppointmentScreen());
               break;
             case 'appointment_booked':
               final model = _getAppointmentDetailsModel;
@@ -3194,7 +3336,7 @@ class _NewDsPageState extends State<NewDsPage> {
               if (res.difference(curTime).inMinutes > 5 ||
                   res.difference(curTime).inMinutes < -15) {
               } else {
-                goToScreen(DoctorSlotsDetailsScreen(
+                goToScreen(NewAppointmentJoinScreen(
                   bookingDate: model.value!.date!,
                   bookingTime: model.value!.slotStartTime!,
                   appointmentUrl: model.value,
@@ -3327,7 +3469,7 @@ class _NewDsPageState extends State<NewDsPage> {
 
               print(model.value!.doctor!.toJson());
 
-              goToScreen(DoctorCalenderTimeScreen(
+              goToScreen(NewAppointmentScreen(
                 isReschedule: true,
                 prevBookingDate: model.value!.date,
                 prevBookingTime: model.value!.appointmentStartTime,
@@ -3360,7 +3502,7 @@ class _NewDsPageState extends State<NewDsPage> {
               // add this before calling calendertimescreen for reschedule
               // _pref!.setString(AppConfig.appointmentId, '');
               goToScreen(
-                DoctorCalenderTimeScreen(
+                NewAppointmentScreen(
                   isReschedule: true,
                   prevBookingDate: model.value!.date,
                   prevBookingTime: model.value!.appointmentStartTime,
@@ -3384,22 +3526,22 @@ class _NewDsPageState extends State<NewDsPage> {
         // print(consultationStage);
         switch (consultationStage) {
           case 'consultation_waiting':
-            goToScreen(UploadFiles());
+            goToScreen(const UploadFiles());
             break;
           case 'check_user_reports':
-            goToScreen(CheckUserReportsScreen());
+            goToScreen(const CheckUserReportsScreen());
             // goToScreen(UploadFiles(isFromSettings: true,));
 
             break;
           case 'consultation_accepted':
-            goToScreen(UploadFiles(
-              isFromSettings: true,
+            goToScreen(const MyReportsScreen(
+              fromDashboard: true,
             ));
             break;
           case 'report_upload':
             // new ui need to add here
-            goToScreen(UploadFiles(
-              isFromSettings: true,
+            goToScreen(const MyReportsScreen(
+              fromDashboard: true,
             ));
 
           // // show history screen
@@ -3448,8 +3590,10 @@ class _NewDsPageState extends State<NewDsPage> {
               Navigator.of(context)
                   .push(
                     MaterialPageRoute(
-                      builder: (context) =>
-                          CookKitTracking(currentStage: shippingStage ?? ''),
+                      builder: (context) => CookKitTracking(
+                        currentStage: shippingStage ?? '',
+                        isForeign: getTeamPatientModel?.isForeign ?? '',
+                      ),
                     ),
                   )
                   .then((value) => reloadUI());
@@ -3466,6 +3610,7 @@ class _NewDsPageState extends State<NewDsPage> {
                         awb_number:
                             _shippingApprovedModel?.value?.awbCode ?? '',
                         currentStage: shippingStage!,
+                        isForeign: getTeamPatientModel?.isForeign ?? '',
                       ),
                     ),
                   )
@@ -3474,8 +3619,10 @@ class _NewDsPageState extends State<NewDsPage> {
               Navigator.of(context)
                   .push(
                     MaterialPageRoute(
-                      builder: (context) =>
-                          CookKitTracking(currentStage: shippingStage ?? ''),
+                      builder: (context) => CookKitTracking(
+                        currentStage: shippingStage ?? '',
+                        isForeign: getTeamPatientModel?.isForeign ?? '',
+                      ),
                     ),
                   )
                   .then((value) => reloadUI());
@@ -3488,7 +3635,7 @@ class _NewDsPageState extends State<NewDsPage> {
           Navigator.of(context)
               .push(
                 MaterialPageRoute(
-                  builder: (context) => const ShoppingListScreen(),
+                  builder: (context) => const NewShoppingListScreen(),
                 ),
               )
               .then((value) => reloadUI());
@@ -3523,7 +3670,7 @@ class _NewDsPageState extends State<NewDsPage> {
           Navigator.of(context)
               .push(
                 MaterialPageRoute(
-                  builder: (context) => const ShoppingListScreen(),
+                  builder: (context) => const NewShoppingListScreen(),
                 ),
               )
               .then((value) => reloadUI());
@@ -3563,20 +3710,20 @@ class _NewDsPageState extends State<NewDsPage> {
             //   }
             // } else {
             //   if (_gutPostProgramModel!.isProgramFeedbackSubmitted == "1") {
-                Navigator.of(context)
-                    .push(
-                      MaterialPageRoute(
-                          builder: (context) => PpcConsBookingScreen(
-                                isPostProgram: true,
-                                nourishTotalDays:
-                                    _gutProgramModel!.value!.nourishTotalDays,
-                                nourishStartedDate:
-                                    _gutProgramModel!.value!.nourishStartedDate,
-                              )
-                          // PostProgramScreen(postProgramStage: postProgramStage,),
-                          ),
-                    )
-                    .then((value) => reloadUI());
+            Navigator.of(context)
+                .push(
+                  MaterialPageRoute(
+                      builder: (context) => NewAppointmentScreen(
+                            isPostProgram: true,
+                            nourishTotalDays:
+                                _gutProgramModel!.value!.nourishTotalDays,
+                            nourishStartedDate:
+                                _gutProgramModel!.value!.nourishStartedDate,
+                          )
+                      // PostProgramScreen(postProgramStage: postProgramStage,),
+                      ),
+                )
+                .then((value) => reloadUI());
             //   } else {
             //     AppConfig().showSnackbar(
             //         context, "Please complete the Feedback",
@@ -3603,7 +3750,7 @@ class _NewDsPageState extends State<NewDsPage> {
                 Navigator.of(context)
                     .push(
                       MaterialPageRoute(
-                          builder: (context) => DoctorSlotsDetailsScreen(
+                          builder: (context) => NewAppointmentJoinScreen(
                                 bookingDate:
                                     _postConsultationAppointment!.value!.date!,
                                 bookingTime: _postConsultationAppointment!
@@ -3614,6 +3761,7 @@ class _NewDsPageState extends State<NewDsPage> {
                                     .toJson(),
                                 appointmentUrl:
                                     _postConsultationAppointment!.value!,
+                                isFromDashboard: true,
                               )
                           // PostProgramScreen(postProgramStage: postProgramStage,
                           //   consultationData: _postConsultationAppointment,),
@@ -3640,7 +3788,7 @@ class _NewDsPageState extends State<NewDsPage> {
 
               // add this before calling calendertimescreen for reschedule
               // _pref!.setString(AppConfig.appointmentId , '');
-              goToScreen(PpcConsBookingScreen(
+              goToScreen(NewAppointmentScreen(
                 isReschedule: true,
                 isPostProgram: true,
                 nourishTotalDays: _gutProgramModel!.value!.nourishTotalDays,
@@ -3672,25 +3820,47 @@ class _NewDsPageState extends State<NewDsPage> {
           case 'post_appointment_done':
             if (buttonId == 1) {
               print(
-                  "Feedback stage : ${_transModel?.value
-                      ?.isMedicalFeedbackSubmitted}");
+                  "Feedback stage : ${_transModel?.value?.isMedicalFeedbackSubmitted}");
 
               if (_transModel?.value?.isMedicalFeedbackSubmitted == false) {
                 goToScreen(
-                  const MedicalFeedbackForm(),
+                  MediaQuery.of(context).size.shortestSide > 600
+                      ? const WebFeedbackFormsScreen(
+                          currentForm: 1,
+                        )
+                      : const MedicalFeedbackForm(),
                 );
-              } else if (_transModel?.value?.isMedicalFeedbackSubmitted == true &&
+              } else if (_transModel?.value?.isMedicalFeedbackSubmitted ==
+                      true &&
                   _transModel?.value?.isProgramFeedbackSubmitted == false) {
                 goToScreen(
-                  const TCardPage(
-                    programContinuesdStatus: 1,
-                  ),
+                  MediaQuery.of(context).size.shortestSide > 600
+                      ? const WebFeedbackFormsScreen(
+                          currentForm: 2,
+                        )
+                      : const TCardPage(
+                          programContinuesdStatus: 1,
+                        ),
                 );
-              } else if (_transModel?.value?.isProgramFeedbackSubmitted == true) {
+              } else if (_transModel?.value?.isProgramFeedbackSubmitted ==
+                  true) {
                 goToScreen(
-                  const PostGutTypeDiagnosis(),
+                  MediaQuery.of(context).size.shortestSide > 600
+                      ? const WebFeedbackFormsScreen(
+                          currentForm: 3,
+                        )
+                      : const PostGutTypeDiagnosis(),
                 );
               }
+            } else if (buttonId == 3) {
+              goToScreen(
+                ProtocolGuideDetails(
+                  pdfLink: _prepratoryModel!.value!.mealProtocol!,
+                  heading: "GMG",
+                  headCircleIcon: bsHeadPinIcon,
+                  isSheetCloseNeeded: true,
+                ),
+              );
             }
             break;
           case 'post_appointment_reschedule':
@@ -3723,7 +3893,7 @@ class _NewDsPageState extends State<NewDsPage> {
 
               // add this before calling calendertimescreen for reschedule
               // _pref!.setString(AppConfig.appointmentId , '');
-              goToScreen(PpcConsBookingScreen(
+              goToScreen(NewAppointmentScreen(
                 isReschedule: true,
                 isPostProgram: true,
                 nourishTotalDays: _gutProgramModel!.value!.nourishTotalDays,
@@ -3744,77 +3914,101 @@ class _NewDsPageState extends State<NewDsPage> {
       // showing gmg and wnd report
 
       case StageType.gmg:
-        if (buttonId == 1) {
-          print(
-              "Feedback stage : ${_transModel?.value?.isMedicalFeedbackSubmitted}");
+        if (_transModel!.value!.isGutDiagnosisSubmitted == false) {
+          if (buttonId == 1) {
+            print(
+                "Feedback stage : ${_transModel?.value?.isMedicalFeedbackSubmitted}");
 
-          if (_transModel?.value?.isMedicalFeedbackSubmitted == false) {
-            goToScreen(
-              const MedicalFeedbackForm(),
-            );
-          } else if (_transModel?.value?.isMedicalFeedbackSubmitted == true &&
-              _transModel?.value?.isProgramFeedbackSubmitted == false) {
-            goToScreen(
-              const TCardPage(
-                programContinuesdStatus: 1,
-              ),
-            );
-          } else if (_transModel?.value?.isProgramFeedbackSubmitted == true) {
-            goToScreen(
-              const PostGutTypeDiagnosis(),
-            );
-          }
-        } else if (buttonId == 2) {
-          if (postProgramStage == "protocol_guide" ||
-              postProgramStage == 'gmg_submitted') {
-            if (_postConsultationAppointment!.value != null) {
-              if (_postConsultationAppointment!.value!.gmgPdfUrl != null &&
-                  _postConsultationAppointment!.value!.gmgPdfUrl!.isNotEmpty) {
+            if (_transModel?.value?.isMedicalFeedbackSubmitted == false) {
+              goToScreen(
+                MediaQuery.of(context).size.shortestSide > 600
+                    ? const WebFeedbackFormsScreen(
+                        currentForm: 1,
+                      )
+                    : const MedicalFeedbackForm(),
+              );
+            } else if (_transModel?.value?.isMedicalFeedbackSubmitted == true &&
+                _transModel?.value?.isProgramFeedbackSubmitted == false) {
+              goToScreen(
+                MediaQuery.of(context).size.shortestSide > 600
+                    ? const WebFeedbackFormsScreen(
+                        currentForm: 2,
+                      )
+                    : const TCardPage(
+                        programContinuesdStatus: 1,
+                      ),
+              );
+            } else if (_transModel?.value?.isProgramFeedbackSubmitted == true) {
+              goToScreen(
+                MediaQuery.of(context).size.shortestSide > 600
+                    ? const WebFeedbackFormsScreen(
+                        currentForm: 3,
+                      )
+                    : const PostGutTypeDiagnosis(),
+              );
+            }
+          } else if (buttonId == 2) {
+            if (postProgramStage == "protocol_guide" ||
+                postProgramStage == 'gmg_submitted') {
+              if (_postConsultationAppointment!
+                  .value!.mealProtocol!.isNotEmpty) {
+                // WidgetsBinding.instance.addPostFrameCallback((_) {
+                //   pollQuePopUp();
+                // });
                 goToScreen(ProtocolGuideDetails(
-                  pdfLink: _postConsultationAppointment!.value!.gmgPdfUrl!,
+                  pdfLink: _postConsultationAppointment!.value!.mealProtocol!,
                   heading: "GMG",
                   headCircleIcon: bsHeadPinIcon,
                   isSheetCloseNeeded: true,
                 ));
               } else {
-                AppConfig()
-                    .showSnackbar(context, "GMG Url is Empty", isError: true);
-              }
-            }
-          } else {
-            // goToScreen(FinalFeedbackForm());
-
-            AppConfig().showSnackbar(context, "Can't access Locked Stage",
-                isError: true);
-          }
-        } else if (buttonId == 3) {
-          if (postProgramStage == "protocol_guide" ||
-              postProgramStage == 'gmg_submitted') {
-            if (_postConsultationAppointment!.value != null) {
-              if (_postConsultationAppointment!.value!.programEndReportUser !=
-                      null &&
-                  _postConsultationAppointment!
-                      .value!.programEndReportUser!.isNotEmpty) {
-                goToScreen(ProtocolGuideDetails(
-                  pdfLink: _postConsultationAppointment!
-                      .value!.programEndReportUser!,
-                  heading: "User EndReport",
-                  headCircleIcon: bsHeadPinIcon,
-                  isSheetCloseNeeded: true,
-                ));
-              } else {
-                AppConfig().showSnackbar(context, "User EndReport is Empty",
+                AppConfig().showSnackbar(context, "Meal Protocol Url is Empty",
                     isError: true);
               }
+            } else {
+              AppConfig().showSnackbar(context, "Can't access Locked Stage",
+                  isError: true);
             }
-          } else {
-            // goToScreen(FinalFeedbackForm());
-
-            AppConfig().showSnackbar(context, "Can't access Locked Stage",
-                isError: true);
           }
         } else {
-          showPostProgramScreen();
+          if (buttonId == 1) {
+            print(
+                "Button 1 : ${_postConsultationAppointment!.value!.mealProtocol}");
+            // WidgetsBinding.instance.addPostFrameCallback((_) {
+            //   pollQuePopUp();
+            // });
+            goToScreen(ProtocolGuideDetails(
+              pdfLink: _postConsultationAppointment!.value!.mealProtocol!,
+              heading: "GMG",
+              headCircleIcon: bsHeadPinIcon,
+              isSheetCloseNeeded: true,
+            ));
+          } else if (buttonId == 2) {
+            if (postProgramStage == "protocol_guide" ||
+                postProgramStage == 'gmg_submitted') {
+              if (_postConsultationAppointment!.value != null) {
+                if (_postConsultationAppointment!.value!.gmgPdfUrl != null &&
+                    _postConsultationAppointment!
+                        .value!.gmgPdfUrl!.isNotEmpty) {
+                  print(
+                      "Button 2 : ${_postConsultationAppointment!.value!.gmgPdfUrl!}");
+
+                  goToScreen(ProtocolGuideDetails(
+                    pdfLink: _postConsultationAppointment!.value!.gmgPdfUrl!,
+                    heading: "GMG",
+                    headCircleIcon: bsHeadPinIcon,
+                    isSheetCloseNeeded: true,
+                  ));
+                } else {
+                  AppConfig()
+                      .showSnackbar(context, "GMG Url is Empty", isError: true);
+                }
+              }
+            } else {
+              AppConfig().showSnackbar(context, "Can't access Locked Stage",
+                  isError: true);
+            }
+          }
         }
         break;
       case StageType.analysis:
@@ -4055,6 +4249,12 @@ class _NewDsPageState extends State<NewDsPage> {
   }
 
   handleTrackerRemedyOnTap() {
-    goToScreen(HomeRemediesScreen());
+    goToScreen(const WebHomeRemedies());
   }
+
+  final ChiefQuestionRepo pollRepository = ChiefQuestionRepo(
+    apiClient: ApiClient(
+      httpClient: http.Client(),
+    ),
+  );
 }

@@ -522,7 +522,7 @@ class _HistoryGraphScreenState extends State<HistoryGraphScreen> {
     _tooltipDetoxBehavior = TooltipBehavior(enable: true);
   }
 
-  final carouselController = CarouselController();
+  // final carouselController = CarouselController();
   int _current = 0;
 
   List<Widget> reviewList = [];
@@ -536,7 +536,7 @@ class _HistoryGraphScreenState extends State<HistoryGraphScreen> {
             height: 20.h,
             width: double.maxFinite,
             child: CarouselSlider(
-              carouselController: carouselController,
+              // carouselController: carouselController,
               options: CarouselOptions(
                   viewportFraction: 0.9,
                   enlargeCenterPage: true,

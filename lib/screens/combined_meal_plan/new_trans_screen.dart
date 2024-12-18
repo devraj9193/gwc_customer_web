@@ -33,6 +33,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:gwc_customer_web/model/combined_meal_model/detox_nourish_model/child_nourish_model.dart';
+import 'package:gwc_customer_web/screens/combined_meal_plan/video_player/yoga_video_screen.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import '../../model/combined_meal_model/combined_meal_model.dart';
@@ -1344,7 +1345,7 @@ class _NourishPlanScreenState extends State<NourishPlanScreen>
                                 print("/// Recipe Details ///");
 
                                 Get.to(
-                                  () => MealPlanPortraitVideo(
+                                  () => YogaVideoPlayer(
                                     videoUrl: meal.yogaVideoUrl ?? '',
                                     heading: meal.mealTypeName == "null" ||
                                             meal.mealTypeName == ""

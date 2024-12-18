@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:gwc_customer_web/model/program_model/program_days_model/child_program_day.dart';
+import 'package:gwc_customer_web/screens/combined_meal_plan/video_player/yoga_video_screen.dart';
 import 'package:gwc_customer_web/screens/combined_meal_plan/widgets/thumbnail_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
@@ -2981,7 +2982,7 @@ class _HealingPlanScreenState extends State<HealingPlanScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (ctx) => MealPlanYogaVideo(
+              builder: (ctx) => YogaVideoPlayer(
                 videoUrl: e.url ?? '',
                 heading: e.name ?? '',
               )));

@@ -88,13 +88,10 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
                 indicatorColor: newDashboardGreenButtonColor.withOpacity(0.5),
                 labelPadding: EdgeInsets.symmetric(horizontal: 5.w),
                 indicatorPadding:
-                    EdgeInsets.only(left: -5.w, right: -5.w, top: -2.h),
+                    EdgeInsets.only(left: -5.w, right: -5.w, top: -2.h,bottom: -2.h),
                 indicator: BoxDecoration(
                   color: newDashboardGreenButtonColor.withOpacity(0.5),
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(20),
-                    topLeft: Radius.circular(20),
-                  ),
+                  borderRadius: BorderRadius.circular(30),
                 ),
                 tabs: const [
                   Text('General'),
@@ -103,8 +100,8 @@ class _HomeRemediesScreenState extends State<HomeRemediesScreen> {
               ),
               Expanded(
                 child: Container(
-                  color: newDashboardGreenButtonColor.withOpacity(0.5),
-                  margin: EdgeInsets.only(top: 0.h),
+                  color: gWhiteColor,
+                  margin: EdgeInsets.only(top: 02.h),
                   child: TabBarView(
                     children: [
                       buildGeneralProblems(),

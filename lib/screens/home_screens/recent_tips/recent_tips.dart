@@ -13,7 +13,7 @@ class RecentTips extends StatefulWidget {
 }
 
 class _RecentTipsState extends State<RecentTips> {
-  final carouselController = CarouselController();
+  // final carouselController = CarouselController();
   int _current = 0;
 
   @override
@@ -40,7 +40,7 @@ class _RecentTipsState extends State<RecentTips> {
             height: 18.h,
             width: double.maxFinite,
             child: CarouselSlider(
-              carouselController: carouselController,
+              // carouselController: carouselController,
               options: CarouselOptions(
                   viewportFraction: .6,
                   aspectRatio: 1.2,

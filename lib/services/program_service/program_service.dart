@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:gwc_customer_web/repository/program_repository/program_repository.dart';
@@ -8,7 +10,7 @@ import '../../model/program_model/proceed_model/send_proceed_program_model.dart'
 class ProgramService extends ChangeNotifier{
   final ProgramRepository repository;
 
-  ProgramService({required this.repository}) : assert(repository != null);
+  ProgramService({required this.repository});
 
   Future getMealProgramDaysService() async{
     return await repository.getMealProgramDaysRepo();
@@ -40,7 +42,7 @@ class ProgramService extends ChangeNotifier{
     return await repository.submitMealPlanRepo(day);
   }
 
-  Future submitMealPlanTrackerService(SubmitMealPlanTrackerModel day, List<PlatformFile> files)async {
+  Future submitMealPlanTrackerService(SubmitMealPlanTrackerModel day, Uint8List files)async {
     return await repository.submitMealPlanTrackerRepo(day,files);
   }
 }

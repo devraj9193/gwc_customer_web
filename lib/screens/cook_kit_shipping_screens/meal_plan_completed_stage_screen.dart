@@ -2,14 +2,17 @@ import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_horizontal_date_picker/flutter_horizontal_date_picker.dart';
 import 'package:gwc_customer_web/widgets/constants.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:intl/intl.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../model/error_model.dart';
 import '../../model/ship_track_model/sipping_approve_model.dart';
 import '../../repository/api_service.dart';
 import '../../repository/shipping_repository/ship_track_repo.dart';
 import '../../services/shipping_service/ship_track_service.dart';
 import '../../utils/app_config.dart';
+import '../../widgets/button_widget.dart';
 import '../../widgets/widgets.dart';
 
 class NewMealPopupScreen extends StatefulWidget {
@@ -20,6 +23,7 @@ class NewMealPopupScreen extends StatefulWidget {
 }
 
 class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
+  final SharedPreferences _pref = AppConfig().preferences!;
   DatePickerController dateController = DatePickerController();
 
   String isSelected = "";
@@ -37,9 +41,17 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: EdgeInsets.only(left: 1.8.w, right: 1.w, top: 1.h),
+              child: buildAppBar(
+                () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
             Center(
               child: Padding(
-                padding: EdgeInsets.only(top: 5.5.h, left: 15.w, right: 15.w),
+                padding: EdgeInsets.only(top: 3.h, left: 15.w, right: 15.w),
                 child: Text(
                   "Please Pick the date on which you'd like us to deliver the kit.",
                   maxLines: 2,
@@ -70,113 +82,234 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
                     )
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 3.h),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5.w),
-                      child: Text(
-                        "Choose Day",
-                        style: TextStyle(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 3.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5.w),
+                        child: Text(
+                          "${_pref.getString(AppConfig.User_Name)}",
+                          style: TextStyle(
                             fontFamily: kFontBold,
+                            height: 1.5,
                             color: eUser().mainHeadingColor,
-                            fontSize: 11.sp),
-                      ),
-                    ),
-                    SizedBox(height: 20,),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 5.w),
-                      child: buildChooseDay(),
-                    ),
-                    Expanded(
-                      child: Container(
-                        width: double.maxFinite,
-                        margin: EdgeInsets.only(top: 2.h),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 5.w, vertical: 1.h),
-                        decoration: BoxDecoration(
-                          color: gWhiteColor,
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(50),
-                              topRight: Radius.circular(50)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withAlpha(50),
-                              blurRadius: 10.0,
-                            ),
-                          ],
-                        ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Center(
-                                child: Image(
-                                  image: const AssetImage(
-                                      "assets/images/Group 76497.png"),
-                                  height: height < 600 ? 22.5.h : 28.h,
-                                ),
-                              ),
-                              SizedBox(height: 3.h),
-                              Text(
-                                "Please note:",
-                                style: TextStyle(
-                                    fontFamily: kFontBold,
-                                    color: kNumberCircleRed,
-                                    fontSize: 11.sp),
-                              ),
-                              SizedBox(height: 1.h),
-                              Text(
-                                "These are estimates, please allow a 1-2 day margin of variance.",
-                                style: TextStyle(
-                                    height: 1.3,
-                                    fontFamily: kFontMedium,
-                                    color: eUser().userTextFieldColor,
-                                    fontSize: 10.sp),
-                              ),
-                              Center(
-                                child: GestureDetector(
-                                  // onTap: (showLoginProgress) ? null : () {
-                                  onTap: () {
-                                    sendApproveStatus("yes");
-                                  },
-                                  child: IntrinsicWidth(
-                                    child: Container(
-                                      margin:
-                                      EdgeInsets.symmetric(vertical: 4.h),
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 1.5.h, horizontal: 8.w),
-                                      decoration: BoxDecoration(
-                                        color: kNumberCircleRed,
-                                        borderRadius: BorderRadius.circular(10),
-                                        // border: Border.all(
-                                        //     color: eUser().buttonBorderColor,
-                                        //     width: eUser().buttonBorderWidth
-                                        // ),
-                                      ),
-                                      child: Center(
-                                        child: (isSubmitted)
-                                            ? buildThreeBounceIndicator(color: eUser().threeBounceIndicatorColor)
-                                            : Text(
-                                          'Submit',
-                                          style: TextStyle(
-                                            fontFamily: eUser().buttonTextFont,
-                                            color: gWhiteColor,
-                                            fontSize: eUser().buttonTextSize,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            fontSize: 15.dp,
                           ),
                         ),
                       ),
-                    )
-                  ],
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5.w),
+                        child: Text(
+                          "${_pref.getString(AppConfig.SHIPPING_ADDRESS)}",
+                          style: TextStyle(
+                            fontFamily: kFontBook,
+                            height: 1.5,
+                            color: eUser().mainHeadingColor,
+                            fontSize: 13.dp,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 1.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5.w),
+                        child: Text(
+                          "Choose Day",
+                          style: TextStyle(
+                            fontFamily: kFontMedium,
+                            color: eUser().mainHeadingColor,
+                            fontSize: 12.dp,
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 5.w, vertical: 2.h),
+                        child: buildChooseDay(),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 5.w, vertical: 1.h),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Image(
+                                image: const AssetImage(
+                                    "assets/images/Group 76497.png"),
+                                height: height < 600 ? 22.5.h : 28.h,
+                              ),
+                            ),
+                            SizedBox(height: 3.h),
+                            Text(
+                              "Please note:",
+                              style: TextStyle(
+                                  fontFamily: kFontBold,
+                                  color: kNumberCircleRed,
+                                  fontSize: 11.sp),
+                            ),
+                            SizedBox(height: 1.h),
+                            Text(
+                              "These are estimates, please allow a 1-2 day margin of variance.",
+                              style: TextStyle(
+                                  height: 1.3,
+                                  fontFamily: kFontMedium,
+                                  color: eUser().userTextFieldColor,
+                                  fontSize: 10.sp),
+                            ),
+                            Center(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 4.h),
+                                child: ButtonWidget(
+                                  onPressed: () {
+                                    sendApproveStatus("yes");
+                                  },
+                                  text: 'Submit',
+                                  isLoading: isSubmitted,
+                                  buttonWidth: 20.w,
+                                  radius: 10,
+                                ),
+                              ),
+                              // GestureDetector(
+                              //   // onTap: (showLoginProgress) ? null : () {
+                              //   onTap: () {
+                              //     sendApproveStatus("yes");
+                              //   },
+                              //   child: IntrinsicWidth(
+                              //     child: Container(
+                              //       margin:
+                              //       EdgeInsets.symmetric(vertical: 4.h),
+                              //       padding: EdgeInsets.symmetric(
+                              //           vertical: 1.5.h, horizontal: 8.w),
+                              //       decoration: BoxDecoration(
+                              //         color: kNumberCircleRed,
+                              //         borderRadius: BorderRadius.circular(10),
+                              //         // border: Border.all(
+                              //         //     color: eUser().buttonBorderColor,
+                              //         //     width: eUser().buttonBorderWidth
+                              //         // ),
+                              //       ),
+                              //       child: Center(
+                              //         child: (isSubmitted)
+                              //             ? buildThreeBounceIndicator(color: eUser().threeBounceIndicatorColor)
+                              //             : Text(
+                              //           'Submit',
+                              //           style: TextStyle(
+                              //             fontFamily: eUser().buttonTextFont,
+                              //             color: gWhiteColor,
+                              //             fontSize: eUser().buttonTextSize,
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Expanded(
+                      //   child: Container(
+                      //     width: double.maxFinite,
+                      //     margin: EdgeInsets.only(top: 2.h),
+                      //     padding: EdgeInsets.symmetric(
+                      //         horizontal: 5.w, vertical: 1.h),
+                      //     decoration: BoxDecoration(
+                      //       color: gWhiteColor,
+                      //       borderRadius: const BorderRadius.only(
+                      //           topLeft: Radius.circular(50),
+                      //           topRight: Radius.circular(50)),
+                      //       boxShadow: [
+                      //         BoxShadow(
+                      //           color: Colors.black.withAlpha(50),
+                      //           blurRadius: 10.0,
+                      //         ),
+                      //       ],
+                      //     ),
+                      //     child: SingleChildScrollView(
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Center(
+                      //             child: Image(
+                      //               image: const AssetImage(
+                      //                   "assets/images/Group 76497.png"),
+                      //               height: height < 600 ? 22.5.h : 28.h,
+                      //             ),
+                      //           ),
+                      //           SizedBox(height: 3.h),
+                      //           Text(
+                      //             "Please note:",
+                      //             style: TextStyle(
+                      //                 fontFamily: kFontBold,
+                      //                 color: kNumberCircleRed,
+                      //                 fontSize: 11.sp),
+                      //           ),
+                      //           SizedBox(height: 1.h),
+                      //           Text(
+                      //             "These are estimates, please allow a 1-2 day margin of variance.",
+                      //             style: TextStyle(
+                      //                 height: 1.3,
+                      //                 fontFamily: kFontMedium,
+                      //                 color: eUser().userTextFieldColor,
+                      //                 fontSize: 10.sp),
+                      //           ),
+                      //           Center(
+                      //             child: Padding(
+                      //               padding: EdgeInsets.symmetric(vertical: 4.h),
+                      //               child: ButtonWidget(
+                      //                 onPressed: () {
+                      //                   sendApproveStatus("yes");
+                      //                 },
+                      //                 text: 'Submit',
+                      //                 isLoading: isSubmitted,
+                      //                 buttonWidth: 20.w,
+                      //                 radius: 10,
+                      //               ),
+                      //             ),
+                      //             // GestureDetector(
+                      //             //   // onTap: (showLoginProgress) ? null : () {
+                      //             //   onTap: () {
+                      //             //     sendApproveStatus("yes");
+                      //             //   },
+                      //             //   child: IntrinsicWidth(
+                      //             //     child: Container(
+                      //             //       margin:
+                      //             //       EdgeInsets.symmetric(vertical: 4.h),
+                      //             //       padding: EdgeInsets.symmetric(
+                      //             //           vertical: 1.5.h, horizontal: 8.w),
+                      //             //       decoration: BoxDecoration(
+                      //             //         color: kNumberCircleRed,
+                      //             //         borderRadius: BorderRadius.circular(10),
+                      //             //         // border: Border.all(
+                      //             //         //     color: eUser().buttonBorderColor,
+                      //             //         //     width: eUser().buttonBorderWidth
+                      //             //         // ),
+                      //             //       ),
+                      //             //       child: Center(
+                      //             //         child: (isSubmitted)
+                      //             //             ? buildThreeBounceIndicator(color: eUser().threeBounceIndicatorColor)
+                      //             //             : Text(
+                      //             //           'Submit',
+                      //             //           style: TextStyle(
+                      //             //             fontFamily: eUser().buttonTextFont,
+                      //             //             color: gWhiteColor,
+                      //             //             fontSize: eUser().buttonTextSize,
+                      //             //           ),
+                      //             //         ),
+                      //             //       ),
+                      //             //     ),
+                      //             //   ),
+                      //             // ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ),
+                      // )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -207,7 +340,8 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
           print("this");
           print("itemValue: $itemValue");
           // print(DateFormat("dd/MM/yyyy").format(selectedDate) == DateFormat("dd/MM/yyyy").format(itemValue));
-          if(DateFormat("dd/MM/yyyy").format(selectedDate) == DateFormat("dd/MM/yyyy").format(itemValue)){
+          if (DateFormat("dd/MM/yyyy").format(selectedDate) ==
+              DateFormat("dd/MM/yyyy").format(itemValue)) {
             return Container(
               height: 55,
               width: 40,
@@ -244,8 +378,7 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
                 ],
               ),
             );
-          }
-          else{
+          } else {
             return Container(
               height: 9.h,
               width: 10.w,
@@ -283,7 +416,6 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
             );
           }
         },
-
       ),
     );
     return DatePicker(
@@ -320,7 +452,6 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
     ),
   );
 
-
   bool isSubmitted = false;
 
   sendApproveStatus(String status) async {
@@ -329,14 +460,14 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
       isSubmitted = true;
     });
     final res = await ShipTrackService(repository: shipTrackRepository)
-        .sendShippingApproveStatusService(status, selectedDate: DateFormat("dd/MM/yyyy").format(selectedDate));
+        .sendShippingApproveStatusService(status,
+            selectedDate: DateFormat("dd/MM/yyyy").format(selectedDate));
 
     if (res.runtimeType == ShippingApproveModel) {
       ShippingApproveModel model = res as ShippingApproveModel;
       print('success: ${model.message}');
       Navigator.pop(context);
-    }
-    else {
+    } else {
       ErrorModel model = res as ErrorModel;
       print('error: ${model.message}');
       AppConfig().showSnackbar(context, model.message!, isError: true);
@@ -345,5 +476,4 @@ class _NewMealPopupScreenState extends State<NewMealPopupScreen> {
       isSubmitted = false;
     });
   }
-
 }

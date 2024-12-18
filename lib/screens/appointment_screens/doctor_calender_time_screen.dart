@@ -41,6 +41,7 @@ import '../../services/consultation_service/consultation_service.dart';
 import '../../services/shift_slots_service/shift_slots_service.dart';
 import '../../services/user_slot_for_schedule_service/user_slot_for_schedule_service.dart';
 import '../../utils/app_config.dart';
+import '../../widgets/button_widget.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/widgets.dart';
 import 'doctor_slots_details_screen.dart';
@@ -276,9 +277,8 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
                   })),
               SizedBox(height: 2.h),
               (!widget.isReschedule) ? buildDoctor() : buildDoctorExpList(),
-              SizedBox(height: 1.h),
               SizedBox(
-                height: 2.h,
+                height: 3.h
               ),
               Padding(
                   padding: EdgeInsets.only(left: 4.w, right: 4.w),
@@ -419,46 +419,61 @@ class _DoctorCalenderTimeScreenState extends State<DoctorCalenderTimeScreen> {
               height: 6.h,
             ),
             Center(
-              child: IntrinsicWidth(
-                child: GestureDetector(
-                  onTap: (isSelected.isEmpty || showBookingProgress)
-                      ? () {
-                          AppConfig()
-                              .showSnackbar(context, 'Please select time');
-                        }
-                      : () {
-                          buildConfirm(
-                              DateFormat('yyyy-MM-dd').format(selectedDate),
-                              selectedTimeSlotFullName);
-                        },
-                  child: Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
-                    decoration: BoxDecoration(
-                      color: eUser().buttonColor,
-                      borderRadius:
-                          BorderRadius.circular(eUser().buttonBorderRadius),
-                      // border: Border.all(
-                      //     color: eUser().buttonBorderColor,
-                      //     width: eUser().buttonBorderWidth
-                      // ),
-                    ),
-                    child: (showBookingProgress)
-                        ? buildThreeBounceIndicator(
-                            color: eUser().threeBounceIndicatorColor)
-                        : Center(
-                            child: Text(
-                              'Next',
-                              style: TextStyle(
-                                fontFamily: eUser().buttonTextFont,
-                                color: eUser().buttonTextColor,
-                                fontSize: eUser().buttonTextSize,
-                              ),
-                            ),
-                          ),
-                  ),
-                ),
+              child: ButtonWidget(
+                onPressed: (isSelected.isEmpty || showBookingProgress)
+                    ? () {
+                  AppConfig()
+                      .showSnackbar(context, 'Please select time');
+                }
+                    : () {
+                  buildConfirm(
+                      DateFormat('yyyy-MM-dd').format(selectedDate),
+                      selectedTimeSlotFullName);
+                },
+                text: 'Next',
+                isLoading: showBookingProgress,
+                buttonWidth: 20.w,
               ),
+              // IntrinsicWidth(
+              //   child: GestureDetector(
+              //     onTap: (isSelected.isEmpty || showBookingProgress)
+              //         ? () {
+              //             AppConfig()
+              //                 .showSnackbar(context, 'Please select time');
+              //           }
+              //         : () {
+              //             buildConfirm(
+              //                 DateFormat('yyyy-MM-dd').format(selectedDate),
+              //                 selectedTimeSlotFullName);
+              //           },
+              //     child: Container(
+              //       padding:
+              //           EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
+              //       decoration: BoxDecoration(
+              //         color: eUser().buttonColor,
+              //         borderRadius:
+              //             BorderRadius.circular(eUser().buttonBorderRadius),
+              //         // border: Border.all(
+              //         //     color: eUser().buttonBorderColor,
+              //         //     width: eUser().buttonBorderWidth
+              //         // ),
+              //       ),
+              //       child: (showBookingProgress)
+              //           ? buildThreeBounceIndicator(
+              //               color: eUser().threeBounceIndicatorColor)
+              //           : Center(
+              //               child: Text(
+              //                 'Next',
+              //                 style: TextStyle(
+              //                   fontFamily: eUser().buttonTextFont,
+              //                   color: eUser().buttonTextColor,
+              //                   fontSize: eUser().buttonTextSize,
+              //                 ),
+              //               ),
+              //             ),
+              //     ),
+              //   ),
+              // ),
             )
           ],
         ),

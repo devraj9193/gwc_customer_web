@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:gwc_customer_web/screens/evalution_form/web_eval_screens/web_eval_screen.dart';
 
 import '../../model/dashboard_model/report_upload_model/report_upload_model.dart';
 import '../../model/error_model.dart';
@@ -12,6 +13,7 @@ import '../../repository/api_service.dart';
 import '../../repository/evaluation_form_repository/evanluation_form_repo.dart';
 import '../../services/evaluation_fome_service/evaluation_form_service.dart';
 import '../../utils/app_config.dart';
+import '../../widgets/button_widget.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/widgets.dart';
 import '../uvdesk/ticket_chat_screens/ticket_chat_screen.dart';
@@ -23,8 +25,14 @@ import 'evaluation_upload_report.dart';
 class EvaluationFormPage2 extends StatefulWidget {
   /// this is called when showData is true
   final ChildGetEvaluationDataModel? childGetEvaluationDataModel;
-  const EvaluationFormPage2({Key? key, this.childGetEvaluationDataModel})
-      : super(key: key);
+  final EdgeInsetsGeometry? padding;
+  final bool isWeb;
+  const EvaluationFormPage2({
+    Key? key,
+    this.childGetEvaluationDataModel,
+    this.padding,
+    this.isWeb = false,
+  }) : super(key: key);
 
   @override
   State<EvaluationFormPage2> createState() => _EvaluationFormPage2State();
@@ -133,13 +141,13 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
 
     customizedMealPlanSelected = model?.vegNonVegVegan ?? '';
     customizedMealPlanOther.text = model?.vegNonVegVeganOther ?? '';
-     morningBeverageController.text = model?.earlyMorning ?? '';
-     breakfastController.text = model?.breakfast ?? '';
-     midDayBeverageController.text = model?.midDay ?? '';
-     lunchController.text = model?.lunch ?? '';
-     eveningBeverageController.text = model?.evening ?? '';
-     dinnerController.text = model?.dinner ?? '';
-     postDinnerController.text = model?.postDinner ?? '';
+    morningBeverageController.text = model?.earlyMorning ?? '';
+    breakfastController.text = model?.breakfast ?? '';
+    midDayBeverageController.text = model?.midDay ?? '';
+    lunchController.text = model?.lunch ?? '';
+    eveningBeverageController.text = model?.evening ?? '';
+    dinnerController.text = model?.dinner ?? '';
+    postDinnerController.text = model?.postDinner ?? '';
 
     digestionController.text = model?.mentionIfAnyFoodAffectsYourDigesion ?? '';
     specialDietController.text = model?.anySpecialDiet ?? '';
@@ -178,8 +186,7 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
     hungerPatternSelected = model?.hungerPattern ?? '';
     bowelPatternSelected = model?.bowelPattern ?? '';
     bowelPatternController.text = model?.bowelPatternOther ?? '';
-    setState(() {
-    });
+    setState(() {});
   }
 
   hideKeyboard() {
@@ -188,13 +195,13 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return widget.isWeb ? buildEvalForm() : Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage("assets/images/eval_bg.png"),
           fit: BoxFit.fitWidth,
-          colorFilter:
-          ColorFilter.mode(kPrimaryColor, BlendMode.lighten),),
+          colorFilter: ColorFilter.mode(kPrimaryColor, BlendMode.lighten),
+        ),
       ),
       child: SafeArea(
         child: Scaffold(
@@ -206,9 +213,10 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                 MaterialPageRoute(
                   builder: (_) => TicketChatScreen(
                     userName: "${_pref?.getString(AppConfig.User_Name)}",
-                    thumbNail:
-                    "${_pref?.getString(AppConfig.User_Profile)}",
-                    ticketId: _pref?.getString(AppConfig.User_ticket_id).toString() ?? '',
+                    thumbNail: "${_pref?.getString(AppConfig.User_Profile)}",
+                    ticketId:
+                        _pref?.getString(AppConfig.User_ticket_id).toString() ??
+                            '',
                     subject: '',
                     email: "${_pref?.getString(AppConfig.User_Email)}",
                     ticketStatus: 1,
@@ -245,7 +253,7 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                   child: Container(
                     width: double.maxFinite,
                     padding:
-                    EdgeInsets.symmetric(horizontal: 3.w, vertical: 3.h),
+                        EdgeInsets.symmetric(horizontal: 3.w, vertical: 3.h),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       boxShadow: [
@@ -257,130 +265,213 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                         topRight: Radius.circular(30),
                       ),
                     ),
-                    child: SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          buildHealthDetails(),
-                          buildFoodHabitsDetails(),
-                          buildLifeStyleDetails(),
-                          buildBowelDetails(),
-                          Center(
-                            child: IntrinsicWidth(
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (glassesOfWater.isEmpty) {
-                                    Scrollable.ensureVisible(
-                                        glassWaterKey.currentContext!,
-                                        duration: const Duration(
-                                            milliseconds: 1000));
-                                    showCustomSnack(
-                                        "Please select How Many glass of water do you drink a day");
-                                  } else if (selectedHabitCheckBoxList
-                                      .isEmpty &&
-                                      !habitOtherSelected) {
-                                    Scrollable.ensureVisible(
-                                        habbitsKey.currentContext!,
-                                        duration: const Duration(
-                                            milliseconds: 1000));
-                                    showCustomSnack(
-                                        "Please select Habits or Addiction");
-                                  } else if (mealPreferenceSelected
-                                      .isEmpty) {
-                                    Scrollable.ensureVisible(
-                                        bowelMealKey.currentContext!,
-                                        duration: const Duration(
-                                            milliseconds: 1000));
-                                    showCustomSnack(
-                                        "Please select What is your meal preference");
-                                  } else if (hungerPatternSelected
-                                      .isEmpty) {
-                                    Scrollable.ensureVisible(
-                                        hungerKey.currentContext!,
-                                        duration: const Duration(
-                                            milliseconds: 1000));
-                                    showCustomSnack(
-                                        "Please select Hunger Pattern");
-                                  } else if (bowelPatternSelected.isEmpty) {
-                                    Scrollable.ensureVisible(
-                                        bowelPatternKey.currentContext!,
-                                        duration: const Duration(
-                                            milliseconds: 1000));
-                                    showCustomSnack(
-                                        "Please select Bowel Pattern");
-                                  } else {
-                                    if (formKey1.currentState!.validate()) {
-                                      if (formKey2.currentState!
-                                          .validate()) {
-                                        if (formKey3.currentState!
-                                            .validate()) {
-                                          if (formKey4.currentState!
-                                              .validate()) {
-                                            submitFormDetails();
-                                          } else {
-                                            Scrollable.ensureVisible(
-                                                formKey4.currentContext!,
-                                                duration: const Duration(
-                                                    milliseconds: 1000));
-                                          }
-                                        } else {
-                                          Scrollable.ensureVisible(
-                                              formKey3.currentContext!,
-                                              duration: const Duration(
-                                                  milliseconds: 1000));
-                                        }
-                                      } else {
-                                        Scrollable.ensureVisible(
-                                            formKey2.currentContext!,
-                                            duration: const Duration(
-                                                milliseconds: 1000));
-                                      }
-                                    } else {
-                                      Scrollable.ensureVisible(
-                                          formKey1.currentContext!,
-                                          duration: const Duration(
-                                              milliseconds: 1000));
-                                    }
-                                  }
-                                },
-                                child: Container(
-
-                                  margin: EdgeInsets.symmetric(vertical: 4.h),
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 1.5.h, horizontal: 5.w),
-                                  decoration: BoxDecoration(
-                                    color: eUser().buttonColor,
-                                    borderRadius: BorderRadius.circular(
-                                        eUser().buttonBorderRadius),
-
-                                    // border: Border.all(
-                                    //     color: eUser().buttonBorderColor,
-                                    //     width: eUser().buttonBorderWidth
-                                    // ),
-                                  ),
-                                  child: isSubmitPressed
-                                      ? buildThreeBounceIndicator(color: gWhiteColor)
-                                      : Center(
-                                    child: Text(
-                                      'Submit',
-                                      style: TextStyle(
-                                        fontFamily: eUser().buttonTextFont,
-                                        color: eUser().buttonTextColor,
-                                        fontSize: eUser().buttonTextSize,
-                                      ),
-                                    ),),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: buildEvalForm(),
                   ),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  buildEvalForm(){
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Container(
+        padding: (widget.padding != null) ? widget.padding : EdgeInsets.zero,
+        child: Column(
+          children: [
+            buildHealthDetails(),
+            buildFoodHabitsDetails(),
+            buildLifeStyleDetails(),
+            buildBowelDetails(),
+            Center(
+              child: ButtonWidget(
+                onPressed: () {
+                  if (glassesOfWater.isEmpty) {
+                    Scrollable.ensureVisible(
+                        glassWaterKey.currentContext!,
+                        duration:
+                        const Duration(milliseconds: 1000));
+                    showCustomSnack(
+                        "Please select How Many glass of water do you drink a day");
+                  } else if (selectedHabitCheckBoxList.isEmpty &&
+                      !habitOtherSelected) {
+                    Scrollable.ensureVisible(
+                        habbitsKey.currentContext!,
+                        duration:
+                        const Duration(milliseconds: 1000));
+                    showCustomSnack(
+                        "Please select Habits or Addiction");
+                  } else if (mealPreferenceSelected.isEmpty) {
+                    Scrollable.ensureVisible(
+                        bowelMealKey.currentContext!,
+                        duration:
+                        const Duration(milliseconds: 1000));
+                    showCustomSnack(
+                        "Please select What is your meal preference");
+                  } else if (hungerPatternSelected.isEmpty) {
+                    Scrollable.ensureVisible(
+                        hungerKey.currentContext!,
+                        duration:
+                        const Duration(milliseconds: 1000));
+                    showCustomSnack(
+                        "Please select Hunger Pattern");
+                  } else if (bowelPatternSelected.isEmpty) {
+                    Scrollable.ensureVisible(
+                        bowelPatternKey.currentContext!,
+                        duration:
+                        const Duration(milliseconds: 1000));
+                    showCustomSnack(
+                        "Please select Bowel Pattern");
+                  } else {
+                    if (formKey1.currentState!.validate()) {
+                      if (formKey2.currentState!.validate()) {
+                        if (formKey3.currentState!.validate()) {
+                          if (formKey4.currentState!.validate()) {
+                            submitFormDetails();
+                          } else {
+                            Scrollable.ensureVisible(
+                                formKey4.currentContext!,
+                                duration: const Duration(
+                                    milliseconds: 1000));
+                          }
+                        } else {
+                          Scrollable.ensureVisible(
+                              formKey3.currentContext!,
+                              duration: const Duration(
+                                  milliseconds: 1000));
+                        }
+                      } else {
+                        Scrollable.ensureVisible(
+                            formKey2.currentContext!,
+                            duration: const Duration(
+                                milliseconds: 1000));
+                      }
+                    } else {
+                      Scrollable.ensureVisible(
+                          formKey1.currentContext!,
+                          duration:
+                          const Duration(milliseconds: 1000));
+                    }
+                  }
+                },
+                text: 'Submit',
+                isLoading: isSubmitPressed,
+                buttonWidth: 18.w,
+              ),
+            ),
+            // Center(
+            //   child: IntrinsicWidth(
+            //     child: GestureDetector(
+            //       onTap: () {
+            //         if (glassesOfWater.isEmpty) {
+            //           Scrollable.ensureVisible(
+            //               glassWaterKey.currentContext!,
+            //               duration: const Duration(
+            //                   milliseconds: 1000));
+            //           showCustomSnack(
+            //               "Please select How Many glass of water do you drink a day");
+            //         } else if (selectedHabitCheckBoxList
+            //             .isEmpty &&
+            //             !habitOtherSelected) {
+            //           Scrollable.ensureVisible(
+            //               habbitsKey.currentContext!,
+            //               duration: const Duration(
+            //                   milliseconds: 1000));
+            //           showCustomSnack(
+            //               "Please select Habits or Addiction");
+            //         } else if (mealPreferenceSelected
+            //             .isEmpty) {
+            //           Scrollable.ensureVisible(
+            //               bowelMealKey.currentContext!,
+            //               duration: const Duration(
+            //                   milliseconds: 1000));
+            //           showCustomSnack(
+            //               "Please select What is your meal preference");
+            //         } else if (hungerPatternSelected
+            //             .isEmpty) {
+            //           Scrollable.ensureVisible(
+            //               hungerKey.currentContext!,
+            //               duration: const Duration(
+            //                   milliseconds: 1000));
+            //           showCustomSnack(
+            //               "Please select Hunger Pattern");
+            //         } else if (bowelPatternSelected.isEmpty) {
+            //           Scrollable.ensureVisible(
+            //               bowelPatternKey.currentContext!,
+            //               duration: const Duration(
+            //                   milliseconds: 1000));
+            //           showCustomSnack(
+            //               "Please select Bowel Pattern");
+            //         } else {
+            //           if (formKey1.currentState!.validate()) {
+            //             if (formKey2.currentState!
+            //                 .validate()) {
+            //               if (formKey3.currentState!
+            //                   .validate()) {
+            //                 if (formKey4.currentState!
+            //                     .validate()) {
+            //                   submitFormDetails();
+            //                 } else {
+            //                   Scrollable.ensureVisible(
+            //                       formKey4.currentContext!,
+            //                       duration: const Duration(
+            //                           milliseconds: 1000));
+            //                 }
+            //               } else {
+            //                 Scrollable.ensureVisible(
+            //                     formKey3.currentContext!,
+            //                     duration: const Duration(
+            //                         milliseconds: 1000));
+            //               }
+            //             } else {
+            //               Scrollable.ensureVisible(
+            //                   formKey2.currentContext!,
+            //                   duration: const Duration(
+            //                       milliseconds: 1000));
+            //             }
+            //           } else {
+            //             Scrollable.ensureVisible(
+            //                 formKey1.currentContext!,
+            //                 duration: const Duration(
+            //                     milliseconds: 1000));
+            //           }
+            //         }
+            //       },
+            //       child: Container(
+            //
+            //         margin: EdgeInsets.symmetric(vertical: 4.h),
+            //         padding: EdgeInsets.symmetric(
+            //             vertical: 1.5.h, horizontal: 5.w),
+            //         decoration: BoxDecoration(
+            //           color: eUser().buttonColor,
+            //           borderRadius: BorderRadius.circular(
+            //               eUser().buttonBorderRadius),
+            //
+            //           // border: Border.all(
+            //           //     color: eUser().buttonBorderColor,
+            //           //     width: eUser().buttonBorderWidth
+            //           // ),
+            //         ),
+            //         child: isSubmitPressed
+            //             ? buildThreeBounceIndicator(color: gWhiteColor)
+            //             : Center(
+            //           child: Text(
+            //             'Submit',
+            //             style: TextStyle(
+            //               fontFamily: eUser().buttonTextFont,
+            //               color: eUser().buttonTextColor,
+            //               fontSize: eUser().buttonTextSize,
+            //             ),
+            //           ),),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+          ],
         ),
       ),
     );
@@ -443,8 +534,7 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        customizedMealPlanSelected =
-                        customizedMealCheckBox[0];
+                        customizedMealPlanSelected = customizedMealCheckBox[0];
                       });
                     },
                     child: Row(
@@ -464,11 +554,11 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                           customizedMealCheckBox[0],
                           style: buildTextStyle(
                               color: customizedMealPlanSelected ==
-                                  customizedMealCheckBox[0]
+                                      customizedMealCheckBox[0]
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: customizedMealPlanSelected ==
-                                  customizedMealCheckBox[0]
+                                      customizedMealCheckBox[0]
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -478,8 +568,7 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        customizedMealPlanSelected =
-                        customizedMealCheckBox[1];
+                        customizedMealPlanSelected = customizedMealCheckBox[1];
                       });
                     },
                     child: Row(
@@ -499,11 +588,11 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                           customizedMealCheckBox[1],
                           style: buildTextStyle(
                               color: customizedMealPlanSelected ==
-                                  customizedMealCheckBox[1]
+                                      customizedMealCheckBox[1]
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: customizedMealPlanSelected ==
-                                  customizedMealCheckBox[1]
+                                      customizedMealCheckBox[1]
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -513,8 +602,7 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        customizedMealPlanSelected =
-                        customizedMealCheckBox[2];
+                        customizedMealPlanSelected = customizedMealCheckBox[2];
                       });
                     },
                     child: Row(
@@ -534,11 +622,11 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                           customizedMealCheckBox[2],
                           style: buildTextStyle(
                               color: customizedMealPlanSelected ==
-                                  customizedMealCheckBox[2]
+                                      customizedMealCheckBox[2]
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: customizedMealPlanSelected ==
-                                  customizedMealCheckBox[2]
+                                      customizedMealCheckBox[2]
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -548,8 +636,7 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        customizedMealPlanSelected =
-                        customizedMealCheckBox[3];
+                        customizedMealPlanSelected = customizedMealCheckBox[3];
                       });
                     },
                     child: Row(
@@ -569,11 +656,11 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                           customizedMealCheckBox[3],
                           style: buildTextStyle(
                               color: customizedMealPlanSelected ==
-                                  customizedMealCheckBox[3]
+                                      customizedMealCheckBox[3]
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: customizedMealPlanSelected ==
-                                  customizedMealCheckBox[3]
+                                      customizedMealCheckBox[3]
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -583,8 +670,7 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
-                        customizedMealPlanSelected =
-                        customizedMealCheckBox[4];
+                        customizedMealPlanSelected = customizedMealCheckBox[4];
                       });
                     },
                     child: Row(
@@ -604,11 +690,11 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                           customizedMealCheckBox[4],
                           style: buildTextStyle(
                               color: customizedMealPlanSelected ==
-                                  customizedMealCheckBox[4]
+                                      customizedMealCheckBox[4]
                                   ? kTextColor
                                   : gHintTextColor,
                               fontFamily: customizedMealPlanSelected ==
-                                  customizedMealCheckBox[4]
+                                      customizedMealCheckBox[4]
                                   ? kFontMedium
                                   : kFontBook),
                         ),
@@ -619,7 +705,7 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
               ),
               Visibility(
                 visible:
-                customizedMealPlanSelected == customizedMealCheckBox[4],
+                    customizedMealPlanSelected == customizedMealCheckBox[4],
                 child: TextFormField(
                   textCapitalization: TextCapitalization.sentences,
                   controller: customizedMealPlanOther,
@@ -1149,9 +1235,8 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                           color: glassesOfWater == "9+"
                               ? kTextColor
                               : gHintTextColor,
-                          fontFamily: glassesOfWater == "9+"
-                              ? kFontMedium
-                              : kFontBook),
+                          fontFamily:
+                              glassesOfWater == "9+" ? kFontMedium : kFontBook),
                     ),
                   ],
                 ),
@@ -1226,11 +1311,10 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                     child: Text(
                       'Other:',
                       style: buildTextStyle(
-                          color: habitOtherSelected
-                              ? kTextColor
-                              : gHintTextColor,
+                          color:
+                              habitOtherSelected ? kTextColor : gHintTextColor,
                           fontFamily:
-                          habitOtherSelected ? kFontMedium : kFontBook),
+                              habitOtherSelected ? kFontMedium : kFontBook),
                     ),
                   ),
                   activeColor: kPrimaryColor,
@@ -1354,14 +1438,14 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                       child: Text(
                         mealPreferenceList[0],
                         style: buildTextStyle(
-                            color: mealPreferenceSelected ==
-                                mealPreferenceList[0]
-                                ? kTextColor
-                                : gHintTextColor,
-                            fontFamily: mealPreferenceSelected ==
-                                mealPreferenceList[0]
-                                ? kFontMedium
-                                : kFontBook),
+                            color:
+                                mealPreferenceSelected == mealPreferenceList[0]
+                                    ? kTextColor
+                                    : gHintTextColor,
+                            fontFamily:
+                                mealPreferenceSelected == mealPreferenceList[0]
+                                    ? kFontMedium
+                                    : kFontBook),
                       ),
                     ),
                   ],
@@ -1389,14 +1473,14 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                       child: Text(
                         mealPreferenceList[1],
                         style: buildTextStyle(
-                            color: mealPreferenceSelected ==
-                                mealPreferenceList[1]
-                                ? kTextColor
-                                : gHintTextColor,
-                            fontFamily: mealPreferenceSelected ==
-                                mealPreferenceList[1]
-                                ? kFontMedium
-                                : kFontBook),
+                            color:
+                                mealPreferenceSelected == mealPreferenceList[1]
+                                    ? kTextColor
+                                    : gHintTextColor,
+                            fontFamily:
+                                mealPreferenceSelected == mealPreferenceList[1]
+                                    ? kFontMedium
+                                    : kFontBook),
                       ),
                     ),
                   ],
@@ -1423,14 +1507,13 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                     Text(
                       mealPreferenceList[2],
                       style: buildTextStyle(
-                          color:
-                          mealPreferenceSelected == mealPreferenceList[2]
+                          color: mealPreferenceSelected == mealPreferenceList[2]
                               ? kTextColor
                               : gHintTextColor,
                           fontFamily:
-                          mealPreferenceSelected == mealPreferenceList[2]
-                              ? kFontMedium
-                              : kFontBook),
+                              mealPreferenceSelected == mealPreferenceList[2]
+                                  ? kFontMedium
+                                  : kFontBook),
                     ),
                   ],
                 ),
@@ -1490,14 +1573,13 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                       child: Text(
                         hungerPatternList[0],
                         style: buildTextStyle(
-                            color:
-                            hungerPatternSelected == hungerPatternList[0]
+                            color: hungerPatternSelected == hungerPatternList[0]
                                 ? kTextColor
                                 : gHintTextColor,
                             fontFamily:
-                            hungerPatternSelected == hungerPatternList[0]
-                                ? kFontMedium
-                                : kFontBook),
+                                hungerPatternSelected == hungerPatternList[0]
+                                    ? kFontMedium
+                                    : kFontBook),
                       ),
                     ),
                   ],
@@ -1525,14 +1607,13 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                       child: Text(
                         hungerPatternList[1],
                         style: buildTextStyle(
-                            color:
-                            hungerPatternSelected == hungerPatternList[1]
+                            color: hungerPatternSelected == hungerPatternList[1]
                                 ? kTextColor
                                 : gHintTextColor,
                             fontFamily:
-                            hungerPatternSelected == hungerPatternList[1]
-                                ? kFontMedium
-                                : kFontBook),
+                                hungerPatternSelected == hungerPatternList[1]
+                                    ? kFontMedium
+                                    : kFontBook),
                       ),
                     ),
                   ],
@@ -1560,14 +1641,13 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                       child: Text(
                         hungerPatternList[2],
                         style: buildTextStyle(
-                            color:
-                            hungerPatternSelected == hungerPatternList[2]
+                            color: hungerPatternSelected == hungerPatternList[2]
                                 ? kTextColor
                                 : gHintTextColor,
                             fontFamily:
-                            hungerPatternSelected == hungerPatternList[2]
-                                ? kFontMedium
-                                : kFontBook),
+                                hungerPatternSelected == hungerPatternList[2]
+                                    ? kFontMedium
+                                    : kFontBook),
                       ),
                     ),
                   ],
@@ -1595,14 +1675,13 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                       child: Text(
                         hungerPatternList[3],
                         style: buildTextStyle(
-                            color:
-                            hungerPatternSelected == hungerPatternList[3]
+                            color: hungerPatternSelected == hungerPatternList[3]
                                 ? kTextColor
                                 : gHintTextColor,
                             fontFamily:
-                            hungerPatternSelected == hungerPatternList[3]
-                                ? kFontMedium
-                                : kFontBook),
+                                hungerPatternSelected == hungerPatternList[3]
+                                    ? kFontMedium
+                                    : kFontBook),
                       ),
                     ),
                   ],
@@ -1616,8 +1695,7 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                   cursorColor: kPrimaryColor,
                   validator: (value) {
                     if (value!.isEmpty &&
-                        hungerPatternSelected
-                            .contains(hungerPatternList[3])) {
+                        hungerPatternSelected.contains(hungerPatternList[3])) {
                       return 'Please enter Hunger Pattern';
                     } else {
                       return null;
@@ -1667,9 +1745,9 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                                 ? kTextColor
                                 : gHintTextColor,
                             fontFamily:
-                            bowelPatternSelected == bowelPatternList[0]
-                                ? kFontMedium
-                                : kFontBook),
+                                bowelPatternSelected == bowelPatternList[0]
+                                    ? kFontMedium
+                                    : kFontBook),
                       ),
                     ),
                   ],
@@ -1701,9 +1779,9 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                                 ? kTextColor
                                 : gHintTextColor,
                             fontFamily:
-                            bowelPatternSelected == bowelPatternList[1]
-                                ? kFontMedium
-                                : kFontBook),
+                                bowelPatternSelected == bowelPatternList[1]
+                                    ? kFontMedium
+                                    : kFontBook),
                       ),
                     ),
                   ],
@@ -1735,9 +1813,9 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                                 ? kTextColor
                                 : gHintTextColor,
                             fontFamily:
-                            bowelPatternSelected == bowelPatternList[2]
-                                ? kFontMedium
-                                : kFontBook),
+                                bowelPatternSelected == bowelPatternList[2]
+                                    ? kFontMedium
+                                    : kFontBook),
                       ),
                     ),
                   ],
@@ -1769,9 +1847,9 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
                                 ? kTextColor
                                 : gHintTextColor,
                             fontFamily:
-                            bowelPatternSelected == bowelPatternList[3]
-                                ? kFontMedium
-                                : kFontBook),
+                                bowelPatternSelected == bowelPatternList[3]
+                                    ? kFontMedium
+                                    : kFontBook),
                       ),
                     ),
                   ],
@@ -1819,9 +1897,9 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
             healthCheckBox.title.toString(),
             style: buildTextStyle(
                 color:
-                healthCheckBox.value == true ? kTextColor : gHintTextColor,
+                    healthCheckBox.value == true ? kTextColor : gHintTextColor,
                 fontFamily:
-                healthCheckBox.value == true ? kFontMedium : kFontBook),
+                    healthCheckBox.value == true ? kFontMedium : kFontBook),
           ),
         ),
         dense: true,
@@ -2042,7 +2120,8 @@ class _EvaluationFormPage2State extends State<EvaluationFormPage2> {
       // _pref!.setString(AppConfig.EVAL_STATUS, "evaluation_done");
       // AppConfig().showSnackbar(context, result.message ?? '');
       Navigator.push(context,
-          MaterialPageRoute(builder: (ctx) => EvaluationUploadReport()));
+          MaterialPageRoute(builder: (ctx) => widget.isWeb
+              ? const WebEvalScreen() : const EvaluationUploadReport()));
       // Navigator.of(context).pushAndRemoveUntil(
       //   MaterialPageRoute(
       //       builder: (context) =>

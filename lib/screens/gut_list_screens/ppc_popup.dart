@@ -159,46 +159,44 @@ class _PpcPopUpScreenState extends State<PpcPopUpScreen> {
           image: const AssetImage("assets/images/consultation_completed.png"),
           height: 30.h,
         ),
-        IntrinsicWidth(
-          child: Container(
-            height: 8.h,
-            margin: EdgeInsets.symmetric(vertical: 2.h),
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 1.h),
-            decoration: BoxDecoration(
-              color: gSitBackBgColor,
-              boxShadow: [
-                BoxShadow(
-                  color: kLineColor.withOpacity(0.5),
-                  offset: const Offset(2, 5),
-                  blurRadius: 5,
-                )
-              ],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  doctorName ?? '',
-                  style: TextStyle(
-                    color: gBlackColor,
-                    fontFamily: kFontBold,
-                    fontSize: 15.dp,
-                  ),
+        Container(
+          // height: 8.h,
+          margin: EdgeInsets.symmetric(vertical: 2.h),
+          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.h),
+          decoration: BoxDecoration(
+            color: gSitBackBgColor,
+            boxShadow: [
+              BoxShadow(
+                color: kLineColor.withOpacity(0.5),
+                offset: const Offset(2, 5),
+                blurRadius: 5,
+              )
+            ],
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                doctorName ?? '',
+                style: TextStyle(
+                  color: gBlackColor,
+                  fontFamily: kFontBold,
+                  fontSize: 15.dp,
                 ),
-                SizedBox(height: 0.h),
-                Text(
-                  designation ?? '',
-                  style: TextStyle(
-                    color: gTextColor,
-                    height: 1.3,
-                    fontFamily: kFontBook,
-                    fontSize: 12.dp,
-                  ),
+              ),
+              SizedBox(height: 0.h),
+              Text(
+                designation ?? '',
+                style: TextStyle(
+                  color: gTextColor,
+                  height: 1.3,
+                  fontFamily: kFontBook,
+                  fontSize: 12.dp,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
         SizedBox(height: 1.5.h),

@@ -20,4 +20,12 @@ class ShipTrackRepository{
   Future sendSippingApproveStatusRepo(String approveStatus, String selectedDate) async{
     return await apiClient.shippingApproveApi(approveStatus, selectedDate);
   }
+
+  Future getUserAddressRepo() async{
+    return await apiClient.getUserAddressApi();
+  }
+
+  Future sendUserAddressRepo(Map details) async{
+    return await apiClient.sendUserAddressApi(details);
+  }
 }

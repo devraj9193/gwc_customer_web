@@ -551,14 +551,14 @@ class GutListState extends State<GutList> {
                         if(_shippingApprovedModel != null){
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => CookKitTracking(awb_number: _shippingApprovedModel?.value?.awbCode ?? '',currentStage: shippingStage!,),
+                              builder: (context) => CookKitTracking(awb_number: _shippingApprovedModel?.value?.awbCode ?? '',currentStage: shippingStage!, isForeign: '',),
                             ),
                           ).then((value) => reloadUI());
                         }
                         else{
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => CookKitTracking(currentStage: shippingStage ?? ''),
+                              builder: (context) => CookKitTracking(currentStage: shippingStage ?? '', isForeign: '',),
                             ),
                           ).then((value) => reloadUI());
                         }

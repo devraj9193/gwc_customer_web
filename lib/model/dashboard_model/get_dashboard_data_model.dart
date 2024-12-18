@@ -33,6 +33,7 @@ class GetDashboardDataModel {
   // these parameters for post programs
   GutDataModel? normal_postprogram;
   GetAppointmentDetailsModel? postprogram_consultation;
+  GetTeamPatient? getTeamPatient;
 
   GetDashboardDataModel(
       {this.status,
@@ -53,7 +54,8 @@ class GetDashboardDataModel {
       this.programVideo,
       this.gmgVideo,
       this.notification,
-      this.isMrRead
+      this.isMrRead,
+        this.getTeamPatient,
       // this.postprogram
       });
 
@@ -69,6 +71,7 @@ class GetDashboardDataModel {
     gmgVideo = json['gmg_video'].toString();
     isMrRead = json['is_mr_report_read'].toString();
     notification = json['notification'].toString();
+    getTeamPatient = json['getTeamPatient'] != null ? GetTeamPatient.fromJson(json['getTeamPatient']) : null;
 
     print(json['Consulation']['value'].runtimeType);
     print(json['Shipping']['value'].runtimeType);
@@ -140,7 +143,7 @@ class GetDashboardDataModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['status'] = status;
     data['errorCode'] = errorCode;
     data['key'] = key;
@@ -168,6 +171,7 @@ class GetDashboardDataModel {
       data['PostProgram'] = normal_postprogram!.toJson();
     }
     data['notification'] = notification;
+    data['getTeamPatient'] = getTeamPatient;
     return data;
   }
 }
@@ -186,7 +190,7 @@ class GetPrePostMealModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['days'] = this.data;
     data['value'] = value;
     return data;
@@ -206,20 +210,23 @@ class GetPrePostMealvalue {
   bool? isTransMealStarted;
   bool? isTransMealCompleted;
   String? currentDay;
+  String? mealProtocol;
 
-  GetPrePostMealvalue(
-      {this.prep_days,
-      this.trans_days,
-      this.isPrepratoryStarted,
-      this.isTransMealCompleted,
-      this.isPrepCompleted,
-      this.isPrepTrackerCompleted,
-      this.isProgramFeedbackSubmitted,
-        this.isMedicalFeedbackSubmitted,
-        this.isGutDiagnosisSubmitted,
-      this.isTransMealStarted,
-      this.currentDay,
-      this.startVideo});
+  GetPrePostMealvalue({
+    this.prep_days,
+    this.trans_days,
+    this.isPrepratoryStarted,
+    this.isTransMealCompleted,
+    this.isPrepCompleted,
+    this.isPrepTrackerCompleted,
+    this.isProgramFeedbackSubmitted,
+    this.isMedicalFeedbackSubmitted,
+    this.isGutDiagnosisSubmitted,
+    this.isTransMealStarted,
+    this.currentDay,
+    this.startVideo,
+    this.mealProtocol,
+  });
 
   GetPrePostMealvalue.fromJson(Map<String, dynamic> json) {
     print("json['days']===> ${json['days']}");
@@ -228,6 +235,7 @@ class GetPrePostMealvalue {
     prep_days = json['days'].toString();
     trans_days = json['days'].toString();
     startVideo = json['video'];
+    mealProtocol = json['meal_protocol'];
 
     isPrepratoryStarted = (json['is_prep_program_started'] != null)
         ? json['is_prep_program_started'].toString().contains("0")
@@ -257,13 +265,13 @@ class GetPrePostMealvalue {
         : false;
     isMedicalFeedbackSubmitted = (json['is_medical_feedback_submitted'] != null)
         ? json['is_medical_feedback_submitted'].toString().contains("1")
-        ? true
-        : false
+            ? true
+            : false
         : false;
     isGutDiagnosisSubmitted = (json['is_gut_diagnosis_submitted'] != null)
         ? json['is_gut_diagnosis_submitted'].toString().contains("1")
-        ? true
-        : false
+            ? true
+            : false
         : false;
     isTransMealCompleted = (json['is_trans_completed'] != null)
         ? json['is_trans_completed'].toString().contains("1")
@@ -275,7 +283,7 @@ class GetPrePostMealvalue {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['days'] = prep_days;
     data['trans_days'] = trans_days;
     data['is_prep_program_started'] = isPrepratoryStarted;
@@ -288,7 +296,23 @@ class GetPrePostMealvalue {
     data['is_gut_diagnosis_submitted'] = isGutDiagnosisSubmitted;
     data['current_day'] = currentDay;
     data['video'] = startVideo;
+    data['meal_protocol'] = mealProtocol;
+    return data;
+  }
+}
 
+class GetTeamPatient {
+  String? isForeign;
+
+  GetTeamPatient({this.isForeign});
+
+  GetTeamPatient.fromJson(Map<String, dynamic> json) {
+    isForeign = json['is_foriegn'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['is_foriegn'] = this.isForeign;
     return data;
   }
 }

@@ -12,6 +12,7 @@ import '../../repository/user_slot_for_schedule_repository/schedule_slot_reposit
 import '../../services/shift_slots_service/shift_slots_service.dart';
 import '../../services/user_slot_for_schedule_service/user_slot_for_schedule_service.dart';
 import '../../utils/app_config.dart';
+import '../../widgets/button_widget.dart';
 import '../../widgets/constants.dart';
 import '../../widgets/widgets.dart';
 import '../../model/shift_slots_model/shift_slots_model.dart';
@@ -456,43 +457,51 @@ class _FollowUpCallDateScreenState extends State<FollowUpCallDateScreen> {
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          SizedBox(height: 2.h),
                           // Spacer(),
                           (showSubmitProgress)
                               ? Center(child: buildCircularIndicator())
                               : Center(
-                                  child: IntrinsicWidth(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        submitFollowupSlots(
-                                            date2, selectedSlot, eventId,
-                                            isReschedule: isReschedule);
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 1.5.h, horizontal: 5.w),
-                                        decoration: BoxDecoration(
-                                          color: eUser().buttonColor,
-                                          borderRadius: BorderRadius.circular(
-                                              eUser().buttonBorderRadius),
-                                          // border: Border.all(color: eUser().buttonBorderColor,
-                                          //     width: eUser().buttonBorderWidth),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            'Submit',
-                                            style: TextStyle(
-                                              fontFamily: kFontBold,
-                                              color: gWhiteColor,
-                                              fontSize: 13.dp,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                  child: ButtonWidget(
+                                    onPressed: () {
+                                      submitFollowupSlots(
+                                          date2, selectedSlot, eventId,
+                                          isReschedule: isReschedule);
+                                    },
+                                    text: 'Submit',
+                                    isLoading: showSubmitProgress,
+                                    buttonWidth: 20.w,
                                   ),
+                                  // IntrinsicWidth(
+                                  //   child: GestureDetector(
+                                  //     onTap: () {
+                                  //       submitFollowupSlots(
+                                  //           date2, selectedSlot, eventId,
+                                  //           isReschedule: isReschedule);
+                                  //     },
+                                  //     child: Container(
+                                  //       padding: EdgeInsets.symmetric(
+                                  //           vertical: 1.5.h, horizontal: 5.w),
+                                  //       decoration: BoxDecoration(
+                                  //         color: eUser().buttonColor,
+                                  //         borderRadius: BorderRadius.circular(
+                                  //             eUser().buttonBorderRadius),
+                                  //         // border: Border.all(color: eUser().buttonBorderColor,
+                                  //         //     width: eUser().buttonBorderWidth),
+                                  //       ),
+                                  //       child: Center(
+                                  //         child: Text(
+                                  //           'Submit',
+                                  //           style: TextStyle(
+                                  //             fontFamily: kFontBold,
+                                  //             color: gWhiteColor,
+                                  //             fontSize: 13.dp,
+                                  //           ),
+                                  //         ),
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ),
                           const SizedBox(
                             height: 10,

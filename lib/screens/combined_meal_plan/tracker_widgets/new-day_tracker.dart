@@ -1,8 +1,6 @@
-import 'dart:io';
-
 import 'package:auto_orientation/auto_orientation.dart';
 import 'package:chewie/chewie.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,8 +22,9 @@ import 'package:video_player/video_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../model/combined_meal_model/meal_plan_tracker_modl/send_meal_plan_tracker_model.dart';
+import '../../../widgets/button_widget.dart';
 import '../../combined_meal_plan/combined_meal_screen.dart';
-import 'button_widget.dart';
+import 'chief_question_page.dart';
 import 'question_widget.dart';
 
 class NewDayTracker extends StatefulWidget {
@@ -121,9 +120,9 @@ class _NewDayTrackerState extends State<NewDayTracker> {
   String headache = "";
   String anxiety = "";
   String nourishSigns = "";
-
-  List<File> mandatoryFileFormatList = [];
-  List<PlatformFile> mandatoryListRecords = [];
+  //
+  // List<File> mandatoryFileFormatList = [];
+  // List<PlatformFile> mandatoryListRecords = [];
 
   List mealPlanList = [
     "Yes I followed with the given timings",
@@ -341,10 +340,11 @@ class _NewDayTrackerState extends State<NewDayTracker> {
                                       padEnds: false,
                                       itemCount: ("1" == widget.phases)
                                           ? prepQuestions.length
-                                          : ("3" == widget.phases ||
-                                                  "2" == widget.phases)
-                                              ? detoxAndHealingQuestions.length
-                                              : nourishQuestions.length,
+                                          : ("2" == widget.phases)
+                                              ? detoxQuestions.length
+                                              : ("3" == widget.phases)
+                                                  ? healingQuestions.length
+                                                  : nourishQuestions.length,
                                       physics:
                                           const NeverScrollableScrollPhysics(),
                                       controller: _pageController,
@@ -357,11 +357,11 @@ class _NewDayTrackerState extends State<NewDayTracker> {
                                       itemBuilder: (context, index) {
                                         return ("1" == widget.phases)
                                             ? prepQuestions[index]
-                                            : ("3" == widget.phases ||
-                                                    "2" == widget.phases)
-                                                ? detoxAndHealingQuestions[
-                                                    index]
-                                                : nourishQuestions[index];
+                                            : ("2" == widget.phases)
+                                                ? detoxQuestions[index]
+                                                : ("3" == widget.phases)
+                                                    ? healingQuestions[index]
+                                                    : nourishQuestions[index];
                                       }),
                                   Visibility(
                                     visible: showMealVideo,
@@ -425,7 +425,7 @@ class _NewDayTrackerState extends State<NewDayTracker> {
                             Navigator.pop(context);
                           }
                         },
-                        child: Icon(
+                        child: const Icon(
                           Icons.cancel_outlined,
                           color: gsecondaryColor,
                           size: 28,
@@ -439,6 +439,12 @@ class _NewDayTrackerState extends State<NewDayTracker> {
   }
 
   late List<Widget> prepQuestions = [
+    ChiefQuestionPage(
+      phases: widget.phases,
+      proceedProgramDayModel: widget.proceedProgramDayModel,
+      controller: _pageController,
+    ),
+    // buildQuestion15(09),
     buildMainPage(
       01,
       "Did you follow your Meal plan?",
@@ -680,7 +686,339 @@ class _NewDayTrackerState extends State<NewDayTracker> {
     // ),
   ];
 
-  late List<Widget> detoxAndHealingQuestions = [
+  late List<Widget> detoxQuestions = [
+    buildMainPage(
+      01,
+      "Did you follow your Meal plan?",
+      buildQuestion2(),
+      "Next",
+      () {
+        if (followYourMealPlan.isEmpty) {
+          AppConfig().showSnackbar(
+              context, "Please Select Follow your Meal Plan",
+              isError: true);
+        } else {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        }
+      },
+      "0.08",
+    ),
+    // buildMainPage(
+    //   03,
+    //   "If you missed anything in the Meal plan, Please let us know what it is?",
+    //   buildQuestion3(),
+    //   "Next",
+    //   () {
+    //     if (missedAnythingMealPlanController.text.isEmpty) {
+    //       AppConfig().showSnackbar(
+    //           context, "Please Enter Missed Anything in the Meal Plan",
+    //           isError: true);
+    //     } else {
+    //       _pageController
+    //           .nextPage(
+    //               duration: const Duration(milliseconds: 300),
+    //               curve: Curves.linear)
+    //           .then((value) {});
+    //     }
+    //   },
+    // ),
+    buildMainPage(
+      02,
+      "Did you follow your yoga modules (move, calm and DRT)",
+      buildQuestion4(),
+      "Next",
+      () {
+        if (yogaModules.isEmpty) {
+          AppConfig().showSnackbar(context, "Please Select your Yoga modules",
+              isError: true);
+        } else {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        }
+      },
+      "0.16",
+    ),
+    // buildMainPage(
+    //   05,
+    //   "If you missed anything in the yoga plan, Please let us know what it is?",
+    //   buildQuestion5(),
+    //   "Next",
+    //   () {
+    //     if (missedAnythingYogaPlanController.text.isEmpty) {
+    //       AppConfig().showSnackbar(
+    //           context, "Please Enter Missed Anything in the Yoga Plan",
+    //           isError: true);
+    //     } else {
+    //       _pageController
+    //           .nextPage(
+    //               duration: const Duration(milliseconds: 300),
+    //               curve: Curves.linear)
+    //           .then((value) {});
+    //     }
+    //   },
+    // ),
+    buildMainPage(
+      03,
+      "How was your sleep?",
+      buildQuestion6(),
+      "Next",
+      () {
+        if (sleep.isEmpty) {
+          AppConfig()
+              .showSnackbar(context, "Please Select Sleep", isError: true);
+        } else {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        }
+      },
+      "0.24",
+    ),
+    buildMainPage(
+      04,
+      "Stool formation",
+      buildQuestion7(),
+      "Next",
+      () {
+        if (stoolInfo.isEmpty) {
+          AppConfig().showSnackbar(context, "Please Select Stool formation",
+              isError: true);
+        } else {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        }
+      },
+      "0.32",
+      questionSub: true,
+    ),
+    buildMainPage(
+      05,
+      "How is your general health today?",
+      buildQuestion9(),
+      "Next",
+      () {
+        if (generalHealth.isEmpty) {
+          AppConfig().showSnackbar(context, "Please Select General Health",
+              isError: true);
+        } else {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        }
+      },
+      "0.40",
+    ),
+    buildMainPage(
+      06,
+      "How Does this compare to yesterday",
+      buildQuestion10(),
+      "Next",
+      () {
+        if (compareToYesterday.isEmpty) {
+          AppConfig().showSnackbar(
+              context, "Please Select Compare to Yesterday",
+              isError: true);
+        } else {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        }
+      },
+      "0.48",
+    ),
+    buildMainPage(
+      07,
+      "PART 1: SYMPTOMS",
+      buildQuestion11(),
+      "Next",
+      () {
+        if (dizziness.isEmpty) {
+          AppConfig()
+              .showSnackbar(context, "Please Select Dizziness", isError: true);
+        } else if (vomiting.isEmpty) {
+          AppConfig()
+              .showSnackbar(context, "Please Select Vomiting", isError: true);
+        } else if (looseMotion.isEmpty) {
+          AppConfig().showSnackbar(context, "Please Select Loose Motion",
+              isError: true);
+        } else if (noEvacuation.isEmpty) {
+          AppConfig().showSnackbar(context, "Please Select No Evacuation",
+              isError: true);
+        } else if (headache.isEmpty) {
+          AppConfig().showSnackbar(context, "Please Select Extreme Headache",
+              isError: true);
+        } else if (anxiety.isEmpty) {
+          AppConfig().showSnackbar(
+              context, "Please Select Anxiety/Panic attacks",
+              isError: true);
+        } else {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        }
+      },
+      "0.56",
+    ),
+    buildMainPage(
+      08,
+      "PART 2: SYMPTOMS",
+      buildQuestion12(),
+      "Next",
+      () {
+        if (selectedSymptomsPart2.isEmpty) {
+          AppConfig().showSnackbar(context, "Please Select Symptoms Part 2",
+              isError: true);
+        } else {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        }
+      },
+      "0.64",
+    ),
+    buildMainPage(
+      09,
+      "PART 3: SYMPTOMS",
+      buildQuestion13(),
+      "Next",
+      () {
+        if (selectedSymptomsPart3.isEmpty) {
+          AppConfig().showSnackbar(context, "Please Select Symptoms Part 3",
+              isError: true);
+        } else {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        }
+      },
+      "0.72",
+    ),
+    buildMainPage(
+      10,
+      widget.phases == "2" ? "Detox Signs" : "Healing Signs",
+      buildQuestion14(),
+      "Next",
+      () {
+        if (selectedNourishSigns.isEmpty) {
+          AppConfig().showSnackbar(
+              context,
+              widget.phases == "2"
+                  ? "Please Select Detox Signs"
+                  : "Please Select Healing Signs",
+              isError: true);
+        } else {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        }
+      },
+      "0.80",
+    ),
+    buildMainPage(
+      11,
+      "Please do let us know if there are any additional concerns you may have besides the symptoms previously mentioned.",
+      buildQuestion16(),
+      "Next",
+      () {
+        _pageController
+            .nextPage(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.linear)
+            .then((value) {});
+      },
+      "0.88",
+    ),
+    buildMainPage(
+      12,
+      "Have you had a medical exam or taken any medications during the program?",
+      buildQuestion1(),
+      "Next",
+      () {
+        if (selectedAnyMedicines.isNotEmpty) {
+          _pageController
+              .nextPage(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear)
+              .then((value) {});
+        } else {
+          AppConfig().showSnackbar(context,
+              "Please medical exam or taken any medications during the program",
+              isError: true);
+        }
+      },
+      "0.94",
+    ),
+    buildQuestion15(13),
+    // buildMainPage(
+    //   14,
+    //   "Tongue Picture -",
+    //   buildQuestion15(),
+    //   "Submit",
+    //   () {
+    //     if (mandatoryFileFormatList.isEmpty) {
+    //       AppConfig().showSnackbar(context, "Please Upload Image",
+    //           isError: true, bottomPadding: 100);
+    //     } else {
+    //       Map<String, String> m = {
+    //         "phone": widget.phone,
+    //         "phase": widget.phases == "Detox Phase" ? "2" : "3",
+    //         "day": dayOfPhaseController.text.toString(),
+    //         "follow_meal_plan": followYourMealPlan,
+    //         "anything_missed_in_meal_plan":
+    //             missedAnythingMealPlanController.text.toString(),
+    //         "follow_yoga_modules": yogaModules,
+    //         "missed_anything_in_yoga_plan":
+    //             missedAnythingYogaPlanController.text.toString(),
+    //         "sleep": sleep,
+    //         "stool_formation": stoolInfo,
+    //         "general_health": generalHealth,
+    //         "compare_yesterday": compareToYesterday,
+    //         "dazziness_symptoms": dizziness,
+    //         "vomiting_symptoms": vomiting,
+    //         "loose_motion_symptoms": looseMotion,
+    //         "no_evacuation_symptoms": noEvacuation,
+    //         "extreme_headache_symptoms": headache,
+    //         "anxiety_symptoms": anxiety,
+    //         "part2_symptoms[]": selectedSymptomsPart2.join(","),
+    //         "part3_symptoms[]": selectedSymptomsPart3.join(","),
+    //         "healing_signs[]": selectedNourishSigns.join(","),
+    //       };
+    //       proceed(m);
+    //     }
+    //   },
+    // ),
+  ];
+
+  late List<Widget> healingQuestions = [
+    ChiefQuestionPage(
+      phases: widget.phases,
+      proceedProgramDayModel: widget.proceedProgramDayModel,
+      controller: _pageController,
+    ),
     buildMainPage(
       01,
       "Did you follow your Meal plan?",
@@ -1008,6 +1346,11 @@ class _NewDayTrackerState extends State<NewDayTracker> {
   ];
 
   late List<Widget> nourishQuestions = [
+    ChiefQuestionPage(
+      phases: widget.phases,
+      proceedProgramDayModel: widget.proceedProgramDayModel,
+      controller: _pageController,
+    ),
     buildMainPage(
       01,
       "Did you follow your Meal plan?",
@@ -1310,10 +1653,22 @@ class _NewDayTrackerState extends State<NewDayTracker> {
               child: child,
             ),
           ),
-          ButtonWidget(
-            title: btnTitle,
-            func: func,
+          Padding(
+            padding: EdgeInsets.only(bottom: 4.h, right: 5.w),
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: ButtonWidget(
+                onPressed: func,
+                text: btnTitle,
+                isLoading: false,
+                buttonWidth: 20.w,
+              ),
+            ),
           ),
+          // ButtonWidget(
+          //   title: btnTitle,
+          //   func: func,
+          // ),
         ],
       ),
     );
@@ -2129,96 +2484,244 @@ class _NewDayTrackerState extends State<NewDayTracker> {
             percentage: "1.0",
           ),
           SizedBox(height: 2.h),
-          Visibility(
-            visible: mandatoryFileFormatList.isEmpty,
-            child: GestureDetector(
-              onTap: () async {
-                // pickFromFile(setState, isMandatory: true);
-                showChooserSheet(setstate, isMandatory: true);
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(
-                      color: gHintTextColor.withOpacity(0.3), width: 1),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+          croppedImage == null
+              ? GestureDetector(
+                  onTap: () async {
+                    // pickFromFile(setState, isMandatory: true);
+                    showChooserSheet(setstate, isMandatory: true);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      border: Border.all(
+                          color: gHintTextColor.withOpacity(0.3), width: 1),
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.file_upload_outlined,
+                          color: gsecondaryColor,
+                          size: 2.5.h,
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          'Add File',
+                          style: TextStyle(
+                            fontSize: 10.dp,
+                            color: gsecondaryColor,
+                            fontFamily: "GothamMedium",
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                )
+              : Column(
                   children: [
-                    Icon(
-                      Icons.file_upload_outlined,
-                      color: gsecondaryColor,
-                      size: 2.5.h,
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      'Add File',
-                      style: TextStyle(
-                        fontSize: 10.dp,
-                        color: gsecondaryColor,
-                        fontFamily: "GothamMedium",
+                    Container(
+                      // padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: gWhiteColor,
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
                       ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          ...mandatoryFileFormatList.map((e) {
-            return IntrinsicWidth(
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
-                margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: 0.w),
-                height: 7.h,
-                decoration: BoxDecoration(
-                  color: gWhiteColor,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      blurRadius: 3,
-                      offset: const Offset(2, 3),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        e.path.split("/").last,
-                        textAlign: TextAlign.start,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: kFontBold,
-                          fontSize: 11.dp,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: Image.memory(
+                          croppedImage!,
+                          height: 25.h,
+                          width: 35.w,
+                          fit: BoxFit.fill,
                         ),
                       ),
                     ),
-                    SizedBox(width: 2.w),
-                    GestureDetector(
-                      onTap: () {
-                        print("delete");
-
-                        setstate(() {
-                          mandatoryFileFormatList.removeAt(0);
-                        });
-                      },
-                      child: const Icon(
-                        Icons.delete_outline_outlined,
-                        color: gMainColor,
+                    SizedBox(height: 4.h),
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: ButtonWidget(
+                        text: "Submit",
+                        onPressed: () {
+                          if (croppedImage == null) {
+                            AppConfig().showSnackbar(
+                                context, "Please Choose File",
+                                isError: true);
+                          } else {
+                            if (widget.phases == "1") {
+                              Map<String, String> m = {
+                                // "phase": "1",
+                                // "day": widget.day,
+                                "any_medications": selectedAnyMedicines,
+                                "medication_used":
+                                    anyMedicinesController.text.toString(),
+                                "follow_meal_plan": followYourMealPlan,
+                                "anything_missed_in_meal_plan":
+                                    missedAnythingMealPlanController.text
+                                        .toString(),
+                                "follow_yoga_modules": yogaModules,
+                                "missed_anything_in_yoga_plan":
+                                    missedAnythingYogaPlanController.text
+                                        .toString(),
+                                "sleep": sleep,
+                                "stool_formation": stoolInfo,
+                                "any_symptoms": symptomsStopping,
+                                "dazziness_symptoms": dizziness,
+                                "vomiting_symptoms": vomiting,
+                                "loose_motion_symptoms": looseMotion,
+                                "no_evacuation_symptoms": noEvacuation,
+                                "extreme_headache_symptoms": headache,
+                                "anxiety_symptoms": anxiety,
+                                "previous_symptoms":
+                                    additionalConcernsController.text
+                                        .toString(),
+                              };
+                              print("Map : $m");
+                              proceed(m, setstate);
+                            } else if (widget.phases == "4") {
+                              Map<String, String> m = {
+                                // "phone": widget.phone,
+                                // "phase": "4",
+                                // "day": widget.day,
+                                "any_medications": selectedAnyMedicines,
+                                "medication_used":
+                                    anyMedicinesController.text.toString(),
+                                "follow_meal_plan": followYourMealPlan,
+                                "anything_missed_in_meal_plan":
+                                    missedAnythingMealPlanController.text
+                                        .toString(),
+                                "follow_yoga_modules": yogaModules,
+                                "missed_anything_in_yoga_plan":
+                                    missedAnythingYogaPlanController.text
+                                        .toString(),
+                                "sleep": sleep,
+                                "stool_formation": stoolInfo,
+                                "general_health": generalHealth,
+                                "compare_yesterday": compareToYesterday,
+                                "dazziness_symptoms": dizziness,
+                                "vomiting_symptoms": vomiting,
+                                "loose_motion_symptoms": looseMotion,
+                                "no_evacuation_symptoms": noEvacuation,
+                                "extreme_headache_symptoms": headache,
+                                "anxiety_symptoms": anxiety,
+                                "nourish_signs[]":
+                                    selectedNourishSigns.join(","),
+                                "previous_symptoms":
+                                    additionalConcernsController.text
+                                        .toString(),
+                              };
+                              print("Map : $m");
+                              proceed(m, setstate);
+                            } else {
+                              Map<String, String> m = {
+                                // "phone": widget.phone,
+                                // "phase": widget.phases == "2" ? "2" : "3",
+                                // "day": widget.day,
+                                "any_medications": selectedAnyMedicines,
+                                "medication_used":
+                                    anyMedicinesController.text.toString(),
+                                "follow_meal_plan": followYourMealPlan,
+                                "anything_missed_in_meal_plan":
+                                    missedAnythingMealPlanController.text
+                                        .toString(),
+                                "follow_yoga_modules": yogaModules,
+                                "missed_anything_in_yoga_plan":
+                                    missedAnythingYogaPlanController.text
+                                        .toString(),
+                                "sleep": sleep,
+                                "stool_formation": stoolInfo,
+                                "general_health": generalHealth,
+                                "compare_yesterday": compareToYesterday,
+                                "dazziness_symptoms": dizziness,
+                                "vomiting_symptoms": vomiting,
+                                "loose_motion_symptoms": looseMotion,
+                                "no_evacuation_symptoms": noEvacuation,
+                                "extreme_headache_symptoms": headache,
+                                "anxiety_symptoms": anxiety,
+                                "part2_symptoms[]":
+                                    selectedSymptomsPart2.join(","),
+                                "part3_symptoms[]":
+                                    selectedSymptomsPart3.join(","),
+                                "healing_signs[]":
+                                    selectedNourishSigns.join(","),
+                                "previous_symptoms":
+                                    additionalConcernsController.text
+                                        .toString(),
+                              };
+                              print("Map : $m");
+                              proceed(m, setstate);
+                            }
+                          }
+                        },
+                        isLoading: showProgress,
+                        buttonWidth: 20.w,
+                        radius: 10,
                       ),
                     ),
+                    SizedBox(height: 1.h),
                   ],
                 ),
-              ),
-            );
-            // buildMandatoryFileList(e, index, setstate,
-            //   isMandatory: true);
-          }),
+          // ...mandatoryFileFormatList.map((e) {
+          //   return IntrinsicWidth(
+          //     child: Container(
+          //       padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
+          //       margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: 0.w),
+          //       height: 7.h,
+          //       decoration: BoxDecoration(
+          //         color: gWhiteColor,
+          //         borderRadius: BorderRadius.circular(15),
+          //         boxShadow: [
+          //           BoxShadow(
+          //             color: Colors.grey.withOpacity(0.5),
+          //             blurRadius: 3,
+          //             offset: const Offset(2, 3),
+          //           ),
+          //         ],
+          //       ),
+          //       child: Row(
+          //         children: [
+          //           Expanded(
+          //             child: Text(
+          //               e.path.split("/").last,
+          //               textAlign: TextAlign.start,
+          //               maxLines: 2,
+          //               overflow: TextOverflow.ellipsis,
+          //               style: TextStyle(
+          //                 fontFamily: kFontBold,
+          //                 fontSize: 11.dp,
+          //               ),
+          //             ),
+          //           ),
+          //           SizedBox(width: 2.w),
+          //           GestureDetector(
+          //             onTap: () {
+          //               print("delete");
+          //
+          //               setstate(() {
+          //                 mandatoryFileFormatList.removeAt(0);
+          //               });
+          //             },
+          //             child: const Icon(
+          //               Icons.delete_outline_outlined,
+          //               color: gMainColor,
+          //             ),
+          //           ),
+          //         ],
+          //       ),
+          //     ),
+          //   );
+          //   // buildMandatoryFileList(e, index, setstate,
+          //   //   isMandatory: true);
+          // }),
           // (mandatoryFileFormatList.isEmpty)
           //     ? const SizedBox()
           //     : ListView.builder(
@@ -2232,144 +2735,6 @@ class _NewDayTrackerState extends State<NewDayTracker> {
           //               isMandatory: true);
           //         },
           //       ),
-          SizedBox(height: 6.h),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: IntrinsicWidth(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: gsecondaryColor,
-                  // onSurface: eUser().buttonTextColor,
-                  padding:
-                      EdgeInsets.symmetric(vertical: 1.5.h, horizontal: 5.w),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-                onPressed: showProgress
-                    ? null
-                    : () {
-                        if (mandatoryListRecords.isEmpty) {
-                          AppConfig().showSnackbar(
-                              context, "Please Choose File",
-                              isError: true);
-                        } else {
-                          if (widget.phases == "1") {
-                            Map<String, String> m = {
-                              // "phase": "1",
-                              // "day": widget.day,
-                              "any_medications": selectedAnyMedicines,
-                              "medication_used":
-                                  anyMedicinesController.text.toString(),
-                              "follow_meal_plan": followYourMealPlan,
-                              "anything_missed_in_meal_plan":
-                                  missedAnythingMealPlanController.text
-                                      .toString(),
-                              "follow_yoga_modules": yogaModules,
-                              "missed_anything_in_yoga_plan":
-                                  missedAnythingYogaPlanController.text
-                                      .toString(),
-                              "sleep": sleep,
-                              "stool_formation": stoolInfo,
-                              "any_symptoms": symptomsStopping,
-                              "dazziness_symptoms": dizziness,
-                              "vomiting_symptoms": vomiting,
-                              "loose_motion_symptoms": looseMotion,
-                              "no_evacuation_symptoms": noEvacuation,
-                              "extreme_headache_symptoms": headache,
-                              "anxiety_symptoms": anxiety,
-                              "previous_symptoms":
-                                  additionalConcernsController.text.toString(),
-                            };
-                            print("Map : $m");
-                            proceed(m, setstate);
-                          } else if (widget.phases == "4") {
-                            Map<String, String> m = {
-                              // "phone": widget.phone,
-                              // "phase": "4",
-                              // "day": widget.day,
-                              "any_medications": selectedAnyMedicines,
-                              "medication_used":
-                                  anyMedicinesController.text.toString(),
-                              "follow_meal_plan": followYourMealPlan,
-                              "anything_missed_in_meal_plan":
-                                  missedAnythingMealPlanController.text
-                                      .toString(),
-                              "follow_yoga_modules": yogaModules,
-                              "missed_anything_in_yoga_plan":
-                                  missedAnythingYogaPlanController.text
-                                      .toString(),
-                              "sleep": sleep,
-                              "stool_formation": stoolInfo,
-                              "general_health": generalHealth,
-                              "compare_yesterday": compareToYesterday,
-                              "dazziness_symptoms": dizziness,
-                              "vomiting_symptoms": vomiting,
-                              "loose_motion_symptoms": looseMotion,
-                              "no_evacuation_symptoms": noEvacuation,
-                              "extreme_headache_symptoms": headache,
-                              "anxiety_symptoms": anxiety,
-                              "nourish_signs[]": selectedNourishSigns.join(","),
-                              "previous_symptoms":
-                                  additionalConcernsController.text.toString(),
-                            };
-                            print("Map : $m");
-                            proceed(m, setstate);
-                          } else {
-                            Map<String, String> m = {
-                              // "phone": widget.phone,
-                              // "phase": widget.phases == "2" ? "2" : "3",
-                              // "day": widget.day,
-                              "any_medications": selectedAnyMedicines,
-                              "medication_used":
-                                  anyMedicinesController.text.toString(),
-                              "follow_meal_plan": followYourMealPlan,
-                              "anything_missed_in_meal_plan":
-                                  missedAnythingMealPlanController.text
-                                      .toString(),
-                              "follow_yoga_modules": yogaModules,
-                              "missed_anything_in_yoga_plan":
-                                  missedAnythingYogaPlanController.text
-                                      .toString(),
-                              "sleep": sleep,
-                              "stool_formation": stoolInfo,
-                              "general_health": generalHealth,
-                              "compare_yesterday": compareToYesterday,
-                              "dazziness_symptoms": dizziness,
-                              "vomiting_symptoms": vomiting,
-                              "loose_motion_symptoms": looseMotion,
-                              "no_evacuation_symptoms": noEvacuation,
-                              "extreme_headache_symptoms": headache,
-                              "anxiety_symptoms": anxiety,
-                              "part2_symptoms[]":
-                                  selectedSymptomsPart2.join(","),
-                              "part3_symptoms[]":
-                                  selectedSymptomsPart3.join(","),
-                              "healing_signs[]": selectedNourishSigns.join(","),
-                              "previous_symptoms":
-                                  additionalConcernsController.text.toString(),
-                            };
-                            print("Map : $m");
-                            proceed(m, setstate);
-                          }
-                        }
-                      },
-                child: Center(
-                  child: showProgress
-                      ? buildThreeBounceIndicator(color: gWhiteColor)
-                      : Text(
-                          "Submit",
-                          style: TextStyle(
-                            fontSize: 13.dp,
-                            color: gWhiteColor,
-                            fontFamily: kFontMedium,
-                          ),
-                        ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 2.h),
         ],
       );
     });
@@ -2573,58 +2938,6 @@ class _NewDayTrackerState extends State<NewDayTracker> {
     );
   }
 
-  buildMandatoryFileList(File filename, index, Function setstate,
-      {bool isMandatory = false}) {
-    return IntrinsicWidth(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
-        margin: EdgeInsets.symmetric(vertical: 1.h, horizontal: 0.w),
-        height: 7.h,
-        decoration: BoxDecoration(
-          color: gWhiteColor,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              blurRadius: 3,
-              offset: const Offset(2, 3),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                isMandatory
-                    ? "${filename.path.split("/").last}.jpg"
-                    : filename.path.split("/").last,
-                textAlign: TextAlign.start,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: kFontBold,
-                  fontSize: 11.dp,
-                ),
-              ),
-            ),
-            SizedBox(width: 2.w),
-            GestureDetector(
-              onTap: () {
-                mandatoryFileFormatList.clear();
-                mandatoryFileFormatList.removeAt(index);
-                setstate(() {});
-              },
-              child: const Icon(
-                Icons.delete_outline_outlined,
-                color: gMainColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   showChooserSheet(Function setstate, {bool isMandatory = false}) {
     return showModalBottomSheet(
         backgroundColor: Colors.transparent,
@@ -2634,7 +2947,8 @@ class _NewDayTrackerState extends State<NewDayTracker> {
           return Wrap(
             children: [
               Container(
-                decoration: BoxDecoration(
+                padding: EdgeInsets.symmetric(vertical: 2.h),
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(20),
@@ -2643,9 +2957,10 @@ class _NewDayTrackerState extends State<NewDayTracker> {
                 child: Column(
                   children: [
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 2, vertical: 4),
-                      child: Text('Choose File Source'),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 2, vertical: 4),
+                      child: const Text('Choose File Source'),
+                      decoration: const BoxDecoration(
                           border: Border(
                         bottom: BorderSide(
                           color: gHintTextColor,
@@ -2653,16 +2968,18 @@ class _NewDayTrackerState extends State<NewDayTracker> {
                         ),
                       )),
                     ),
+                    SizedBox(height: 2.h),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         TextButton(
                             onPressed: () {
-                              getImageFromCamera(setstate,
-                                  isMandatory: isMandatory);
+                              _pickImage(ImageSource.camera, setstate);
+                              // getImageFromCamera(setstate,
+                              //     isMandatory: isMandatory);
                               Navigator.pop(context);
                             },
-                            child: Row(
+                            child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
@@ -2675,7 +2992,7 @@ class _NewDayTrackerState extends State<NewDayTracker> {
                         Container(
                           width: 5,
                           height: 10,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                               border: Border(
                             right: BorderSide(
                               color: gHintTextColor,
@@ -2685,10 +3002,11 @@ class _NewDayTrackerState extends State<NewDayTracker> {
                         ),
                         TextButton(
                             onPressed: () {
-                              pickFromFile(setstate, isMandatory: isMandatory);
+                              _pickImage(ImageSource.gallery, setstate);
+                              // pickFromFile(setstate, isMandatory: isMandatory);
                               Navigator.pop(context);
                             },
-                            child: Row(
+                            child: const Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
@@ -2700,6 +3018,7 @@ class _NewDayTrackerState extends State<NewDayTracker> {
                             ))
                       ],
                     ),
+                    SizedBox(height: 3.h),
                   ],
                 ),
               )
@@ -2708,105 +3027,117 @@ class _NewDayTrackerState extends State<NewDayTracker> {
         });
   }
 
-  List<PlatformFile>? _paths;
-  PlatformFile? objFile;
+  Uint8List? croppedImage;
+  final CropController cropController = CropController();
 
-  void pickFromFile(Function setstate, {bool isMandatory = false}) async {
-    _paths = (await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowMultiple: true,
-      onFileLoading: (FilePickerStatus status) => print(status),
-      allowedExtensions: ['png', 'jpg', 'jpeg'],
-    ))
-        ?.files;
+  Future<void> _pickImage(
+      ImageSource source,
+      Function setstate,
+      ) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: source);
 
-    var path2 = _paths?.single.bytes;
+    if (image != null) {
+      int fileSizeInBytes = await image.length();
+      int maxSizeInBytes = 2 * 1024 * 1024; // 2MB in bytes
 
-    var path3 = _paths?.single.name;
+      if (fileSizeInBytes > maxSizeInBytes) {
+        AppConfig().showSnackbar(context, "File size exceeds 2MB! Please choose a smaller file.",isError: true);
+        return;
+      }
 
-    File file = File(path3 ?? "");
-    setstate(() {
-      objFile = _paths?.single;
-      mandatoryListRecords.add(objFile!);
-      mandatoryFileFormatList.add(file);
-    });
-
-    // isMandatory ?
-    // addFilesToMandatoryList(File(result.paths.first!), setstate) :
-    // addFilesToList(File(result.paths.first!), setstate);
-
-    setState(() {});
+      final imageBytes = await image.readAsBytes();
+      Uint8List? cropped =
+      await _showCropperDialog(context, imageBytes, setstate);
+      if (cropped != null) {
+        setstate(() {
+          croppedImage = cropped;
+        });
+      }
+    }
   }
 
-  File? _image;
+  // Future<void> _pickImage(
+  //   ImageSource source,
+  //   Function setstate,
+  // ) async {
+  //   final ImagePicker picker = ImagePicker();
+  //   final XFile? image = await picker.pickImage(source: source);
+  //
+  //   if (image != null) {
+  //     final imageBytes = await image.readAsBytes();
+  //     Uint8List? cropped =
+  //         await _showCropperDialog(context, imageBytes, setstate);
+  //     if (cropped != null) {
+  //       setstate(() {
+  //         croppedImage = cropped;
+  //       });
+  //     }
+  //   }
+  // }
 
-  getFileSize(File file) {
-    var size = file.lengthSync();
-    num mb = num.parse((size / (1024 * 1024)).toStringAsFixed(2));
-    return mb;
-  }
-
-  Uint8List? bytes;
-
-  String path = '';
-
-  Future getImageFromCamera(Function setstate,
-      {bool isMandatory = false}) async {
-    var image = await ImagePicker.platform
-        .getImageFromSource(source: ImageSource.camera);
-
-    _image = File(image!.path);
-
-    bytes = await image.readAsBytes();
-
-    path = image.path ?? "";
-
-    addFilesToMandatoryList(_image!, setstate);
-
-    // setstate(() {
-    //   _image = File(image!.path);
-    //   if (getFileSize(_image!) <= 12) {
-    //     print("filesize: ${getFileSize(_image!)}Mb");
-    //     isMandatory ? addFilesToMandatoryList(_image!, setstate) :  addFilesToList(_image!, setstate);
-    //
-    //   } else {
-    //     print("filesize: ${getFileSize(_image!)}Mb");
-    //
-    //     AppConfig()
-    //         .showSnackbar(context, "File size must be <12Mb", isError: true);
-    //   }
-    // });
-    print("captured image: $_image ${_image!.path}");
-  }
-
-  addFilesToMandatoryList(File file, Function setstate) async {
-    print("file: $file");
-    setstate(() {
-      mandatoryFileFormatList.add(file);
-    });
-
-    print("path : ${file.path}");
-    //
-    // Uint8List bytes = await mandatoryFileFormatList[0].readAsBytes();
-    //
-    print("bytes : $bytes");
-    print("bytes : $path");
-
-    mandatoryListRecords.add(
-      PlatformFile(name: "$path.jpg", size: 0, bytes: bytes),
+  Future<Uint8List?> _showCropperDialog(
+      BuildContext context, Uint8List imageBytes, Function setstate) async {
+    return await showDialog<Uint8List?>(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing by clicking outside
+      builder: (BuildContext context) {
+        bool _isCropping =
+            false; // Track the cropping status to show a progress indicator
+        return AlertDialog(
+          contentPadding: const EdgeInsets.all(10),
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            height: MediaQuery.of(context).size.height * 0.6,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Crop Image',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: Crop(
+                    image: imageBytes,
+                    controller: cropController,
+                    onCropped: (croppedImage) {
+                      setState(() {
+                        _isCropping = false;
+                      });
+                      Navigator.of(context)
+                          .pop(croppedImage); // Return cropped image
+                    },
+                    onStatusChanged: (CropStatus status) {
+                      setState(() {
+                        _isCropping = (status == CropStatus.cropping);
+                      });
+                    },
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (_isCropping)
+                  const CircularProgressIndicator() // Show loader while cropping
+                else
+                  ElevatedButton(
+                    onPressed: () {
+                      // Call the crop function here
+                      cropController.crop();
+                      if (croppedImage != null) {
+                        setState(() {
+                          Navigator.of(context).pop(croppedImage);
+                        });
+                      }
+                    },
+                    child: const Text("Crop and Return"),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
-
-    // for (int i = 0; i < mandatoryFileFormatList.length; i++) {
-    //   var stream = http.ByteStream(
-    //       DelegatingStream.typed(mandatoryFileFormatList[i].openRead()));
-    //   var length = await mandatoryFileFormatList[i].length();
-    //   var multipartFile = http.MultipartFile("tongue_image", stream, length,
-    //       filename: mandatoryFileFormatList[i].path);
-    //   mandatoryList.add(multipartFile);
-    //   print("mandatoryList : $mandatoryList");
-    // }
-
-    setstate(() {});
   }
 
   void proceed(Map m, setstate) async {
@@ -2899,7 +3230,7 @@ class _NewDayTrackerState extends State<NewDayTracker> {
               );
 
     final result = await ProgramService(repository: repository)
-        .submitMealPlanTrackerService(model, mandatoryListRecords);
+        .submitMealPlanTrackerService(model, croppedImage!);
 
     print("result: $result");
 
@@ -3041,18 +3372,16 @@ class _NewDayTrackerState extends State<NewDayTracker> {
     if (_sheetChewieController != null) {
       return Container(
         padding: EdgeInsets.only(top: 4.h),
-        margin: EdgeInsets.only(left: 5.w,bottom: 2.h,right: 5.w),
+        margin: EdgeInsets.only(left: 5.w, bottom: 2.h, right: 5.w),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: gBlackColor.withOpacity(0.2),
           // border: Border.all(color: gPrimaryColor, width: 1),
         ),
         child: Column(
-
           children: [
             Container(
               height: 35.h,
-
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(5),
                 child: Center(

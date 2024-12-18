@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../widgets/constants.dart';
@@ -12,21 +13,23 @@ class ProtocolGuideDetails extends StatefulWidget {
   final String? headCircleIcon;
   final bool isSheetCloseNeeded;
   VoidCallback? sheetCloseOnTap;
-  ProtocolGuideDetails({
-    Key? key, required this.pdfLink, this.heading,
-    this.topHeadColor, this.headCircleIcon,
-    this.isSheetCloseNeeded = false, this.sheetCloseOnTap
-  }) : super(key: key);
+  ProtocolGuideDetails(
+      {Key? key,
+      required this.pdfLink,
+      this.heading,
+      this.topHeadColor,
+      this.headCircleIcon,
+      this.isSheetCloseNeeded = false,
+      this.sheetCloseOnTap})
+      : super(key: key);
 
   @override
   State<ProtocolGuideDetails> createState() => _ProtocolGuideDetailsState();
 }
 
 class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
-
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Navigator.pop(context);
     viewPdf();
@@ -56,7 +59,7 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
                 child: SafeArea(
                   child: Padding(
                     padding:
-                    EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
+                        EdgeInsets.symmetric(vertical: 1.h, horizontal: 3.w),
                     child: buildAppBar(() {}, isBackEnable: false),
                   ),
                 ),
@@ -68,7 +71,7 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           Navigator.pop(context);
                         },
                         child: SizedBox(height: 10.h)),
@@ -81,8 +84,7 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
                           color: gBackgroundColor,
                           borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(22),
-                              topRight: Radius.circular(22)
-                          ),
+                              topRight: Radius.circular(22)),
                         ),
                         child: Stack(
                           children: [
@@ -93,10 +95,12 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
                                   height: 15.h,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(22),
-                                    color: this.widget.topHeadColor ?? kBottomSheetHeadYellow,
+                                    color: this.widget.topHeadColor ??
+                                        kBottomSheetHeadYellow,
                                   ),
                                   child: Center(
-                                    child: Image.asset(bsHeadStarsIcon,
+                                    child: Image.asset(
+                                      bsHeadStarsIcon,
                                       alignment: Alignment.topRight,
                                       fit: BoxFit.scaleDown,
                                       width: 30.w,
@@ -111,16 +115,15 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
                                   child: SizedBox(
                                     height: 70.h,
                                     child: SingleChildScrollView(
-                                      child:  Column(
+                                      child: Column(
                                         // shrinkWrap: true,
                                         mainAxisSize: MainAxisSize.min,
                                         children: <Widget>[
                                           SizedBox(height: 1.5.h),
                                           Flexible(
-                                            child:  IntrinsicHeight(
+                                            child: IntrinsicHeight(
                                               child: SfPdfViewer.network(
-                                                  widget.pdfLink
-                                              ),
+                                                  widget.pdfLink),
                                             ),
                                           ),
                                         ],
@@ -128,7 +131,6 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
                                     ),
                                   ),
                                 )
-
                               ],
                             ),
                             Positioned(
@@ -140,34 +142,42 @@ class _ProtocolGuideDetailsState extends State<ProtocolGuideDetails> {
                                       // color: Colors.white,
                                       shape: BoxShape.circle,
                                       boxShadow: [
-                                        BoxShadow(blurRadius: 5, color: gHintTextColor.withOpacity(0.8))
+                                        BoxShadow(
+                                            blurRadius: 5,
+                                            color:
+                                                gHintTextColor.withOpacity(0.8))
                                       ],
                                     ),
                                     child: CircleAvatar(
                                       maxRadius: 40.dp,
-                                      backgroundColor: kBottomSheetHeadCircleColor,
-                                      child: Image.asset(this.widget.headCircleIcon ?? bsHeadBellIcon,
+                                      backgroundColor:
+                                          kBottomSheetHeadCircleColor,
+                                      child: Image.asset(
+                                        this.widget.headCircleIcon ??
+                                            bsHeadBellIcon,
                                         fit: BoxFit.scaleDown,
                                         width: 45,
                                         height: 45,
                                       ),
-                                    )
-                                )
-                            ),
+                                    ))),
                             Visibility(
                               visible: widget.isSheetCloseNeeded,
                               child: Positioned(
                                   top: 10,
                                   right: 10,
                                   child: GestureDetector(
-                                      onTap: widget.sheetCloseOnTap ?? (){
-                                        Navigator.pop(context);
-                                      },
-                                      child: Icon(Icons.cancel_outlined, color: gsecondaryColor,size: 28,))),
+                                      onTap: widget.sheetCloseOnTap ??
+                                          () {
+                                            Navigator.pop(context);
+                                          },
+                                      child: Icon(
+                                        Icons.cancel_outlined,
+                                        color: gsecondaryColor,
+                                        size: 28,
+                                      ))),
                             )
                           ],
                         ),
-
                       ),
                       // child: Container(
                       //   width: double.maxFinite,

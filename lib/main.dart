@@ -8,8 +8,9 @@ import 'dart:io';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
+import 'package:gwc_customer_web/screens/follow_up_Call_screens/sample.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart' hide ModalBottomSheetRoute;
 import 'package:flutter/services.dart';
@@ -85,7 +86,10 @@ void main() async {
   // DependencyInjection.init();
 
   // *****  end *************
-  runApp(const MyApp());
+
+  runApp(
+    const MyApp(),
+  );
 }
 
 // Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -238,23 +242,24 @@ class _MyAppState extends State<MyApp> {
     String url = "https://m.gutandhealth.com/";
 
     if (await canLaunchUrl(Uri.parse(url ?? ''))) {
-    launch(url ?? '');
-    Navigator.pop(context);
-    } else{
-    // can't launch url, there is some error
-    throw "Could not launch $url";}
+      launch(url ?? '');
+      Navigator.pop(context);
+    } else {
+      // can't launch url, there is some error
+      throw "Could not launch $url";
+    }
   }
 
   void _handleCustomButtonTap() async {
+    String url = "https://m.gutandhealth.com/";
 
-   String url = "https://m.gutandhealth.com/";
-
-   if (await canLaunchUrl(Uri.parse(url ?? ''))) {
-    launch(url ?? '');
-    Navigator.pop(context);
-    } else{
-    // can't launch url, there is some error
-    throw "Could not launch $url";}
+    if (await canLaunchUrl(Uri.parse(url ?? ''))) {
+      launch(url ?? '');
+      Navigator.pop(context);
+    } else {
+      // can't launch url, there is some error
+      throw "Could not launch $url";
+    }
   }
 
   /// if user has loggedIn than making auto logout after 7 days
@@ -294,7 +299,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods and getters like dragDevices
   @override
   Set<PointerDeviceKind> get dragDevices => {
-    PointerDeviceKind.touch,
-    PointerDeviceKind.mouse,
-  };
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+      };
 }

@@ -6,7 +6,8 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_sizer/flutter_sizer.dart';import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+import 'package:flutter_sizer/flutter_sizer.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 import 'constants.dart';
 import 'package:im_animations/im_animations.dart';
@@ -66,7 +67,8 @@ class CommonButton {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         backgroundColor: gPrimaryColor,
-        disabledForegroundColor: kSecondaryColor.withOpacity(0.38), disabledBackgroundColor: kSecondaryColor.withOpacity(0.12),
+        disabledForegroundColor: kSecondaryColor.withOpacity(0.38),
+        disabledBackgroundColor: kSecondaryColor.withOpacity(0.12),
         padding: EdgeInsets.symmetric(vertical: 1.h, horizontal: 25.w),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
@@ -122,24 +124,23 @@ buildTapCount(String title, int count) {
       count == 0
           ? const SizedBox()
           : Container(
-        padding: const EdgeInsets.all(5),
-        decoration: const BoxDecoration(
-          color: kNumberCircleRed,
-          shape: BoxShape.circle,
-        ),
-        child: Text(
-          count.toString(),
-          style: TextStyle(
-            fontSize: 7.dp,
-            fontFamily: "GothamMedium",
-            color: gWhiteColor,
-          ),
-        ),
-      )
+              padding: const EdgeInsets.all(5),
+              decoration: const BoxDecoration(
+                color: kNumberCircleRed,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                count.toString(),
+                style: TextStyle(
+                  fontSize: 7.dp,
+                  fontFamily: "GothamMedium",
+                  color: gWhiteColor,
+                ),
+              ),
+            )
     ],
   );
 }
-
 
 // Center buildCircularIndicator() {
 //   return Center(
@@ -170,7 +171,7 @@ buildThreeBounceIndicator({Color? color}) {
   return Center(
     child: SpinKitThreeBounce(
       color: color ?? gMainColor,
-      size: 30,
+      size: 20,
     ),
   );
 }
@@ -207,26 +208,26 @@ SnackbarController buildSnackBar(String title, String subTitle) {
   );
 }
 
-buildAppBar(
-    VoidCallback func, {
-      bool isBackEnable = true,
-      bool showNotificationIcon = false,
-      VoidCallback? notificationOnTap,
-      bool showHelpIcon = false,
-      VoidCallback? helpOnTap,
-      bool showSupportIcon = false,
-      bool isProfileScreen = false,
-      VoidCallback? supportOnTap,
-      Color? helpIconColor,
-      String? badgeNotification,
-      bool showLogo = true,
-      bool showChild = false,
-      Widget? child,
-      /// customAction is true than pass action
-      bool customAction = false,
-      List<Widget>? actions
-    })  {
+buildAppBar(VoidCallback func,
+    {bool isBackEnable = true,
+    bool showNotificationIcon = false,
+    VoidCallback? notificationOnTap,
+    bool showHelpIcon = false,
+    VoidCallback? helpOnTap,
+    bool showLogoutIcon = false,
+    VoidCallback? logoutOnTap,
+    bool showSupportIcon = false,
+    bool isProfileScreen = false,
+    VoidCallback? supportOnTap,
+    Color? helpIconColor,
+    String? badgeNotification,
+    bool showLogo = true,
+    bool showChild = false,
+    Widget? child,
 
+    /// customAction is true than pass action
+    bool customAction = false,
+    List<Widget>? actions}) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: [
@@ -234,9 +235,9 @@ buildAppBar(
         children: [
           Visibility(
             visible: isBackEnable,
-            child: IconButton(
-              onPressed: func,
-              icon: Icon(
+            child: GestureDetector(
+              onTap: func,
+              child: Icon(
                 Icons.arrow_back_ios,
                 color: gMainColor,
                 size: 3.5.h,
@@ -261,59 +262,75 @@ buildAppBar(
       ),
       Row(
         mainAxisSize: MainAxisSize.min,
-        children: (customAction) ? actions ?? [] : [
-          Visibility(
-            visible: showNotificationIcon,
-            child: GestureDetector(
-              child: badgeNotification == "1"
-                  ? buildCustomBadge(
-                child: Icon(
-                  Icons.notifications,
-                  color: isProfileScreen ? gWhiteColor : gHintTextColor,
+        children: (customAction)
+            ? actions ?? []
+            : [
+                Visibility(
+                  visible: showNotificationIcon,
+                  child: GestureDetector(
+                    child: badgeNotification == "1"
+                        ? buildCustomBadge(
+                            child: Icon(
+                              Icons.notifications,
+                              color: isProfileScreen
+                                  ? gWhiteColor
+                                  : gHintTextColor,
+                            ),
+                            // child: Icon(Icons.notifications,color: gHintTextColor,)
+                            // SvgPicture.asset(
+                            //   "assets/images/Notification.svg",
+                            //   height: 2.5.h,
+                            //   color: gHintTextColor,
+                            // ),
+                          )
+                        : Icon(
+                            Icons.notifications,
+                            color:
+                                isProfileScreen ? gWhiteColor : gHintTextColor,
+                          ),
+                    onTap: notificationOnTap,
+                  ),
                 ),
-                // child: Icon(Icons.notifications,color: gHintTextColor,)
-                // SvgPicture.asset(
-                //   "assets/images/Notification.svg",
-                //   height: 2.5.h,
-                //   color: gHintTextColor,
-                // ),
-              )
-                  : Icon(
-                Icons.notifications,
-                color:  isProfileScreen ? gWhiteColor : gHintTextColor,
-              ),
-              onTap: notificationOnTap,
-            ),
-          ),
-          SizedBox(
-            width: 1.w,
-          ),
-          Visibility(
-            visible: showHelpIcon,
-            child: GestureDetector(
-              child: ImageIcon(
-                AssetImage("assets/images/new_ds/help.png"),
-                color: helpIconColor ?? gHintTextColor,
-                size: 3.h,
-              ),
-              onTap: helpOnTap,
-
-            ),
-          ),
-          SizedBox(
-            width: 1.w,
-          ),
-          Visibility(
-            visible: showSupportIcon,
-            child: GestureDetector(
-              child: ImageIcon(
-                AssetImage("assets/images/new_ds/support.png"),
-                color: gHintTextColor,
-              ),
-              onTap: supportOnTap,
-            ),
-          ),
-        ],
+                SizedBox(
+                  width: 1.w,
+                ),
+                Visibility(
+                  visible: showHelpIcon,
+                  child: GestureDetector(
+                    child: ImageIcon(
+                      AssetImage("assets/images/new_ds/help.png"),
+                      color: helpIconColor ?? gHintTextColor,
+                      size: 3.h,
+                    ),
+                    onTap: helpOnTap,
+                  ),
+                ),
+                SizedBox(
+                  width: 1.w,
+                ),
+                Visibility(
+                  visible: showSupportIcon,
+                  child: GestureDetector(
+                    child: ImageIcon(
+                      AssetImage("assets/images/new_ds/support.png"),
+                      color: gHintTextColor,
+                    ),
+                    onTap: supportOnTap,
+                  ),
+                ),
+                SizedBox(width: 2.w),
+                Visibility(
+                  visible: showLogoutIcon,
+                  child: GestureDetector(
+                    child: Icon(
+                      Icons.logout_sharp,
+                      size: 2.5.h,
+                      color: gBlackColor,
+                    ),
+                    onTap: logoutOnTap,
+                  ),
+                ),
+              ],
       )
     ],
   );
@@ -322,8 +339,7 @@ buildAppBar(
 buildLabelTextField(String name,
     {double? fontSize, double textScleFactor = 0.9, Key? key}) {
   return RichText(
-    key: key,
-      textScaleFactor: textScleFactor,
+      key: key,
       text: TextSpan(
           text: name,
           style: TextStyle(
@@ -341,19 +357,23 @@ buildLabelTextField(String name,
                 fontFamily: "PoppinsSemiBold",
               ),
             )
-          ]));
-  return Text(
-    'Full Name:*',
-    style: TextStyle(
-      fontSize: 9.dp,
-      color: kTextColor,
-      fontFamily: "PoppinsSemiBold",
-    ),
-  );
+          ]),
+      textScaler: TextScaler.linear(textScleFactor));
+  // return Text(
+  //   'Full Name:*',
+  //   style: TextStyle(
+  //     fontSize: 9.dp,
+  //     color: kTextColor,
+  //     fontFamily: "PoppinsSemiBold",
+  //   ),
+  // );
 }
 
 buildLabelTextFields(String name,
-    {double? fontSize, double textScaleFactor = 0.9, Key? key, bool questionSub = false}) {
+    {double? fontSize,
+    double textScaleFactor = 0.9,
+    Key? key,
+    bool questionSub = false}) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -382,34 +402,45 @@ buildLabelTextFields(String name,
           ],
         ),
       ),
-      questionSub ? Text(
-        "Note: Refer below given Bristol Stool chart",
-        textAlign: TextAlign.start,
-        style: TextStyle(
-            fontFamily: kFontBook,
-            color: gHintTextColor,
-            height: 1.3,
-            fontSize: subHeadingFont),
-      ) : const SizedBox(),
+      questionSub
+          ? Text(
+              "Note: Refer below given Bristol Stool chart",
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                  fontFamily: kFontBook,
+                  color: gHintTextColor,
+                  height: 1.3,
+                  fontSize: subHeadingFont),
+            )
+          : const SizedBox(),
     ],
   );
 }
 
+bool checkIfSunday(String date) {
+  // Parse the date from the dd-MM-yyyy format
+  DateTime parsedDate = DateTime.parse(
+      "${date.split('-')[2]}-${date.split('-')[1]}-${date.split('-')[0]}");
+
+  // Check if the day is Sunday
+  return parsedDate.weekday == DateTime.sunday;
+}
+
 Future<CroppedFile?> cropSelectedImage(String filePath) async {
   return await ImageCropper().cropImage(
-      sourcePath: filePath,
-      aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
-      cropStyle: CropStyle.circle,
-      uiSettings: [
-        AndroidUiSettings(
-            toolbarColor: gBlackColor,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false),
-        IOSUiSettings(
-          title: 'Cropper',
-        ),
-      ],
+    sourcePath: filePath,
+    aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+    // cropStyle: CropStyle.circle,
+    uiSettings: [
+      AndroidUiSettings(
+          toolbarColor: gBlackColor,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false),
+      IOSUiSettings(
+        title: 'Cropper',
+      ),
+    ],
   );
 }
 
@@ -595,15 +626,16 @@ buildNewAppBar(VoidCallback func,
             child: GestureDetector(
               onTap: func,
               child: Container(
-                padding:  EdgeInsets.only(top: 0.8.h,bottom: 0.8.h,left: 1.w,right: 1.5.w),
+                padding: EdgeInsets.only(
+                    top: 0.8.h, bottom: 0.8.h, left: 1.w, right: 1.5.w),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(color: gMainColor, width: 2),
                 ),
                 child: Image(
                   height: 1.5.h,
-                  image:const
-                      AssetImage("assets/images/Icon ionic-ios-arrow-back.png"),
+                  image: const AssetImage(
+                      "assets/images/Icon ionic-ios-arrow-back.png"),
                 ),
               ),
             ),
@@ -677,9 +709,7 @@ MaterialStateProperty<Color> getColor(Color color, Color colorPressed) {
   return MaterialStateProperty.resolveWith(getColor);
 }
 
-
-
-Future<File> getCachedPdfViewer(String url) async{
+Future<File> getCachedPdfViewer(String url) async {
   File? _tempFile;
   final Directory tempPath = await getApplicationDocumentsDirectory();
   final File tempFile = File(tempPath.path + '/${url.split('/').last}');
@@ -690,7 +720,7 @@ Future<File> getCachedPdfViewer(String url) async{
   return Future.value(_tempFile);
 }
 
-writePdfFile(PdfDocumentLoadedDetails details, String url) async{
+writePdfFile(PdfDocumentLoadedDetails details, String url) async {
   print("writePdfFile");
   final Directory tempPath1 = await getTemporaryDirectory();
 
@@ -703,21 +733,24 @@ writePdfFile(PdfDocumentLoadedDetails details, String url) async{
   print(_temp.exists());
 }
 
-
 String getDayOfMonthSuffix(int dayNum) {
-  if(!(dayNum >= 1 && dayNum <= 31)) {
+  if (!(dayNum >= 1 && dayNum <= 31)) {
     throw Exception('Invalid day of month');
   }
 
-  if(dayNum >= 11 && dayNum <= 13) {
+  if (dayNum >= 11 && dayNum <= 13) {
     return 'th';
   }
 
-  switch(dayNum % 10) {
-    case 1: return 'st';
-    case 2: return 'nd';
-    case 3: return 'rd';
-    default: return 'th';
+  switch (dayNum % 10) {
+    case 1:
+      return 'st';
+    case 2:
+      return 'nd';
+    case 3:
+      return 'rd';
+    default:
+      return 'th';
   }
 }
 
@@ -739,16 +772,13 @@ buildCustomBadge({required Widget child}) {
 }
 
 Widget landscapeView(ChewieController controller) {
-  return OrientationBuilder(
-      builder: (_, orientation){
-        if(orientation == Orientation.portrait){
-          return VideoWidget(controller);
-        }
-        else{
-          return VideoWidget(controller);
-        }
-      }
-  );
+  return OrientationBuilder(builder: (_, orientation) {
+    if (orientation == Orientation.portrait) {
+      return VideoWidget(controller);
+    } else {
+      return VideoWidget(controller);
+    }
+  });
 }
 
 VideoWidget(ChewieController controller) {
@@ -764,11 +794,11 @@ VideoWidget(ChewieController controller) {
             aspectRatio: constraints.maxWidth / constraints.maxHeight,
             child: (controller == null)
                 ? Center(
-              child: buildCircularIndicator(),
-            )
+                    child: buildCircularIndicator(),
+                  )
                 : Chewie(
-              controller: controller!,
-            ),
+                    controller: controller!,
+                  ),
             // child: VlcPlayerWithControls(
             //   key: _key,
             //   controller: _controller!,

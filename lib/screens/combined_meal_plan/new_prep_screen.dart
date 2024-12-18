@@ -19,6 +19,8 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:flutter_sizer/flutter_sizer.dart';
 import 'package:gwc_customer_web/screens/combined_meal_plan/tracker_widgets/new-day_tracker.dart';
+import 'package:gwc_customer_web/screens/combined_meal_plan/video_player/yoga_video_screen.dart';
+import 'package:gwc_customer_web/screens/combined_meal_plan/widgets/meal_bottom_sheet.dart';
 import '../../model/combined_meal_model/meal_plan_tracker_modl/send_meal_plan_tracker_model.dart';
 import '../../model/combined_meal_model/meal_slot_model.dart';
 import '../../model/combined_meal_model/new_prep_model.dart';
@@ -188,6 +190,18 @@ class _NewPrepScreenState extends State<NewPrepScreen>
                       : GestureDetector(
                           onTap: () {
                             print("meal note : ${widget.mealNote}");
+
+                            // showModalBottomSheet(
+                            //   context: context,
+                            //   isDismissible: true,
+                            //   backgroundColor: Colors.transparent,
+                            //   isScrollControlled: true, // Full-screen control over bottom sheet
+                            //   shape: RoundedRectangleBorder(
+                            //     borderRadius: BorderRadius.circular(10),
+                            //   ),
+                            //   builder: (context) => MealBottomSheet(notes: widget.mealNote,),
+                            // );
+
                             Future.delayed(const Duration(seconds: 0))
                                 .then((value) {
                               return showMoreBenefitsTextSheet(widget.mealNote,
@@ -570,7 +584,6 @@ class _NewPrepScreenState extends State<NewPrepScreen>
                 //       fontSize: eUser().mainHeadingFontSize),
                 // ),
                 SizedBox(height: 2.h),
-
                 Expanded(
                   child: (meal?.benefits == null || meal?.benefits == "")
                       ? const SizedBox()
@@ -661,10 +674,11 @@ class _NewPrepScreenState extends State<NewPrepScreen>
                                 print("/// Recipe Details ///");
 
                                 Get.to(
-                                  () => MealPlanPortraitVideo(
+                                  () => YogaVideoPlayer(
                                     videoUrl: meal?.yogaVideoUrl ?? '',
                                     heading: meal?.mealTypeName == "null" ||
-                                            meal?.mealTypeName == ""
+                                            meal?.mealTypeName == ""||
+                                        meal?.mealTypeName == "yoga"
                                         ? meal?.name ?? ''
                                         : meal?.mealTypeName ?? '',
                                   ),
